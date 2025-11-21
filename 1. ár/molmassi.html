@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="is">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Molmassi - Kvenno Efnafræði</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --kvenno-orange: #f36b22;
+            --kvenno-orange-dark: #d95a1a;
+        }
+
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+                'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+                sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background: #f9fafb;
+        }
+
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        .site-header {
+            background: white;
+            border-bottom: 2px solid #e5e7eb;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            height: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .site-logo {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: var(--kvenno-orange);
+            text-decoration: none;
+        }
+
+        .site-logo:hover {
+            color: var(--kvenno-orange-dark);
+        }
+
+        .header-btn {
+            background: white;
+            border: 2px solid var(--kvenno-orange);
+            color: var(--kvenno-orange);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-left: 0.5rem;
+        }
+
+        .header-btn:hover {
+            background: var(--kvenno-orange);
+            color: white;
+        }
+
+        .breadcrumb {
+            color: #6b7280;
+            font-size: 0.875rem;
+            padding: 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .breadcrumb a {
+            color: var(--kvenno-orange);
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .back-btn {
+            background: white;
+            border: 2px solid var(--kvenno-orange);
+            color: var(--kvenno-orange);
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-block;
+            text-decoration: none;
+            margin: 1rem;
+        }
+
+        .back-btn:hover {
+            background: var(--kvenno-orange);
+            color: white;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .5; }
+        }
+
+        .animate-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="site-header">
+        <div class="header-content">
+            <a href="/" class="site-logo">Kvenno Efnafræði</a>
+            <div>
+                <button class="header-btn" onclick="alert('Admin aðgangur kemur fljótlega')">Admin</button>
+                <button class="header-btn" onclick="alert('Upplýsingar um leiki og notkun')">Info</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+        <a href="/">Heim</a> &gt; <a href="/1-ar/">1. ár</a> &gt; <a href="/1-ar/games/">Leikir</a> &gt; Molmassi
+    </div>
+
+    <!-- Back button -->
+    <a href="/1-ar/games/" class="back-btn">← Til baka</a>
+
+    <!-- React App Container -->
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        const elements = [
+            { symbol: 'H', name: 'Hydrogen', atomicMass: 1.008 },
+            { symbol: 'C', name: 'Carbon', atomicMass: 12.011 },
+            { symbol: 'N', name: 'Nitrogen', atomicMass: 14.007 },
+            { symbol: 'O', name: 'Oxygen', atomicMass: 15.999 },
+            { symbol: 'F', name: 'Fluorine', atomicMass: 18.998 },
+            { symbol: 'Na', name: 'Sodium', atomicMass: 22.990 },
+            { symbol: 'Mg', name: 'Magnesium', atomicMass: 24.305 },
+            { symbol: 'Al', name: 'Aluminum', atomicMass: 26.982 },
+            { symbol: 'Si', name: 'Silicon', atomicMass: 28.086 },
+            { symbol: 'P', name: 'Phosphorus', atomicMass: 30.974 },
+            { symbol: 'S', name: 'Sulfur', atomicMass: 32.06 },
+            { symbol: 'Cl', name: 'Chlorine', atomicMass: 35.45 },
+            { symbol: 'K', name: 'Potassium', atomicMass: 39.098 },
+            { symbol: 'Ca', name: 'Calcium', atomicMass: 40.078 },
+            { symbol: 'Fe', name: 'Iron', atomicMass: 55.845 },
+            { symbol: 'Cu', name: 'Copper', atomicMass: 63.546 },
+            { symbol: 'Zn', name: 'Zinc', atomicMass: 65.38 },
+            { symbol: 'Br', name: 'Bromine', atomicMass: 79.904 },
+            { symbol: 'Ag', name: 'Silver', atomicMass: 107.868 },
+            { symbol: 'I', name: 'Iodine', atomicMass: 126.904 },
+        ];
+
+        const compoundsList = [
+            // Easy
+            { formula: 'H₂O', name: 'Vatn', elements: [{symbol: 'H', count: 2}, {symbol: 'O', count: 1}], molarMass: 18.015, difficulty: 'easy' },
+            { formula: 'CO₂', name: 'Koltvísýringur', elements: [{symbol: 'C', count: 1}, {symbol: 'O', count: 2}], molarMass: 44.009, difficulty: 'easy' },
+            { formula: 'NH₃', name: 'Ammóníak', elements: [{symbol: 'N', count: 1}, {symbol: 'H', count: 3}], molarMass: 17.031, difficulty: 'easy' },
+            { formula: 'CH₄', name: 'Metan', elements: [{symbol: 'C', count: 1}, {symbol: 'H', count: 4}], molarMass: 16.043, difficulty: 'easy' },
+            { formula: 'NaCl', name: 'Natrímklóríð', elements: [{symbol: 'Na', count: 1}, {symbol: 'Cl', count: 1}], molarMass: 58.440, difficulty: 'easy' },
+            { formula: 'O₂', name: 'Súrefni', elements: [{symbol: 'O', count: 2}], molarMass: 31.998, difficulty: 'easy' },
+            { formula: 'HCl', name: 'Saltsýra', elements: [{symbol: 'H', count: 1}, {symbol: 'Cl', count: 1}], molarMass: 36.458, difficulty: 'easy' },
+            { formula: 'MgO', name: 'Magnesíumoxíð', elements: [{symbol: 'Mg', count: 1}, {symbol: 'O', count: 1}], molarMass: 40.304, difficulty: 'easy' },
+
+            // Medium
+            { formula: 'H₂SO₄', name: 'Brennisteinssýra', elements: [{symbol: 'H', count: 2}, {symbol: 'S', count: 1}, {symbol: 'O', count: 4}], molarMass: 98.079, difficulty: 'medium' },
+            { formula: 'CaCO₃', name: 'Kalsíumkarbónat', elements: [{symbol: 'Ca', count: 1}, {symbol: 'C', count: 1}, {symbol: 'O', count: 3}], molarMass: 100.087, difficulty: 'medium' },
+            { formula: 'NaOH', name: 'Natrímhýdroxíð', elements: [{symbol: 'Na', count: 1}, {symbol: 'O', count: 1}, {symbol: 'H', count: 1}], molarMass: 39.997, difficulty: 'medium' },
+            { formula: 'C₆H₁₂O₆', name: 'Glúkósi', elements: [{symbol: 'C', count: 6}, {symbol: 'H', count: 12}, {symbol: 'O', count: 6}], molarMass: 180.156, difficulty: 'medium' },
+            { formula: 'Ca(OH)₂', name: 'Kalsíumhýdroxíð', elements: [{symbol: 'Ca', count: 1}, {symbol: 'O', count: 2}, {symbol: 'H', count: 2}], molarMass: 74.093, difficulty: 'medium' },
+            { formula: 'Al₂O₃', name: 'Áloxíð', elements: [{symbol: 'Al', count: 2}, {symbol: 'O', count: 3}], molarMass: 101.961, difficulty: 'medium' },
+            { formula: 'HNO₃', name: 'Saltpéturssýra', elements: [{symbol: 'H', count: 1}, {symbol: 'N', count: 1}, {symbol: 'O', count: 3}], molarMass: 63.012, difficulty: 'medium' },
+            { formula: 'KNO₃', name: 'Kalíumnítrat', elements: [{symbol: 'K', count: 1}, {symbol: 'N', count: 1}, {symbol: 'O', count: 3}], molarMass: 101.103, difficulty: 'medium' },
+
+            // Hard
+            { formula: 'Ca₃(PO₄)₂', name: 'Kalsíumfosfat', elements: [{symbol: 'Ca', count: 3}, {symbol: 'P', count: 2}, {symbol: 'O', count: 8}], molarMass: 310.177, difficulty: 'hard' },
+            { formula: 'Al(OH)₃', name: 'Álhýdroxíð', elements: [{symbol: 'Al', count: 1}, {symbol: 'O', count: 3}, {symbol: 'H', count: 3}], molarMass: 78.004, difficulty: 'hard' },
+            { formula: '(NH₄)₂SO₄', name: 'Ammóníumsúlfat', elements: [{symbol: 'N', count: 2}, {symbol: 'H', count: 8}, {symbol: 'S', count: 1}, {symbol: 'O', count: 4}], molarMass: 132.140, difficulty: 'hard' },
+            { formula: 'Fe₂O₃', name: 'Járn(III)oxíð', elements: [{symbol: 'Fe', count: 2}, {symbol: 'O', count: 3}], molarMass: 159.688, difficulty: 'hard' },
+            { formula: 'CuSO₄·5H₂O', name: 'Koparbrennisteinshýdrat', elements: [{symbol: 'Cu', count: 1}, {symbol: 'S', count: 1}, {symbol: 'O', count: 9}, {symbol: 'H', count: 10}], molarMass: 249.685, difficulty: 'hard' },
+            { formula: 'Mg(NO₃)₂', name: 'Magnesíumnítrat', elements: [{symbol: 'Mg', count: 1}, {symbol: 'N', count: 2}, {symbol: 'O', count: 6}], molarMass: 148.315, difficulty: 'hard' },
+        ];
+
+        const MolarMassChallenge = () => {
+            const [gameState, setGameState] = useState({
+                currentCompound: null,
+                userAnswer: '',
+                score: 0,
+                questionsAnswered: 0,
+                correctAnswers: 0,
+                timeRemaining: 90,
+                isPlaying: false,
+                gameOver: false,
+                difficulty: 'mixed',
+                showFeedback: false,
+                lastAnswerCorrect: null,
+                streak: 0,
+                bestStreak: 0,
+                showPeriodicTable: false
+            });
+
+            const [showInstructions, setShowInstructions] = useState(true);
+            const inputRef = useRef(null);
+            const timerRef = useRef(null);
+
+            const generateQuestion = (difficulty) => {
+                let availableCompounds;
+
+                if (difficulty === 'mixed') {
+                    availableCompounds = compoundsList;
+                } else {
+                    availableCompounds = compoundsList.filter(c => c.difficulty === difficulty);
+                }
+
+                return availableCompounds[Math.floor(Math.random() * availableCompounds.length)];
+            };
+
+            const startGame = () => {
+                const firstQuestion = generateQuestion(gameState.difficulty);
+                setGameState(prev => ({
+                    ...prev,
+                    currentCompound: firstQuestion,
+                    userAnswer: '',
+                    score: 0,
+                    questionsAnswered: 0,
+                    correctAnswers: 0,
+                    timeRemaining: 90,
+                    isPlaying: true,
+                    gameOver: false,
+                    showFeedback: false,
+                    lastAnswerCorrect: null,
+                    streak: 0
+                }));
+            };
+
+            const checkAnswer = () => {
+                if (!gameState.currentCompound || !gameState.userAnswer.trim()) return;
+
+                const userValue = parseFloat(gameState.userAnswer);
+                const correctAnswer = gameState.currentCompound.molarMass;
+
+                const tolerance = correctAnswer * 0.01;
+                const isCorrect = Math.abs(userValue - correctAnswer) <= tolerance;
+
+                const pointValue = gameState.currentCompound.difficulty === 'easy' ? 10 :
+                                   gameState.currentCompound.difficulty === 'medium' ? 15 : 20;
+
+                const streakBonus = gameState.streak >= 3 ? 5 : 0;
+                const timeBonus = gameState.timeRemaining > 60 ? 5 : gameState.timeRemaining > 30 ? 3 : 0;
+
+                setGameState(prev => ({
+                    ...prev,
+                    score: isCorrect ? prev.score + pointValue + streakBonus + timeBonus : prev.score,
+                    questionsAnswered: prev.questionsAnswered + 1,
+                    correctAnswers: isCorrect ? prev.correctAnswers + 1 : prev.correctAnswers,
+                    showFeedback: true,
+                    lastAnswerCorrect: isCorrect,
+                    streak: isCorrect ? prev.streak + 1 : 0,
+                    bestStreak: isCorrect && prev.streak + 1 > prev.bestStreak ? prev.streak + 1 : prev.bestStreak
+                }));
+
+                setTimeout(() => {
+                    if (gameState.timeRemaining > 0) {
+                        const nextQuestion = generateQuestion(gameState.difficulty);
+                        setGameState(prev => ({
+                            ...prev,
+                            currentCompound: nextQuestion,
+                            userAnswer: '',
+                            showFeedback: false,
+                            lastAnswerCorrect: null
+                        }));
+                        if (inputRef.current) inputRef.current.focus();
+                    }
+                }, 1500);
+            };
+
+            const handleKeyPress = (e) => {
+                if (e.key === 'Enter' && !gameState.showFeedback) {
+                    checkAnswer();
+                }
+            };
+
+            const resetGame = () => {
+                if (timerRef.current) clearInterval(timerRef.current);
+                setGameState(prev => ({
+                    ...prev,
+                    currentCompound: null,
+                    userAnswer: '',
+                    score: 0,
+                    questionsAnswered: 0,
+                    correctAnswers: 0,
+                    timeRemaining: 90,
+                    isPlaying: false,
+                    gameOver: false,
+                    showFeedback: false,
+                    lastAnswerCorrect: null,
+                    streak: 0
+                }));
+            };
+
+            useEffect(() => {
+                if (gameState.isPlaying && !gameState.gameOver && gameState.timeRemaining > 0) {
+                    timerRef.current = setInterval(() => {
+                        setGameState(prev => {
+                            if (prev.timeRemaining <= 1) {
+                                return { ...prev, timeRemaining: 0, isPlaying: false, gameOver: true };
+                            }
+                            return { ...prev, timeRemaining: prev.timeRemaining - 1 };
+                        });
+                    }, 1000);
+                }
+
+                return () => {
+                    if (timerRef.current) clearInterval(timerRef.current);
+                };
+            }, [gameState.isPlaying, gameState.gameOver, gameState.timeRemaining]);
+
+            useEffect(() => {
+                if (gameState.isPlaying && !gameState.showFeedback && inputRef.current) {
+                    inputRef.current.focus();
+                }
+            }, [gameState.isPlaying, gameState.showFeedback, gameState.currentCompound]);
+
+            if (showInstructions) {
+                return (
+                    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-orange-100 p-8">
+                        <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-2xl p-8">
+                            <h1 className="text-4xl font-bold text-center mb-6" style={{color: 'var(--kvenno-orange)'}}>
+                                ⚖️ Molmassi
+                            </h1>
+
+                            <div className="space-y-4 text-gray-700">
+                                <h2 className="text-2xl font-semibold" style={{color: 'var(--kvenno-orange)'}}>Leiðbeiningar</h2>
+
+                                <div className="bg-orange-50 p-4 rounded-lg">
+                                    <h3 className="font-semibold mb-2">Markmið:</h3>
+                                    <p>Reiknaðu mólþyngd (molar mass) efnasambanda eins hratt og þú getur!</p>
+                                </div>
+
+                                <div className="bg-blue-50 p-4 rounded-lg">
+                                    <h3 className="font-semibold mb-2">Hvernig á að spila:</h3>
+                                    <ol className="list-decimal list-inside space-y-2">
+                                        <li>Veldu erfiðleikastig</li>
+                                        <li>Sjáðu efnaformúluna</li>
+                                        <li>Reiknaðu mólþyngd með lotukerfinu</li>
+                                        <li>Sláðu inn svarið í g/mol</li>
+                                        <li>Haltu áfram í 90 sekúndur!</li>
+                                    </ol>
+                                </div>
+
+                                <div className="bg-green-50 p-4 rounded-lg">
+                                    <h3 className="font-semibold mb-2">Dæmi:</h3>
+                                    <div className="font-mono text-sm bg-white p-3 rounded">
+                                        <p className="font-bold mb-1">H₂O (Vatn)</p>
+                                        <p>H: 2 × 1.008 = 2.016</p>
+                                        <p>O: 1 × 15.999 = 15.999</p>
+                                        <p className="border-t border-gray-300 pt-1 mt-1 font-bold">
+                                            Samtals: 18.015 g/mol
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="bg-yellow-50 p-4 rounded-lg">
+                                    <h3 className="font-semibold mb-2">Stigagjöf:</h3>
+                                    <ul className="space-y-1 text-sm">
+                                        <li><strong>Auðvelt:</strong> 10 stig + bónus</li>
+                                        <li><strong>Miðlungs:</strong> 15 stig + bónus</li>
+                                        <li><strong>Erfitt:</strong> 20 stig + bónus</li>
+                                        <li><strong>Röð bónus:</strong> +5 eftir 3 í röð</li>
+                                        <li><strong>Tíma bónus:</strong> +3-5 fyrir hraða svör</li>
+                                    </ul>
+                                </div>
+
+                                <div className="bg-purple-50 p-4 rounded-lg">
+                                    <h3 className="font-semibold mb-2">Ábendingar:</h3>
+                                    <ul className="list-disc list-inside space-y-1 text-sm">
+                                        <li>Notaðu "Sýna lotukerfið" takkann</li>
+                                        <li>Mundu algengustu massatölurnar</li>
+                                        <li>Fylgdu nákvæmnistillögunni (1% skekkja)</li>
+                                        <li>Ef hydrate (·xH₂O), bættu við vatninu</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <button
+                                onClick={() => setShowInstructions(false)}
+                                className="w-full mt-6 text-white font-bold py-4 px-6 rounded-xl transition-colors duration-200 text-lg"
+                                style={{backgroundColor: 'var(--kvenno-orange)'}}
+                                onMouseOver={(e) => e.target.style.backgroundColor = 'var(--kvenno-orange-dark)'}
+                                onMouseOut={(e) => e.target.style.backgroundColor = 'var(--kvenno-orange)'}
+                            >
+                                Byrja að spila 🚀
+                            </button>
+                        </div>
+                    </div>
+                );
+            }
+
+            if (!gameState.isPlaying && !gameState.gameOver) {
+                return (
+                    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-orange-100 p-8">
+                        <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-2xl p-8">
+                            <h1 className="text-4xl font-bold text-center mb-6" style={{color: 'var(--kvenno-orange)'}}>
+                                ⚖️ Molmassi
+                            </h1>
+
+                            <div className="space-y-6">
+                                <div className="text-center">
+                                    <p className="text-lg text-gray-700 mb-4">
+                                        Veldu erfiðleikastig:
+                                    </p>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    <button
+                                        onClick={() => {
+                                            setGameState(prev => ({ ...prev, difficulty: 'easy' }));
+                                            setTimeout(startGame, 100);
+                                        }}
+                                        className="bg-green-500 hover:bg-green-600 text-white font-bold py-6 px-6 rounded-xl transition-colors"
+                                    >
+                                        <div className="text-2xl mb-2">😊</div>
+                                        <div className="text-xl">Auðvelt</div>
+                                        <div className="text-xs mt-2">Einföld sambönd</div>
+                                    </button>
+
+                                    <button
+                                        onClick={() => {
+                                            setGameState(prev => ({ ...prev, difficulty: 'medium' }));
+                                            setTimeout(startGame, 100);
+                                        }}
+                                        className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-6 px-6 rounded-xl transition-colors"
+                                    >
+                                        <div className="text-2xl mb-2">🤔</div>
+                                        <div className="text-xl">Miðlungs</div>
+                                        <div className="text-xs mt-2">Flóknari formúlur</div>
+                                    </button>
+
+                                    <button
+                                        onClick={() => {
+                                            setGameState(prev => ({ ...prev, difficulty: 'hard' }));
+                                            setTimeout(startGame, 100);
+                                        }}
+                                        className="bg-red-500 hover:bg-red-600 text-white font-bold py-6 px-6 rounded-xl transition-colors"
+                                    >
+                                        <div className="text-2xl mb-2">😰</div>
+                                        <div className="text-xl">Erfitt</div>
+                                        <div className="text-xs mt-2">Mjög flókin</div>
+                                    </button>
+
+                                    <button
+                                        onClick={() => {
+                                            setGameState(prev => ({ ...prev, difficulty: 'mixed' }));
+                                            setTimeout(startGame, 100);
+                                        }}
+                                        className="bg-purple-500 hover:bg-purple-600 text-white font-bold py-6 px-6 rounded-xl transition-colors"
+                                    >
+                                        <div className="text-2xl mb-2">🎲</div>
+                                        <div className="text-xl">Blandað</div>
+                                        <div className="text-xs mt-2">Öll stig</div>
+                                    </button>
+                                </div>
+
+                                <button
+                                    onClick={() => setShowInstructions(true)}
+                                    className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-3 px-6 rounded-xl transition-colors"
+                                >
+                                    📖 Sjá leiðbeiningar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            if (gameState.gameOver) {
+                const accuracy = gameState.questionsAnswered > 0
+                    ? ((gameState.correctAnswers / gameState.questionsAnswered) * 100).toFixed(1)
+                    : '0';
+
+                return (
+                    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-orange-100 p-8">
+                        <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-2xl p-8">
+                            <h1 className="text-4xl font-bold text-center mb-6" style={{color: 'var(--kvenno-orange)'}}>
+                                🏁 Leik lokið!
+                            </h1>
+
+                            <div className="space-y-6">
+                                <div className="bg-gradient-to-r from-orange-100 to-orange-200 p-6 rounded-xl">
+                                    <div className="text-center">
+                                        <div className="text-6xl font-bold mb-2" style={{color: 'var(--kvenno-orange)'}}>{gameState.score}</div>
+                                        <div className="text-xl text-gray-700">Heildarstaða</div>
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="bg-blue-50 p-4 rounded-xl text-center">
+                                        <div className="text-3xl font-bold text-blue-600">{gameState.questionsAnswered}</div>
+                                        <div className="text-sm text-gray-700">Spurningar</div>
+                                    </div>
+
+                                    <div className="bg-green-50 p-4 rounded-xl text-center">
+                                        <div className="text-3xl font-bold text-green-600">{gameState.correctAnswers}</div>
+                                        <div className="text-sm text-gray-700">Rétt</div>
+                                    </div>
+
+                                    <div className="bg-yellow-50 p-4 rounded-xl text-center">
+                                        <div className="text-3xl font-bold text-yellow-600">{accuracy}%</div>
+                                        <div className="text-sm text-gray-700">Nákvæmni</div>
+                                    </div>
+
+                                    <div className="bg-orange-50 p-4 rounded-xl text-center">
+                                        <div className="text-3xl font-bold" style={{color: 'var(--kvenno-orange)'}}>{gameState.bestStreak}</div>
+                                        <div className="text-sm text-gray-700">Besta röð</div>
+                                    </div>
+                                </div>
+
+                                <div className="bg-orange-50 p-4 rounded-xl">
+                                    <h3 className="font-semibold text-center mb-2">
+                                        {gameState.score >= 350 ? '🌟 Frábært!' :
+                                         gameState.score >= 250 ? '👍 Vel gert!' :
+                                         gameState.score >= 150 ? '💪 Góð byrjun!' :
+                                         '📚 Æfðu meira!'}
+                                    </h3>
+                                </div>
+
+                                <div className="flex gap-4">
+                                    <button
+                                        onClick={resetGame}
+                                        className="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-bold py-4 px-6 rounded-xl transition-colors"
+                                    >
+                                        ↻ Velja stig
+                                    </button>
+                                    <button
+                                        onClick={() => setShowInstructions(true)}
+                                        className="flex-1 text-white font-bold py-4 px-6 rounded-xl transition-colors"
+                                        style={{backgroundColor: 'var(--kvenno-orange)'}}
+                                        onMouseOver={(e) => e.target.style.backgroundColor = 'var(--kvenno-orange-dark)'}
+                                        onMouseOut={(e) => e.target.style.backgroundColor = 'var(--kvenno-orange)'}
+                                    >
+                                        Leiðbeiningar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="min-h-screen bg-gradient-to-br from-orange-50 to-orange-100 p-4 md:p-8">
+                    <div className="max-w-4xl mx-auto">
+                        {/* Header */}
+                        <div className="bg-white rounded-2xl shadow-2xl p-6 mb-6">
+                            <div className="flex justify-between items-center flex-wrap gap-4">
+                                <div className="flex items-center gap-4">
+                                    <div className="text-center">
+                                        <div className="flex items-center gap-2 text-red-600 mb-1">
+                                            <span>⏰</span>
+                                            <span className="text-3xl font-bold">{gameState.timeRemaining}s</span>
+                                        </div>
+                                        <div className="text-xs text-gray-600">Tími eftir</div>
+                                    </div>
+
+                                    <div className="text-center">
+                                        <div className="flex items-center gap-2 mb-1" style={{color: 'var(--kvenno-orange)'}}>
+                                            <span>🏆</span>
+                                            <span className="text-3xl font-bold">{gameState.score}</span>
+                                        </div>
+                                        <div className="text-xs text-gray-600">Stig</div>
+                                    </div>
+                                </div>
+
+                                <div className="flex items-center gap-4">
+                                    <div className="text-center">
+                                        <div className="text-2xl font-bold text-green-600">
+                                            {gameState.correctAnswers}/{gameState.questionsAnswered}
+                                        </div>
+                                        <div className="text-xs text-gray-600">Rétt</div>
+                                    </div>
+
+                                    {gameState.streak >= 3 && (
+                                        <div className="text-center animate-pulse">
+                                            <div className="flex items-center gap-1 mb-1" style={{color: 'var(--kvenno-orange)'}}>
+                                                <span>⚡</span>
+                                                <span className="text-2xl font-bold">{gameState.streak}</span>
+                                            </div>
+                                            <div className="text-xs text-gray-600">Röð!</div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="mt-4 bg-gray-200 rounded-full h-2">
+                                <div
+                                    className="h-2 rounded-full transition-all duration-1000"
+                                    style={{
+                                        width: `${(gameState.timeRemaining / 90) * 100}%`,
+                                        background: 'linear-gradient(to right, var(--kvenno-orange), var(--kvenno-orange-dark))'
+                                    }}
+                                />
+                            </div>
+                        </div>
+
+                        {/* Game Area */}
+                        <div className="bg-white rounded-2xl shadow-2xl p-8">
+                            {gameState.currentCompound && (
+                                <>
+                                    <div className="mb-6 text-center">
+                                        <div className="text-6xl font-bold text-gray-800 mb-4">
+                                            {gameState.currentCompound.formula}
+                                        </div>
+                                        <div className="text-xl text-gray-600 mb-2">
+                                            {gameState.currentCompound.name}
+                                        </div>
+                                        <div className="text-sm text-gray-500">
+                                            Reiknaðu mólþyngd í g/mol
+                                        </div>
+                                    </div>
+
+                                    {/* Periodic Table Toggle */}
+                                    <div className="mb-4 text-center">
+                                        <button
+                                            onClick={() => setGameState(prev => ({ ...prev, showPeriodicTable: !prev.showPeriodicTable }))}
+                                            className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg text-sm"
+                                        >
+                                            {gameState.showPeriodicTable ? 'Fela lotukerfið' : 'Sýna lotukerfið'} 📊
+                                        </button>
+                                    </div>
+
+                                    {gameState.showPeriodicTable && (
+                                        <div className="mb-6 bg-blue-50 p-4 rounded-xl max-h-60 overflow-y-auto">
+                                            <h4 className="font-semibold mb-2 text-center">Lotukerfið</h4>
+                                            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
+                                                {elements.map(el => (
+                                                    <div key={el.symbol} className="bg-white p-2 rounded border border-blue-200">
+                                                        <div className="font-bold">{el.symbol}</div>
+                                                        <div className="text-xs text-gray-600">{el.atomicMass.toFixed(3)}</div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Answer Input */}
+                                    <div className="max-w-md mx-auto">
+                                        {!gameState.showFeedback ? (
+                                            <div className="space-y-4">
+                                                <input
+                                                    ref={inputRef}
+                                                    type="number"
+                                                    step="0.001"
+                                                    value={gameState.userAnswer}
+                                                    onChange={(e) => setGameState(prev => ({ ...prev, userAnswer: e.target.value }))}
+                                                    onKeyPress={handleKeyPress}
+                                                    placeholder="Mólþyngd í g/mol"
+                                                    className="w-full p-4 text-2xl border-4 rounded-xl focus:outline-none text-center font-bold"
+                                                    style={{borderColor: 'var(--kvenno-orange)'}}
+                                                    onFocus={(e) => e.target.style.borderColor = 'var(--kvenno-orange-dark)'}
+                                                    onBlur={(e) => e.target.style.borderColor = 'var(--kvenno-orange)'}
+                                                    autoFocus
+                                                />
+                                                <button
+                                                    onClick={checkAnswer}
+                                                    disabled={!gameState.userAnswer.trim()}
+                                                    className="w-full text-white font-bold py-4 px-6 rounded-xl transition-colors text-xl disabled:bg-gray-300"
+                                                    style={{backgroundColor: gameState.userAnswer.trim() ? 'var(--kvenno-orange)' : undefined}}
+                                                    onMouseOver={(e) => {if (gameState.userAnswer.trim()) e.target.style.backgroundColor = 'var(--kvenno-orange-dark)'}}
+                                                    onMouseOut={(e) => {if (gameState.userAnswer.trim()) e.target.style.backgroundColor = 'var(--kvenno-orange)'}}
+                                                >
+                                                    Athuga svar ✓
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <div className={`p-6 rounded-xl ${gameState.lastAnswerCorrect ? 'bg-green-50 border-4 border-green-300' : 'bg-red-50 border-4 border-red-300'}`}>
+                                                <div className="text-center">
+                                                    <div className="text-4xl mb-2">
+                                                        {gameState.lastAnswerCorrect ? '✅' : '❌'}
+                                                    </div>
+                                                    <div className="text-2xl font-bold mb-2">
+                                                        {gameState.lastAnswerCorrect ? 'Rétt!' : 'Rangt'}
+                                                    </div>
+                                                    <div className="text-lg text-gray-700">
+                                                        Rétt svar: <span className="font-bold">{gameState.currentCompound.molarMass.toFixed(3)} g/mol</span>
+                                                    </div>
+                                                    {!gameState.lastAnswerCorrect && (
+                                                        <div className="text-sm text-gray-600 mt-2">
+                                                            Þitt svar: {gameState.userAnswer} g/mol
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                </>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<MolarMassChallenge />);
+    </script>
+</body>
+</html>

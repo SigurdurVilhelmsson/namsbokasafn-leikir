@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="is">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Limiting Reactant Factory - Chemistry Game</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+                'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+                sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Lucide React icons as simple SVG components
+        const Play = ({ size = 24 }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+        );
+
+        const RotateCcw = ({ size = 24 }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="1 4 1 10 7 10"></polyline>
+                <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+            </svg>
+        );
+
+        const HelpCircle = ({ size = 24 }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+        );
+
+        const reactions = [
+            {
+                id: '1',
+                equation: '2H₂ + O₂ → 2H₂O',
+                reactant1: { formula: 'H₂', coeff: 2, color: '#3b82f6' },
+                reactant2: { formula: 'O₂', coeff: 1, color: '#ef4444' },
+                product: { formula: 'H₂O', coeff: 2, color: '#8b5cf6' },
+                description: 'Hydrogen + Oxygen → Water'
+            },
+            {
+                id: '2',
+                equation: 'N₂ + 3H₂ → 2NH₃',
+                reactant1: { formula: 'N₂', coeff: 1, color: '#10b981' },
+                reactant2: { formula: 'H₂', coeff: 3, color: '#3b82f6' },
+                product: { formula: 'NH₃', coeff: 2, color: '#f59e0b' },
+                description: 'Nitrogen + Hydrogen → Ammonia'
+            },
+            {
+                id: '3',
+                equation: 'C + O₂ → CO₂',
+                reactant1: { formula: 'C', coeff: 1, color: '#1f2937' },
+                reactant2: { formula: 'O₂', coeff: 1, color: '#ef4444' },
+                product: { formula: 'CO₂', coeff: 1, color: '#6b7280' },
+                description: 'Carbon + Oxygen → Carbon dioxide'
+            },
+            {
+                id: '4',
+                equation: 'CH₄ + 2O₂ → CO₂ + 2H₂O',
+                reactant1: { formula: 'CH₄', coeff: 1, color: '#14b8a6' },
+                reactant2: { formula: 'O₂', coeff: 2, color: '#ef4444' },
+                product: { formula: 'CO₂ + H₂O', coeff: 1, color: '#8b5cf6' },
+                description: 'Methane + Oxygen → Carbon dioxide + Water'
+            },
+            {
+                id: '5',
+                equation: '2Mg + O₂ → 2MgO',
+                reactant1: { formula: 'Mg', coeff: 2, color: '#a855f7' },
+                reactant2: { formula: 'O₂', coeff: 1, color: '#ef4444' },
+                product: { formula: 'MgO', coeff: 2, color: '#f97316' },
+                description: 'Magnesium + Oxygen → Magnesium oxide'
+            },
+            {
+                id: '6',
+                equation: '4Fe + 3O₂ → 2Fe₂O₃',
+                reactant1: { formula: 'Fe', coeff: 4, color: '#dc2626' },
+                reactant2: { formula: 'O₂', coeff: 3, color: '#ef4444' },
+                product: { formula: 'Fe₂O₃', coeff: 2, color: '#92400e' },
+                description: 'Iron + Oxygen → Iron(III) oxide'
+            }
+        ];
+
+        const LimitingReactantGame = () => {
+            const [gameState, setGameState] = useState({
+                currentReaction: reactions[0],
+                reactant1Count: 6,
+                reactant2Count: 4,
+                userAnswer: { limitingReactant: '', productsFormed: '', excessRemaining: '' },
+                isAnswered: false,
+                isCorrect: null,
+                score: 0,
+                questionsAnswered: 0,
+                showHint: false,
+                difficulty: 'easy'
+            });
+
+            const [showInstructions, setShowInstructions] = useState(true);
+
+            const generateNewProblem = (difficulty) => {
+                const reaction = reactions[Math.floor(Math.random() * reactions.length)];
+                
+                let r1Count, r2Count;
+                if (difficulty === 'easy') {
+                    r1Count = Math.floor(Math.random() * 6) + 3;
+                    r2Count = Math.floor(Math.random() * 6) + 3;
+                } else if (difficulty === 'medium') {
+                    r1Count = Math.floor(Math.random() * 10) + 5;
+                    r2Count = Math.floor(Math.random() * 10) + 5;
+                } else {
+                    r1Count = Math.floor(Math.random() * 15) + 10;
+                    r2Count = Math.floor(Math.random() * 15) + 10;
+                }
+
+                setGameState(prev => ({
+                    ...prev,
+                    currentReaction: reaction,
+                    reactant1Count: r1Count,
+                    reactant2Count: r2Count,
+                    userAnswer: { limitingReactant: '', productsFormed: '', excessRemaining: '' },
+                    isAnswered: false,
+                    isCorrect: null,
+                    showHint: false
+                }));
+            };
+
+            const calculateCorrectAnswer = () => {
+                const { currentReaction, reactant1Count, reactant2Count } = gameState;
+                
+                const timesFromR1 = reactant1Count / currentReaction.reactant1.coeff;
+                const timesFromR2 = reactant2Count / currentReaction.reactant2.coeff;
+                
+                const limitingReactant = timesFromR1 < timesFromR2 
+                    ? currentReaction.reactant1.formula 
+                    : currentReaction.reactant2.formula;
+                
+                const timesReactionRuns = Math.floor(Math.min(timesFromR1, timesFromR2));
+                const productsFormed = timesReactionRuns * currentReaction.product.coeff;
+                
+                const r1Used = timesReactionRuns * currentReaction.reactant1.coeff;
+                const r2Used = timesReactionRuns * currentReaction.reactant2.coeff;
+                
+                const excessReactant = limitingReactant === currentReaction.reactant1.formula
+                    ? currentReaction.reactant2.formula
+                    : currentReaction.reactant1.formula;
+                
+                const excessRemaining = limitingReactant === currentReaction.reactant1.formula
+                    ? reactant2Count - r2Used
+                    : reactant1Count - r1Used;
+
+                return {
+                    limitingReactant,
+                    productsFormed,
+                    excessReactant,
+                    excessRemaining
+                };
+            };
+
+            const handleSubmit = () => {
+                const correct = calculateCorrectAnswer();
+                const isLimitingCorrect = gameState.userAnswer.limitingReactant === correct.limitingReactant;
+                const isProductsCorrect = parseInt(gameState.userAnswer.productsFormed) === correct.productsFormed;
+                const isExcessCorrect = parseInt(gameState.userAnswer.excessRemaining) === correct.excessRemaining;
+                
+                const allCorrect = isLimitingCorrect && isProductsCorrect && isExcessCorrect;
+                
+                setGameState(prev => ({
+                    ...prev,
+                    isAnswered: true,
+                    isCorrect: allCorrect,
+                    score: allCorrect ? prev.score + (prev.difficulty === 'easy' ? 10 : prev.difficulty === 'medium' ? 15 : 20) : prev.score,
+                    questionsAnswered: prev.questionsAnswered + 1
+                }));
+            };
+
+            const handleNextQuestion = () => {
+                generateNewProblem(gameState.difficulty);
+            };
+
+            const handleReset = () => {
+                setGameState(prev => ({
+                    ...prev,
+                    score: 0,
+                    questionsAnswered: 0
+                }));
+                generateNewProblem(gameState.difficulty);
+            };
+
+            const renderMolecules = (formula, count, color) => {
+                return (
+                    <div className="flex flex-wrap gap-2 justify-center min-h-[100px] items-center">
+                        {Array.from({ length: count }).map((_, i) => (
+                            <div
+                                key={i}
+                                className="w-12 h-12 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg"
+                                style={{ backgroundColor: color }}
+                            >
+                                {formula}
+                            </div>
+                        ))}
+                    </div>
+                );
+            };
+
+            useEffect(() => {
+                generateNewProblem('easy');
+            }, []);
+
+            if (showInstructions) {
+                return (
+                    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8">
+                        <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-2xl p-8">
+                            <h1 className="text-4xl font-bold text-center mb-6 text-indigo-600">
+                                ⚗️ Limiting Reactant Factory
+                            </h1>
+                            
+                            <div className="space-y-4 text-gray-700">
+                                <h2 className="text-2xl font-semibold text-indigo-500">Leiðbeiningar / Instructions</h2>
+                                
+                                <div className="bg-blue-50 p-4 rounded-lg">
+                                    <h3 className="font-semibold mb-2">Markmið / Goal:</h3>
+                                    <p>Finndu takmörkuðu hvarfefnið (limiting reactant) og reiknaðu hversu miklar afurðir myndast!</p>
+                                    <p className="text-sm italic">Find the limiting reactant and calculate how many products form!</p>
+                                </div>
+
+                                <div className="bg-green-50 p-4 rounded-lg">
+                                    <h3 className="font-semibold mb-2">Hvernig á að spila / How to play:</h3>
+                                    <ol className="list-decimal list-inside space-y-2">
+                                        <li>Skoðaðu jöfnuna og fjölda hvarfefna / Look at the equation and count of reactants</li>
+                                        <li>Reiknaðu hvaða hvarfefni klárast fyrst / Calculate which reactant runs out first</li>
+                                        <li>Finndu hversu margar afurðir myndast / Find how many products form</li>
+                                        <li>Reiknaðu afganginn af hinum hvarfefnunum / Calculate the excess remaining</li>
+                                    </ol>
+                                </div>
+
+                                <div className="bg-yellow-50 p-4 rounded-lg">
+                                    <h3 className="font-semibold mb-2">Erfiðleikastig / Difficulty Levels:</h3>
+                                    <ul className="space-y-1">
+                                        <li><strong>Auðvelt/Easy:</strong> Litlir tölur (10 stig)</li>
+                                        <li><strong>Miðlungs/Medium:</strong> Meðalstórar tölur (15 stig)</li>
+                                        <li><strong>Erfitt/Hard:</strong> Stórar tölur (20 stig)</li>
+                                    </ul>
+                                </div>
+
+                                <div className="bg-purple-50 p-4 rounded-lg">
+                                    <h3 className="font-semibold mb-2">Ábending / Hint:</h3>
+                                    <p className="text-sm">Notaðu formúluna: mól hvarfefnis / stuðull í jöfnu</p>
+                                    <p className="text-sm italic">Use the formula: moles of reactant / coefficient in equation</p>
+                                </div>
+                            </div>
+
+                            <button
+                                onClick={() => setShowInstructions(false)}
+                                className="w-full mt-6 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-6 rounded-xl transition-colors duration-200 text-lg"
+                            >
+                                Byrja að spila / Start Playing! 🚀
+                            </button>
+                        </div>
+                    </div>
+                );
+            }
+
+            const correctAnswer = calculateCorrectAnswer();
+
+            return (
+                <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4 md:p-8">
+                    <div className="max-w-6xl mx-auto">
+                        <div className="bg-white rounded-2xl shadow-2xl p-6 mb-6">
+                            <div className="flex justify-between items-center flex-wrap gap-4">
+                                <h1 className="text-3xl font-bold text-indigo-600">⚗️ Limiting Reactant Factory</h1>
+                                
+                                <div className="flex gap-4 items-center">
+                                    <div className="text-center">
+                                        <div className="text-sm text-gray-600">Stig / Score</div>
+                                        <div className="text-2xl font-bold text-indigo-600">{gameState.score}</div>
+                                    </div>
+                                    <div className="text-center">
+                                        <div className="text-sm text-gray-600">Spurningar</div>
+                                        <div className="text-2xl font-bold text-gray-700">{gameState.questionsAnswered}</div>
+                                    </div>
+                                </div>
+
+                                <button
+                                    onClick={() => setShowInstructions(true)}
+                                    className="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                                >
+                                    <HelpCircle size={24} />
+                                </button>
+                            </div>
+
+                            <div className="mt-4 flex gap-2 justify-center flex-wrap">
+                                {['easy', 'medium', 'hard'].map(diff => (
+                                    <button
+                                        key={diff}
+                                        onClick={() => {
+                                            setGameState(prev => ({ ...prev, difficulty: diff }));
+                                            generateNewProblem(diff);
+                                        }}
+                                        className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+                                            gameState.difficulty === diff
+                                                ? 'bg-indigo-600 text-white'
+                                                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                                        }`}
+                                    >
+                                        {diff === 'easy' ? 'Auðvelt' : diff === 'medium' ? 'Miðlungs' : 'Erfitt'}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="bg-white rounded-2xl shadow-2xl p-6">
+                            <div className="text-center mb-6">
+                                <div className="inline-block bg-indigo-50 px-6 py-3 rounded-xl">
+                                    <div className="text-2xl font-bold text-indigo-900 mb-1">
+                                        {gameState.currentReaction.equation}
+                                    </div>
+                                    <div className="text-sm text-indigo-600">
+                                        {gameState.currentReaction.description}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="grid md:grid-cols-2 gap-6 mb-6">
+                                <div className="bg-blue-50 p-4 rounded-xl">
+                                    <h3 className="text-center font-semibold text-lg mb-3 text-gray-700">
+                                        {gameState.currentReaction.reactant1.formula} 
+                                        <span className="ml-2 text-indigo-600">×{gameState.reactant1Count}</span>
+                                    </h3>
+                                    {renderMolecules(
+                                        gameState.currentReaction.reactant1.formula,
+                                        gameState.reactant1Count,
+                                        gameState.currentReaction.reactant1.color
+                                    )}
+                                </div>
+
+                                <div className="bg-red-50 p-4 rounded-xl">
+                                    <h3 className="text-center font-semibold text-lg mb-3 text-gray-700">
+                                        {gameState.currentReaction.reactant2.formula}
+                                        <span className="ml-2 text-indigo-600">×{gameState.reactant2Count}</span>
+                                    </h3>
+                                    {renderMolecules(
+                                        gameState.currentReaction.reactant2.formula,
+                                        gameState.reactant2Count,
+                                        gameState.currentReaction.reactant2.color
+                                    )}
+                                </div>
+                            </div>
+
+                            {!gameState.isAnswered ? (
+                                <div className="space-y-4 max-w-2xl mx-auto">
+                                    <div className="bg-gray-50 p-4 rounded-xl">
+                                        <label className="block font-semibold mb-2 text-gray-700">
+                                            1. Hvaða hvarfefni er takmörkuð? / Which is the limiting reactant?
+                                        </label>
+                                        <div className="flex gap-4">
+                                            <button
+                                                onClick={() => setGameState(prev => ({
+                                                    ...prev,
+                                                    userAnswer: { ...prev.userAnswer, limitingReactant: gameState.currentReaction.reactant1.formula }
+                                                }))}
+                                                className={`flex-1 py-3 rounded-lg font-semibold transition-colors ${
+                                                    gameState.userAnswer.limitingReactant === gameState.currentReaction.reactant1.formula
+                                                        ? 'bg-indigo-600 text-white'
+                                                        : 'bg-white border-2 border-gray-300 hover:border-indigo-400'
+                                                }`}
+                                            >
+                                                {gameState.currentReaction.reactant1.formula}
+                                            </button>
+                                            <button
+                                                onClick={() => setGameState(prev => ({
+                                                    ...prev,
+                                                    userAnswer: { ...prev.userAnswer, limitingReactant: gameState.currentReaction.reactant2.formula }
+                                                }))}
+                                                className={`flex-1 py-3 rounded-lg font-semibold transition-colors ${
+                                                    gameState.userAnswer.limitingReactant === gameState.currentReaction.reactant2.formula
+                                                        ? 'bg-indigo-600 text-white'
+                                                        : 'bg-white border-2 border-gray-300 hover:border-indigo-400'
+                                                }`}
+                                            >
+                                                {gameState.currentReaction.reactant2.formula}
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div className="bg-gray-50 p-4 rounded-xl">
+                                        <label className="block font-semibold mb-2 text-gray-700">
+                                            2. Hversu margar afurðir myndast? / How many products form?
+                                        </label>
+                                        <input
+                                            type="number"
+                                            min="0"
+                                            value={gameState.userAnswer.productsFormed}
+                                            onChange={(e) => setGameState(prev => ({
+                                                ...prev,
+                                                userAnswer: { ...prev.userAnswer, productsFormed: e.target.value }
+                                            }))}
+                                            className="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-indigo-500 focus:outline-none text-lg"
+                                            placeholder="0"
+                                        />
+                                    </div>
+
+                                    <div className="bg-gray-50 p-4 rounded-xl">
+                                        <label className="block font-semibold mb-2 text-gray-700">
+                                            3. Hve mikið af umframhvarfefninu er eftir? / How much excess reactant remains?
+                                        </label>
+                                        <input
+                                            type="number"
+                                            min="0"
+                                            value={gameState.userAnswer.excessRemaining}
+                                            onChange={(e) => setGameState(prev => ({
+                                                ...prev,
+                                                userAnswer: { ...prev.userAnswer, excessRemaining: e.target.value }
+                                            }))}
+                                            className="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-indigo-500 focus:outline-none text-lg"
+                                            placeholder="0"
+                                        />
+                                    </div>
+
+                                    {gameState.showHint && (
+                                        <div className="bg-yellow-50 border-2 border-yellow-300 p-4 rounded-xl">
+                                            <h4 className="font-semibold text-yellow-800 mb-2">💡 Ábending / Hint:</h4>
+                                            <p className="text-sm text-yellow-900">
+                                                Deildu fjölda hvers hvarfefnis með stuðlinum í jöfnunni. Hvarfefnið með lægri útkoman er takmörkuð.
+                                            </p>
+                                            <p className="text-sm text-yellow-900 italic mt-1">
+                                                Divide each reactant count by its coefficient. The one with the lower result is limiting.
+                                            </p>
+                                            <div className="mt-2 text-sm font-mono bg-yellow-100 p-2 rounded">
+                                                {gameState.currentReaction.reactant1.formula}: {gameState.reactant1Count} ÷ {gameState.currentReaction.reactant1.coeff} = {(gameState.reactant1Count / gameState.currentReaction.reactant1.coeff).toFixed(2)}
+                                                <br />
+                                                {gameState.currentReaction.reactant2.formula}: {gameState.reactant2Count} ÷ {gameState.currentReaction.reactant2.coeff} = {(gameState.reactant2Count / gameState.currentReaction.reactant2.coeff).toFixed(2)}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    <div className="flex gap-4">
+                                        <button
+                                            onClick={() => setGameState(prev => ({ ...prev, showHint: !prev.showHint }))}
+                                            className="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-6 rounded-xl transition-colors"
+                                        >
+                                            {gameState.showHint ? 'Fela ábendingu' : 'Sýna ábendingu'} 💡
+                                        </button>
+                                        <button
+                                            onClick={handleSubmit}
+                                            disabled={!gameState.userAnswer.limitingReactant || !gameState.userAnswer.productsFormed || !gameState.userAnswer.excessRemaining}
+                                            className="flex-1 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold py-3 px-6 rounded-xl transition-colors"
+                                        >
+                                            Athuga svar / Submit Answer ✓
+                                        </button>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="max-w-2xl mx-auto">
+                                    <div className={`p-6 rounded-xl ${gameState.isCorrect ? 'bg-green-50 border-2 border-green-300' : 'bg-red-50 border-2 border-red-300'}`}>
+                                        <h3 className="text-2xl font-bold mb-4 text-center">
+                                            {gameState.isCorrect ? '🎉 Rétt! / Correct!' : '❌ Rangt / Incorrect'}
+                                        </h3>
+                                        
+                                        <div className="space-y-3 bg-white p-4 rounded-lg">
+                                            <div className="flex justify-between items-center">
+                                                <span className="font-semibold">Takmörkuð hvarfefni / Limiting reactant:</span>
+                                                <span className={gameState.userAnswer.limitingReactant === correctAnswer.limitingReactant ? 'text-green-600 font-bold' : 'text-red-600'}>
+                                                    {correctAnswer.limitingReactant}
+                                                    {gameState.userAnswer.limitingReactant !== correctAnswer.limitingReactant && 
+                                                        ` (þú sagðir / you said: ${gameState.userAnswer.limitingReactant})`
+                                                    }
+                                                </span>
+                                            </div>
+                                            
+                                            <div className="flex justify-between items-center">
+                                                <span className="font-semibold">Afurðir sem myndast / Products formed:</span>
+                                                <span className={parseInt(gameState.userAnswer.productsFormed) === correctAnswer.productsFormed ? 'text-green-600 font-bold' : 'text-red-600'}>
+                                                    {correctAnswer.productsFormed} {gameState.currentReaction.product.formula}
+                                                    {parseInt(gameState.userAnswer.productsFormed) !== correctAnswer.productsFormed && 
+                                                        ` (þú sagðir / you said: ${gameState.userAnswer.productsFormed})`
+                                                    }
+                                                </span>
+                                            </div>
+                                            
+                                            <div className="flex justify-between items-center">
+                                                <span className="font-semibold">Umframhvarfefni eftir / Excess remaining:</span>
+                                                <span className={parseInt(gameState.userAnswer.excessRemaining) === correctAnswer.excessRemaining ? 'text-green-600 font-bold' : 'text-red-600'}>
+                                                    {correctAnswer.excessRemaining} {correctAnswer.excessReactant}
+                                                    {parseInt(gameState.userAnswer.excessRemaining) !== correctAnswer.excessRemaining && 
+                                                        ` (þú sagðir / you said: ${gameState.userAnswer.excessRemaining})`
+                                                    }
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        {!gameState.isCorrect && (
+                                            <div className="mt-4 bg-blue-50 p-4 rounded-lg text-sm">
+                                                <h4 className="font-semibold mb-2">Útskýring / Explanation:</h4>
+                                                <p>
+                                                    {gameState.currentReaction.reactant1.formula}: {gameState.reactant1Count} ÷ {gameState.currentReaction.reactant1.coeff} = {(gameState.reactant1Count / gameState.currentReaction.reactant1.coeff).toFixed(2)} möl
+                                                </p>
+                                                <p>
+                                                    {gameState.currentReaction.reactant2.formula}: {gameState.reactant2Count} ÷ {gameState.currentReaction.reactant2.coeff} = {(gameState.reactant2Count / gameState.currentReaction.reactant2.coeff).toFixed(2)} möl
+                                                </p>
+                                                <p className="mt-2 font-semibold">
+                                                    {correctAnswer.limitingReactant} er takmörkuð vegna þess að hvarfin getur aðeins gerst {Math.floor(Math.min(gameState.reactant1Count / gameState.currentReaction.reactant1.coeff, gameState.reactant2Count / gameState.currentReaction.reactant2.coeff))} sinnum.
+                                                </p>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div className="flex gap-4 mt-6">
+                                        <button
+                                            onClick={handleReset}
+                                            className="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-xl transition-colors flex items-center justify-center gap-2"
+                                        >
+                                            <RotateCcw size={20} />
+                                            Byrja upp á nýtt / Reset
+                                        </button>
+                                        <button
+                                            onClick={handleNextQuestion}
+                                            className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-xl transition-colors flex items-center justify-center gap-2"
+                                        >
+                                            Næsta spurning / Next Question
+                                            <Play size={20} />
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        ReactDOM.render(<LimitingReactantGame />, document.getElementById('root'));
+    </script>
+</body>
+</html>

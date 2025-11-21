@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="is">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive chemistry games for first-year students. Learn chemistry through fun, educational games.">
+    <meta name="keywords" content="chemistry, education, games, learning, efnafræði, stoichiometry, molar mass, unit conversion">
+    <meta name="author" content="Sigurður E. Vilhelmsson">
+    <title>Chemistry Games - Efnafræðileikir</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .game-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .game-card:hover {
+            transform: translateY(-4px);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8 md:py-12">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                🧪 Chemistry Games
+            </h1>
+            <p class="text-xl md:text-2xl text-gray-700 mb-2">
+                Efnafræðileikir fyrir 1. árs nemendur
+            </p>
+            <p class="text-base md:text-lg text-gray-600">
+                Interactive Chemistry Games for First-Year Students
+            </p>
+        </div>
+
+        <!-- Game Cards Grid -->
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto mb-12">
+            <!-- Card 1: Nafnakerfið -->
+            <a href="1. ár/nafnakerfið.html" class="game-card bg-white rounded-xl shadow-lg p-6 hover:shadow-2xl block">
+                <div class="flex items-center mb-4">
+                    <div class="text-4xl mr-3">🔤</div>
+                    <h2 class="text-2xl font-bold text-green-600">Nafnakerfið</h2>
+                </div>
+                <p class="text-gray-700 font-semibold mb-2">Compound Name Matchmaker</p>
+                <p class="text-gray-600 text-sm mb-4">
+                    Match chemical formulas to their compound names in this memory-style game.
+                </p>
+                <div class="flex flex-wrap gap-2 mb-3">
+                    <span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">Easy</span>
+                    <span class="px-2 py-1 bg-yellow-100 text-yellow-700 text-xs rounded-full">Medium</span>
+                    <span class="px-2 py-1 bg-red-100 text-red-700 text-xs rounded-full">Hard</span>
+                </div>
+                <p class="text-xs text-gray-500">Type: Memory Matching</p>
+            </a>
+
+            <!-- Card 2: Einingagreining -->
+            <a href="1. ár/einingagreining.html" class="game-card bg-white rounded-xl shadow-lg p-6 hover:shadow-2xl block">
+                <div class="flex items-center mb-4">
+                    <div class="text-4xl mr-3">⚡</div>
+                    <h2 class="text-2xl font-bold text-blue-600">Einingagreining</h2>
+                </div>
+                <p class="text-gray-700 font-semibold mb-2">Unit Conversion Race</p>
+                <p class="text-gray-600 text-sm mb-4">
+                    Convert units as fast as you can in this 60-second speed challenge!
+                </p>
+                <div class="flex flex-wrap gap-2 mb-3">
+                    <span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">Easy</span>
+                    <span class="px-2 py-1 bg-yellow-100 text-yellow-700 text-xs rounded-full">Medium</span>
+                    <span class="px-2 py-1 bg-red-100 text-red-700 text-xs rounded-full">Hard</span>
+                    <span class="px-2 py-1 bg-purple-100 text-purple-700 text-xs rounded-full">Mixed</span>
+                </div>
+                <p class="text-xs text-gray-500">Type: Timed Speed Quiz (60s)</p>
+            </a>
+
+            <!-- Card 3: Takmarkandi -->
+            <a href="1. ár/takmarkandi.html" class="game-card bg-white rounded-xl shadow-lg p-6 hover:shadow-2xl block">
+                <div class="flex items-center mb-4">
+                    <div class="text-4xl mr-3">🏭</div>
+                    <h2 class="text-2xl font-bold text-purple-600">Takmarkandi</h2>
+                </div>
+                <p class="text-gray-700 font-semibold mb-2">Limiting Reactant Factory</p>
+                <p class="text-gray-600 text-sm mb-4">
+                    Identify limiting reagents and calculate products in chemical reactions.
+                </p>
+                <div class="flex flex-wrap gap-2 mb-3">
+                    <span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">Easy</span>
+                    <span class="px-2 py-1 bg-yellow-100 text-yellow-700 text-xs rounded-full">Medium</span>
+                    <span class="px-2 py-1 bg-red-100 text-red-700 text-xs rounded-full">Hard</span>
+                </div>
+                <p class="text-xs text-gray-500">Type: Problem Solving</p>
+            </a>
+
+            <!-- Card 4: Molmassi -->
+            <a href="1. ár/molmassi.html" class="game-card bg-white rounded-xl shadow-lg p-6 hover:shadow-2xl block opacity-60 cursor-not-allowed pointer-events-none">
+                <div class="flex items-center mb-4">
+                    <div class="text-4xl mr-3">⚖️</div>
+                    <h2 class="text-2xl font-bold text-orange-600">Molmassi</h2>
+                </div>
+                <p class="text-gray-700 font-semibold mb-2">Molar Mass Challenge</p>
+                <p class="text-gray-600 text-sm mb-4">
+                    Calculate molar masses from chemical formulas in 90 seconds!
+                </p>
+                <div class="flex flex-wrap gap-2 mb-3">
+                    <span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">Easy</span>
+                    <span class="px-2 py-1 bg-yellow-100 text-yellow-700 text-xs rounded-full">Medium</span>
+                    <span class="px-2 py-1 bg-red-100 text-red-700 text-xs rounded-full">Hard</span>
+                    <span class="px-2 py-1 bg-purple-100 text-purple-700 text-xs rounded-full">Mixed</span>
+                </div>
+                <p class="text-xs text-gray-500">Type: Timed Speed Quiz (90s)</p>
+                <p class="text-xs text-orange-600 font-semibold mt-2">⚠️ Coming Soon (Requires Build)</p>
+            </a>
+
+            <!-- Card 5: Lausnir -->
+            <a href="1. ár/lausnir.html" class="game-card bg-white rounded-xl shadow-lg p-6 hover:shadow-2xl block opacity-60 cursor-not-allowed pointer-events-none">
+                <div class="flex items-center mb-4">
+                    <div class="text-4xl mr-3">🧪</div>
+                    <h2 class="text-2xl font-bold text-pink-600">Lausnir</h2>
+                </div>
+                <p class="text-gray-700 font-semibold mb-2">Solution Lab</p>
+                <p class="text-gray-600 text-sm mb-4">
+                    Master dilution, molarity, and solution mixing problems.
+                </p>
+                <div class="flex flex-wrap gap-2 mb-3">
+                    <span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">Easy</span>
+                    <span class="px-2 py-1 bg-yellow-100 text-yellow-700 text-xs rounded-full">Medium</span>
+                    <span class="px-2 py-1 bg-red-100 text-red-700 text-xs rounded-full">Hard</span>
+                </div>
+                <p class="text-xs text-gray-500">Type: Problem Solving</p>
+                <p class="text-xs text-orange-600 font-semibold mt-2">⚠️ Coming Soon (Requires Build)</p>
+            </a>
+        </div>
+
+        <!-- Features Section -->
+        <div class="max-w-4xl mx-auto mb-12">
+            <h2 class="text-3xl font-bold text-center mb-8 text-gray-800">Features</h2>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-white rounded-lg shadow p-6">
+                    <div class="text-3xl mb-3">🎯</div>
+                    <h3 class="text-xl font-bold mb-2 text-gray-800">Multiple Difficulty Levels</h3>
+                    <p class="text-gray-600">Choose from Easy, Medium, Hard, or Mixed difficulties to match your skill level.</p>
+                </div>
+                <div class="bg-white rounded-lg shadow p-6">
+                    <div class="text-3xl mb-3">🌍</div>
+                    <h3 class="text-xl font-bold mb-2 text-gray-800">Bilingual Interface</h3>
+                    <p class="text-gray-600">Available in both Icelandic and English for maximum accessibility.</p>
+                </div>
+                <div class="bg-white rounded-lg shadow p-6">
+                    <div class="text-3xl mb-3">📱</div>
+                    <h3 class="text-xl font-bold mb-2 text-gray-800">Mobile Friendly</h3>
+                    <p class="text-gray-600">Responsive design works perfectly on phones, tablets, and desktops.</p>
+                </div>
+                <div class="bg-white rounded-lg shadow p-6">
+                    <div class="text-3xl mb-3">⏱️</div>
+                    <h3 class="text-xl font-bold mb-2 text-gray-800">Real-Time Feedback</h3>
+                    <p class="text-gray-600">Get instant feedback on your answers and track your progress.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- About Section -->
+        <div class="max-w-3xl mx-auto bg-white rounded-xl shadow-lg p-8 mb-8">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">About Chemistry Games</h2>
+            <p class="text-gray-600 mb-4">
+                Chemistry Games is a collection of interactive educational games designed to help first-year chemistry students
+                master fundamental concepts through engaging, hands-on practice. Each game focuses on different aspects of
+                chemistry education, from nomenclature to stoichiometry.
+            </p>
+            <p class="text-gray-600 mb-4">
+                Built with modern web technologies including React and Tailwind CSS, these games provide an intuitive,
+                responsive learning experience that works on any device.
+            </p>
+            <div class="flex items-center text-sm text-gray-500 mt-6">
+                <span class="mr-4">📊 5 Games</span>
+                <span class="mr-4">🌐 2 Languages</span>
+                <span>🎓 100+ Questions</span>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="text-center text-gray-600 mt-12">
+            <p class="mb-2">&copy; 2025 Sigurður E. Vilhelmsson</p>
+            <p class="text-sm text-gray-500">Licensed under MIT License</p>
+            <p class="text-xs text-gray-400 mt-4">
+                Built with React 18, Tailwind CSS, and TypeScript
+            </p>
+        </footer>
+    </div>
+</body>
+</html>

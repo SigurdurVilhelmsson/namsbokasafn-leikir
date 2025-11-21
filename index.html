@@ -3,184 +3,299 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Interactive chemistry games for first-year students. Learn chemistry through fun, educational games.">
-    <meta name="keywords" content="chemistry, education, games, learning, efnafræði, stoichiometry, molar mass, unit conversion">
+    <meta name="description" content="Gagnvirkir efnafræðileikir fyrir 1. árs nemendur. Lærum efnafræði í gegnum skemmtilega, fræðandi leiki.">
+    <meta name="keywords" content="efnafræði, menntun, leikir, námskeið, chemistry, stoichiometry, molar mass, unit conversion">
     <meta name="author" content="Sigurður E. Vilhelmsson">
-    <title>Chemistry Games - Efnafræðileikir</title>
+    <title>Efnafræðileikir - Kvenno Efnafræði</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        :root {
+            --kvenno-orange: #f36b22;
+            --kvenno-orange-dark: #d95a1a;
+            --kvenno-orange-light: #ff8347;
+        }
+
         .game-card {
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 2px solid var(--kvenno-orange);
+            border-radius: 8px;
         }
+
         .game-card:hover {
             transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(243, 107, 34, 0.2);
+            border-color: var(--kvenno-orange-dark);
+        }
+
+        .site-header {
+            background: white;
+            border-bottom: 2px solid #e5e7eb;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            height: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .site-logo {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: var(--kvenno-orange);
+            text-decoration: none;
+        }
+
+        .site-logo:hover {
+            color: var(--kvenno-orange-dark);
+        }
+
+        .header-btn {
+            background: white;
+            border: 2px solid var(--kvenno-orange);
+            color: var(--kvenno-orange);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-left: 0.5rem;
+        }
+
+        .header-btn:hover {
+            background: var(--kvenno-orange);
+            color: white;
+        }
+
+        .breadcrumb {
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+
+        .breadcrumb a {
+            color: var(--kvenno-orange);
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .back-btn {
+            background: white;
+            border: 2px solid var(--kvenno-orange);
+            color: var(--kvenno-orange);
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            background: var(--kvenno-orange);
+            color: white;
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 min-h-screen">
-    <div class="container mx-auto px-4 py-8 md:py-12">
+<body class="bg-gray-50 min-h-screen">
+    <!-- Site Header -->
+    <header class="site-header">
+        <div class="header-content">
+            <a href="/" class="site-logo">Kvenno Efnafræði</a>
+            <div class="header-actions">
+                <button class="header-btn" onclick="alert('Stjórnendaaðgangur í þróun')">Stjórnandi</button>
+                <button class="header-btn" onclick="alert('Hjálp og upplýsingar um leikina')">Upplýsingar</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container mx-auto px-4 py-8 md:py-12" style="max-width: 1200px;">
+        <!-- Breadcrumbs -->
+        <div class="breadcrumb mb-6">
+            <a href="/">Heim</a> > <a href="/1-ar/">1. ár</a> > <span>Leikir</span>
+        </div>
+
+        <!-- Back Button -->
+        <div class="mb-8">
+            <a href="/1-ar/" class="back-btn">
+                <span>←</span>
+                <span>Til baka</span>
+            </a>
+        </div>
+
         <!-- Header -->
         <div class="text-center mb-12">
-            <h1 class="text-4xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                🧪 Chemistry Games
+            <h1 class="text-4xl md:text-6xl font-bold mb-4" style="color: var(--kvenno-orange);">
+                🧪 Efnafræðileikir
             </h1>
             <p class="text-xl md:text-2xl text-gray-700 mb-2">
-                Efnafræðileikir fyrir 1. árs nemendur
+                Gagnvirkir leikir fyrir 1. árs nemendur
             </p>
             <p class="text-base md:text-lg text-gray-600">
-                Interactive Chemistry Games for First-Year Students
+                Lærðu efnafræði í gegnum skemmtilega leiki
             </p>
         </div>
 
         <!-- Game Cards Grid -->
         <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto mb-12">
             <!-- Card 1: Nafnakerfið -->
-            <a href="1. ár/nafnakerfið.html" class="game-card bg-white rounded-xl shadow-lg p-6 hover:shadow-2xl block">
+            <a href="1. ár/nafnakerfið.html" class="game-card bg-white p-6 block">
                 <div class="flex items-center mb-4">
                     <div class="text-4xl mr-3">🔤</div>
-                    <h2 class="text-2xl font-bold text-green-600">Nafnakerfið</h2>
+                    <h2 class="text-2xl font-bold" style="color: var(--kvenno-orange);">Nafnakerfið</h2>
                 </div>
-                <p class="text-gray-700 font-semibold mb-2">Compound Name Matchmaker</p>
+                <p class="text-gray-700 font-semibold mb-2">Samsvörunarleikur fyrir efnasamböndum</p>
                 <p class="text-gray-600 text-sm mb-4">
-                    Match chemical formulas to their compound names in this memory-style game.
+                    Passaðu saman efnaformúlur og nöfn í þessum minnisleik.
                 </p>
                 <div class="flex flex-wrap gap-2 mb-3">
-                    <span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">Easy</span>
-                    <span class="px-2 py-1 bg-yellow-100 text-yellow-700 text-xs rounded-full">Medium</span>
-                    <span class="px-2 py-1 bg-red-100 text-red-700 text-xs rounded-full">Hard</span>
+                    <span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">Auðvelt</span>
+                    <span class="px-2 py-1 bg-yellow-100 text-yellow-700 text-xs rounded-full">Miðlungs</span>
+                    <span class="px-2 py-1 bg-red-100 text-red-700 text-xs rounded-full">Erfitt</span>
                 </div>
-                <p class="text-xs text-gray-500">Type: Memory Matching</p>
+                <p class="text-xs text-gray-500">Tegund: Minnisleikur</p>
             </a>
 
             <!-- Card 2: Einingagreining -->
-            <a href="1. ár/einingagreining.html" class="game-card bg-white rounded-xl shadow-lg p-6 hover:shadow-2xl block">
+            <a href="1. ár/einingagreining.html" class="game-card bg-white p-6 block">
                 <div class="flex items-center mb-4">
                     <div class="text-4xl mr-3">⚡</div>
-                    <h2 class="text-2xl font-bold text-blue-600">Einingagreining</h2>
+                    <h2 class="text-2xl font-bold" style="color: var(--kvenno-orange);">Einingagreining</h2>
                 </div>
-                <p class="text-gray-700 font-semibold mb-2">Unit Conversion Race</p>
+                <p class="text-gray-700 font-semibold mb-2">Keppni í einingaumreikningum</p>
                 <p class="text-gray-600 text-sm mb-4">
-                    Convert units as fast as you can in this 60-second speed challenge!
+                    Umbreyttu einingum eins hratt og þú getur á 60 sekúndum!
                 </p>
                 <div class="flex flex-wrap gap-2 mb-3">
-                    <span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">Easy</span>
-                    <span class="px-2 py-1 bg-yellow-100 text-yellow-700 text-xs rounded-full">Medium</span>
-                    <span class="px-2 py-1 bg-red-100 text-red-700 text-xs rounded-full">Hard</span>
-                    <span class="px-2 py-1 bg-purple-100 text-purple-700 text-xs rounded-full">Mixed</span>
+                    <span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">Auðvelt</span>
+                    <span class="px-2 py-1 bg-yellow-100 text-yellow-700 text-xs rounded-full">Miðlungs</span>
+                    <span class="px-2 py-1 bg-red-100 text-red-700 text-xs rounded-full">Erfitt</span>
+                    <span class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full">Blandað</span>
                 </div>
-                <p class="text-xs text-gray-500">Type: Timed Speed Quiz (60s)</p>
+                <p class="text-xs text-gray-500">Tegund: Tímaprófun (60 sek)</p>
             </a>
 
             <!-- Card 3: Takmarkandi -->
-            <a href="1. ár/takmarkandi.html" class="game-card bg-white rounded-xl shadow-lg p-6 hover:shadow-2xl block">
+            <a href="1. ár/takmarkandi.html" class="game-card bg-white p-6 block">
                 <div class="flex items-center mb-4">
                     <div class="text-4xl mr-3">🏭</div>
-                    <h2 class="text-2xl font-bold text-purple-600">Takmarkandi</h2>
+                    <h2 class="text-2xl font-bold" style="color: var(--kvenno-orange);">Takmarkandi</h2>
                 </div>
-                <p class="text-gray-700 font-semibold mb-2">Limiting Reactant Factory</p>
+                <p class="text-gray-700 font-semibold mb-2">Verksmiðja takmarkandi hvarfefna</p>
                 <p class="text-gray-600 text-sm mb-4">
-                    Identify limiting reagents and calculate products in chemical reactions.
+                    Finndu takmarkandi hvarfefni og reiknaðu afraksturinn í efnathvörfum.
                 </p>
                 <div class="flex flex-wrap gap-2 mb-3">
-                    <span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">Easy</span>
-                    <span class="px-2 py-1 bg-yellow-100 text-yellow-700 text-xs rounded-full">Medium</span>
-                    <span class="px-2 py-1 bg-red-100 text-red-700 text-xs rounded-full">Hard</span>
+                    <span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">Auðvelt</span>
+                    <span class="px-2 py-1 bg-yellow-100 text-yellow-700 text-xs rounded-full">Miðlungs</span>
+                    <span class="px-2 py-1 bg-red-100 text-red-700 text-xs rounded-full">Erfitt</span>
                 </div>
-                <p class="text-xs text-gray-500">Type: Problem Solving</p>
+                <p class="text-xs text-gray-500">Tegund: Dæmaleysn</p>
             </a>
 
             <!-- Card 4: Molmassi -->
-            <a href="1. ár/molmassi.html" class="game-card bg-white rounded-xl shadow-lg p-6 hover:shadow-2xl block opacity-60 cursor-not-allowed pointer-events-none">
+            <a href="1. ár/molmassi.html" class="game-card bg-white p-6 block opacity-60 cursor-not-allowed pointer-events-none">
                 <div class="flex items-center mb-4">
                     <div class="text-4xl mr-3">⚖️</div>
-                    <h2 class="text-2xl font-bold text-orange-600">Molmassi</h2>
+                    <h2 class="text-2xl font-bold" style="color: var(--kvenno-orange);">Molmassi</h2>
                 </div>
-                <p class="text-gray-700 font-semibold mb-2">Molar Mass Challenge</p>
+                <p class="text-gray-700 font-semibold mb-2">Áskorun í mólmassa</p>
                 <p class="text-gray-600 text-sm mb-4">
-                    Calculate molar masses from chemical formulas in 90 seconds!
+                    Reiknaðu mólmassa úr efnaformúlum á 90 sekúndum!
                 </p>
                 <div class="flex flex-wrap gap-2 mb-3">
-                    <span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">Easy</span>
-                    <span class="px-2 py-1 bg-yellow-100 text-yellow-700 text-xs rounded-full">Medium</span>
-                    <span class="px-2 py-1 bg-red-100 text-red-700 text-xs rounded-full">Hard</span>
-                    <span class="px-2 py-1 bg-purple-100 text-purple-700 text-xs rounded-full">Mixed</span>
+                    <span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">Auðvelt</span>
+                    <span class="px-2 py-1 bg-yellow-100 text-yellow-700 text-xs rounded-full">Miðlungs</span>
+                    <span class="px-2 py-1 bg-red-100 text-red-700 text-xs rounded-full">Erfitt</span>
+                    <span class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full">Blandað</span>
                 </div>
-                <p class="text-xs text-gray-500">Type: Timed Speed Quiz (90s)</p>
-                <p class="text-xs text-orange-600 font-semibold mt-2">⚠️ Coming Soon (Requires Build)</p>
+                <p class="text-xs text-gray-500">Tegund: Tímaprófun (90 sek)</p>
+                <p class="text-xs font-semibold mt-2" style="color: var(--kvenno-orange);">⚠️ Væntanlegt</p>
             </a>
 
             <!-- Card 5: Lausnir -->
-            <a href="1. ár/lausnir.html" class="game-card bg-white rounded-xl shadow-lg p-6 hover:shadow-2xl block opacity-60 cursor-not-allowed pointer-events-none">
+            <a href="1. ár/lausnir.html" class="game-card bg-white p-6 block opacity-60 cursor-not-allowed pointer-events-none">
                 <div class="flex items-center mb-4">
                     <div class="text-4xl mr-3">🧪</div>
-                    <h2 class="text-2xl font-bold text-pink-600">Lausnir</h2>
+                    <h2 class="text-2xl font-bold" style="color: var(--kvenno-orange);">Lausnir</h2>
                 </div>
-                <p class="text-gray-700 font-semibold mb-2">Solution Lab</p>
+                <p class="text-gray-700 font-semibold mb-2">Lausnarverksmiðja</p>
                 <p class="text-gray-600 text-sm mb-4">
-                    Master dilution, molarity, and solution mixing problems.
+                    Lestu dæmi um þynningu, mólstyrkleika og blöndun lausna.
                 </p>
                 <div class="flex flex-wrap gap-2 mb-3">
-                    <span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">Easy</span>
-                    <span class="px-2 py-1 bg-yellow-100 text-yellow-700 text-xs rounded-full">Medium</span>
-                    <span class="px-2 py-1 bg-red-100 text-red-700 text-xs rounded-full">Hard</span>
+                    <span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">Auðvelt</span>
+                    <span class="px-2 py-1 bg-yellow-100 text-yellow-700 text-xs rounded-full">Miðlungs</span>
+                    <span class="px-2 py-1 bg-red-100 text-red-700 text-xs rounded-full">Erfitt</span>
                 </div>
-                <p class="text-xs text-gray-500">Type: Problem Solving</p>
-                <p class="text-xs text-orange-600 font-semibold mt-2">⚠️ Coming Soon (Requires Build)</p>
+                <p class="text-xs text-gray-500">Tegund: Dæmaleysn</p>
+                <p class="text-xs font-semibold mt-2" style="color: var(--kvenno-orange);">⚠️ Væntanlegt</p>
             </a>
         </div>
 
         <!-- Features Section -->
         <div class="max-w-4xl mx-auto mb-12">
-            <h2 class="text-3xl font-bold text-center mb-8 text-gray-800">Features</h2>
+            <h2 class="text-3xl font-bold text-center mb-8 text-gray-800">Eiginleikar</h2>
             <div class="grid md:grid-cols-2 gap-6">
-                <div class="bg-white rounded-lg shadow p-6">
+                <div class="bg-white rounded-lg shadow p-6" style="border: 2px solid #f5f5f5;">
                     <div class="text-3xl mb-3">🎯</div>
-                    <h3 class="text-xl font-bold mb-2 text-gray-800">Multiple Difficulty Levels</h3>
-                    <p class="text-gray-600">Choose from Easy, Medium, Hard, or Mixed difficulties to match your skill level.</p>
+                    <h3 class="text-xl font-bold mb-2" style="color: var(--kvenno-orange);">Mörg erfiðleikastig</h3>
+                    <p class="text-gray-600">Veldu á milli auðvelt, miðlungs, erfitt eða blandað til að passa við þína kunnáttu.</p>
                 </div>
-                <div class="bg-white rounded-lg shadow p-6">
+                <div class="bg-white rounded-lg shadow p-6" style="border: 2px solid #f5f5f5;">
                     <div class="text-3xl mb-3">🌍</div>
-                    <h3 class="text-xl font-bold mb-2 text-gray-800">Bilingual Interface</h3>
-                    <p class="text-gray-600">Available in both Icelandic and English for maximum accessibility.</p>
+                    <h3 class="text-xl font-bold mb-2" style="color: var(--kvenno-orange);">Tvítyngt viðmót</h3>
+                    <p class="text-gray-600">Fáanlegt á bæði íslensku og ensku fyrir hámarks aðgengi.</p>
                 </div>
-                <div class="bg-white rounded-lg shadow p-6">
+                <div class="bg-white rounded-lg shadow p-6" style="border: 2px solid #f5f5f5;">
                     <div class="text-3xl mb-3">📱</div>
-                    <h3 class="text-xl font-bold mb-2 text-gray-800">Mobile Friendly</h3>
-                    <p class="text-gray-600">Responsive design works perfectly on phones, tablets, and desktops.</p>
+                    <h3 class="text-xl font-bold mb-2" style="color: var(--kvenno-orange);">Símavænt</h3>
+                    <p class="text-gray-600">Sveigjanleg hönnun virkar fullkomlega á símum, spjaldtölvum og tölvum.</p>
                 </div>
-                <div class="bg-white rounded-lg shadow p-6">
+                <div class="bg-white rounded-lg shadow p-6" style="border: 2px solid #f5f5f5;">
                     <div class="text-3xl mb-3">⏱️</div>
-                    <h3 class="text-xl font-bold mb-2 text-gray-800">Real-Time Feedback</h3>
-                    <p class="text-gray-600">Get instant feedback on your answers and track your progress.</p>
+                    <h3 class="text-xl font-bold mb-2" style="color: var(--kvenno-orange);">Svörun í rauntíma</h3>
+                    <p class="text-gray-600">Fáðu tafarlaust endurgjöf á svörin þín og fylgstu með framförum.</p>
                 </div>
             </div>
         </div>
 
         <!-- About Section -->
-        <div class="max-w-3xl mx-auto bg-white rounded-xl shadow-lg p-8 mb-8">
-            <h2 class="text-2xl font-bold mb-4 text-gray-800">About Chemistry Games</h2>
+        <div class="max-w-3xl mx-auto bg-white rounded-xl shadow-lg p-8 mb-8" style="border: 2px solid #f5f5f5;">
+            <h2 class="text-2xl font-bold mb-4" style="color: var(--kvenno-orange);">Um efnafræðileikina</h2>
             <p class="text-gray-600 mb-4">
-                Chemistry Games is a collection of interactive educational games designed to help first-year chemistry students
-                master fundamental concepts through engaging, hands-on practice. Each game focuses on different aspects of
-                chemistry education, from nomenclature to stoichiometry.
+                Efnafræðileikir eru safn gagnvirkra kennsluleikja sem eru hannaðir til að hjálpa 1. árs efnafræðinemendum
+                að ná tökum á grunnhugtökum í gegnum skemmtilega og hagnýta æfingu. Hver leikur einbeitir sér að mismunandi
+                þáttum efnafræðikennslu, allt frá nafnakerfi til efnajafna.
             </p>
             <p class="text-gray-600 mb-4">
-                Built with modern web technologies including React and Tailwind CSS, these games provide an intuitive,
-                responsive learning experience that works on any device.
+                Byggðir með nútíma veftækni þar á meðal React og Tailwind CSS, þessir leikir bjóða upp á leiðandi
+                námstæki sem virka á öllum tækjum.
             </p>
             <div class="flex items-center text-sm text-gray-500 mt-6">
-                <span class="mr-4">📊 5 Games</span>
-                <span class="mr-4">🌐 2 Languages</span>
-                <span>🎓 100+ Questions</span>
+                <span class="mr-4">📊 5 leikir</span>
+                <span class="mr-4">🌐 2 tungumál</span>
+                <span>🎓 100+ spurningar</span>
             </div>
         </div>
 
         <!-- Footer -->
-        <footer class="text-center text-gray-600 mt-12">
+        <footer class="text-center text-gray-600 mt-12 pb-8">
+            <p class="mb-2" style="color: var(--kvenno-orange); font-weight: 600;">Kvennaskólinn í Reykjavík</p>
             <p class="mb-2">&copy; 2025 Sigurður E. Vilhelmsson</p>
-            <p class="text-sm text-gray-500">Licensed under MIT License</p>
+            <p class="text-sm text-gray-500">MIT leyfi</p>
             <p class="text-xs text-gray-400 mt-4">
-                Built with React 18, Tailwind CSS, and TypeScript
+                Smíðað með React 18, Tailwind CSS og TypeScript
             </p>
         </footer>
     </div>

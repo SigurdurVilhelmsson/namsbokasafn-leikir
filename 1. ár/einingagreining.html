@@ -3,12 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unit Conversion Race - Chemistry Game</title>
+    <title>Einingagreining - Kvenno Efnafræði</title>
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        :root {
+            --kvenno-orange: #f36b22;
+            --kvenno-orange-dark: #d95a1a;
+        }
+
         body {
             margin: 0;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -16,7 +21,9 @@
                 sans-serif;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            background: #f9fafb;
         }
+
         input::-webkit-outer-spin-button,
         input::-webkit-inner-spin-button {
             -webkit-appearance: none;
@@ -25,9 +32,122 @@
         input[type=number] {
             -moz-appearance: textfield;
         }
+
+        .site-header {
+            background: white;
+            border-bottom: 2px solid #e5e7eb;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            height: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .site-logo {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: var(--kvenno-orange);
+            text-decoration: none;
+        }
+
+        .site-logo:hover {
+            color: var(--kvenno-orange-dark);
+        }
+
+        .header-btn {
+            background: white;
+            border: 2px solid var(--kvenno-orange);
+            color: var(--kvenno-orange);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-left: 0.5rem;
+        }
+
+        .header-btn:hover {
+            background: var(--kvenno-orange);
+            color: white;
+        }
+
+        .breadcrumb {
+            color: #6b7280;
+            font-size: 0.875rem;
+            padding: 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .breadcrumb a {
+            color: var(--kvenno-orange);
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .back-btn {
+            background: white;
+            border: 2px solid var(--kvenno-orange);
+            color: var(--kvenno-orange);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            font-size: 0.875rem;
+            margin: 0 1rem 1rem 1rem;
+        }
+
+        .back-btn:hover {
+            background: var(--kvenno-orange);
+            color: white;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
     </style>
 </head>
 <body>
+    <!-- Site Header -->
+    <header class="site-header">
+        <div class="header-content">
+            <a href="/" class="site-logo">Kvenno Efnafræði</a>
+            <div class="header-actions">
+                <button class="header-btn" onclick="alert('Stjórnendaaðgangur í þróun')">Stjórnandi</button>
+                <button class="header-btn" onclick="alert('Hjálp og upplýsingar um leikina')">Upplýsingar</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Breadcrumbs -->
+    <div class="breadcrumb">
+        <a href="/">Heim</a> > <a href="/1-ar/">1. ár</a> > <a href="/1-ar/games/">Leikir</a> > <span>Einingagreining</span>
+    </div>
+
+    <!-- Back Button -->
+    <div class="nav-container">
+        <a href="/1-ar/games/" class="back-btn">
+            <span>←</span>
+            <span>Til baka</span>
+        </a>
+    </div>
+
     <div id="root"></div>
 
     <script type="text/babel">

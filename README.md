@@ -2,6 +2,15 @@
 
 An interactive collection of educational chemistry games designed for first-year chemistry students (1. ár). Built with React and Tailwind CSS, featuring bilingual support (Icelandic/English).
 
+**Part of the Kvenno Efnafræði ecosystem** - Chemistry learning tools for Kvennaskólinn í Reykjavík
+
+## Deployment
+
+This repository is configured for deployment to **kvenno.app** at:
+- **Production URL**: `https://kvenno.app/1-ar/games/`
+- **Repository**: `chemistry-games-1ar`
+- **Target Audience**: 1st year chemistry students
+
 ## 🎮 Games Included
 
 ### 1. **Nafnakerfið** (Compound Name Matchmaker)
@@ -36,7 +45,7 @@ An interactive collection of educational chemistry games designed for first-year
 
 ## 🚀 Quick Start
 
-### HTML Games (Ready to Use)
+### Local Development
 The first three games can be opened directly in any modern web browser:
 
 ```bash
@@ -44,9 +53,17 @@ The first three games can be opened directly in any modern web browser:
 open "1. ár/nafnakerfið.html"
 open "1. ár/einingagreining.html"
 open "1. ár/takmarkandi.html"
+
+# Or serve with a local server:
+python -m http.server 8000
+# Then visit http://localhost:8000
 ```
 
 **Note:** An internet connection is required for CDN-loaded dependencies (React, Tailwind CSS).
+
+### Production Deployment to kvenno.app
+
+See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed deployment instructions to kvenno.app.
 
 ### TSX Games (Require Build Setup)
 The `molmassi.tsx` and `lausnir.tsx` files need to be integrated into a build system. See [Build Setup](#build-setup) below.

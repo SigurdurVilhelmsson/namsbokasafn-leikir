@@ -1,6 +1,120 @@
-# Deployment Guide for Linode Ubuntu Server with Nginx
+# Deployment Guide
 
-This guide covers deploying ChemistryGames to a Linode Ubuntu server running nginx.
+This guide covers deploying ChemistryGames to **kvenno.app** and general server deployment.
+
+## 🎓 Deployment to kvenno.app (Production)
+
+### Overview
+- **Production URL**: `https://kvenno.app/1-ar/games/`
+- **Deployment Path**: `/var/www/kvenno.app/1-ar/games/`
+- **Repository**: `chemistry-games-1ar`
+- **Year-Specific**: 1st year only (separate repos for 2nd/3rd year)
+
+### Quick Deployment Steps
+
+```bash
+# 1. SSH into kvenno.app server
+ssh user@kvenno.app
+
+# 2. Navigate to deployment directory
+cd /var/www/kvenno.app/1-ar/games/
+
+# 3. Pull latest changes (if using git)
+git pull origin main
+
+# 4. Or copy files directly
+# Copy index.html and game files
+cp /path/to/repo/index.html ./
+cp -r "/path/to/repo/1. ár/" ./
+
+# 5. Ensure correct permissions
+sudo chown -R www-data:www-data /var/www/kvenno.app/1-ar/games/
+sudo chmod -R 755 /var/www/kvenno.app/1-ar/games/
+
+# 6. Reload nginx
+sudo systemctl reload nginx
+```
+
+### Nginx Configuration for kvenno.app
+
+The site should be configured to serve from `/1-ar/games/` path:
+
+```nginx
+server {
+    server_name kvenno.app;
+    root /var/www/kvenno.app;
+
+    # Main site location
+    location /1-ar/games/ {
+        alias /var/www/kvenno.app/1-ar/games/;
+        index index.html;
+        try_files $uri $uri/ =404;
+
+        # Cache HTML files briefly
+        location ~* \.html$ {
+            expires 1h;
+            add_header Cache-Control "public, must-revalidate";
+        }
+    }
+
+    # Security headers
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-Content-Type-Options "nosniff" always;
+
+    # Gzip compression
+    gzip on;
+    gzip_types text/html text/css application/javascript;
+}
+```
+
+### File Structure on Server
+
+```
+/var/www/kvenno.app/
+└── 1-ar/
+    └── games/
+        ├── index.html                  (landing page with game list)
+        ├── 404.html                    (error page)
+        ├── kvenno_structure.md         (reference doc)
+        └── 1. ár/                      (game files directory)
+            ├── nafnakerfið.html
+            ├── einingagreining.html
+            ├── takmarkandi.html
+            ├── molmassi.html (if built)
+            └── lausnir.html (if built)
+```
+
+### Integration with Kvenno Site Structure
+
+All pages include:
+- **Standard Header**: "Kvenno Efnafræði" with Admin/Info buttons
+- **Breadcrumbs**: `Heim > 1. ár > Leikir > [Game Name]`
+- **Back Navigation**: "Til baka" button linking to `/1-ar/`
+- **Orange Color Scheme**: `#f36b22` (Kvennaskólinn brand color)
+
+### Updating Existing Deployment
+
+```bash
+# Pull latest changes
+cd /var/www/kvenno.app/1-ar/games/
+git pull origin main
+
+# Or use rsync from local machine
+rsync -avz --progress \
+    --exclude '.git' \
+    --exclude 'node_modules' \
+    ./ChemistryGames/ \
+    user@kvenno.app:/var/www/kvenno.app/1-ar/games/
+
+# Reload nginx
+sudo systemctl reload nginx
+```
+
+---
+
+## 🖥️ General Server Deployment (Alternative Setup)
+
+This section covers deploying to a general Linode/Ubuntu server with nginx.
 
 ## 📋 Pre-Deployment Checklist
 

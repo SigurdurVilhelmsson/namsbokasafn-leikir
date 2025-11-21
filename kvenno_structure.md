@@ -188,73 +188,69 @@ Each app (Lab Reports, AI Tutor, etc.) must include:
 
 ## 8. This App's Details
 
-- **Repo Name**: `lab-reports-app` (SigurdurVilhelmsson/LabReports)
+- **Repo Name**: `chemistry-games-1ar` (SigurdurVilhelmsson/ChemistryGames)
 - **Deployed To**:
-  - `/2-ar/lab-reports/` (2nd year students and teachers)
-  - `/3-ar/lab-reports/` (3rd year students and teachers)
-- **Purpose**: AI-powered lab report grading and feedback system for chemistry. Teachers can batch-grade reports with points-based evaluation; students receive detailed, encouraging feedback to improve their writing.
-- **Current Status**: ✅ **Deployed** (v3.0.0)
+  - `/1-ar/games/` (1st year students)
+- **Purpose**: Interactive educational chemistry games for first-year students. Collection of games covering nomenclature, unit conversion, stoichiometry, molar mass, and solution chemistry.
+- **Current Status**: 🚧 **In Development**
 - **Key Features**:
-  - Dual mode: Teacher grading & Student feedback
-  - File support: .docx (via pandoc), .pdf, images
-  - Points-based evaluation with detailed criteria
-  - Session management and CSV export
-  - Icelandic language UI and feedback
-- **Tech Stack**: React 18 + TypeScript + Vite + Tailwind CSS + Claude Sonnet 4
-- **Shared Across Years**: ✅ Yes - Same codebase deployed to multiple paths
-- **Base Path Configuration**: Uses React Router `basename` (e.g., `/2-ar/lab-reports/`)
-- **Year-Specific Experiments**: Configured via `year` property in experiment definitions (1, 2, or 3)
+  - 5 interactive chemistry games
+  - Multiple difficulty levels (Easy, Medium, Hard, Mixed)
+  - Bilingual support (Icelandic/English)
+  - Real-time feedback and scoring
+  - Mobile-friendly responsive design
+  - Timed challenges and problem-solving exercises
+- **Tech Stack**: React 18 + Tailwind CSS + Babel Standalone (CDN-based for HTML files)
+- **Shared Across Years**: ❌ No - Year-specific content (separate repos for 1st, 2nd, 3rd year)
+- **Base Path Configuration**: Deployed to `/1-ar/games/` - HTML files currently use relative paths
+
+### Games Included
+
+1. **Nafnakerfið** (Compound Name Matchmaker) - Memory matching game
+2. **Einingagreining** (Unit Conversion Race) - 60-second timed quiz
+3. **Takmarkandi** (Limiting Reactant Factory) - Stoichiometry problem-solving
+4. **Molmassi** (Molar Mass Challenge) - 90-second calculation quiz *(in development)*
+5. **Lausnir** (Solution Lab) - Solution chemistry problems *(in development)*
 
 ### Navigation Requirements for This App
 
 **Breadcrumbs**:
-- From `/2-ar/lab-reports/`: `Heim > 2. ár > Tilraunarskýrslur`
-- From `/3-ar/lab-reports/`: `Heim > 3. ár > Tilraunarskýrslur`
+- From `/1-ar/games/`: `Heim > 1. ár > Leikir`
 
 **Header**:
 - Site logo → Links to `/` (main landing)
-- Admin button → Teacher login/access (if applicable)
-- Info button → Help/about modal or page
+- Admin button → Teacher access (future feature)
+- Info button → Help/about modal with game instructions
 
 **Back Navigation**:
-- "Til baka" button → Returns to year hub (`/2-ar/` or `/3-ar/`)
+- "Til baka" button → Returns to year hub (`/1-ar/`)
 
-### Base Path Configuration
+### Deployment Configuration
 
-**Current Setup** (needs updating):
-- `vite.config.ts`: `base: '/lab-reports/'`
-- `src/main.tsx`: `<BrowserRouter basename="/lab-reports">`
+**Current Setup**:
+- Standalone HTML files with CDN dependencies
+- Files in `1. ár/` directory
+- No build process required for HTML games
 
-**Required for Multi-Path Deployment**:
+**For Deployment to `/1-ar/games/`**:
+- Copy `index.html` to `/var/www/kvenno.app/1-ar/games/index.html`
+- Copy game files to `/var/www/kvenno.app/1-ar/games/`
+- Update internal links to work with deployment path
+- Configure nginx to serve from `/1-ar/games/`
 
-Option 1 - Environment Variable (Recommended):
-```typescript
-// vite.config.ts
-base: process.env.VITE_BASE_PATH || '/lab-reports/',
+### Color Scheme Migration
 
-// src/main.tsx
-<BrowserRouter basename={import.meta.env.VITE_BASE_PATH || '/lab-reports'}>
-```
-
-Then set in environment:
-- 2nd year: `VITE_BASE_PATH=/2-ar/lab-reports/`
-- 3rd year: `VITE_BASE_PATH=/3-ar/lab-reports/`
-
-Option 2 - Separate Builds:
-- Create separate build configurations for each year
-- Manually update paths before each deployment
-
-### Color Scheme in Use
-
-This app currently uses **indigo-600** as primary color in some components. **TODO**: Migrate to unified `#f36b22` orange per Kvenno design system.
+**TODO**: Migrate from blue/purple gradient to unified `#f36b22` orange per Kvenno design system.
 
 **Migration checklist**:
-- [ ] Update button colors from indigo to #f36b22
-- [ ] Update border colors to match orange theme
+- [ ] Update primary colors from blue/purple to #f36b22
+- [ ] Update button/tile borders to match orange theme (2px solid #f36b22)
 - [ ] Add consistent header with "Kvenno Efnafræði" branding
-- [ ] Add breadcrumb navigation
-- [ ] Update hover states to darker orange shade
-- [ ] Make base path configurable via environment variable
+- [ ] Add breadcrumb navigation to all pages
+- [ ] Add "Til baka" back button
+- [ ] Update hover states to darker orange shade (#d95a1a)
+- [ ] Convert all UI text to Icelandic
+- [ ] Update game cards to use standard tile styling
 
 ## 9. Deployment Notes
 

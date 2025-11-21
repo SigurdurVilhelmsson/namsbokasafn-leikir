@@ -4,12 +4,17 @@ An interactive collection of educational chemistry games designed for first-year
 
 **Part of the Kvenno Efnafræði ecosystem** - Chemistry learning tools for Kvennaskólinn í Reykjavík
 
+## 🚀 Current Status
+
+**All games are production-ready!** All 5 chemistry games have been converted to standalone HTML files with Kvenno branding and are ready for deployment.
+
 ## Deployment
 
 This repository is configured for deployment to **kvenno.app** at:
 - **Production URL**: `https://kvenno.app/1-ar/games/`
 - **Repository**: `chemistry-games-1ar`
 - **Target Audience**: 1st year chemistry students
+- **Deployment Status**: ✅ Ready for production
 
 ## 🎮 Games Included
 
@@ -35,24 +40,26 @@ This repository is configured for deployment to **kvenno.app** at:
 - **Type:** Timed speed quiz (90 seconds)
 - **Purpose:** Calculate molar mass from chemical formulas
 - **Difficulty Levels:** Easy, Medium, Hard, Mixed
-- **File:** `1. ár/molmassi.tsx` *(requires build)*
+- **File:** `1. ár/molmassi.html`
 
 ### 5. **Lausnir** (Solution Lab)
 - **Type:** Problem-solving game
 - **Purpose:** Solve dilution, molarity, and solution mixing problems
 - **Difficulty Levels:** Easy, Medium, Hard
-- **File:** `1. ár/lausnir.tsx` *(requires build)*
+- **File:** `1. ár/lausnir.html`
 
 ## 🚀 Quick Start
 
 ### Local Development
-The first three games can be opened directly in any modern web browser:
+All games can be opened directly in any modern web browser - no build process required!
 
 ```bash
-# Simply open in browser:
+# Simply open any game in your browser:
 open "1. ár/nafnakerfið.html"
 open "1. ár/einingagreining.html"
 open "1. ár/takmarkandi.html"
+open "1. ár/molmassi.html"
+open "1. ár/lausnir.html"
 
 # Or serve with a local server:
 python -m http.server 8000
@@ -65,96 +72,14 @@ python -m http.server 8000
 
 See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed deployment instructions to kvenno.app.
 
-### TSX Games (Require Build Setup)
-The `molmassi.tsx` and `lausnir.tsx` files need to be integrated into a build system. See [Build Setup](#build-setup) below.
-
 ## 🛠️ Technology Stack
 
-- **React 18** - UI component library
-- **TypeScript** - Type-safe JavaScript (for TSX files)
-- **Tailwind CSS** - Utility-first CSS framework
-- **Babel Standalone** - JSX transpilation (for HTML files)
-- **Lucide React** - Icon library (for TSX files)
+- **React 18** - UI component library (loaded via CDN)
+- **Tailwind CSS** - Utility-first CSS framework (loaded via CDN)
+- **Babel Standalone** - JSX transpilation in browser
+- **Inline SVG Icons** - Custom icons embedded in HTML
 
-## 📋 Build Setup
-
-To use the TSX components or develop locally, set up a build environment:
-
-### Option 1: Vite (Recommended)
-
-```bash
-# Initialize npm project
-npm init -y
-
-# Install dependencies
-npm install react react-dom
-npm install -D vite @vitejs/plugin-react typescript @types/react @types/react-dom
-
-# Install additional dependencies
-npm install lucide-react tailwindcss autoprefixer postcss
-
-# Initialize Tailwind CSS
-npx tailwindcss init -p
-
-# Create vite.config.ts
-cat > vite.config.ts << 'EOF'
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-
-export default defineConfig({
-  plugins: [react()],
-})
-EOF
-
-# Create tsconfig.json
-cat > tsconfig.json << 'EOF'
-{
-  "compilerOptions": {
-    "target": "ES2020",
-    "useDefineForClassFields": true,
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
-    "module": "ESNext",
-    "skipLibCheck": true,
-    "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": true,
-    "jsx": "react-jsx",
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
-  },
-  "include": ["1. ár/**/*.tsx"],
-  "references": [{ "path": "./tsconfig.node.json" }]
-}
-EOF
-
-# Add scripts to package.json
-npm pkg set scripts.dev="vite"
-npm pkg set scripts.build="vite build"
-npm pkg set scripts.preview="vite preview"
-
-# Start development server
-npm run dev
-```
-
-### Option 2: Create React App
-
-```bash
-npx create-react-app chemistry-games --template typescript
-cd chemistry-games
-npm install lucide-react tailwindcss
-npx tailwindcss init
-
-# Copy TSX files to src/
-cp "../1. ár/molmassi.tsx" src/
-cp "../1. ár/lausnir.tsx" src/
-
-# Start development
-npm start
-```
+All games are standalone HTML files with no build process required. Dependencies are loaded from CDN for easy deployment.
 
 ## 📁 Project Structure
 
@@ -162,13 +87,21 @@ npm start
 ChemistryGames/
 ├── LICENSE                    # MIT License
 ├── README.md                  # This file
+├── DEPLOYMENT.md              # Deployment guide for kvenno.app
+├── kvenno_structure.md        # Kvenno site structure and design system
+├── index.html                 # Landing page with game selection
+├── 404.html                   # Error page
 └── 1. ár/                     # Year 1 Chemistry Games
     ├── nafnakerfið.html      # Compound Name Matchmaker
     ├── einingagreining.html  # Unit Conversion Race
     ├── takmarkandi.html      # Limiting Reactant Factory
-    ├── molmassi.tsx          # Molar Mass Challenge (React component)
-    └── lausnir.tsx           # Solution Lab (React component)
+    ├── molmassi.html         # Molar Mass Challenge
+    ├── molmassi.tsx          # Source TSX file (reference)
+    ├── lausnir.html          # Solution Lab
+    └── lausnir.tsx           # Source TSX file (reference)
 ```
+
+**Note:** The `.tsx` files are kept for reference but are no longer needed for deployment. All games use the `.html` versions.
 
 ## 🌐 Browser Compatibility
 
@@ -217,28 +150,28 @@ Contributions are welcome! Feel free to:
 
 ## 🔧 Development Notes
 
-### CDN Dependencies (HTML files)
-The HTML files load dependencies from CDN:
+### CDN Dependencies
+All HTML files load dependencies from CDN:
 - React 18: `https://unpkg.com/react@18/umd/react.production.min.js`
 - React-DOM 18: `https://unpkg.com/react-dom@18/umd/react-dom.production.min.js`
 - Babel Standalone: `https://unpkg.com/@babel/standalone/babel.min.js`
 - Tailwind CSS: `https://cdn.tailwindcss.com`
 
-### Converting TSX to HTML
-To convert TSX files to standalone HTML (like the other games):
-
-1. Replace `import` statements with CDN script tags
-2. Replace lucide-react icons with inline SVG
-3. Wrap component in `<script type="text/babel">` tags
-4. Add `ReactDOM.createRoot(document.getElementById('root')).render(<Component />);`
+### Design System
+All games follow the Kvenno branding:
+- **Primary Color:** `#f36b22` (Kvenno orange)
+- **Header:** Consistent site header with "Kvenno Efnafræði" branding
+- **Navigation:** Breadcrumbs and "Til baka" (Back) buttons
+- **Button Style:** 2px solid border with 8px border radius
 
 ## 📊 Game Statistics
 
-- **Total Lines of Code:** ~3,000
-- **Number of Games:** 5
+- **Total Lines of Code:** ~5,000+
+- **Number of Games:** 5 (all production-ready)
 - **Languages Supported:** 2 (Icelandic, English)
 - **Total Questions/Compounds:** 100+
 - **Chemistry Topics Covered:** Nomenclature, Unit Conversion, Stoichiometry, Molar Mass, Solution Chemistry
+- **Deployment:** Standalone HTML - no build process required
 
 ## 🎓 Target Audience
 
@@ -247,7 +180,16 @@ To convert TSX files to standalone HTML (like the other games):
 - Teachers looking for interactive educational tools
 - Students preparing for chemistry exams
 
-## 🌟 Future Enhancements
+## 🌟 Recent Updates
+
+- ✅ All TSX files converted to standalone HTML
+- ✅ Kvenno branding applied to all games
+- ✅ Consistent header and navigation across all pages
+- ✅ Landing page with game selection
+- ✅ Custom 404 error page
+- ✅ All 5 games production-ready
+
+## 🔮 Future Enhancements
 
 Potential additions:
 - [ ] Backend for score persistence
@@ -258,6 +200,7 @@ Potential additions:
 - [ ] Offline PWA support
 - [ ] More difficulty levels
 - [ ] Customizable question sets
+- [ ] Self-hosted CDN dependencies for better reliability
 
 ## 📞 Support
 

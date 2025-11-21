@@ -1,50 +1,151 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="is">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>404 - Page Not Found | Chemistry Games</title>
+    <title>404 - Síða fannst ekki | Kvenno Efnafræði</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --kvenno-orange: #f36b22;
+            --kvenno-orange-dark: #d95a1a;
+        }
+
+        .site-header {
+            background: white;
+            border-bottom: 2px solid #e5e7eb;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            height: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .site-logo {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: var(--kvenno-orange);
+            text-decoration: none;
+        }
+
+        .site-logo:hover {
+            color: var(--kvenno-orange-dark);
+        }
+
+        .header-btn {
+            background: white;
+            border: 2px solid var(--kvenno-orange);
+            color: var(--kvenno-orange);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-left: 0.5rem;
+        }
+
+        .header-btn:hover {
+            background: var(--kvenno-orange);
+            color: white;
+        }
+
+        .back-btn {
+            background: var(--kvenno-orange);
+            color: white;
+            padding: 12px 32px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-block;
+            text-decoration: none;
+            border: 2px solid var(--kvenno-orange);
+        }
+
+        .back-btn:hover {
+            background: var(--kvenno-orange-dark);
+            border-color: var(--kvenno-orange-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(243, 107, 34, 0.3);
+        }
+
+        .game-link {
+            color: var(--kvenno-orange);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .game-link:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
-<body class="bg-gradient-to-br from-blue-50 to-purple-50 min-h-screen flex items-center justify-center px-4">
-    <div class="text-center max-w-md">
-        <div class="mb-8">
-            <h1 class="text-9xl font-bold text-gray-300 mb-4">404</h1>
-            <div class="text-6xl mb-4">🧪💥</div>
-        </div>
-
-        <h2 class="text-3xl font-bold text-gray-800 mb-4">
-            Page Not Found
-        </h2>
-
-        <p class="text-lg text-gray-600 mb-2">
-            Oops! Looks like this molecule doesn't exist.
-        </p>
-
-        <p class="text-gray-500 mb-8">
-            The page you're looking for has either been moved or doesn't exist.
-        </p>
-
-        <div class="space-y-4">
-            <a href="/" class="inline-block bg-gradient-to-r from-blue-500 to-purple-500 text-white px-8 py-3 rounded-lg hover:from-blue-600 hover:to-purple-600 transition font-semibold shadow-lg">
-                🏠 Back to Home
-            </a>
-
-            <div class="text-sm text-gray-500">
-                <p>or try one of these games:</p>
-                <div class="flex flex-wrap justify-center gap-2 mt-3">
-                    <a href="/1. ár/nafnakerfið.html" class="text-blue-600 hover:underline">Nafnakerfið</a>
-                    <span class="text-gray-300">•</span>
-                    <a href="/1. ár/einingagreining.html" class="text-blue-600 hover:underline">Einingagreining</a>
-                    <span class="text-gray-300">•</span>
-                    <a href="/1. ár/takmarkandi.html" class="text-blue-600 hover:underline">Takmarkandi</a>
-                </div>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+    <!-- Site Header -->
+    <header class="site-header">
+        <div class="header-content">
+            <a href="/" class="site-logo">Kvenno Efnafræði</a>
+            <div class="header-actions">
+                <button class="header-btn" onclick="alert('Stjórnendaaðgangur í þróun')">Stjórnandi</button>
+                <button class="header-btn" onclick="alert('Hjálp og upplýsingar um leikina')">Upplýsingar</button>
             </div>
         </div>
+    </header>
 
-        <div class="mt-12 text-xs text-gray-400">
-            <p>Error Code: 404 - Resource Not Found</p>
+    <!-- Error Content -->
+    <div class="flex-grow flex items-center justify-center px-4 py-12">
+        <div class="text-center max-w-md">
+            <div class="mb-8">
+                <h1 class="text-9xl font-bold text-gray-300 mb-4">404</h1>
+                <div class="text-6xl mb-4">🧪💥</div>
+            </div>
+
+            <h2 class="text-3xl font-bold text-gray-800 mb-4">
+                Síða fannst ekki
+            </h2>
+
+            <p class="text-lg text-gray-600 mb-2">
+                Úps! Þessi sameind virðist ekki vera til.
+            </p>
+
+            <p class="text-gray-500 mb-8">
+                Síðan sem þú ert að leita að hefur verið færð eða er ekki til.
+            </p>
+
+            <div class="space-y-4">
+                <a href="/" class="back-btn">
+                    🏠 Til baka á forsíðu
+                </a>
+
+                <div class="text-sm text-gray-500">
+                    <p class="mb-3">eða prófaðu einn af þessum leikjum:</p>
+                    <div class="flex flex-wrap justify-center gap-2">
+                        <a href="/1. ár/nafnakerfið.html" class="game-link">Nafnakerfið</a>
+                        <span class="text-gray-300">•</span>
+                        <a href="/1. ár/einingagreining.html" class="game-link">Einingagreining</a>
+                        <span class="text-gray-300">•</span>
+                        <a href="/1. ár/takmarkandi.html" class="game-link">Takmarkandi</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-12 text-xs text-gray-400">
+                <p>Villu kóði: 404 - Síða fannst ekki</p>
+            </div>
         </div>
     </div>
+
+    <!-- Footer -->
+    <footer class="text-center text-gray-600 py-6">
+        <p style="color: var(--kvenno-orange); font-weight: 600;">Kvennaskólinn í Reykjavík</p>
+        <p class="text-sm text-gray-500 mt-2">&copy; 2025 Sigurður E. Vilhelmsson</p>
+    </footer>
 </body>
 </html>

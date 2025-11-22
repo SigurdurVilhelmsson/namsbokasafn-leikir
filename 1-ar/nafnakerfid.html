@@ -274,11 +274,11 @@
 
         const compounds = [
             // AUÐVELT / EASY (10 compounds)
-            { formula: 'NaCl', name: 'Natrímklóríð', type: 'ionic', category: 'jónefni', difficulty: 'easy',
+            { formula: 'NaCl', name: 'Natríumklóríð', type: 'ionic', category: 'jónefni', difficulty: 'easy',
               elements: ['Na', 'Cl'], info: 'Málmur + Málmleysingi → Jónefni' },
-            { formula: 'H₂O', name: 'Vatn', type: 'molecular', category: 'sameind', difficulty: 'easy',
+            { formula: 'H₂O', name: 'Vatn', type: 'molecular', category: 'sameindaefni', difficulty: 'easy',
               elements: ['H', 'O'], info: 'Eina efnið með sérheiti!' },
-            { formula: 'CO₂', name: 'Koldíoxíð', type: 'molecular', category: 'sameind', difficulty: 'easy',
+            { formula: 'CO₂', name: 'Koldíoxíð', type: 'molecular', category: 'sameindaefni', difficulty: 'easy',
               elements: ['C', 'O'], info: 'Tvíefni: tvær súrefniseiningar' },
             { formula: 'NH₃', name: 'Ammóníak', type: 'molecular', category: 'sameind', difficulty: 'easy',
               elements: ['N', 'H'], info: 'Algengt efnasamband' },
@@ -296,7 +296,7 @@
               elements: ['O'], info: 'Tvíatóma sameind' },
 
             // AUÐVELT / EASY - ADDITIONS (9 more)
-            { formula: 'N₂', name: 'Köfnunarefni', type: 'molecular', category: 'sameind', difficulty: 'easy',
+            { formula: 'N₂', name: 'Nitur', type: 'molecular', category: 'sameind', difficulty: 'easy',
               elements: ['N'], info: 'Tvíatóma sameind' },
             { formula: 'H₂', name: 'Vetni', type: 'molecular', category: 'sameind', difficulty: 'easy',
               elements: ['H'], info: 'Léttasta frumefnið' },
@@ -310,7 +310,7 @@
               elements: ['Ba', 'O'], info: 'Málmoxíð' },
             { formula: 'AlCl₃', name: 'Álklóríð', type: 'ionic', category: 'jónefni', difficulty: 'easy',
               elements: ['Al', 'Cl'], info: 'Ál hefur +3 hleðslu' },
-            { formula: 'Na₂O', name: 'Natrímoxíð', type: 'ionic', category: 'jónefni', difficulty: 'easy',
+            { formula: 'Na₂O', name: 'Natríumoxíð', type: 'ionic', category: 'jónefni', difficulty: 'easy',
               elements: ['Na', 'O'], info: 'Tvö Na⁺ fyrir hvert O²⁻' },
             { formula: 'MgCl₂', name: 'Magnesíumklóríð', type: 'ionic', category: 'jónefni', difficulty: 'easy',
               elements: ['Mg', 'Cl'], info: 'Algengt salt' },
@@ -322,7 +322,7 @@
               elements: ['Fe', 'O'], info: 'Járn með +3 hleðslu - rust' },
             { formula: 'CuSO₄', name: 'Kopar(II)súlfat', type: 'ionic', category: 'málmar-breytilega-hleðsla', difficulty: 'medium',
               elements: ['Cu', 'S', 'O'], info: 'Kopar + Súlfat (SO₄²⁻)' },
-            { formula: 'Na₂CO₃', name: 'Natrímkarbónat', type: 'ionic', category: 'jónefni', difficulty: 'medium',
+            { formula: 'Na₂CO₃', name: 'Natríumkarbónat', type: 'ionic', category: 'jónefni', difficulty: 'medium',
               elements: ['Na', 'C', 'O'], info: 'Sameindajón: CO₃²⁻ (karbónat)' },
             { formula: 'NH₄Cl', name: 'Ammóníumklóríð', type: 'ionic', category: 'jónefni', difficulty: 'medium',
               elements: ['N', 'H', 'Cl'], info: 'Ammóníum (NH₄⁺) + Klóríð' },
@@ -332,7 +332,7 @@
               elements: ['Ca', 'O', 'H'], info: 'Ca²⁺ + tvö OH⁻' },
             { formula: 'KNO₃', name: 'Kalíumnítrat', type: 'ionic', category: 'jónefni', difficulty: 'medium',
               elements: ['K', 'N', 'O'], info: 'Sameindajón: NO₃⁻ (nítrat)' },
-            { formula: 'N₂O₄', name: 'Tvíköfnunartetróxíð', type: 'molecular', category: 'sameind', difficulty: 'medium',
+            { formula: 'N₂O₄', name: 'Díniturtetroxíð', type: 'molecular', category: 'sameind', difficulty: 'medium',
               elements: ['N', 'O'], info: 'Tvö köfnunarefni, fjögur súrefni' },
             { formula: 'SO₂', name: 'Brennisteinsdíoxíð', type: 'molecular', category: 'sameind', difficulty: 'medium',
               elements: ['S', 'O'], info: 'Mengun frá brennisteinsneitun' },
@@ -366,10 +366,10 @@
               elements: ['Mg', 'N', 'O'], info: 'Mg²⁺ + tvö nítrat' },
             { formula: 'Al(OH)₃', name: 'Álhýdroxíð', type: 'ionic', category: 'jónefni', difficulty: 'hard',
               elements: ['Al', 'O', 'H'], info: 'Ál + þrjú hýdroxíð' },
-            { formula: 'P₂O₅', name: 'Dífosfórpentóxíð', type: 'molecular', category: 'sameind', difficulty: 'hard',
+            { formula: 'P₂O₅', name: 'Dífosfórpentoxíð', type: 'molecular', category: 'sameind', difficulty: 'hard',
               elements: ['P', 'O'], info: 'Tvö fosfór, fimm súrefni' },
-            { formula: 'N₂O', name: 'Tvíköfnunaroxíð', type: 'molecular', category: 'sameind', difficulty: 'hard',
-              elements: ['N', 'O'], info: 'Hlægigas' },
+            { formula: 'N₂O', name: 'Díniturmónoxíð', type: 'molecular', category: 'sameind', difficulty: 'hard',
+              elements: ['N', 'O'], info: 'Hláturgas' },
             { formula: 'AgNO₃', name: 'Silfurnítrat', type: 'ionic', category: 'jónefni', difficulty: 'hard',
               elements: ['Ag', 'N', 'O'], info: 'Silfur + nítrat' },
             { formula: 'FeSO₄', name: 'Járn(II)súlfat', type: 'ionic', category: 'málmar-breytilega-hleðsla', difficulty: 'hard',
@@ -407,7 +407,7 @@
                     title: 'Tvíefni (Binary compounds):',
                     rules: [
                         'Málmur + Málmleysingi → [Málmur][Málmleysingi]-íð',
-                        'Dæmi: NaCl = Natrím-klóríð',
+                        'Dæmi: NaCl = Natríum-klóríð',
                         'Endi -íð er fyrir tvíefni'
                     ]
                 },

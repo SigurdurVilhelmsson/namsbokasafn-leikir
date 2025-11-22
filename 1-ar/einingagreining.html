@@ -237,6 +237,37 @@
             </svg>
         );
 
+        // Utility function to count significant figures
+        const countSigFigs = (num) => {
+            const str = num.toString();
+            // Remove leading zeros and decimal point for counting
+            const cleaned = str.replace(/^0+/, '').replace('.', '');
+            // If the number is less than 1, don't count leading zeros after decimal
+            if (Math.abs(num) < 1) {
+                const match = str.match(/\.0*([1-9]\d*)/);
+                return match ? match[1].length : 1;
+            }
+            // For numbers >= 1, count all digits except leading zeros
+            return cleaned.length || 1;
+        };
+
+        // Format number to specific significant figures
+        const formatToSigFigs = (num, sigFigs) => {
+            if (num === 0) return '0';
+            
+            const magnitude = Math.floor(Math.log10(Math.abs(num)));
+            const precision = sigFigs - magnitude - 1;
+            
+            if (precision < 0) {
+                // For large numbers, round to significant figures
+                const factor = Math.pow(10, -precision);
+                return (Math.round(num / factor) * factor).toString();
+            } else {
+                // Use toFixed for appropriate decimal places
+                return num.toFixed(Math.max(0, precision));
+            }
+        };
+
         // Question templates with conversion factors
         const questionTemplates = [
             // Easy - single step conversions
@@ -400,7 +431,6 @@
             });
 
             const [showInstructions, setShowInstructions] = useState(true);
-            const [draggedFactor, setDraggedFactor] = useState(null);
 
             const generateQuestion = (difficulty) => {
                 let availableQuestions;
@@ -472,13 +502,19 @@
                 return match ? match[0] : unitString;
             };
 
+            // NEW: Properly track compound units
             const calculateResult = () => {
                 if (!gameState.currentQuestion || gameState.selectedFactors.length === 0) {
-                    return { value: gameState.currentQuestion?.startValue, unit: gameState.currentQuestion?.startUnit };
+                    return { 
+                        value: gameState.currentQuestion?.startValue, 
+                        numeratorUnits: [gameState.currentQuestion?.startUnit],
+                        denominatorUnits: []
+                    };
                 }
 
                 let currentValue = gameState.currentQuestion.startValue;
-                let currentUnit = gameState.currentQuestion.startUnit;
+                let numeratorUnits = [gameState.currentQuestion.startUnit];
+                let denominatorUnits = [];
 
                 // Apply each conversion factor
                 for (const factor of gameState.selectedFactors) {
@@ -490,24 +526,70 @@
                     const denValue = parseFloat(denParts[0]);
                     const denUnit = parseUnit(denParts.slice(1).join(' '));
 
-                    // Check if units cancel
-                    if (denUnit === currentUnit) {
-                        currentValue = (currentValue * numValue) / denValue;
-                        currentUnit = numUnit;
-                    } else {
-                        // Units don't cancel
-                        return { value: currentValue, unit: currentUnit, error: true };
+                    // Multiply/divide the numerical values
+                    currentValue = (currentValue * numValue) / denValue;
+
+                    // Add units from numerator of conversion factor
+                    numeratorUnits.push(numUnit);
+                    // Add units from denominator of conversion factor
+                    denominatorUnits.push(denUnit);
+
+                    // Cancel out matching units
+                    const numIndex = numeratorUnits.indexOf(denUnit);
+                    if (numIndex !== -1) {
+                        numeratorUnits.splice(numIndex, 1);
+                        const denIndex = denominatorUnits.indexOf(denUnit);
+                        denominatorUnits.splice(denIndex, 1);
                     }
                 }
 
-                return { value: currentValue, unit: currentUnit };
+                return { 
+                    value: currentValue, 
+                    numeratorUnits, 
+                    denominatorUnits 
+                };
+            };
+
+            // NEW: Format compound units for display
+            const formatUnits = (numeratorUnits, denominatorUnits) => {
+                if (numeratorUnits.length === 0 && denominatorUnits.length === 0) {
+                    return 'dimensionless';
+                }
+
+                // Count occurrences of each unit
+                const numCounts = {};
+                numeratorUnits.forEach(unit => {
+                    numCounts[unit] = (numCounts[unit] || 0) + 1;
+                });
+
+                const denCounts = {};
+                denominatorUnits.forEach(unit => {
+                    denCounts[unit] = (denCounts[unit] || 0) + 1;
+                });
+
+                // Format with exponents
+                const formatUnitGroup = (counts) => {
+                    return Object.entries(counts)
+                        .map(([unit, count]) => count > 1 ? `${unit}^${count}` : unit)
+                        .join('·');
+                };
+
+                const numStr = formatUnitGroup(numCounts);
+                const denStr = formatUnitGroup(denCounts);
+
+                if (!denStr) return numStr || '1';
+                if (!numStr) return `1/${denStr}`;
+                return `${numStr}/${denStr}`;
             };
 
             const checkAnswer = () => {
                 const result = calculateResult();
                 const targetUnit = gameState.currentQuestion.targetUnit;
 
-                const isCorrect = result.unit === targetUnit && !result.error;
+                // Check if we have exactly one unit in numerator matching target, and no denominator units
+                const isCorrect = result.numeratorUnits.length === 1 && 
+                                 result.numeratorUnits[0] === targetUnit &&
+                                 result.denominatorUnits.length === 0;
 
                 const pointValue = gameState.currentQuestion.difficulty === 'easy' ? 10 :
                                 gameState.currentQuestion.difficulty === 'medium' ? 20 : 30;
@@ -535,7 +617,10 @@
                         }));
                     }, 2000);
                 } else {
-                    const needsMoreFactors = result.unit !== targetUnit && !result.error &&
+                    // Check if on the right track (partial progress)
+                    const needsMoreFactors = result.numeratorUnits.length === 1 && 
+                                           result.denominatorUnits.length === 0 &&
+                                           result.numeratorUnits[0] !== targetUnit &&
                                            gameState.selectedFactors.length < gameState.currentQuestion.correctFactors.length;
 
                     setGameState(prev => ({
@@ -579,7 +664,7 @@
                 if (!gameState.currentQuestion || gameState.selectedFactors.length === 0) return null;
 
                 let currentUnit = gameState.currentQuestion.startUnit;
-                const steps = [{ value: gameState.currentQuestion.startValue, unit: currentUnit, cancelled: false }];
+                const steps = [];
 
                 for (let i = 0; i < gameState.selectedFactors.length; i++) {
                     const factor = gameState.selectedFactors[i];
@@ -607,7 +692,6 @@
                         </span>
                         {gameState.selectedFactors.map((factor, idx) => {
                             const denUnit = parseUnit(factor.den.split(' ').slice(1).join(' '));
-                            const numUnit = parseUnit(factor.num.split(' ').slice(1).join(' '));
                             const previousUnit = idx === 0 ? gameState.currentQuestion.startUnit :
                                                parseUnit(gameState.selectedFactors[idx-1].num.split(' ').slice(1).join(' '));
                             const cancelled = denUnit === previousUnit;
@@ -616,7 +700,7 @@
                                 <React.Fragment key={idx}>
                                     <span>×</span>
                                     <div className="inline-flex flex-col border-2 border-purple-300 rounded px-2 py-1">
-                                        <span className={cancelled ? 'unit-strike' : ''}>{factor.num}</span>
+                                        <span className={cancelled ? '' : ''}>{factor.num}</span>
                                         <div className="border-t-2 border-gray-400"></div>
                                         <span className={cancelled ? 'unit-strike' : ''}>{factor.den}</span>
                                     </div>
@@ -641,81 +725,57 @@
                                 <div className="bg-purple-50 p-4 rounded-lg">
                                     <h3 className="font-semibold mb-2">Markmið / Goal:</h3>
                                     <p>Notaðu umbreytingarstuðla til að umbreyta úr einni einingu í aðra!</p>
-                                    <p className="text-sm italic">Use conversion factors to convert from one unit to another!</p>
+                                    <p className="text-sm mt-1">Use conversion factors to convert from one unit to another!</p>
                                 </div>
 
                                 <div className="bg-blue-50 p-4 rounded-lg">
                                     <h3 className="font-semibold mb-2">Hvernig á að spila / How to play:</h3>
-                                    <ol className="list-decimal list-inside space-y-2">
-                                        <li>Þú færð upphafsgildi með einingu (t.d. 5000 g)</li>
-                                        <li>Þú þarft að komast í markeiningu (t.d. kg)</li>
-                                        <li>Smelltu á umbreytingarstuðul til að bæta honum við</li>
-                                        <li>Smelltu á "⇅" til að snúa stuðlinum við (t.d. 1000g/1kg → 1kg/1000g)</li>
-                                        <li>Þegar einingar falla út sérðu þær með yfirstrikun</li>
-                                        <li>Þegar þú ert kominn í rétta einingu, smelltu á "Athuga svar"</li>
+                                    <ol className="list-decimal ml-5 space-y-2">
+                                        <li>Veldu umbreytingarstuðul frá listanum fyrir neðan / Select a conversion factor from the list below</li>
+                                        <li>Smelltu á "⇅" til að snúa stuðli við ef þörf er á / Click "⇅" to invert a factor if needed</li>
+                                        <li>Bættu við fleiri stuðlum ef þörf er á / Add more factors if needed</li>
+                                        <li>Athugaðu hvort einingarnar striki út rétt / Check that units cancel correctly</li>
+                                        <li>Ýttu á "Athuga svar" / Press "Check Answer"</li>
                                     </ol>
                                 </div>
 
                                 <div className="bg-green-50 p-4 rounded-lg">
                                     <h3 className="font-semibold mb-2">Dæmi / Example:</h3>
-                                    <div className="bg-white p-3 rounded border-2 border-green-200">
-                                        <p className="font-semibold mb-2">Spurning: 5000 g → kg</p>
-                                        <div className="text-sm space-y-1">
-                                            <p>1. Veldu: <span className="font-mono bg-gray-100 px-2 py-1 rounded">1000 g / 1 kg</span></p>
-                                            <p>2. Snúðu við: <span className="font-mono bg-gray-100 px-2 py-1 rounded">1 kg / 1000 g</span></p>
-                                            <p>3. Einingin "g" fellur út og þú færð 5 kg!</p>
+                                    <p>Til að umbreyta 5000 g í kg:</p>
+                                    <p className="text-sm">To convert 5000 g to kg:</p>
+                                    <div className="mt-2 p-3 bg-white rounded border-2 border-green-200">
+                                        <div className="font-mono text-center">
+                                            5000 g × (1 kg / 1000 g) = 5 kg
                                         </div>
                                     </div>
+                                    <p className="text-sm mt-2 text-gray-600">
+                                        Athugaðu að "g" einingin strikast út! / Notice that the "g" unit cancels out!
+                                    </p>
                                 </div>
 
                                 <div className="bg-yellow-50 p-4 rounded-lg">
                                     <h3 className="font-semibold mb-2">Stigagjöf / Scoring:</h3>
-                                    <ul className="space-y-1">
-                                        <li><strong>Auðvelt/Easy:</strong> 10 stig (1 skref)</li>
-                                        <li><strong>Miðlungs/Medium:</strong> 20 stig (2 skref)</li>
-                                        <li><strong>Erfitt/Hard:</strong> 30 stig (3 skref)</li>
-                                        <li><strong>Röð bónus/Streak bonus:</strong> +10 stig eftir 3 í röð rétt</li>
+                                    <ul className="list-disc ml-5 space-y-1">
+                                        <li>Auðvelt / Easy: 10 stig / points</li>
+                                        <li>Miðlungs / Medium: 20 stig / points</li>
+                                        <li>Erfitt / Hard: 30 stig / points</li>
+                                        <li>Streak bonus (3+): +10 stig / points</li>
                                     </ul>
                                 </div>
 
-                                <div className="bg-pink-50 p-4 rounded-lg">
-                                    <h3 className="font-semibold mb-2">Ábendingar / Tips:</h3>
-                                    <ul className="list-disc list-inside space-y-1">
-                                        <li>Passaðu að einingin í nefnara (neðst) falli út með núverandi einingu</li>
-                                        <li>Teljari (efst) verður ný einingin þín</li>
-                                        <li>Fyrir erfið dæmi þarftu oft fleiri en eitt skref</li>
-                                        <li>Þú getur fjarlægt stuðul með því að smella á "×" hnappinn</li>
-                                    </ul>
+                                <div className="bg-red-50 p-4 rounded-lg">
+                                    <h3 className="font-semibold mb-2">⚠️ Mikilvægt / Important:</h3>
+                                    <p>Gættu þess að nota rétta stuðla! Ef þú notar stuðul rangt (t.d. 1 m / 1000 mm í stað 1000 mm / 1 m), þá munu einingarnar EKKI strikast rétt út og þú færð ranga einingu í svarinu.</p>
+                                    <p className="text-sm mt-1">Make sure to use the right factors! If you use a factor incorrectly (e.g. 1 m / 1000 mm instead of 1000 mm / 1 m), the units will NOT cancel correctly and you'll get the wrong unit in your answer.</p>
                                 </div>
                             </div>
 
-                            <button
-                                onClick={() => setShowInstructions(false)}
-                                className="w-full mt-6 bg-purple-600 hover:bg-purple-700 text-white font-bold py-4 px-6 rounded-xl transition-colors duration-200 text-lg"
-                            >
-                                Byrja að spila / Start Playing! 🚀
-                            </button>
-                        </div>
-                    </div>
-                );
-            }
+                            <div className="mt-8 space-y-4">
+                                <h2 className="text-xl font-semibold text-center text-purple-600">
+                                    Veldu erfiðleikastig / Choose Difficulty
+                                </h2>
 
-            if (!gameState.isPlaying && !gameState.gameOver) {
-                return (
-                    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-100 p-8">
-                        <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-2xl p-8">
-                            <h1 className="text-4xl font-bold text-center mb-6 text-purple-600">
-                                🔬 Einingagreining
-                            </h1>
-
-                            <div className="space-y-6">
-                                <div className="text-center">
-                                    <p className="text-lg text-gray-700 mb-4">
-                                        Veldu erfiðleikastig / Choose your difficulty:
-                                    </p>
-                                </div>
-
-                                <div className="grid grid-cols-2 gap-4">
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                     <button
                                         onClick={() => {
                                             setGameState(prev => ({ ...prev, difficulty: 'easy' }));
@@ -862,6 +922,9 @@
 
             // Main game interface
             const result = calculateResult();
+            const sigFigs = countSigFigs(gameState.currentQuestion?.startValue || 1);
+            const formattedValue = formatToSigFigs(result.value, sigFigs);
+            const unitDisplay = formatUnits(result.numeratorUnits, result.denominatorUnits);
 
             return (
                 <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-100 p-4 md:p-8">
@@ -934,7 +997,7 @@
                                     {renderUnitCancellation()}
                                     <div className="mt-3 text-center">
                                         <span className="text-xl font-bold text-purple-600">
-                                            = {result.value.toFixed(6)} {result.unit}
+                                            = {formattedValue} {unitDisplay}
                                         </span>
                                     </div>
                                 </div>
@@ -995,7 +1058,10 @@
                                 <div className="mb-4 p-4 bg-red-100 border-2 border-red-400 rounded-xl text-center shake">
                                     <div className="text-4xl mb-2">❌</div>
                                     <div className="text-2xl font-bold text-red-700">Rangt / Incorrect</div>
-                                    <div className="text-sm text-red-600 mt-1">Prófaðu að snúa við stuðli eða veldu annan</div>
+                                    <div className="text-sm text-red-600 mt-1">
+                                        Núverandi eining: {unitDisplay}<br/>
+                                        Prófaðu að snúa við stuðli eða veldu annan
+                                    </div>
                                 </div>
                             )}
 

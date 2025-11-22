@@ -122,6 +122,75 @@
         .animate-pulse {
             animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
+
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            .mobile-input {
+                font-size: 24px !important;
+                min-height: 48px !important;
+            }
+
+            .mobile-btn {
+                min-height: 44px !important;
+                min-width: 44px !important;
+                font-size: 16px !important;
+            }
+
+            .header-content {
+                padding: 0 0.5rem;
+            }
+
+            .site-logo {
+                font-size: 1rem;
+            }
+
+            .header-btn {
+                font-size: 0.75rem;
+                padding: 6px 12px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .breadcrumb {
+                font-size: 0.75rem;
+                padding: 0.5rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 5px rgba(34, 197, 94, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(34, 197, 94, 0.8); }
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .shake {
+            animation: shake 0.5s;
+        }
+
+        .glow {
+            animation: glow 1s;
+        }
+
+        .slide-down {
+            animation: slideDown 0.3s ease-out;
+        }
+
+        /* Focus indicators for accessibility */
+        button:focus, input:focus {
+            outline: 3px solid #3b82f6;
+            outline-offset: 2px;
+        }
     </style>
 </head>
 <body>
@@ -240,7 +309,11 @@
                 correctCompounds: [], // Track correctly answered compounds
                 // Part 3: Achievements
                 showAchievement: null,
-                recentAchievement: null
+                recentAchievement: null,
+                // Part 4: Animations and UI
+                inputShake: false,
+                isPaused: false,
+                showKeyboardHelp: false
             });
 
             const [showInstructions, setShowInstructions] = useState(true);
@@ -249,6 +322,7 @@
             const [periodicTableSearch, setPeriodicTableSearch] = useState('');
             const [showFormulaReference, setShowFormulaReference] = useState(false);
             const [progress, setProgress] = useState(loadProgress());
+            const [soundEnabled, setSoundEnabled] = useState(false);
             const inputRef = useRef(null);
             const timerRef = useRef(null);
 
@@ -631,8 +705,16 @@
                     userAnswer: isCorrect ? prev.userAnswer : '',
                     correctCompounds: isCorrect ? [...prev.correctCompounds, prev.currentCompound.formula] : prev.correctCompounds,
                     showAchievement: achievement,
-                    recentAchievement: achievement
+                    recentAchievement: achievement,
+                    inputShake: !isCorrect
                 }));
+
+                // Clear shake animation after it completes
+                if (!isCorrect) {
+                    setTimeout(() => {
+                        setGameState(prev => ({ ...prev, inputShake: false }));
+                    }, 500);
+                }
 
                 // Show achievement popup briefly
                 if (achievement) {
@@ -774,8 +856,8 @@
             };
 
             useEffect(() => {
-                // Timer only runs in competition mode
-                if (gameState.isPlaying && !gameState.gameOver && gameState.timeRemaining > 0 && gameState.gameMode === 'competition') {
+                // Timer only runs in competition mode and when not paused
+                if (gameState.isPlaying && !gameState.gameOver && !gameState.isPaused && gameState.timeRemaining > 0 && gameState.gameMode === 'competition') {
                     timerRef.current = setInterval(() => {
                         setGameState(prev => {
                             if (prev.timeRemaining <= 1) {
@@ -789,13 +871,54 @@
                 return () => {
                     if (timerRef.current) clearInterval(timerRef.current);
                 };
-            }, [gameState.isPlaying, gameState.gameOver, gameState.timeRemaining, gameState.gameMode]);
+            }, [gameState.isPlaying, gameState.gameOver, gameState.isPaused, gameState.timeRemaining, gameState.gameMode]);
 
             useEffect(() => {
                 if (gameState.isPlaying && !gameState.showFeedback && inputRef.current) {
                     inputRef.current.focus();
                 }
             }, [gameState.isPlaying, gameState.showFeedback, gameState.currentCompound]);
+
+            // Keyboard shortcuts
+            useEffect(() => {
+                const handleKeyDown = (e) => {
+                    // Don't trigger shortcuts when typing in input fields
+                    if (e.target.tagName === 'INPUT') {
+                        if (e.key === 'Enter' && !gameState.showFeedback && gameState.inputValidation.valid && gameState.userAnswer.trim()) {
+                            checkAnswer();
+                        }
+                        if (e.key === 'Escape') {
+                            e.target.blur();
+                        }
+                        return;
+                    }
+
+                    // Global shortcuts
+                    if (gameState.isPlaying && !gameState.gameOver) {
+                        if (e.key === 'Escape' || e.key === ' ') {
+                            e.preventDefault();
+                            setGameState(prev => ({ ...prev, isPaused: !prev.isPaused }));
+                        }
+                        if (e.key === '?' || e.key === 'h' || e.key === 'H') {
+                            e.preventDefault();
+                            setGameState(prev => ({ ...prev, showKeyboardHelp: !prev.showKeyboardHelp }));
+                        }
+                        if (e.key === 'p' || e.key === 'P') {
+                            e.preventDefault();
+                            setGameState(prev => ({ ...prev, showPeriodicTable: !prev.showPeriodicTable }));
+                        }
+                        if (e.key === 's' || e.key === 'S') {
+                            e.preventDefault();
+                            if (gameState.incorrectAttempts >= 2 || gameState.gameMode === 'practice') {
+                                handleShowSolution();
+                            }
+                        }
+                    }
+                };
+
+                document.addEventListener('keydown', handleKeyDown);
+                return () => document.removeEventListener('keydown', handleKeyDown);
+            }, [gameState.isPlaying, gameState.gameOver, gameState.showFeedback, gameState.inputValidation, gameState.userAnswer, gameState.showPeriodicTable, gameState.incorrectAttempts, gameState.gameMode]);
 
             if (showInstructions) {
                 return (
@@ -1131,6 +1254,79 @@
             return (
                 <div className={`min-h-screen bg-gradient-to-br ${bgGradient} p-4 md:p-8`}>
                     <div className="max-w-4xl mx-auto">
+                        {/* Pause Overlay */}
+                        {gameState.isPaused && (
+                            <div className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center">
+                                <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md mx-4 slide-down">
+                                    <h2 className="text-3xl font-bold text-center mb-6" style={{color: modeColor}}>⏸️ Hlé</h2>
+                                    <div className="space-y-4">
+                                        <button
+                                            onClick={() => setGameState(prev => ({ ...prev, isPaused: false }))}
+                                            className="w-full text-white font-bold py-4 px-6 rounded-xl transition-colors mobile-btn"
+                                            style={{backgroundColor: modeColor}}
+                                            onMouseOver={(e) => e.target.style.backgroundColor = modeColorDark}
+                                            onMouseOut={(e) => e.target.style.backgroundColor = modeColor}
+                                            aria-label="Halda áfram að spila"
+                                        >
+                                            ▶️ Halda áfram
+                                        </button>
+                                        <button
+                                            onClick={() => {
+                                                setGameState(prev => ({ ...prev, isPaused: false, isPlaying: false, gameOver: true }));
+                                            }}
+                                            className="w-full bg-gray-600 hover:bg-gray-700 text-white font-bold py-4 px-6 rounded-xl transition-colors mobile-btn"
+                                            aria-label="Hætta leik"
+                                        >
+                                            🛑 Hætta
+                                        </button>
+                                    </div>
+                                    <div className="mt-6 text-center text-sm text-gray-600">
+                                        <p>Flýtilyklar: Esc eða Bilslá</p>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Keyboard Help Popup */}
+                        {gameState.showKeyboardHelp && (
+                            <div className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center">
+                                <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md mx-4 slide-down">
+                                    <div className="flex justify-between items-center mb-6">
+                                        <h2 className="text-2xl font-bold" style={{color: modeColor}}>⌨️ Flýtilyklar</h2>
+                                        <button
+                                            onClick={() => setGameState(prev => ({ ...prev, showKeyboardHelp: false }))}
+                                            className="text-gray-500 hover:text-gray-700 font-bold text-2xl"
+                                            aria-label="Loka hjálp"
+                                        >
+                                            ✕
+                                        </button>
+                                    </div>
+                                    <div className="space-y-3 text-sm">
+                                        <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                                            <span className="font-semibold">Enter</span>
+                                            <span className="text-gray-600">Athuga svar</span>
+                                        </div>
+                                        <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                                            <span className="font-semibold">Esc / Bilslá</span>
+                                            <span className="text-gray-600">Hlé / Halda áfram</span>
+                                        </div>
+                                        <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                                            <span className="font-semibold">P</span>
+                                            <span className="text-gray-600">Sýna/fela lotukerfið</span>
+                                        </div>
+                                        <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                                            <span className="font-semibold">S</span>
+                                            <span className="text-gray-600">Sýna lausn</span>
+                                        </div>
+                                        <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                                            <span className="font-semibold">H / ?</span>
+                                            <span className="text-gray-600">Sýna þessa hjálp</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
                         {/* Header */}
                         <div className="bg-white rounded-2xl shadow-2xl p-6 mb-6">
                             <div className="flex justify-between items-center flex-wrap gap-4">
@@ -1138,7 +1334,7 @@
                                     {/* Timer - Only show in competition mode */}
                                     {gameState.gameMode === 'competition' && (
                                         <div className="text-center">
-                                            <div className="flex items-center gap-2 text-red-600 mb-1">
+                                            <div className={`flex items-center gap-2 mb-1 ${gameState.timeRemaining <= 10 ? 'text-red-600 animate-pulse' : 'text-red-600'}`}>
                                                 <span>⏰</span>
                                                 <span className="text-3xl font-bold">{gameState.timeRemaining}s</span>
                                             </div>
@@ -1183,6 +1379,34 @@
                                             <div className="text-xs text-gray-600">Röð!</div>
                                         </div>
                                     )}
+
+                                    {/* Control buttons */}
+                                    <div className="flex gap-2">
+                                        <button
+                                            onClick={() => setSoundEnabled(!soundEnabled)}
+                                            className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-3 rounded-lg mobile-btn"
+                                            aria-label={soundEnabled ? 'Slökkva á hljóði' : 'Kveikja á hljóði'}
+                                            title={soundEnabled ? 'Slökkva á hljóði' : 'Kveikja á hljóði'}
+                                        >
+                                            {soundEnabled ? '🔊' : '🔇'}
+                                        </button>
+                                        <button
+                                            onClick={() => setGameState(prev => ({ ...prev, isPaused: !prev.isPaused }))}
+                                            className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-3 rounded-lg mobile-btn"
+                                            aria-label="Hlé"
+                                            title="Hlé (Esc/Bilslá)"
+                                        >
+                                            ⏸️
+                                        </button>
+                                        <button
+                                            onClick={() => setGameState(prev => ({ ...prev, showKeyboardHelp: !prev.showKeyboardHelp }))}
+                                            className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-3 rounded-lg mobile-btn"
+                                            aria-label="Flýtilyklar"
+                                            title="Flýtilyklar (?)"
+                                        >
+                                            ⌨️
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
 
@@ -1253,20 +1477,42 @@
                                         <div className="text-sm text-gray-500">
                                             Reiknaðu mólþyngd í g/mol
                                         </div>
+
+                                        {/* Educational tooltips */}
+                                        <div className="mt-4 flex flex-wrap gap-2 justify-center text-xs">
+                                            {gameState.currentCompound.formula.match(/[₀-₉]/) && (
+                                                <div className="bg-blue-50 border border-blue-200 text-blue-800 px-3 py-2 rounded-lg" title="Hjálp">
+                                                    <span className="font-semibold">💡 Undirskrift:</span> H₂O þýðir 2 vetni + 1 súrefni
+                                                </div>
+                                            )}
+                                            {gameState.currentCompound.formula.includes('(') && (
+                                                <div className="bg-purple-50 border border-purple-200 text-purple-800 px-3 py-2 rounded-lg" title="Hjálp">
+                                                    <span className="font-semibold">💡 Svigi:</span> Ca(OH)₂ = Ca + 2×(O+H)
+                                                </div>
+                                            )}
+                                            {gameState.currentCompound.formula.includes('·') && (
+                                                <div className="bg-green-50 border border-green-200 text-green-800 px-3 py-2 rounded-lg" title="Hjálp">
+                                                    <span className="font-semibold">💡 Hýdröt:</span> ·5H₂O = bættu við 5 vatnsameindum
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
 
                                     {/* Helper Tools */}
                                     <div className="mb-4 text-center flex flex-wrap gap-2 justify-center">
                                         <button
                                             onClick={() => setGameState(prev => ({ ...prev, showPeriodicTable: !prev.showPeriodicTable }))}
-                                            className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg text-sm"
+                                            className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg text-sm mobile-btn"
+                                            aria-label={gameState.showPeriodicTable ? 'Fela lotukerfið' : 'Sýna lotukerfið'}
+                                            title="Flýtilykill: P"
                                         >
                                             {gameState.showPeriodicTable ? 'Fela lotukerfið' : 'Sýna lotukerfið'} 📊
                                         </button>
 
                                         <button
                                             onClick={handleElementCounter}
-                                            className="bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2 px-4 rounded-lg text-sm"
+                                            className="bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2 px-4 rounded-lg text-sm mobile-btn"
+                                            aria-label={gameState.showElementCounter ? 'Fela atómatalning' : 'Telja atóm'}
                                         >
                                             {gameState.showElementCounter ? 'Fela' : 'Telja atóm'} 🧮 {gameState.gameMode === 'competition' && !gameState.showElementCounter && '(-5 stig)'}
                                         </button>
@@ -1274,7 +1520,8 @@
                                         {gameState.hintsUsed < 3 && !gameState.showFeedback && (
                                             <button
                                                 onClick={() => handleHint(gameState.hintLevel + 1)}
-                                                className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-lg text-sm"
+                                                className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-lg text-sm mobile-btn"
+                                                aria-label={`Fá vísbendingu ${gameState.hintLevel + 1} af 3`}
                                             >
                                                 💡 Vísbending {gameState.hintLevel + 1}/3 {gameState.gameMode === 'competition' && `(-${[2, 3, 5][gameState.hintLevel]} stig)`}
                                             </button>
@@ -1434,12 +1681,13 @@
                                                     <input
                                                         ref={inputRef}
                                                         type="number"
+                                                        inputMode="decimal"
                                                         step="0.001"
                                                         value={gameState.userAnswer}
                                                         onChange={(e) => handleInputChange(e.target.value)}
                                                         onKeyPress={handleKeyPress}
                                                         placeholder="Mólþyngd í g/mol"
-                                                        className="w-full p-4 text-2xl border-4 rounded-xl focus:outline-none text-center font-bold"
+                                                        className={`w-full p-4 text-2xl border-4 rounded-xl focus:outline-none text-center font-bold mobile-input ${gameState.inputShake ? 'shake' : ''}`}
                                                         style={{
                                                             borderColor: !gameState.inputValidation.valid ? '#ef4444' : modeColor
                                                         }}
@@ -1453,6 +1701,7 @@
                                                                 e.target.style.borderColor = modeColor;
                                                             }
                                                         }}
+                                                        aria-label="Sláðu inn mólþyngd í g/mol"
                                                         autoFocus
                                                     />
                                                     {!gameState.inputValidation.valid && (
@@ -1464,16 +1713,18 @@
                                                 <button
                                                     onClick={checkAnswer}
                                                     disabled={!gameState.userAnswer.trim() || !gameState.inputValidation.valid}
-                                                    className="w-full text-white font-bold py-4 px-6 rounded-xl transition-colors text-xl disabled:bg-gray-300"
+                                                    className="w-full text-white font-bold py-4 px-6 rounded-xl transition-colors text-xl disabled:bg-gray-300 mobile-btn"
                                                     style={{backgroundColor: (gameState.userAnswer.trim() && gameState.inputValidation.valid) ? modeColor : undefined}}
                                                     onMouseOver={(e) => {if (gameState.userAnswer.trim() && gameState.inputValidation.valid) e.target.style.backgroundColor = modeColorDark}}
                                                     onMouseOut={(e) => {if (gameState.userAnswer.trim() && gameState.inputValidation.valid) e.target.style.backgroundColor = modeColor}}
+                                                    aria-label="Athuga svar"
+                                                    title="Flýtilykill: Enter"
                                                 >
                                                     Athuga svar ✓
                                                 </button>
                                             </div>
                                         ) : (
-                                            <div className={`p-6 rounded-xl ${gameState.lastAnswerCorrect ? 'bg-green-50 border-4 border-green-300' : 'bg-red-50 border-4 border-red-300'}`}>
+                                            <div className={`p-6 rounded-xl ${gameState.lastAnswerCorrect ? 'bg-green-50 border-4 border-green-300 glow' : 'bg-red-50 border-4 border-red-300'}`}>
                                                 <div className="text-center mb-4">
                                                     <div className="text-4xl mb-2">
                                                         {gameState.lastAnswerCorrect ? '✅' : '❌'}
@@ -1534,7 +1785,9 @@
                                                     {!gameState.lastAnswerCorrect && !gameState.showSolution && (gameState.incorrectAttempts >= 2 || gameState.gameMode === 'practice') && (
                                                         <button
                                                             onClick={handleShowSolution}
-                                                            className="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-6 rounded-xl transition-colors"
+                                                            className="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-6 rounded-xl transition-colors mobile-btn"
+                                                            aria-label="Sýna lausn"
+                                                            title="Flýtilykill: S"
                                                         >
                                                             💡 Sýna lausn {gameState.gameMode === 'competition' && '(+3 stig)'}
                                                         </button>
@@ -1544,7 +1797,8 @@
                                                     {(gameState.gameMode === 'practice' || gameState.showSolution) && (
                                                         <button
                                                             onClick={handleNextQuestion}
-                                                            className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-xl transition-colors"
+                                                            className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-xl transition-colors mobile-btn"
+                                                            aria-label="Næsta spurning"
                                                         >
                                                             Næsta spurning →
                                                         </button>
@@ -1554,7 +1808,8 @@
                                                     {!gameState.lastAnswerCorrect && !gameState.showSolution && gameState.incorrectAttempts < 2 && gameState.gameMode === 'competition' && (
                                                         <button
                                                             onClick={() => setGameState(prev => ({ ...prev, showFeedback: false, userAnswer: '' }))}
-                                                            className="w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-xl transition-colors"
+                                                            className="w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-xl transition-colors mobile-btn"
+                                                            aria-label="Reyna aftur"
                                                         >
                                                             ↻ Reyna aftur
                                                         </button>

@@ -131,7 +131,7 @@
             <a href="/" class="site-logo">Kvenno Efnafræði</a>
             <div>
                 <button class="header-btn" onclick="alert('Admin aðgangur kemur fljótlega')">Admin</button>
-                <button class="header-btn" onclick="alert('Upplýsingar um leiki og notkun')">Info</button>
+                <button class="header-btn" onclick="alert('Upplýsingar um leiki og notkun')">Upplýsingar</button>
             </div>
         </div>
     </header>
@@ -151,26 +151,26 @@
         const { useState, useEffect, useRef } = React;
 
         const elements = [
-            { symbol: 'H', name: 'Hydrogen', atomicMass: 1.008 },
-            { symbol: 'C', name: 'Carbon', atomicMass: 12.011 },
-            { symbol: 'N', name: 'Nitrogen', atomicMass: 14.007 },
-            { symbol: 'O', name: 'Oxygen', atomicMass: 15.999 },
-            { symbol: 'F', name: 'Fluorine', atomicMass: 18.998 },
-            { symbol: 'Na', name: 'Sodium', atomicMass: 22.990 },
-            { symbol: 'Mg', name: 'Magnesium', atomicMass: 24.305 },
-            { symbol: 'Al', name: 'Aluminum', atomicMass: 26.982 },
-            { symbol: 'Si', name: 'Silicon', atomicMass: 28.086 },
-            { symbol: 'P', name: 'Phosphorus', atomicMass: 30.974 },
-            { symbol: 'S', name: 'Sulfur', atomicMass: 32.06 },
-            { symbol: 'Cl', name: 'Chlorine', atomicMass: 35.45 },
-            { symbol: 'K', name: 'Potassium', atomicMass: 39.098 },
-            { symbol: 'Ca', name: 'Calcium', atomicMass: 40.078 },
-            { symbol: 'Fe', name: 'Iron', atomicMass: 55.845 },
-            { symbol: 'Cu', name: 'Copper', atomicMass: 63.546 },
-            { symbol: 'Zn', name: 'Zinc', atomicMass: 65.38 },
-            { symbol: 'Br', name: 'Bromine', atomicMass: 79.904 },
-            { symbol: 'Ag', name: 'Silver', atomicMass: 107.868 },
-            { symbol: 'I', name: 'Iodine', atomicMass: 126.904 },
+            { symbol: 'H', name: 'Vetni', atomicMass: 1.008 },
+            { symbol: 'C', name: 'Kolefni', atomicMass: 12.011 },
+            { symbol: 'N', name: 'Köfnunarefni', atomicMass: 14.007 },
+            { symbol: 'O', name: 'Súrefni', atomicMass: 15.999 },
+            { symbol: 'F', name: 'Flúor', atomicMass: 18.998 },
+            { symbol: 'Na', name: 'Natríum', atomicMass: 22.990 },
+            { symbol: 'Mg', name: 'Magnesíum', atomicMass: 24.305 },
+            { symbol: 'Al', name: 'Ál', atomicMass: 26.982 },
+            { symbol: 'Si', name: 'Kísill', atomicMass: 28.086 },
+            { symbol: 'P', name: 'Fosfór', atomicMass: 30.974 },
+            { symbol: 'S', name: 'Brennisteinn', atomicMass: 32.06 },
+            { symbol: 'Cl', name: 'Klór', atomicMass: 35.45 },
+            { symbol: 'K', name: 'Kalíum', atomicMass: 39.098 },
+            { symbol: 'Ca', name: 'Kalsíum', atomicMass: 40.078 },
+            { symbol: 'Fe', name: 'Járn', atomicMass: 55.845 },
+            { symbol: 'Cu', name: 'Kopar', atomicMass: 63.546 },
+            { symbol: 'Zn', name: 'Sink', atomicMass: 65.38 },
+            { symbol: 'Br', name: 'Bróm', atomicMass: 79.904 },
+            { symbol: 'Ag', name: 'Silfur', atomicMass: 107.868 },
+            { symbol: 'I', name: 'Joð', atomicMass: 126.904 },
         ];
 
         const compoundsList = [
@@ -218,12 +218,156 @@
                 lastAnswerCorrect: null,
                 streak: 0,
                 bestStreak: 0,
-                showPeriodicTable: false
+                showPeriodicTable: false,
+                inputValidation: { valid: true, error: '' },
+                calculationBreakdown: null,
+                contextualFeedback: ''
             });
 
             const [showInstructions, setShowInstructions] = useState(true);
+            const [periodicTableSearch, setPeriodicTableSearch] = useState('');
             const inputRef = useRef(null);
             const timerRef = useRef(null);
+
+            // Input validation function
+            const validateInput = (value) => {
+                if (!value || value.trim() === '') {
+                    return { valid: true, error: '' };
+                }
+
+                // Handle scientific notation
+                const num = parseFloat(value);
+
+                if (isNaN(num)) {
+                    return { valid: false, error: 'Sláðu inn gilda tölu' };
+                }
+
+                if (num <= 0) {
+                    return { valid: false, error: 'Sláðu inn jákvæða tölu' };
+                }
+
+                if (num >= 1000) {
+                    return { valid: false, error: 'Sláðu inn tölu á milli 0 og 1000' };
+                }
+
+                return { valid: true, error: '' };
+            };
+
+            // Generate calculation breakdown
+            const generateCalculationBreakdown = (compound) => {
+                const breakdown = [];
+                const isHydrate = compound.formula.includes('·');
+
+                if (isHydrate) {
+                    // Handle hydrates separately
+                    const parts = compound.formula.split('·');
+                    const mainFormula = parts[0];
+                    const waterPart = parts[1];
+
+                    // Extract water multiplier (e.g., "5H₂O" -> 5)
+                    const waterMatch = waterPart.match(/^(\d+)/);
+                    const waterMultiplier = waterMatch ? parseInt(waterMatch[1]) : 1;
+
+                    breakdown.push({ type: 'section', label: `Aðalefni (${mainFormula}):` });
+
+                    // Get elements from main compound
+                    const mainElements = compound.elements.filter(el => {
+                        if (el.symbol === 'H' || el.symbol === 'O') {
+                            // For hydrates, we need to calculate which H and O belong to main compound
+                            return true; // We'll handle this in compound data
+                        }
+                        return true;
+                    });
+
+                    // For simplicity, we'll use the compound.elements data
+                    // Add non-water elements first
+                    compound.elements.forEach(el => {
+                        if (el.symbol !== 'H' && el.symbol !== 'O') {
+                            const element = elements.find(e => e.symbol === el.symbol);
+                            if (element) {
+                                breakdown.push({
+                                    type: 'calculation',
+                                    symbol: el.symbol,
+                                    count: el.count,
+                                    atomicMass: element.atomicMass,
+                                    total: el.count * element.atomicMass
+                                });
+                            }
+                        }
+                    });
+
+                    // Add O and H from main compound (need to calculate)
+                    const totalH = compound.elements.find(e => e.symbol === 'H')?.count || 0;
+                    const totalO = compound.elements.find(e => e.symbol === 'O')?.count || 0;
+                    const waterH = waterMultiplier * 2;
+                    const waterO = waterMultiplier * 1;
+                    const mainO = totalO - waterO;
+
+                    if (mainO > 0) {
+                        const oElement = elements.find(e => e.symbol === 'O');
+                        breakdown.push({
+                            type: 'calculation',
+                            symbol: 'O',
+                            count: mainO,
+                            atomicMass: oElement.atomicMass,
+                            total: mainO * oElement.atomicMass
+                        });
+                    }
+
+                    breakdown.push({ type: 'section', label: `Vatn (${waterMultiplier}H₂O):` });
+
+                    const hElement = elements.find(e => e.symbol === 'H');
+                    const oElement = elements.find(e => e.symbol === 'O');
+
+                    breakdown.push({
+                        type: 'calculation',
+                        symbol: 'H',
+                        count: waterH,
+                        atomicMass: hElement.atomicMass,
+                        total: waterH * hElement.atomicMass
+                    });
+
+                    breakdown.push({
+                        type: 'calculation',
+                        symbol: 'O',
+                        count: waterO,
+                        atomicMass: oElement.atomicMass,
+                        total: waterO * oElement.atomicMass
+                    });
+                } else {
+                    // Regular compound
+                    compound.elements.forEach(el => {
+                        const element = elements.find(e => e.symbol === el.symbol);
+                        if (element) {
+                            breakdown.push({
+                                type: 'calculation',
+                                symbol: el.symbol,
+                                count: el.count,
+                                atomicMass: element.atomicMass,
+                                total: el.count * element.atomicMass
+                            });
+                        }
+                    });
+                }
+
+                return breakdown;
+            };
+
+            // Generate contextual feedback based on error magnitude
+            const generateContextualFeedback = (userValue, correctValue) => {
+                const percentError = Math.abs((userValue - correctValue) / correctValue) * 100;
+
+                if (percentError > 50) {
+                    return 'Miklu of langt frá! Athugaðu hvort þú gleymdir frumefni';
+                } else if (percentError > 20) {
+                    return 'Ekki rétt. Athugaðu fjölda atóma';
+                } else if (percentError > 5) {
+                    return 'Nálægt en ekki alveg! Athugaðu aukastafi';
+                } else if (percentError > 1) {
+                    return 'Mjög nálægt! Athugaðu útreikning þinn vandlega';
+                }
+                return '';
+            };
 
             const generateQuestion = (difficulty) => {
                 let availableCompounds;
@@ -270,6 +414,10 @@
                 const streakBonus = gameState.streak >= 3 ? 5 : 0;
                 const timeBonus = gameState.timeRemaining > 60 ? 5 : gameState.timeRemaining > 30 ? 3 : 0;
 
+                // Generate calculation breakdown and contextual feedback
+                const breakdown = generateCalculationBreakdown(gameState.currentCompound);
+                const feedback = !isCorrect ? generateContextualFeedback(userValue, correctAnswer) : '';
+
                 setGameState(prev => ({
                     ...prev,
                     score: isCorrect ? prev.score + pointValue + streakBonus + timeBonus : prev.score,
@@ -278,7 +426,9 @@
                     showFeedback: true,
                     lastAnswerCorrect: isCorrect,
                     streak: isCorrect ? prev.streak + 1 : 0,
-                    bestStreak: isCorrect && prev.streak + 1 > prev.bestStreak ? prev.streak + 1 : prev.bestStreak
+                    bestStreak: isCorrect && prev.streak + 1 > prev.bestStreak ? prev.streak + 1 : prev.bestStreak,
+                    calculationBreakdown: breakdown,
+                    contextualFeedback: feedback
                 }));
 
                 setTimeout(() => {
@@ -289,15 +439,27 @@
                             currentCompound: nextQuestion,
                             userAnswer: '',
                             showFeedback: false,
-                            lastAnswerCorrect: null
+                            lastAnswerCorrect: null,
+                            calculationBreakdown: null,
+                            contextualFeedback: '',
+                            inputValidation: { valid: true, error: '' }
                         }));
                         if (inputRef.current) inputRef.current.focus();
                     }
                 }, 1500);
             };
 
+            const handleInputChange = (value) => {
+                const validation = validateInput(value);
+                setGameState(prev => ({
+                    ...prev,
+                    userAnswer: value,
+                    inputValidation: validation
+                }));
+            };
+
             const handleKeyPress = (e) => {
-                if (e.key === 'Enter' && !gameState.showFeedback) {
+                if (e.key === 'Enter' && !gameState.showFeedback && gameState.inputValidation.valid && gameState.userAnswer.trim()) {
                     checkAnswer();
                 }
             };
@@ -651,15 +813,74 @@
                                     </div>
 
                                     {gameState.showPeriodicTable && (
-                                        <div className="mb-6 bg-blue-50 p-4 rounded-xl max-h-60 overflow-y-auto">
-                                            <h4 className="font-semibold mb-2 text-center">Lotukerfið</h4>
-                                            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
-                                                {elements.map(el => (
-                                                    <div key={el.symbol} className="bg-white p-2 rounded border border-blue-200">
-                                                        <div className="font-bold">{el.symbol}</div>
-                                                        <div className="text-xs text-gray-600">{el.atomicMass.toFixed(3)}</div>
-                                                    </div>
-                                                ))}
+                                        <div className="mb-6 bg-blue-50 p-4 rounded-xl">
+                                            <h4 className="font-semibold mb-3 text-center text-lg">Lotukerfið</h4>
+
+                                            {/* Search box */}
+                                            <div className="mb-3">
+                                                <input
+                                                    type="text"
+                                                    placeholder="Leita að frumefni..."
+                                                    value={periodicTableSearch}
+                                                    onChange={(e) => setPeriodicTableSearch(e.target.value)}
+                                                    className="w-full p-2 border-2 border-blue-300 rounded-lg focus:outline-none focus:border-blue-500"
+                                                />
+                                            </div>
+
+                                            {/* Common elements section */}
+                                            <div className="mb-3">
+                                                <h5 className="font-semibold text-sm mb-2">Algeng frumefni:</h5>
+                                                <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
+                                                    {['H', 'C', 'N', 'O', 'S', 'Cl'].map(symbol => {
+                                                        const el = elements.find(e => e.symbol === symbol);
+                                                        const isInCompound = gameState.currentCompound?.elements.some(e => e.symbol === symbol);
+                                                        return el ? (
+                                                            <div
+                                                                key={el.symbol}
+                                                                className={`p-2 rounded border-2 text-center ${
+                                                                    isInCompound
+                                                                        ? 'bg-yellow-100 border-yellow-400'
+                                                                        : 'bg-white border-blue-300'
+                                                                }`}
+                                                            >
+                                                                <div className="font-bold text-lg">{el.symbol}</div>
+                                                                <div className="text-xs text-gray-600">{el.name}</div>
+                                                                <div className="font-semibold text-sm">{el.atomicMass.toFixed(3)}</div>
+                                                            </div>
+                                                        ) : null;
+                                                    })}
+                                                </div>
+                                            </div>
+
+                                            {/* All elements - scrollable */}
+                                            <div className="max-h-96 overflow-y-auto">
+                                                <h5 className="font-semibold text-sm mb-2">Öll frumefni:</h5>
+                                                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                                                    {elements
+                                                        .filter(el => {
+                                                            if (!periodicTableSearch) return true;
+                                                            const search = periodicTableSearch.toLowerCase();
+                                                            return el.symbol.toLowerCase().includes(search) ||
+                                                                   el.name.toLowerCase().includes(search);
+                                                        })
+                                                        .map(el => {
+                                                            const isInCompound = gameState.currentCompound?.elements.some(e => e.symbol === el.symbol);
+                                                            return (
+                                                                <div
+                                                                    key={el.symbol}
+                                                                    className={`p-2 rounded border-2 text-center ${
+                                                                        isInCompound
+                                                                            ? 'bg-yellow-100 border-yellow-400'
+                                                                            : 'bg-white border-blue-200'
+                                                                    }`}
+                                                                >
+                                                                    <div className="font-bold text-lg">{el.symbol}</div>
+                                                                    <div className="text-xs text-gray-600">{el.name}</div>
+                                                                    <div className="font-semibold text-sm">{el.atomicMass.toFixed(3)}</div>
+                                                                </div>
+                                                            );
+                                                        })}
+                                                </div>
                                             </div>
                                         </div>
                                     )}
@@ -668,40 +889,62 @@
                                     <div className="max-w-md mx-auto">
                                         {!gameState.showFeedback ? (
                                             <div className="space-y-4">
-                                                <input
-                                                    ref={inputRef}
-                                                    type="number"
-                                                    step="0.001"
-                                                    value={gameState.userAnswer}
-                                                    onChange={(e) => setGameState(prev => ({ ...prev, userAnswer: e.target.value }))}
-                                                    onKeyPress={handleKeyPress}
-                                                    placeholder="Mólþyngd í g/mol"
-                                                    className="w-full p-4 text-2xl border-4 rounded-xl focus:outline-none text-center font-bold"
-                                                    style={{borderColor: 'var(--kvenno-orange)'}}
-                                                    onFocus={(e) => e.target.style.borderColor = 'var(--kvenno-orange-dark)'}
-                                                    onBlur={(e) => e.target.style.borderColor = 'var(--kvenno-orange)'}
-                                                    autoFocus
-                                                />
+                                                <div>
+                                                    <input
+                                                        ref={inputRef}
+                                                        type="number"
+                                                        step="0.001"
+                                                        value={gameState.userAnswer}
+                                                        onChange={(e) => handleInputChange(e.target.value)}
+                                                        onKeyPress={handleKeyPress}
+                                                        placeholder="Mólþyngd í g/mol"
+                                                        className="w-full p-4 text-2xl border-4 rounded-xl focus:outline-none text-center font-bold"
+                                                        style={{
+                                                            borderColor: !gameState.inputValidation.valid ? '#ef4444' : 'var(--kvenno-orange)'
+                                                        }}
+                                                        onFocus={(e) => {
+                                                            if (gameState.inputValidation.valid) {
+                                                                e.target.style.borderColor = 'var(--kvenno-orange-dark)';
+                                                            }
+                                                        }}
+                                                        onBlur={(e) => {
+                                                            if (gameState.inputValidation.valid) {
+                                                                e.target.style.borderColor = 'var(--kvenno-orange)';
+                                                            }
+                                                        }}
+                                                        autoFocus
+                                                    />
+                                                    {!gameState.inputValidation.valid && (
+                                                        <div className="text-red-600 text-sm mt-2 text-center font-semibold">
+                                                            {gameState.inputValidation.error}
+                                                        </div>
+                                                    )}
+                                                </div>
                                                 <button
                                                     onClick={checkAnswer}
-                                                    disabled={!gameState.userAnswer.trim()}
+                                                    disabled={!gameState.userAnswer.trim() || !gameState.inputValidation.valid}
                                                     className="w-full text-white font-bold py-4 px-6 rounded-xl transition-colors text-xl disabled:bg-gray-300"
-                                                    style={{backgroundColor: gameState.userAnswer.trim() ? 'var(--kvenno-orange)' : undefined}}
-                                                    onMouseOver={(e) => {if (gameState.userAnswer.trim()) e.target.style.backgroundColor = 'var(--kvenno-orange-dark)'}}
-                                                    onMouseOut={(e) => {if (gameState.userAnswer.trim()) e.target.style.backgroundColor = 'var(--kvenno-orange)'}}
+                                                    style={{backgroundColor: (gameState.userAnswer.trim() && gameState.inputValidation.valid) ? 'var(--kvenno-orange)' : undefined}}
+                                                    onMouseOver={(e) => {if (gameState.userAnswer.trim() && gameState.inputValidation.valid) e.target.style.backgroundColor = 'var(--kvenno-orange-dark)'}}
+                                                    onMouseOut={(e) => {if (gameState.userAnswer.trim() && gameState.inputValidation.valid) e.target.style.backgroundColor = 'var(--kvenno-orange)'}}
                                                 >
                                                     Athuga svar ✓
                                                 </button>
                                             </div>
                                         ) : (
                                             <div className={`p-6 rounded-xl ${gameState.lastAnswerCorrect ? 'bg-green-50 border-4 border-green-300' : 'bg-red-50 border-4 border-red-300'}`}>
-                                                <div className="text-center">
+                                                <div className="text-center mb-4">
                                                     <div className="text-4xl mb-2">
                                                         {gameState.lastAnswerCorrect ? '✅' : '❌'}
                                                     </div>
                                                     <div className="text-2xl font-bold mb-2">
                                                         {gameState.lastAnswerCorrect ? 'Rétt!' : 'Rangt'}
                                                     </div>
+                                                    {!gameState.lastAnswerCorrect && gameState.contextualFeedback && (
+                                                        <div className="text-lg text-red-700 mb-3 font-semibold">
+                                                            {gameState.contextualFeedback}
+                                                        </div>
+                                                    )}
                                                     <div className="text-lg text-gray-700">
                                                         Rétt svar: <span className="font-bold">{gameState.currentCompound.molarMass.toFixed(3)} g/mol</span>
                                                     </div>
@@ -711,6 +954,33 @@
                                                         </div>
                                                     )}
                                                 </div>
+
+                                                {/* Calculation Breakdown */}
+                                                {gameState.calculationBreakdown && (
+                                                    <div className={`text-left p-4 rounded-lg ${gameState.lastAnswerCorrect ? 'bg-green-100' : 'bg-red-100'}`}>
+                                                        <h4 className="font-bold text-center mb-2">Útreikningur:</h4>
+                                                        <div className="font-mono text-sm">
+                                                            {gameState.calculationBreakdown.map((item, idx) => {
+                                                                if (item.type === 'section') {
+                                                                    return (
+                                                                        <div key={idx} className="font-bold mt-2 mb-1">
+                                                                            {item.label}
+                                                                        </div>
+                                                                    );
+                                                                } else {
+                                                                    return (
+                                                                        <div key={idx}>
+                                                                            {item.symbol}: {item.count} × {item.atomicMass} = {item.total.toFixed(3)}
+                                                                        </div>
+                                                                    );
+                                                                }
+                                                            })}
+                                                            <div className="border-t-2 border-gray-400 mt-2 pt-2 font-bold">
+                                                                Samtals: {gameState.currentCompound.molarMass.toFixed(3)} g/mol
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                )}
                                             </div>
                                         )}
                                     </div>

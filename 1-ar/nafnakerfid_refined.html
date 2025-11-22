@@ -1,0 +1,1734 @@
+<!DOCTYPE html>
+<html lang="is">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nafnapör - Kvenno Efnafræði</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --kvenno-orange: #f36b22;
+            --kvenno-orange-dark: #d95a1a;
+            --practice-green: #10b981;
+            --practice-green-dark: #059669;
+        }
+
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+                'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+                sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background: #f9fafb;
+        }
+
+        .site-header {
+            background: white;
+            border-bottom: 2px solid #e5e7eb;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            height: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .site-logo {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: var(--kvenno-orange);
+            text-decoration: none;
+        }
+
+        .site-logo:hover {
+            color: var(--kvenno-orange-dark);
+        }
+
+        .header-btn {
+            background: white;
+            border: 2px solid var(--kvenno-orange);
+            color: var(--kvenno-orange);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-left: 0.5rem;
+        }
+
+        .header-btn:hover {
+            background: var(--kvenno-orange);
+            color: white;
+        }
+
+        .breadcrumb {
+            color: #6b7280;
+            font-size: 0.875rem;
+            padding: 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .breadcrumb a {
+            color: var(--kvenno-orange);
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .back-btn {
+            background: white;
+            border: 2px solid var(--kvenno-orange);
+            color: var(--kvenno-orange);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            font-size: 0.875rem;
+            margin: 0 1rem 1rem 1rem;
+        }
+
+        .back-btn:hover {
+            background: var(--kvenno-orange);
+            color: white;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Card flip animation with 3D effect */
+        .card {
+            perspective: 1000px;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover:not(:disabled) {
+            transform: scale(1.05);
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-back {
+            transform: rotateY(180deg);
+        }
+
+        /* Match success animation */
+        @keyframes matchGlow {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            50% { box-shadow: 0 0 20px 10px rgba(16, 185, 129, 0.3); }
+        }
+
+        .matched {
+            animation: matchGlow 1s ease-in-out;
+        }
+
+        /* Wrong match shake animation */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .shake {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        /* Confetti animation */
+        @keyframes confetti-fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: var(--kvenno-orange);
+            animation: confetti-fall 3s linear forwards;
+            pointer-events: none;
+        }
+
+        /* Mobile optimization - ensure cards are touch-friendly */
+        @media (max-width: 640px) {
+            .card {
+                min-width: 60px;
+                min-height: 60px;
+            }
+        }
+
+        /* High contrast mode */
+        .high-contrast {
+            filter: contrast(1.5);
+        }
+
+        /* Accessibility - focus indicators */
+        .card:focus {
+            outline: 3px solid var(--kvenno-orange);
+            outline-offset: 2px;
+        }
+
+        /* Popup animations */
+        @keyframes slideIn {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .popup {
+            animation: slideIn 0.3s ease-out;
+        }
+
+        /* Streak fire effect */
+        @keyframes fireFlicker {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        .fire-icon {
+            animation: fireFlicker 0.5s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body>
+    <!-- Site Header -->
+    <header class="site-header">
+        <div class="header-content">
+            <a href="/" class="site-logo">Kvenno Efnafræði</a>
+            <div class="header-actions">
+                <button class="header-btn" onclick="alert('Stjórnendaaðgangur í þróun')">Stjórnandi</button>
+                <button class="header-btn" onclick="alert('Hjálp og upplýsingar um leikina')">Upplýsingar</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Breadcrumbs -->
+    <div class="breadcrumb">
+        <a href="/">Heim</a> > <a href="/1-ar/">1. ár</a> > <a href="/1-ar/games/">Leikir</a> > <span>Nafnapör</span>
+    </div>
+
+    <!-- Back Button -->
+    <div class="nav-container">
+        <a href="/1-ar/games/" class="back-btn">
+            <span>←</span>
+            <span>Til baka</span>
+        </a>
+    </div>
+
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef, useCallback } = React;
+
+        /* ========================================
+           COMPOUND DATA - ALL IN ICELANDIC
+           NO ACIDS (students learn acids later)
+           Appropriate for 1st year (ages 15-16)
+           ======================================== */
+
+        const compounds = [
+            // AUÐVELT / EASY (10 compounds)
+            { formula: 'NaCl', name: 'Natrímklóríð', type: 'ionic', category: 'jónefni', difficulty: 'easy',
+              elements: ['Na', 'Cl'], info: 'Málmur + Málmleysingi → Jónefni' },
+            { formula: 'H₂O', name: 'Vatn', type: 'molecular', category: 'sameind', difficulty: 'easy',
+              elements: ['H', 'O'], info: 'Eina efnið með sérheiti!' },
+            { formula: 'CO₂', name: 'Koldíoxíð', type: 'molecular', category: 'sameind', difficulty: 'easy',
+              elements: ['C', 'O'], info: 'Tvíefni: tvær súrefniseiningar' },
+            { formula: 'NH₃', name: 'Ammóníak', type: 'molecular', category: 'sameind', difficulty: 'easy',
+              elements: ['N', 'H'], info: 'Algengt efnasamband' },
+            { formula: 'MgO', name: 'Magnesíumoxíð', type: 'ionic', category: 'jónefni', difficulty: 'easy',
+              elements: ['Mg', 'O'], info: 'Málmur + Súrefni → Oxíð' },
+            { formula: 'CaCl₂', name: 'Kalsíumklóríð', type: 'ionic', category: 'jónefni', difficulty: 'easy',
+              elements: ['Ca', 'Cl'], info: 'Ca²⁺ þarf tvö Cl⁻ jónir' },
+            { formula: 'KBr', name: 'Kalíumbrómíð', type: 'ionic', category: 'jónefni', difficulty: 'easy',
+              elements: ['K', 'Br'], info: 'Endi -íð fyrir tvíefni' },
+            { formula: 'LiF', name: 'Litíumflúoríð', type: 'ionic', category: 'jónefni', difficulty: 'easy',
+              elements: ['Li', 'F'], info: 'Einfaldasta jónefnið' },
+            { formula: 'CH₄', name: 'Metan', type: 'molecular', category: 'sameind', difficulty: 'easy',
+              elements: ['C', 'H'], info: 'Einfaldasta kolvetnið' },
+            { formula: 'O₂', name: 'Súrefni', type: 'molecular', category: 'sameind', difficulty: 'easy',
+              elements: ['O'], info: 'Tvíatóma sameind' },
+
+            // AUÐVELT / EASY - ADDITIONS (9 more)
+            { formula: 'N₂', name: 'Köfnunarefni', type: 'molecular', category: 'sameind', difficulty: 'easy',
+              elements: ['N'], info: 'Tvíatóma sameind' },
+            { formula: 'H₂', name: 'Vetni', type: 'molecular', category: 'sameind', difficulty: 'easy',
+              elements: ['H'], info: 'Léttasta frumefnið' },
+            { formula: 'Cl₂', name: 'Klór', type: 'molecular', category: 'sameind', difficulty: 'easy',
+              elements: ['Cl'], info: 'Grænt gas' },
+            { formula: 'NaF', name: 'Natrímflúoríð', type: 'ionic', category: 'jónefni', difficulty: 'easy',
+              elements: ['Na', 'F'], info: 'Notað í tannkremi' },
+            { formula: 'KCl', name: 'Kalíumklóríð', type: 'ionic', category: 'jónefni', difficulty: 'easy',
+              elements: ['K', 'Cl'], info: 'Líkt og borðsalt' },
+            { formula: 'BaO', name: 'Baríumoxíð', type: 'ionic', category: 'jónefni', difficulty: 'easy',
+              elements: ['Ba', 'O'], info: 'Málmoxíð' },
+            { formula: 'AlCl₃', name: 'Álklóríð', type: 'ionic', category: 'jónefni', difficulty: 'easy',
+              elements: ['Al', 'Cl'], info: 'Ál hefur +3 hleðslu' },
+            { formula: 'Na₂O', name: 'Natrímoxíð', type: 'ionic', category: 'jónefni', difficulty: 'easy',
+              elements: ['Na', 'O'], info: 'Tvö Na⁺ fyrir hvert O²⁻' },
+            { formula: 'MgCl₂', name: 'Magnesíumklóríð', type: 'ionic', category: 'jónefni', difficulty: 'easy',
+              elements: ['Mg', 'Cl'], info: 'Algengt salt' },
+
+            // MIÐLUNGS / MEDIUM (10 compounds - NO ACIDS!)
+            { formula: 'Al₂O₃', name: 'Áloxíð', type: 'ionic', category: 'jónefni', difficulty: 'medium',
+              elements: ['Al', 'O'], info: 'Tvö ál, þrjú súrefni' },
+            { formula: 'Fe₂O₃', name: 'Járn(III)oxíð', type: 'ionic', category: 'málmar-breytilega-hleðsla', difficulty: 'medium',
+              elements: ['Fe', 'O'], info: 'Járn með +3 hleðslu - rust' },
+            { formula: 'CuSO₄', name: 'Kopar(II)súlfat', type: 'ionic', category: 'málmar-breytilega-hleðsla', difficulty: 'medium',
+              elements: ['Cu', 'S', 'O'], info: 'Kopar + Súlfat (SO₄²⁻)' },
+            { formula: 'Na₂CO₃', name: 'Natrímkarbónat', type: 'ionic', category: 'jónefni', difficulty: 'medium',
+              elements: ['Na', 'C', 'O'], info: 'Sameindajón: CO₃²⁻ (karbónat)' },
+            { formula: 'NH₄Cl', name: 'Ammóníumklóríð', type: 'ionic', category: 'jónefni', difficulty: 'medium',
+              elements: ['N', 'H', 'Cl'], info: 'Ammóníum (NH₄⁺) + Klóríð' },
+            { formula: 'NaOH', name: 'Natrímhýdroxíð', type: 'ionic', category: 'jónefni', difficulty: 'medium',
+              elements: ['Na', 'O', 'H'], info: 'Sterkt basi, hýdroxíð (OH⁻)' },
+            { formula: 'Ca(OH)₂', name: 'Kalsíumhýdroxíð', type: 'ionic', category: 'jónefni', difficulty: 'medium',
+              elements: ['Ca', 'O', 'H'], info: 'Ca²⁺ + tvö OH⁻' },
+            { formula: 'KNO₃', name: 'Kalíumnítrat', type: 'ionic', category: 'jónefni', difficulty: 'medium',
+              elements: ['K', 'N', 'O'], info: 'Sameindajón: NO₃⁻ (nítrat)' },
+            { formula: 'N₂O₄', name: 'Tvíköfnunartetróxíð', type: 'molecular', category: 'sameind', difficulty: 'medium',
+              elements: ['N', 'O'], info: 'Tvö köfnunarefni, fjögur súrefni' },
+            { formula: 'SO₂', name: 'Brennisteinsdíoxíð', type: 'molecular', category: 'sameind', difficulty: 'medium',
+              elements: ['S', 'O'], info: 'Mengun frá brennisteinsneitun' },
+
+            // MIÐLUNGS / MEDIUM - ADDITIONS (7 more)
+            { formula: 'K₂SO₄', name: 'Kalíumsúlfat', type: 'ionic', category: 'jónefni', difficulty: 'medium',
+              elements: ['K', 'S', 'O'], info: 'Tvö kalíum + súlfat' },
+            { formula: 'ZnO', name: 'Sinkoxíð', type: 'ionic', category: 'jónefni', difficulty: 'medium',
+              elements: ['Zn', 'O'], info: 'Notað í sólarvörn' },
+            { formula: 'Na₂SO₄', name: 'Natrí​umsúlfat', type: 'ionic', category: 'jónefni', difficulty: 'medium',
+              elements: ['Na', 'S', 'O'], info: 'Algengur í sápu' },
+            { formula: 'CaCO₃', name: 'Kalsíumkarbónat', type: 'ionic', category: 'jónefni', difficulty: 'medium',
+              elements: ['Ca', 'C', 'O'], info: 'Kalksteinn, skeljabrot' },
+            { formula: 'AgCl', name: 'Silfurklóríð', type: 'ionic', category: 'jónefni', difficulty: 'medium',
+              elements: ['Ag', 'Cl'], info: 'Hvítur úrfellingur' },
+            { formula: 'ZnCl₂', name: 'Sinkklóríð', type: 'ionic', category: 'jónefni', difficulty: 'medium',
+              elements: ['Zn', 'Cl'], info: 'Sink + klór' },
+            { formula: 'BaCl₂', name: 'Baríumklóríð', type: 'ionic', category: 'jónefni', difficulty: 'medium',
+              elements: ['Ba', 'Cl'], info: 'Baríum + klór' },
+
+            // ERFITT / HARD (12 compounds - NO ACIDS!)
+            { formula: 'FeCl₃', name: 'Járn(III)klóríð', type: 'ionic', category: 'málmar-breytilega-hleðsla', difficulty: 'hard',
+              elements: ['Fe', 'Cl'], info: 'Járn með +3 hleðslu' },
+            { formula: 'CuO', name: 'Kopar(II)oxíð', type: 'ionic', category: 'málmar-breytilega-hleðsla', difficulty: 'hard',
+              elements: ['Cu', 'O'], info: 'Kopar með +2 hleðslu' },
+            { formula: '(NH₄)₂SO₄', name: 'Ammóníumsúlfat', type: 'ionic', category: 'jónefni', difficulty: 'hard',
+              elements: ['N', 'H', 'S', 'O'], info: 'Tvö ammóníum + eitt súlfat' },
+            { formula: 'Ca₃(PO₄)₂', name: 'Kalsíumfosfat', type: 'ionic', category: 'jónefni', difficulty: 'hard',
+              elements: ['Ca', 'P', 'O'], info: '3 kalsíum + 2 fosfat (PO₄³⁻)' },
+            { formula: 'Mg(NO₃)₂', name: 'Magnesíumnítrat', type: 'ionic', category: 'jónefni', difficulty: 'hard',
+              elements: ['Mg', 'N', 'O'], info: 'Mg²⁺ + tvö nítrat' },
+            { formula: 'Al(OH)₃', name: 'Álhýdroxíð', type: 'ionic', category: 'jónefni', difficulty: 'hard',
+              elements: ['Al', 'O', 'H'], info: 'Ál + þrjú hýdroxíð' },
+            { formula: 'P₂O₅', name: 'Dífosfórpentóxíð', type: 'molecular', category: 'sameind', difficulty: 'hard',
+              elements: ['P', 'O'], info: 'Tvö fosfór, fimm súrefni' },
+            { formula: 'N₂O', name: 'Tvíköfnunaroxíð', type: 'molecular', category: 'sameind', difficulty: 'hard',
+              elements: ['N', 'O'], info: 'Hlægigas' },
+            { formula: 'AgNO₃', name: 'Silfurnítrat', type: 'ionic', category: 'jónefni', difficulty: 'hard',
+              elements: ['Ag', 'N', 'O'], info: 'Silfur + nítrat' },
+            { formula: 'FeSO₄', name: 'Járn(II)súlfat', type: 'ionic', category: 'málmar-breytilega-hleðsla', difficulty: 'hard',
+              elements: ['Fe', 'S', 'O'], info: 'Járn með +2 hleðslu + súlfat' },
+            { formula: 'NaHCO₃', name: 'Natrí​umvetniskarbónat', type: 'ionic', category: 'jónefni', difficulty: 'hard',
+              elements: ['Na', 'H', 'C', 'O'], info: 'Matarsódi' },
+            { formula: 'KOH', name: 'Kalíumhýdroxíð', type: 'ionic', category: 'jónefni', difficulty: 'hard',
+              elements: ['K', 'O', 'H'], info: 'Sterkt basi' },
+
+            // ERFITT / HARD - ADDITIONS (7 more)
+            { formula: 'Cu(NO₃)₂', name: 'Kopar(II)nítrat', type: 'ionic', category: 'málmar-breytilega-hleðsla', difficulty: 'hard',
+              elements: ['Cu', 'N', 'O'], info: 'Kopar(II) + tvö nítrat' },
+            { formula: 'Al₂(SO₄)₃', name: 'Álsúlfat', type: 'ionic', category: 'jónefni', difficulty: 'hard',
+              elements: ['Al', 'S', 'O'], info: 'Tvö ál + þrjú súlfat' },
+            { formula: 'Fe(OH)₃', name: 'Járn(III)hýdroxíð', type: 'ionic', category: 'málmar-breytilega-hleðsla', difficulty: 'hard',
+              elements: ['Fe', 'O', 'H'], info: 'Járn(III) + þrjú hýdroxíð' },
+            { formula: 'Cr₂O₃', name: 'Króm(III)oxíð', type: 'ionic', category: 'málmar-breytilega-hleðsla', difficulty: 'hard',
+              elements: ['Cr', 'O'], info: 'Tvö króm + þrjú súrefni' },
+            { formula: 'MnO₂', name: 'Mangan(IV)oxíð', type: 'ionic', category: 'málmar-breytilega-hleðsla', difficulty: 'hard',
+              elements: ['Mn', 'O'], info: 'Mangan með +4 hleðslu' },
+            { formula: 'CaSO₄', name: 'Kalsíumsúlfat', type: 'ionic', category: 'jónefni', difficulty: 'hard',
+              elements: ['Ca', 'S', 'O'], info: 'Gips' },
+            { formula: 'Na₃PO₄', name: 'Natrí​umfosfat', type: 'ionic', category: 'jónefni', difficulty: 'hard',
+              elements: ['Na', 'P', 'O'], info: 'Þrjú natríum + fosfat' }
+        ];
+
+        /* ========================================
+           NOMENCLATURE RULES IN ICELANDIC
+           ======================================== */
+
+        const nomenclatureRules = {
+            title: 'NAFNAREGLUR',
+            sections: [
+                {
+                    title: 'Tvíefni (Binary compounds):',
+                    rules: [
+                        'Málmur + Málmleysingi → [Málmur][Málmleysingi]-íð',
+                        'Dæmi: NaCl = Natrím-klóríð',
+                        'Endi -íð er fyrir tvíefni'
+                    ]
+                },
+                {
+                    title: 'Málmar með breytilega hleðslu:',
+                    rules: [
+                        'Nota rómverskar tölur: (I), (II), (III), (IV)',
+                        'Dæmi: FeCl₂ = Járn(II)klóríð',
+                        '      FeCl₃ = Járn(III)klóríð',
+                        'Talan sýnir hleðslu jónsins'
+                    ]
+                },
+                {
+                    title: 'Sameindajónir (fjölhlaða jónir):',
+                    rules: [
+                        'Súlfat: SO₄²⁻',
+                        'Nítrat: NO₃⁻',
+                        'Karbónat: CO₃²⁻',
+                        'Fosfat: PO₄³⁻',
+                        'Hýdroxíð: OH⁻',
+                        'Ammóníum: NH₄⁺'
+                    ]
+                }
+            ]
+        };
+
+        /* ========================================
+           LEARNING TIPS BY DIFFICULTY
+           ======================================== */
+
+        const learningTips = {
+            easy: [
+                'Tvíefni enda á -íð: klóríð, oxíð, brómíð, flúoríð',
+                'Vatn (H₂O) er eina efnið með sérheiti!',
+                'Málmur + Málmleysingi = Jónefni',
+                'Súrefnissambönd enda á -oxíð',
+                'Klórsambönd enda á -klóríð'
+            ],
+            medium: [
+                'Sameindajónir: súlfat (SO₄²⁻), nítrat (NO₃⁻), karbónat (CO₃²⁻)',
+                'Hýdroxíð (OH⁻) og ammóníum (NH₄⁺) eru algeng',
+                'Hýdroxíð endi táknar basa (ekki sýrur)',
+                'Sameindajónir hafa sérstök nöfn sem þarf að læra',
+                'Tvíefni með tveimur málmleysinga nota forskeyti'
+            ],
+            hard: [
+                'Rómverskar tölur: Fe(II) = +2 hleðsla, Fe(III) = +3 hleðsla',
+                'Svigarnir margfalda: Ca₃(PO₄)₂ = 3 Ca og 2 PO₄',
+                'Málmar með breytilega hleðslu þurfa rómverskar tölur',
+                'Cu, Fe, Mn, Cr hafa oft breytilega hleðslu',
+                'Sameindajón í sviga × tala utan sviga = heildarfjöldi'
+            ]
+        };
+
+        /* ========================================
+           ICON COMPONENTS
+           ======================================== */
+
+        const Clock = ({ size = 24 }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+        );
+
+        const Trophy = ({ size = 24 }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+                <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+                <path d="M4 22h16"></path>
+                <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path>
+                <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path>
+                <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+            </svg>
+        );
+
+        const HelpCircle = ({ size = 24 }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+        );
+
+        const RotateCcw = ({ size = 24 }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <polyline points="1 4 1 10 7 10"></polyline>
+                <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+            </svg>
+        );
+
+        const Lightbulb = ({ size = 24 }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M9 18h6"></path>
+                <path d="M10 22h4"></path>
+                <path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"></path>
+            </svg>
+        );
+
+        const Volume2 = ({ size = 24 }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+                <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+            </svg>
+        );
+
+        const VolumeX = ({ size = 24 }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                <line x1="23" y1="9" x2="17" y2="15"></line>
+                <line x1="17" y1="9" x2="23" y2="15"></line>
+            </svg>
+        );
+
+        const Book = ({ size = 24 }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            </svg>
+        );
+
+        const Eye = ({ size = 24 }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+        );
+
+        const Filter = ({ size = 24 }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+            </svg>
+        );
+
+        /* ========================================
+           UTILITY FUNCTIONS
+           ======================================== */
+
+        // LocalStorage helper with error handling
+        const storage = {
+            get: (key, defaultValue = null) => {
+                try {
+                    const item = localStorage.getItem(key);
+                    return item ? JSON.parse(item) : defaultValue;
+                } catch (e) {
+                    console.error('localStorage get error:', e);
+                    return defaultValue;
+                }
+            },
+            set: (key, value) => {
+                try {
+                    localStorage.setItem(key, JSON.stringify(value));
+                } catch (e) {
+                    console.error('localStorage set error:', e);
+                }
+            }
+        };
+
+        // Sound effects (using Web Audio API for simple beeps)
+        const playSound = (type, isMuted) => {
+            if (isMuted) return;
+
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+
+                const sounds = {
+                    flip: { freq: 400, duration: 0.1 },
+                    match: { freq: 600, duration: 0.2 },
+                    mismatch: { freq: 200, duration: 0.15 },
+                    complete: { freq: 800, duration: 0.3 },
+                    streak: { freq: 700, duration: 0.15 }
+                };
+
+                const sound = sounds[type] || sounds.flip;
+                oscillator.frequency.value = sound.freq;
+                gainNode.gain.value = 0.1;
+
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + sound.duration);
+            } catch (e) {
+                // Silently fail if audio not supported
+            }
+        };
+
+        // Confetti animation
+        const createConfetti = () => {
+            const colors = ['#f36b22', '#10b981', '#3b82f6', '#f59e0b', '#8b5cf6'];
+            const confettiCount = 50;
+
+            for (let i = 0; i < confettiCount; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                document.body.appendChild(confetti);
+
+                setTimeout(() => confetti.remove(), 3000);
+            }
+        };
+
+        /* ========================================
+           MAIN GAME COMPONENT
+           ======================================== */
+
+        const NafnaparGame = () => {
+            // Game state
+            const [gameState, setGameState] = useState({
+                cards: [],
+                flippedCards: [],
+                matchedPairs: 0,
+                moves: 0,
+                timeElapsed: 0,
+                isPlaying: false,
+                gameOver: false,
+                difficulty: 'easy',
+                score: 0,
+                streak: 0,
+                maxStreak: 0,
+                isPracticeMode: false,
+                timerMode: 'normal', // 'untimed', 'normal', 'challenge'
+                hintsUsed: 0,
+                categoryFilter: 'all' // 'all', 'jónefni', 'sameind', 'málmar-breytilega-hleðsla'
+            });
+
+            // UI state
+            const [showInstructions, setShowInstructions] = useState(true);
+            const [showRules, setShowRules] = useState(false);
+            const [showProgress, setShowProgress] = useState(false);
+            const [showStudyMode, setShowStudyMode] = useState(false);
+            const [isMuted, setIsMuted] = useState(false);
+            const [isHighContrast, setIsHighContrast] = useState(false);
+            const [matchPopup, setMatchPopup] = useState(null);
+            const [mismatchPopup, setMismatchPopup] = useState(null);
+            const [selectedCard, setSelectedCard] = useState(null);
+            const [showSettings, setShowSettings] = useState(false);
+
+            const timerRef = useRef(null);
+            const cardRefs = useRef([]);
+
+            /* ========================================
+               GAME LOGIC
+               ======================================== */
+
+            const generateCards = (difficulty, pairCount, categoryFilter = 'all') => {
+                let availableCompounds = compounds.filter(c => c.difficulty === difficulty);
+
+                // Apply category filter if specified
+                if (categoryFilter !== 'all') {
+                    availableCompounds = availableCompounds.filter(c => c.category === categoryFilter);
+                }
+
+                const selectedCompounds = availableCompounds
+                    .sort(() => Math.random() - 0.5)
+                    .slice(0, Math.min(pairCount, availableCompounds.length));
+
+                const cards = [];
+                selectedCompounds.forEach((compound, index) => {
+                    cards.push({
+                        id: `${compound.formula}-formula-${index}`,
+                        content: compound.formula,
+                        type: 'formula',
+                        compoundId: compound.formula,
+                        compound: compound,
+                        isFlipped: false,
+                        isMatched: false,
+                        tabIndex: index * 2
+                    });
+                    cards.push({
+                        id: `${compound.formula}-name-${index}`,
+                        content: compound.name,
+                        type: 'name',
+                        compoundId: compound.formula,
+                        compound: compound,
+                        isFlipped: false,
+                        isMatched: false,
+                        tabIndex: index * 2 + 1
+                    });
+                });
+
+                return cards.sort(() => Math.random() - 0.5);
+            };
+
+            const startGame = (difficulty, isPracticeMode = false, categoryFilter = 'all') => {
+                const pairCount = difficulty === 'easy' ? 6 : difficulty === 'medium' ? 8 : 10;
+                const cards = generateCards(difficulty, pairCount, categoryFilter);
+
+                setGameState({
+                    cards,
+                    flippedCards: [],
+                    matchedPairs: 0,
+                    moves: 0,
+                    timeElapsed: 0,
+                    isPlaying: true,
+                    gameOver: false,
+                    difficulty,
+                    score: 0,
+                    streak: 0,
+                    maxStreak: 0,
+                    isPracticeMode,
+                    timerMode: isPracticeMode ? 'untimed' : 'normal',
+                    hintsUsed: 0,
+                    categoryFilter
+                });
+
+                setShowInstructions(false);
+                setShowStudyMode(false);
+            };
+
+            const handleCardClick = (clickedCard) => {
+                if (!gameState.isPlaying || gameState.flippedCards.length === 2 ||
+                    clickedCard.isFlipped || clickedCard.isMatched) {
+                    return;
+                }
+
+                playSound('flip', isMuted);
+
+                const newFlippedCards = [...gameState.flippedCards, clickedCard];
+
+                setGameState(prev => ({
+                    ...prev,
+                    cards: prev.cards.map(card =>
+                        card.id === clickedCard.id ? { ...card, isFlipped: true } : card
+                    ),
+                    flippedCards: newFlippedCards
+                }));
+
+                if (newFlippedCards.length === 2) {
+                    setGameState(prev => ({ ...prev, moves: prev.moves + 1 }));
+
+                    const [first, second] = newFlippedCards;
+                    const isMatch = first.compoundId === second.compoundId && first.type !== second.type;
+
+                    if (isMatch) {
+                        // Match found!
+                        playSound('match', isMuted);
+
+                        setTimeout(() => {
+                            setGameState(prev => {
+                                const newMatchedPairs = prev.matchedPairs + 1;
+                                const totalPairs = prev.cards.length / 2;
+                                const isGameOver = newMatchedPairs === totalPairs;
+
+                                const newStreak = prev.streak + 1;
+                                const newMaxStreak = Math.max(newStreak, prev.maxStreak);
+
+                                // Streak bonus
+                                const streakBonus = newStreak > 3 ? (newStreak - 3) * 5 : 0;
+
+                                // Calculate score
+                                const baseScore = prev.difficulty === 'easy' ? 100 :
+                                                prev.difficulty === 'medium' ? 150 : 200;
+                                const timeBonus = prev.timerMode !== 'untimed' ? Math.max(0, 300 - prev.timeElapsed) : 0;
+                                const moveBonus = Math.max(0, (totalPairs * 2 - prev.moves) * 10);
+                                const hintPenalty = prev.hintsUsed * 10;
+                                const totalScore = isGameOver ?
+                                    baseScore + timeBonus + moveBonus - hintPenalty + streakBonus :
+                                    prev.score + streakBonus;
+
+                                // Show educational popup
+                                const compound = first.compound;
+                                setMatchPopup({
+                                    formula: compound.formula,
+                                    name: compound.name,
+                                    info: compound.info,
+                                    category: compound.category
+                                });
+
+                                // Track mastery
+                                if (!prev.isPracticeMode) {
+                                    const progress = storage.get('nafnapar-progress', {
+                                        gamesPlayed: 0,
+                                        bestTime: {},
+                                        bestMoves: {},
+                                        bestScore: {},
+                                        compoundsMastered: [],
+                                        byCategory: {}
+                                    });
+
+                                    if (!progress.compoundsMastered.includes(compound.formula)) {
+                                        progress.compoundsMastered.push(compound.formula);
+                                        storage.set('nafnapar-progress', progress);
+                                    }
+                                }
+
+                                if (isGameOver) {
+                                    playSound('complete', isMuted);
+                                    createConfetti();
+
+                                    // Update progress
+                                    const progress = storage.get('nafnapar-progress', {
+                                        gamesPlayed: 0,
+                                        bestTime: {},
+                                        bestMoves: {},
+                                        bestScore: {},
+                                        compoundsMastered: [],
+                                        byCategory: {}
+                                    });
+
+                                    progress.gamesPlayed++;
+
+                                    if (!progress.bestTime[prev.difficulty] || prev.timeElapsed < progress.bestTime[prev.difficulty]) {
+                                        progress.bestTime[prev.difficulty] = prev.timeElapsed;
+                                    }
+                                    if (!progress.bestMoves[prev.difficulty] || prev.moves < progress.bestMoves[prev.difficulty]) {
+                                        progress.bestMoves[prev.difficulty] = prev.moves;
+                                    }
+                                    if (!progress.bestScore[prev.difficulty] || totalScore > progress.bestScore[prev.difficulty]) {
+                                        progress.bestScore[prev.difficulty] = totalScore;
+                                    }
+
+                                    storage.set('nafnapar-progress', progress);
+                                }
+
+                                return {
+                                    ...prev,
+                                    cards: prev.cards.map(card =>
+                                        card.compoundId === first.compoundId ? { ...card, isMatched: true } : card
+                                    ),
+                                    flippedCards: [],
+                                    matchedPairs: newMatchedPairs,
+                                    gameOver: isGameOver,
+                                    isPlaying: !isGameOver,
+                                    score: totalScore,
+                                    streak: newStreak,
+                                    maxStreak: newMaxStreak
+                                };
+                            });
+                        }, 500);
+
+                        // Auto-hide popup after 2 seconds
+                        setTimeout(() => setMatchPopup(null), 2000);
+                    } else {
+                        // No match
+                        playSound('mismatch', isMuted);
+
+                        // Show educational feedback
+                        setMismatchPopup({
+                            first: first.compound,
+                            second: second.compound
+                        });
+
+                        setTimeout(() => {
+                            setGameState(prev => ({
+                                ...prev,
+                                cards: prev.cards.map(card =>
+                                    card.id === first.id || card.id === second.id
+                                        ? { ...card, isFlipped: false }
+                                        : card
+                                ),
+                                flippedCards: [],
+                                streak: 0 // Reset streak on mismatch
+                            }));
+                            setMismatchPopup(null);
+                        }, 1000);
+                    }
+                }
+            };
+
+            const useHint = (level) => {
+                if (gameState.isPracticeMode || gameState.flippedCards.length > 0) return;
+
+                const unmatched = gameState.cards.filter(c => !c.isMatched && !c.isFlipped);
+                if (unmatched.length === 0) return;
+
+                const randomCard = unmatched[Math.floor(Math.random() * unmatched.length)];
+
+                if (level === 1) {
+                    // Show category
+                    alert(`Vísbending: Þetta er ${randomCard.compound.category === 'jónefni' ? 'jónefni' :
+                           randomCard.compound.category === 'sameind' ? 'sameind' :
+                           'málmur með breytilega hleðslu'}`);
+                } else if (level === 2) {
+                    // Show one element
+                    const element = randomCard.compound.elements[0];
+                    alert(`Vísbending: Inniheldur ${element}`);
+                } else if (level === 3) {
+                    // Reveal pair briefly
+                    const pair = gameState.cards.filter(c => c.compoundId === randomCard.compoundId);
+                    setGameState(prev => ({
+                        ...prev,
+                        cards: prev.cards.map(card =>
+                            pair.some(p => p.id === card.id) ? { ...card, isFlipped: true } : card
+                        )
+                    }));
+
+                    setTimeout(() => {
+                        setGameState(prev => ({
+                            ...prev,
+                            cards: prev.cards.map(card =>
+                                pair.some(p => p.id === card.id) && !card.isMatched
+                                    ? { ...card, isFlipped: false } : card
+                            )
+                        }));
+                    }, 1000);
+                }
+
+                const penalty = level === 1 ? 5 : level === 2 ? 10 : 15;
+                setGameState(prev => ({
+                    ...prev,
+                    hintsUsed: prev.hintsUsed + 1,
+                    score: Math.max(0, prev.score - penalty)
+                }));
+
+                playSound('streak', isMuted);
+            };
+
+            const resetGame = () => {
+                if (timerRef.current) clearInterval(timerRef.current);
+                setGameState(prev => ({
+                    ...prev,
+                    cards: [],
+                    flippedCards: [],
+                    matchedPairs: 0,
+                    moves: 0,
+                    timeElapsed: 0,
+                    isPlaying: false,
+                    gameOver: false,
+                    score: 0,
+                    streak: 0,
+                    hintsUsed: 0
+                }));
+                setMatchPopup(null);
+                setMismatchPopup(null);
+            };
+
+            /* ========================================
+               TIMER EFFECT
+               ======================================== */
+
+            useEffect(() => {
+                if (gameState.isPlaying && gameState.timerMode !== 'untimed') {
+                    timerRef.current = setInterval(() => {
+                        setGameState(prev => {
+                            const newTime = prev.timeElapsed + 1;
+
+                            // Challenge mode: end game after 3 minutes
+                            if (prev.timerMode === 'challenge' && newTime >= 180) {
+                                clearInterval(timerRef.current);
+                                return { ...prev, gameOver: true, isPlaying: false };
+                            }
+
+                            return { ...prev, timeElapsed: newTime };
+                        });
+                    }, 1000);
+                }
+
+                return () => {
+                    if (timerRef.current) clearInterval(timerRef.current);
+                };
+            }, [gameState.isPlaying, gameState.timerMode]);
+
+            /* ========================================
+               KEYBOARD SHORTCUTS
+               ======================================== */
+
+            useEffect(() => {
+                const handleKeyPress = (e) => {
+                    if (!gameState.isPlaying) return;
+
+                    // R: Reset game
+                    if (e.key === 'r' || e.key === 'R') {
+                        resetGame();
+                    }
+
+                    // H: Toggle help/rules
+                    if (e.key === 'h' || e.key === 'H') {
+                        setShowRules(prev => !prev);
+                    }
+
+                    // Numbers 1-9: Quick select card
+                    if (e.key >= '1' && e.key <= '9') {
+                        const index = parseInt(e.key) - 1;
+                        if (index < gameState.cards.length) {
+                            const card = gameState.cards[index];
+                            if (!card.isFlipped && !card.isMatched) {
+                                handleCardClick(card);
+                            }
+                        }
+                    }
+                };
+
+                window.addEventListener('keydown', handleKeyPress);
+                return () => window.removeEventListener('keydown', handleKeyPress);
+            }, [gameState]);
+
+            /* ========================================
+               UTILITY FUNCTIONS
+               ======================================== */
+
+            const formatTime = (seconds) => {
+                const mins = Math.floor(seconds / 60);
+                const secs = seconds % 60;
+                return `${mins}:${secs.toString().padStart(2, '0')}`;
+            };
+
+            const getDifficultyLabel = (diff) => {
+                return diff === 'easy' ? 'Auðvelt' : diff === 'medium' ? 'Miðlungs' : 'Erfitt';
+            };
+
+            /* ========================================
+               RENDER: INSTRUCTIONS SCREEN
+               ======================================== */
+
+            if (showInstructions) {
+                return (
+                    <div className={`min-h-screen bg-gradient-to-br from-green-50 to-blue-100 p-4 md:p-8 ${isHighContrast ? 'high-contrast' : ''}`}>
+                        <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-2xl p-6 md:p-8">
+                            <h1 className="text-3xl md:text-4xl font-bold text-center mb-6 text-green-600">
+                                🧪 Nafnapör
+                            </h1>
+
+                            <div className="space-y-4 text-gray-700">
+                                <h2 className="text-2xl font-semibold text-green-500">Leiðbeiningar</h2>
+
+                                <div className="bg-green-50 p-4 rounded-lg">
+                                    <h3 className="font-semibold mb-2">Markmið:</h3>
+                                    <p>Para saman efnaformúlur og nöfn efnasambanda!</p>
+                                </div>
+
+                                <div className="bg-blue-50 p-4 rounded-lg">
+                                    <h3 className="font-semibold mb-2">Hvernig á að spila:</h3>
+                                    <ol className="list-decimal list-inside space-y-2">
+                                        <li>Veldu erfiðleikastig og stillingu</li>
+                                        <li>Smelltu á tvö spjöld til að snúa þeim við</li>
+                                        <li>Ef þau passa saman, haldast þau opin</li>
+                                        <li>Ef ekki, snúast þau aftur</li>
+                                        <li>Finndu öll pörin!</li>
+                                    </ol>
+                                </div>
+
+                                <div className="bg-yellow-50 p-4 rounded-lg">
+                                    <h3 className="font-semibold mb-2">Erfiðleikastig:</h3>
+                                    <ul className="space-y-2">
+                                        <li><strong>Auðvelt:</strong> 6 pör - Algeng efnasambönd (NaCl, H₂O, CO₂)</li>
+                                        <li><strong>Miðlungs:</strong> 8 pör - Sameindajónir (CuSO₄, NH₄Cl)</li>
+                                        <li><strong>Erfitt:</strong> 10 pör - Rómversk tölustafi, flókin nöfn</li>
+                                    </ul>
+                                </div>
+
+                                <div className="bg-purple-50 p-4 rounded-lg">
+                                    <h3 className="font-semibold mb-2">Stillingar:</h3>
+                                    <ul className="space-y-1">
+                                        <li><strong>Æfingastilling:</strong> Engin tímamörk, vísbendingar, engin þrýstingur</li>
+                                        <li><strong>Keppnisstilling:</strong> Tími, stig, vísbendingarkerfi með frádrætti</li>
+                                    </ul>
+                                </div>
+
+                                <div className="bg-pink-50 p-4 rounded-lg">
+                                    <h3 className="font-semibold mb-2">Ábendingar:</h3>
+                                    <ul className="list-disc list-inside space-y-1 text-sm">
+                                        <li>Mundu staðsetningu spjalda</li>
+                                        <li>Byrjaðu á auðveldu stigi til að æfa</li>
+                                        <li>Rómverskar tölur (II, III) tákna hleðslu málms</li>
+                                        <li>Sameindajónir: SO₄²⁻ (súlfat), NO₃⁻ (nítrat)</li>
+                                    </ul>
+                                </div>
+
+                                <div className="bg-orange-50 p-4 rounded-lg">
+                                    <h3 className="font-semibold mb-2">Flýtilyklar:</h3>
+                                    <ul className="list-disc list-inside space-y-1 text-sm">
+                                        <li><kbd className="px-2 py-1 bg-gray-200 rounded">Tab</kbd> Fara á milli spjalda</li>
+                                        <li><kbd className="px-2 py-1 bg-gray-200 rounded">Enter</kbd> Snúa spjaldi</li>
+                                        <li><kbd className="px-2 py-1 bg-gray-200 rounded">R</kbd> Byrja upp á nýtt</li>
+                                        <li><kbd className="px-2 py-1 bg-gray-200 rounded">H</kbd> Sýna/fela nafnareglur</li>
+                                        <li><kbd className="px-2 py-1 bg-gray-200 rounded">1-9</kbd> Velja spjald hratt</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div className="mt-6 space-y-3">
+                                <button
+                                    onClick={() => setShowInstructions(false)}
+                                    className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-6 rounded-xl transition-colors duration-200 text-lg"
+                                >
+                                    Byrja að spila 🚀
+                                </button>
+
+                                <button
+                                    onClick={() => setShowProgress(true)}
+                                    className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-xl transition-colors"
+                                >
+                                    📊 Skoða þróun
+                                </button>
+
+                                <div className="flex gap-3">
+                                    <button
+                                        onClick={() => setIsMuted(!isMuted)}
+                                        className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-3 px-6 rounded-xl transition-colors flex items-center justify-center gap-2"
+                                    >
+                                        {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
+                                        {isMuted ? 'Hljóð af' : 'Hljóð á'}
+                                    </button>
+
+                                    <button
+                                        onClick={() => setIsHighContrast(!isHighContrast)}
+                                        className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-3 px-6 rounded-xl transition-colors"
+                                    >
+                                        {isHighContrast ? '🔆 Venjulegur' : '🔅 Há birtuskil'}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            /* ========================================
+               RENDER: PROGRESS SCREEN
+               ======================================== */
+
+            if (showProgress) {
+                const progress = storage.get('nafnapar-progress', {
+                    gamesPlayed: 0,
+                    bestTime: {},
+                    bestMoves: {},
+                    bestScore: {},
+                    compoundsMastered: [],
+                    byCategory: {}
+                });
+
+                return (
+                    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-100 p-4 md:p-8">
+                        <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-2xl p-6 md:p-8">
+                            <h1 className="text-3xl md:text-4xl font-bold text-center mb-6 text-green-600">
+                                📊 Þín þróun
+                            </h1>
+
+                            <div className="space-y-4">
+                                <div className="bg-blue-50 p-4 rounded-xl text-center">
+                                    <div className="text-4xl font-bold text-blue-600">{progress.gamesPlayed}</div>
+                                    <div className="text-sm text-gray-700">Leikir spilaðir</div>
+                                </div>
+
+                                <div className="bg-green-50 p-4 rounded-xl text-center">
+                                    <div className="text-4xl font-bold text-green-600">{progress.compoundsMastered.length}</div>
+                                    <div className="text-sm text-gray-700">Efni sem þú hefur náð</div>
+                                </div>
+
+                                <h3 className="font-semibold text-lg mt-6">Bestu árangur:</h3>
+
+                                {['easy', 'medium', 'hard'].map(diff => (
+                                    <div key={diff} className="bg-gray-50 p-4 rounded-xl">
+                                        <h4 className="font-semibold mb-2">{getDifficultyLabel(diff)}</h4>
+                                        <div className="grid grid-cols-3 gap-2 text-sm">
+                                            <div className="text-center">
+                                                <div className="font-bold text-blue-600">
+                                                    {progress.bestTime[diff] ? formatTime(progress.bestTime[diff]) : '-'}
+                                                </div>
+                                                <div className="text-xs text-gray-600">Tími</div>
+                                            </div>
+                                            <div className="text-center">
+                                                <div className="font-bold text-green-600">
+                                                    {progress.bestMoves[diff] || '-'}
+                                                </div>
+                                                <div className="text-xs text-gray-600">Ferðir</div>
+                                            </div>
+                                            <div className="text-center">
+                                                <div className="font-bold text-purple-600">
+                                                    {progress.bestScore[diff] || '-'}
+                                                </div>
+                                                <div className="text-xs text-gray-600">Stig</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            <button
+                                onClick={() => setShowProgress(false)}
+                                className="w-full mt-6 bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-xl transition-colors"
+                            >
+                                Til baka
+                            </button>
+                        </div>
+                    </div>
+                );
+            }
+
+            /* ========================================
+               RENDER: STUDY MODE
+               ======================================== */
+
+            if (showStudyMode) {
+                const studyCompounds = compounds.filter(c => c.difficulty === gameState.difficulty);
+
+                return (
+                    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-100 p-4 md:p-8">
+                        <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-2xl p-6 md:p-8">
+                            <h1 className="text-3xl md:text-4xl font-bold text-center mb-6 text-green-600">
+                                📚 Skoða öll efni - {getDifficultyLabel(gameState.difficulty)}
+                            </h1>
+
+                            <div className="grid md:grid-cols-2 gap-4 mb-6">
+                                {studyCompounds.map(compound => (
+                                    <div key={compound.formula} className="bg-gradient-to-r from-blue-50 to-purple-50 p-4 rounded-xl">
+                                        <div className="text-2xl font-bold text-blue-600 mb-1">{compound.formula}</div>
+                                        <div className="text-lg text-purple-600 mb-2">{compound.name}</div>
+                                        <div className="text-sm text-gray-600 italic">{compound.info}</div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            <button
+                                onClick={() => {
+                                    setShowStudyMode(false);
+                                    startGame(gameState.difficulty, gameState.isPracticeMode, gameState.categoryFilter);
+                                }}
+                                className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-6 rounded-xl transition-colors"
+                            >
+                                Byrja leik! 🚀
+                            </button>
+                        </div>
+                    </div>
+                );
+            }
+
+            /* ========================================
+               RENDER: DIFFICULTY SELECTION
+               ======================================== */
+
+            if (!gameState.isPlaying && !gameState.gameOver) {
+                return (
+                    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-100 p-4 md:p-8">
+                        <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-2xl p-6 md:p-8">
+                            <h1 className="text-3xl md:text-4xl font-bold text-center mb-6 text-green-600">
+                                🧪 Nafnapör
+                            </h1>
+
+                            <div className="space-y-6">
+                                <div className="text-center">
+                                    <p className="text-lg text-gray-700 mb-4">
+                                        Veldu erfiðleikastig:
+                                    </p>
+                                </div>
+
+                                {/* Mode Toggle */}
+                                <div className="flex gap-3 mb-4">
+                                    <button
+                                        onClick={() => setGameState(prev => ({ ...prev, isPracticeMode: false }))}
+                                        className={`flex-1 py-3 px-4 rounded-xl font-semibold transition-colors ${
+                                            !gameState.isPracticeMode
+                                                ? 'bg-blue-500 text-white'
+                                                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                                        }`}
+                                    >
+                                        🏆 Keppnisstilling
+                                    </button>
+                                    <button
+                                        onClick={() => setGameState(prev => ({ ...prev, isPracticeMode: true }))}
+                                        className={`flex-1 py-3 px-4 rounded-xl font-semibold transition-colors ${
+                                            gameState.isPracticeMode
+                                                ? 'bg-green-500 text-white'
+                                                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                                        }`}
+                                    >
+                                        📖 Æfingastilling
+                                    </button>
+                                </div>
+
+                                {/* Category Filter */}
+                                <div className="bg-gray-50 p-4 rounded-xl">
+                                    <label className="block text-sm font-semibold mb-2">🔍 Sía eftir flokki (valfrjálst):</label>
+                                    <select
+                                        value={gameState.categoryFilter}
+                                        onChange={(e) => setGameState(prev => ({ ...prev, categoryFilter: e.target.value }))}
+                                        className="w-full p-2 border-2 border-gray-300 rounded-lg"
+                                    >
+                                        <option value="all">Öll efni</option>
+                                        <option value="jónefni">Jónefni</option>
+                                        <option value="sameind">Sameindir</option>
+                                        <option value="málmar-breytilega-hleðsla">Málmar með breytilega hleðslu</option>
+                                    </select>
+                                </div>
+
+                                {/* Difficulty Buttons */}
+                                <div className="grid gap-4">
+                                    <button
+                                        onClick={() => {
+                                            setGameState(prev => ({ ...prev, difficulty: 'easy' }));
+                                            setShowStudyMode(true);
+                                        }}
+                                        className="bg-green-500 hover:bg-green-600 text-white font-bold py-6 px-6 rounded-xl transition-colors"
+                                    >
+                                        <div className="text-2xl mb-2">😊</div>
+                                        <div className="text-xl">Auðvelt</div>
+                                        <div className="text-sm opacity-90 mt-2">6 pör - Algeng efnasambönd</div>
+                                        <div className="text-xs opacity-80">NaCl, H₂O, CO₂, MgO...</div>
+                                    </button>
+
+                                    <button
+                                        onClick={() => {
+                                            setGameState(prev => ({ ...prev, difficulty: 'medium' }));
+                                            setShowStudyMode(true);
+                                        }}
+                                        className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-6 px-6 rounded-xl transition-colors"
+                                    >
+                                        <div className="text-2xl mb-2">🤔</div>
+                                        <div className="text-xl">Miðlungs</div>
+                                        <div className="text-sm opacity-90 mt-2">8 pör - Sameindajónir</div>
+                                        <div className="text-xs opacity-80">CuSO₄, NH₄Cl, NaOH...</div>
+                                    </button>
+
+                                    <button
+                                        onClick={() => {
+                                            setGameState(prev => ({ ...prev, difficulty: 'hard' }));
+                                            setShowStudyMode(true);
+                                        }}
+                                        className="bg-red-500 hover:bg-red-600 text-white font-bold py-6 px-6 rounded-xl transition-colors"
+                                    >
+                                        <div className="text-2xl mb-2">😰</div>
+                                        <div className="text-xl">Erfitt</div>
+                                        <div className="text-sm opacity-90 mt-2">10 pör - Flókin efnasambönd</div>
+                                        <div className="text-xs opacity-80">Fe₂O₃, (NH₄)₂SO₄, Ca₃(PO₄)₂...</div>
+                                    </button>
+                                </div>
+
+                                <button
+                                    onClick={() => setShowInstructions(true)}
+                                    className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-3 px-6 rounded-xl transition-colors"
+                                >
+                                    📖 Sjá leiðbeiningar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            /* ========================================
+               RENDER: GAME OVER
+               ======================================== */
+
+            if (gameState.gameOver) {
+                const efficiency = ((gameState.cards.length / 2) * 2 / gameState.moves * 100).toFixed(0);
+                const randomTip = learningTips[gameState.difficulty][Math.floor(Math.random() * learningTips[gameState.difficulty].length)];
+
+                return (
+                    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-100 p-4 md:p-8">
+                        <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-2xl p-6 md:p-8">
+                            <h1 className="text-3xl md:text-4xl font-bold text-center mb-6 text-green-600">
+                                🎉 Til hamingju!
+                            </h1>
+
+                            <div className="space-y-6">
+                                {!gameState.isPracticeMode && (
+                                    <div className="bg-gradient-to-r from-green-100 to-blue-100 p-6 rounded-xl">
+                                        <div className="text-center">
+                                            <div className="text-5xl md:text-6xl font-bold text-green-600 mb-2">
+                                                {gameState.score}
+                                            </div>
+                                            <div className="text-xl text-gray-700">Heildarstaða</div>
+                                        </div>
+                                    </div>
+                                )}
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    {gameState.timerMode !== 'untimed' && (
+                                        <div className="bg-blue-50 p-4 rounded-xl text-center">
+                                            <div className="text-2xl md:text-3xl font-bold text-blue-600">
+                                                {formatTime(gameState.timeElapsed)}
+                                            </div>
+                                            <div className="text-sm text-gray-700">Tími</div>
+                                        </div>
+                                    )}
+
+                                    <div className="bg-green-50 p-4 rounded-xl text-center">
+                                        <div className="text-2xl md:text-3xl font-bold text-green-600">
+                                            {gameState.moves}
+                                        </div>
+                                        <div className="text-sm text-gray-700">Ferðir</div>
+                                    </div>
+
+                                    <div className="bg-yellow-50 p-4 rounded-xl text-center">
+                                        <div className="text-2xl md:text-3xl font-bold text-yellow-600">
+                                            {efficiency}%
+                                        </div>
+                                        <div className="text-sm text-gray-700">Skilvirkni</div>
+                                    </div>
+
+                                    <div className="bg-purple-50 p-4 rounded-xl text-center">
+                                        <div className="text-2xl md:text-3xl font-bold text-purple-600">
+                                            {gameState.matchedPairs}
+                                        </div>
+                                        <div className="text-sm text-gray-700">Pör</div>
+                                    </div>
+
+                                    {gameState.maxStreak > 3 && (
+                                        <div className="bg-orange-50 p-4 rounded-xl text-center col-span-2">
+                                            <div className="text-2xl md:text-3xl font-bold text-orange-600">
+                                                🔥 {gameState.maxStreak} í röð!
+                                            </div>
+                                            <div className="text-sm text-gray-700">Lengsta runa</div>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {!gameState.isPracticeMode && (
+                                    <div className="bg-green-50 p-4 rounded-xl">
+                                        <h3 className="font-semibold text-center mb-2">
+                                            {gameState.score >= 400 ? '🌟 Fullkomið!' :
+                                            gameState.score >= 300 ? '👍 Frábært!' :
+                                            gameState.score >= 200 ? '💪 Vel gert!' :
+                                            '📚 Góð byrjun!'}
+                                        </h3>
+                                        <p className="text-center text-sm text-gray-700">
+                                            {gameState.score >= 400 ? 'Þú ert sannkallaður efnafræðingur!' :
+                                            gameState.score >= 300 ? 'Mjög gott minnisafköst!' :
+                                            gameState.score >= 200 ? 'Haltu áfram að æfa!' :
+                                            'Prófaðu aftur til að bæta stigin!'}
+                                        </p>
+                                    </div>
+                                )}
+
+                                {/* Learning Tip */}
+                                <div className="bg-blue-50 p-4 rounded-xl">
+                                    <h3 className="font-semibold mb-2 flex items-center gap-2">
+                                        <Lightbulb size={20} />
+                                        Ábending:
+                                    </h3>
+                                    <p className="text-sm text-gray-700">{randomTip}</p>
+                                </div>
+
+                                <div className="flex gap-4">
+                                    <button
+                                        onClick={resetGame}
+                                        className="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-bold py-4 px-6 rounded-xl transition-colors flex items-center justify-center gap-2"
+                                    >
+                                        <RotateCcw size={20} />
+                                        Velja annað stig
+                                    </button>
+                                    <button
+                                        onClick={() => startGame(gameState.difficulty, gameState.isPracticeMode, gameState.categoryFilter)}
+                                        className="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-6 rounded-xl transition-colors"
+                                    >
+                                        Spila aftur
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            /* ========================================
+               RENDER: ACTIVE GAME
+               ======================================== */
+
+            return (
+                <div className={`min-h-screen bg-gradient-to-br ${gameState.isPracticeMode ? 'from-green-50 to-emerald-100' : 'from-green-50 to-blue-100'} p-4 md:p-8 ${isHighContrast ? 'high-contrast' : ''}`}>
+                    <div className="max-w-6xl mx-auto">
+                        {/* Header with stats */}
+                        <div className="bg-white rounded-2xl shadow-2xl p-4 md:p-6 mb-6">
+                            <div className="flex justify-between items-center flex-wrap gap-4">
+                                <div>
+                                    <h1 className="text-xl md:text-3xl font-bold text-green-600">
+                                        🧪 Nafnapör
+                                    </h1>
+                                    <div className="text-sm text-gray-600">
+                                        {getDifficultyLabel(gameState.difficulty)} - {gameState.isPracticeMode ? '📖 Æfing' : '🏆 Keppni'}
+                                    </div>
+                                </div>
+
+                                <div className="flex gap-4 items-center flex-wrap">
+                                    {gameState.timerMode !== 'untimed' && (
+                                        <div className="text-center">
+                                            <div className="flex items-center gap-2 text-blue-600 mb-1">
+                                                <Clock size={20} />
+                                                <span className="text-xl md:text-2xl font-bold">
+                                                    {formatTime(gameState.timeElapsed)}
+                                                </span>
+                                            </div>
+                                            <div className="text-xs text-gray-600">Tími</div>
+                                        </div>
+                                    )}
+
+                                    <div className="text-center">
+                                        <div className="text-xl md:text-2xl font-bold text-green-600">
+                                            {gameState.moves}
+                                        </div>
+                                        <div className="text-xs text-gray-600">Ferðir</div>
+                                    </div>
+
+                                    <div className="text-center">
+                                        <div className="text-xl md:text-2xl font-bold text-purple-600">
+                                            {gameState.matchedPairs}/{gameState.cards.length / 2}
+                                        </div>
+                                        <div className="text-xs text-gray-600">Pör</div>
+                                    </div>
+
+                                    {!gameState.isPracticeMode && (
+                                        <div className="text-center">
+                                            <div className="text-xl md:text-2xl font-bold text-orange-600">
+                                                {gameState.score}
+                                            </div>
+                                            <div className="text-xs text-gray-600">Stig</div>
+                                        </div>
+                                    )}
+
+                                    {gameState.streak > 0 && (
+                                        <div className="text-center">
+                                            <div className="text-xl md:text-2xl font-bold text-red-600 flex items-center gap-1">
+                                                <span className="fire-icon">🔥</span>
+                                                <span>{gameState.streak}</span>
+                                            </div>
+                                            <div className="text-xs text-gray-600">Röð</div>
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="flex gap-2">
+                                    <button
+                                        onClick={() => setShowRules(!showRules)}
+                                        className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                                        aria-label="Sýna nafnareglur"
+                                    >
+                                        <Book size={24} />
+                                    </button>
+
+                                    <button
+                                        onClick={() => setIsMuted(!isMuted)}
+                                        className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                                        aria-label={isMuted ? 'Kveikja á hljóði' : 'Slökkva á hljóði'}
+                                    >
+                                        {isMuted ? <VolumeX size={24} /> : <Volume2 size={24} />}
+                                    </button>
+
+                                    <button
+                                        onClick={() => setShowInstructions(true)}
+                                        className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                                        aria-label="Sýna leiðbeiningar"
+                                    >
+                                        <HelpCircle size={24} />
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Streak Achievement */}
+                            {gameState.streak === 5 && (
+                                <div className="mt-4 bg-orange-100 border-2 border-orange-400 p-3 rounded-lg text-center animate-pulse">
+                                    <span className="text-lg font-bold text-orange-700">🎉 5 í röð! Frábært! 🎉</span>
+                                </div>
+                            )}
+                            {gameState.streak === 10 && (
+                                <div className="mt-4 bg-red-100 border-2 border-red-400 p-3 rounded-lg text-center animate-pulse">
+                                    <span className="text-lg font-bold text-red-700">🔥 10 í röð! Fullkominn! 🔥</span>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Nomenclature Rules Card (collapsible) */}
+                        {showRules && (
+                            <div className="bg-white rounded-2xl shadow-2xl p-4 md:p-6 mb-6 popup">
+                                <div className="flex justify-between items-center mb-4">
+                                    <h2 className="text-xl md:text-2xl font-bold text-green-600">
+                                        {nomenclatureRules.title}
+                                    </h2>
+                                    <button
+                                        onClick={() => setShowRules(false)}
+                                        className="text-gray-500 hover:text-gray-700 text-2xl"
+                                    >
+                                        ×
+                                    </button>
+                                </div>
+
+                                <div className="space-y-4">
+                                    {nomenclatureRules.sections.map((section, idx) => (
+                                        <div key={idx} className="bg-gray-50 p-4 rounded-lg">
+                                            <h3 className="font-semibold mb-2 text-gray-800">{section.title}</h3>
+                                            <ul className="space-y-1 text-sm text-gray-700">
+                                                {section.rules.map((rule, rIdx) => (
+                                                    <li key={rIdx} className="ml-4">{rule}</li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Match Popup */}
+                        {matchPopup && (
+                            <div className="bg-white rounded-2xl shadow-2xl p-4 mb-6 border-4 border-green-400 popup">
+                                <div className="flex justify-between items-start">
+                                    <div className="flex-1">
+                                        <div className="text-2xl font-bold text-green-600 mb-2">
+                                            ✓ {matchPopup.formula} = {matchPopup.name}
+                                        </div>
+                                        <div className="text-sm text-gray-700">{matchPopup.info}</div>
+                                    </div>
+                                    <button
+                                        onClick={() => setMatchPopup(null)}
+                                        className="text-gray-500 hover:text-gray-700 text-2xl ml-2"
+                                    >
+                                        ×
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Mismatch Popup */}
+                        {mismatchPopup && (
+                            <div className="bg-white rounded-2xl shadow-2xl p-4 mb-6 border-4 border-red-400 popup shake">
+                                <div className="text-xl font-bold text-red-600 mb-2">
+                                    ❌ Ekki par
+                                </div>
+                                <div className="text-sm text-gray-700">
+                                    {mismatchPopup.first.formula} er {mismatchPopup.first.name}
+                                    <br />
+                                    {mismatchPopup.second.formula} er {mismatchPopup.second.name}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Hint Buttons (Competition Mode Only) */}
+                        {!gameState.isPracticeMode && (
+                            <div className="bg-white rounded-2xl shadow-2xl p-4 mb-6">
+                                <h3 className="font-semibold mb-3 flex items-center gap-2">
+                                    <Lightbulb size={20} />
+                                    Vísbendingar:
+                                </h3>
+                                <div className="grid grid-cols-3 gap-3">
+                                    <button
+                                        onClick={() => useHint(1)}
+                                        disabled={gameState.flippedCards.length > 0}
+                                        className="bg-yellow-100 hover:bg-yellow-200 disabled:bg-gray-100 disabled:cursor-not-allowed text-yellow-800 font-semibold py-2 px-4 rounded-lg transition-colors text-sm"
+                                    >
+                                        Vísbending 1<br />
+                                        <span className="text-xs">(-5 stig)</span>
+                                    </button>
+                                    <button
+                                        onClick={() => useHint(2)}
+                                        disabled={gameState.flippedCards.length > 0}
+                                        className="bg-orange-100 hover:bg-orange-200 disabled:bg-gray-100 disabled:cursor-not-allowed text-orange-800 font-semibold py-2 px-4 rounded-lg transition-colors text-sm"
+                                    >
+                                        Vísbending 2<br />
+                                        <span className="text-xs">(-10 stig)</span>
+                                    </button>
+                                    <button
+                                        onClick={() => useHint(3)}
+                                        disabled={gameState.flippedCards.length > 0}
+                                        className="bg-red-100 hover:bg-red-200 disabled:bg-gray-100 disabled:cursor-not-allowed text-red-800 font-semibold py-2 px-4 rounded-lg transition-colors text-sm"
+                                    >
+                                        Vísbending 3<br />
+                                        <span className="text-xs">(-15 stig)</span>
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Game Board */}
+                        <div className="bg-white rounded-2xl shadow-2xl p-4 md:p-6">
+                            <div className={`grid gap-3 md:gap-4 ${
+                                gameState.cards.length <= 12 ? 'grid-cols-3 md:grid-cols-4' :
+                                gameState.cards.length <= 16 ? 'grid-cols-4 md:grid-cols-4' :
+                                'grid-cols-4 md:grid-cols-5'
+                            }`}
+                            style={{ minHeight: '60px' }}
+                            >
+                                {gameState.cards.map((card, index) => (
+                                    <button
+                                        key={card.id}
+                                        ref={el => cardRefs.current[index] = el}
+                                        onClick={() => handleCardClick(card)}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter' || e.key === ' ') {
+                                                e.preventDefault();
+                                                handleCardClick(card);
+                                            }
+                                        }}
+                                        disabled={card.isFlipped || card.isMatched}
+                                        tabIndex={card.isFlipped || card.isMatched ? -1 : 0}
+                                        aria-label={`Spjald ${index + 1}, ${card.isMatched ? 'fundið' : card.isFlipped ? card.content : 'falið'}`}
+                                        className={`card aspect-square rounded-xl font-bold text-xs md:text-base transition-all duration-300 ${
+                                            card.isMatched
+                                                ? 'bg-gradient-to-br from-green-400 to-green-600 text-white cursor-default matched'
+                                                : card.isFlipped
+                                                ? card.type === 'formula'
+                                                    ? 'bg-gradient-to-br from-blue-400 to-blue-600 text-white'
+                                                    : 'bg-gradient-to-br from-purple-400 to-purple-600 text-white'
+                                                : 'bg-gradient-to-br from-gray-300 to-gray-400 hover:from-gray-400 hover:to-gray-500 text-transparent'
+                                        }`}
+                                        style={{ minWidth: '60px', minHeight: '60px' }}
+                                    >
+                                        <div className={`w-full h-full flex items-center justify-center p-2 ${
+                                            card.isFlipped || card.isMatched ? '' : 'opacity-0'
+                                        }`}>
+                                            {card.isFlipped || card.isMatched ? (
+                                                <span className="text-center leading-tight break-words">
+                                                    {card.content}
+                                                </span>
+                                            ) : (
+                                                '?'
+                                            )}
+                                        </div>
+                                    </button>
+                                ))}
+                            </div>
+
+                            <div className="mt-6 text-center">
+                                <button
+                                    onClick={resetGame}
+                                    className="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-xl transition-colors flex items-center justify-center gap-2 mx-auto"
+                                >
+                                    <RotateCcw size={20} />
+                                    Byrja upp á nýtt
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        ReactDOM.render(<NafnaparGame />, document.getElementById('root'));
+    </script>
+</body>
+</html>

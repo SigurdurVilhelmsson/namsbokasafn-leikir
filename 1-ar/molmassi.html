@@ -174,33 +174,40 @@
         ];
 
         const compoundsList = [
-            // Easy
+            // Easy - Real-world chemicals students know
             { formula: 'H₂O', name: 'Vatn', elements: [{symbol: 'H', count: 2}, {symbol: 'O', count: 1}], molarMass: 18.015, difficulty: 'easy' },
+            { formula: 'NaCl', name: 'Borðsalt', elements: [{symbol: 'Na', count: 1}, {symbol: 'Cl', count: 1}], molarMass: 58.44, difficulty: 'easy' },
+            { formula: 'O₂', name: 'Súrefni', elements: [{symbol: 'O', count: 2}], molarMass: 31.998, difficulty: 'easy' },
+            { formula: 'N₂', name: 'Köfnunarefni', elements: [{symbol: 'N', count: 2}], molarMass: 28.014, difficulty: 'easy' },
+            { formula: 'CH₄', name: 'Metan', elements: [{symbol: 'C', count: 1}, {symbol: 'H', count: 4}], molarMass: 16.043, difficulty: 'easy' },
+            { formula: 'C₂H₆', name: 'Etan', elements: [{symbol: 'C', count: 2}, {symbol: 'H', count: 6}], molarMass: 30.070, difficulty: 'easy' },
+            { formula: 'C₃H₈', name: 'Própan', elements: [{symbol: 'C', count: 3}, {symbol: 'H', count: 8}], molarMass: 44.097, difficulty: 'easy' },
             { formula: 'CO₂', name: 'Koltvísýringur', elements: [{symbol: 'C', count: 1}, {symbol: 'O', count: 2}], molarMass: 44.009, difficulty: 'easy' },
             { formula: 'NH₃', name: 'Ammóníak', elements: [{symbol: 'N', count: 1}, {symbol: 'H', count: 3}], molarMass: 17.031, difficulty: 'easy' },
-            { formula: 'CH₄', name: 'Metan', elements: [{symbol: 'C', count: 1}, {symbol: 'H', count: 4}], molarMass: 16.043, difficulty: 'easy' },
-            { formula: 'NaCl', name: 'Natrímklóríð', elements: [{symbol: 'Na', count: 1}, {symbol: 'Cl', count: 1}], molarMass: 58.440, difficulty: 'easy' },
-            { formula: 'O₂', name: 'Súrefni', elements: [{symbol: 'O', count: 2}], molarMass: 31.998, difficulty: 'easy' },
             { formula: 'HCl', name: 'Saltsýra', elements: [{symbol: 'H', count: 1}, {symbol: 'Cl', count: 1}], molarMass: 36.458, difficulty: 'easy' },
-            { formula: 'MgO', name: 'Magnesíumoxíð', elements: [{symbol: 'Mg', count: 1}, {symbol: 'O', count: 1}], molarMass: 40.304, difficulty: 'easy' },
 
-            // Medium
-            { formula: 'H₂SO₄', name: 'Brennisteinssýra', elements: [{symbol: 'H', count: 2}, {symbol: 'S', count: 1}, {symbol: 'O', count: 4}], molarMass: 98.079, difficulty: 'medium' },
-            { formula: 'CaCO₃', name: 'Kalsíumkarbónat', elements: [{symbol: 'Ca', count: 1}, {symbol: 'C', count: 1}, {symbol: 'O', count: 3}], molarMass: 100.087, difficulty: 'medium' },
+            // Medium - Common chemicals in labs and household
+            { formula: 'C₂H₅OH', name: 'Etanól', elements: [{symbol: 'C', count: 2}, {symbol: 'H', count: 6}, {symbol: 'O', count: 1}], molarMass: 46.069, difficulty: 'medium' },
+            { formula: 'CH₃COOH', name: 'Ediksýra', elements: [{symbol: 'C', count: 2}, {symbol: 'H', count: 4}, {symbol: 'O', count: 2}], molarMass: 60.052, difficulty: 'medium' },
             { formula: 'NaOH', name: 'Natrímhýdroxíð', elements: [{symbol: 'Na', count: 1}, {symbol: 'O', count: 1}, {symbol: 'H', count: 1}], molarMass: 39.997, difficulty: 'medium' },
+            { formula: 'CaCO₃', name: 'Kalsíumkarbónat', elements: [{symbol: 'Ca', count: 1}, {symbol: 'C', count: 1}, {symbol: 'O', count: 3}], molarMass: 100.087, difficulty: 'medium' },
+            { formula: 'KCl', name: 'Kalíumklóríð', elements: [{symbol: 'K', count: 1}, {symbol: 'Cl', count: 1}], molarMass: 74.551, difficulty: 'medium' },
+            { formula: 'MgSO₄', name: 'Magnesíumsúlfat', elements: [{symbol: 'Mg', count: 1}, {symbol: 'S', count: 1}, {symbol: 'O', count: 4}], molarMass: 120.366, difficulty: 'medium' },
+            { formula: 'NaHCO₃', name: 'Matarsódi', elements: [{symbol: 'Na', count: 1}, {symbol: 'H', count: 1}, {symbol: 'C', count: 1}, {symbol: 'O', count: 3}], molarMass: 84.007, difficulty: 'medium' },
+            { formula: 'H₂O₂', name: 'Vetnisperoxíð', elements: [{symbol: 'H', count: 2}, {symbol: 'O', count: 2}], molarMass: 34.015, difficulty: 'medium' },
             { formula: 'C₆H₁₂O₆', name: 'Glúkósi', elements: [{symbol: 'C', count: 6}, {symbol: 'H', count: 12}, {symbol: 'O', count: 6}], molarMass: 180.156, difficulty: 'medium' },
-            { formula: 'Ca(OH)₂', name: 'Kalsíumhýdroxíð', elements: [{symbol: 'Ca', count: 1}, {symbol: 'O', count: 2}, {symbol: 'H', count: 2}], molarMass: 74.093, difficulty: 'medium' },
-            { formula: 'Al₂O₃', name: 'Áloxíð', elements: [{symbol: 'Al', count: 2}, {symbol: 'O', count: 3}], molarMass: 101.961, difficulty: 'medium' },
-            { formula: 'HNO₃', name: 'Saltpéturssýra', elements: [{symbol: 'H', count: 1}, {symbol: 'N', count: 1}, {symbol: 'O', count: 3}], molarMass: 63.012, difficulty: 'medium' },
-            { formula: 'KNO₃', name: 'Kalíumnítrat', elements: [{symbol: 'K', count: 1}, {symbol: 'N', count: 1}, {symbol: 'O', count: 3}], molarMass: 101.103, difficulty: 'medium' },
+            { formula: 'H₂SO₄', name: 'Brennisteinssýra', elements: [{symbol: 'H', count: 2}, {symbol: 'S', count: 1}, {symbol: 'O', count: 4}], molarMass: 98.079, difficulty: 'medium' },
 
-            // Hard
+            // Hard - Complex molecules and hydrates
+            { formula: 'C₆H₅OH', name: 'Fenól', elements: [{symbol: 'C', count: 6}, {symbol: 'H', count: 6}, {symbol: 'O', count: 1}], molarMass: 94.113, difficulty: 'hard' },
+            { formula: 'C₁₂H₂₂O₁₁', name: 'Súkrósi/Sykur', elements: [{symbol: 'C', count: 12}, {symbol: 'H', count: 22}, {symbol: 'O', count: 11}], molarMass: 342.297, difficulty: 'hard' },
+            { formula: 'MgSO₄·7H₂O', name: 'Epsom salt hýdrat', elements: [{symbol: 'Mg', count: 1}, {symbol: 'S', count: 1}, {symbol: 'O', count: 11}, {symbol: 'H', count: 14}], molarMass: 246.475, difficulty: 'hard' },
+            { formula: 'Na₂CO₃·10H₂O', name: 'Vatnaglas hýdrat', elements: [{symbol: 'Na', count: 2}, {symbol: 'C', count: 1}, {symbol: 'O', count: 13}, {symbol: 'H', count: 20}], molarMass: 286.141, difficulty: 'hard' },
+            { formula: 'FeSO₄·7H₂O', name: 'Járnsúlfat hýdrat', elements: [{symbol: 'Fe', count: 1}, {symbol: 'S', count: 1}, {symbol: 'O', count: 11}, {symbol: 'H', count: 14}], molarMass: 278.015, difficulty: 'hard' },
+            { formula: '(NH₄)₃PO₄', name: 'Ammóníumfosfat', elements: [{symbol: 'N', count: 3}, {symbol: 'H', count: 12}, {symbol: 'P', count: 1}, {symbol: 'O', count: 4}], molarMass: 149.087, difficulty: 'hard' },
+            { formula: 'Al₂(SO₄)₃', name: 'Álsúlfat', elements: [{symbol: 'Al', count: 2}, {symbol: 'S', count: 3}, {symbol: 'O', count: 12}], molarMass: 342.151, difficulty: 'hard' },
             { formula: 'Ca₃(PO₄)₂', name: 'Kalsíumfosfat', elements: [{symbol: 'Ca', count: 3}, {symbol: 'P', count: 2}, {symbol: 'O', count: 8}], molarMass: 310.177, difficulty: 'hard' },
-            { formula: 'Al(OH)₃', name: 'Álhýdroxíð', elements: [{symbol: 'Al', count: 1}, {symbol: 'O', count: 3}, {symbol: 'H', count: 3}], molarMass: 78.004, difficulty: 'hard' },
-            { formula: '(NH₄)₂SO₄', name: 'Ammóníumsúlfat', elements: [{symbol: 'N', count: 2}, {symbol: 'H', count: 8}, {symbol: 'S', count: 1}, {symbol: 'O', count: 4}], molarMass: 132.140, difficulty: 'hard' },
-            { formula: 'Fe₂O₃', name: 'Járn(III)oxíð', elements: [{symbol: 'Fe', count: 2}, {symbol: 'O', count: 3}], molarMass: 159.688, difficulty: 'hard' },
             { formula: 'CuSO₄·5H₂O', name: 'Koparbrennisteinshýdrat', elements: [{symbol: 'Cu', count: 1}, {symbol: 'S', count: 1}, {symbol: 'O', count: 9}, {symbol: 'H', count: 10}], molarMass: 249.685, difficulty: 'hard' },
-            { formula: 'Mg(NO₃)₂', name: 'Magnesíumnítrat', elements: [{symbol: 'Mg', count: 1}, {symbol: 'N', count: 2}, {symbol: 'O', count: 6}], molarMass: 148.315, difficulty: 'hard' },
         ];
 
         const MolarMassChallenge = () => {
@@ -214,6 +221,7 @@
                 isPlaying: false,
                 gameOver: false,
                 difficulty: 'mixed',
+                gameMode: 'competition', // 'practice' or 'competition'
                 showFeedback: false,
                 lastAnswerCorrect: null,
                 streak: 0,
@@ -221,11 +229,15 @@
                 showPeriodicTable: false,
                 inputValidation: { valid: true, error: '' },
                 calculationBreakdown: null,
-                contextualFeedback: ''
+                contextualFeedback: '',
+                incorrectAttempts: 0,
+                showSolution: false
             });
 
             const [showInstructions, setShowInstructions] = useState(true);
+            const [showModeSelection, setShowModeSelection] = useState(false);
             const [periodicTableSearch, setPeriodicTableSearch] = useState('');
+            const [showFormulaReference, setShowFormulaReference] = useState(false);
             const inputRef = useRef(null);
             const timerRef = useRef(null);
 
@@ -412,41 +424,83 @@
                                    gameState.currentCompound.difficulty === 'medium' ? 15 : 20;
 
                 const streakBonus = gameState.streak >= 3 ? 5 : 0;
-                const timeBonus = gameState.timeRemaining > 60 ? 5 : gameState.timeRemaining > 30 ? 3 : 0;
+                const timeBonus = gameState.gameMode === 'competition' && gameState.timeRemaining > 60 ? 5 :
+                                  gameState.gameMode === 'competition' && gameState.timeRemaining > 30 ? 3 : 0;
 
                 // Generate calculation breakdown and contextual feedback
                 const breakdown = generateCalculationBreakdown(gameState.currentCompound);
                 const feedback = !isCorrect ? generateContextualFeedback(userValue, correctAnswer) : '';
 
+                const newIncorrectAttempts = isCorrect ? 0 : gameState.incorrectAttempts + 1;
+
                 setGameState(prev => ({
                     ...prev,
                     score: isCorrect ? prev.score + pointValue + streakBonus + timeBonus : prev.score,
-                    questionsAnswered: prev.questionsAnswered + 1,
+                    questionsAnswered: isCorrect ? prev.questionsAnswered + 1 : prev.questionsAnswered,
                     correctAnswers: isCorrect ? prev.correctAnswers + 1 : prev.correctAnswers,
                     showFeedback: true,
                     lastAnswerCorrect: isCorrect,
                     streak: isCorrect ? prev.streak + 1 : 0,
                     bestStreak: isCorrect && prev.streak + 1 > prev.bestStreak ? prev.streak + 1 : prev.bestStreak,
                     calculationBreakdown: breakdown,
-                    contextualFeedback: feedback
+                    contextualFeedback: feedback,
+                    incorrectAttempts: newIncorrectAttempts,
+                    userAnswer: isCorrect ? prev.userAnswer : '', // Clear only if incorrect (allow retry)
                 }));
 
-                setTimeout(() => {
-                    if (gameState.timeRemaining > 0) {
-                        const nextQuestion = generateQuestion(gameState.difficulty);
-                        setGameState(prev => ({
-                            ...prev,
-                            currentCompound: nextQuestion,
-                            userAnswer: '',
-                            showFeedback: false,
-                            lastAnswerCorrect: null,
-                            calculationBreakdown: null,
-                            contextualFeedback: '',
-                            inputValidation: { valid: true, error: '' }
-                        }));
-                        if (inputRef.current) inputRef.current.focus();
-                    }
-                }, 1500);
+                // In competition mode, auto-advance after correct answer
+                // In practice mode, user manually clicks "Næsta"
+                if (isCorrect && gameState.gameMode === 'competition') {
+                    setTimeout(() => {
+                        if (gameState.timeRemaining > 0 || gameState.gameMode === 'practice') {
+                            const nextQuestion = generateQuestion(gameState.difficulty);
+                            setGameState(prev => ({
+                                ...prev,
+                                currentCompound: nextQuestion,
+                                userAnswer: '',
+                                showFeedback: false,
+                                lastAnswerCorrect: null,
+                                calculationBreakdown: null,
+                                contextualFeedback: '',
+                                inputValidation: { valid: true, error: '' },
+                                incorrectAttempts: 0,
+                                showSolution: false
+                            }));
+                            if (inputRef.current) inputRef.current.focus();
+                        }
+                    }, 1500);
+                }
+            };
+
+            const handleShowSolution = () => {
+                const breakdown = generateCalculationBreakdown(gameState.currentCompound);
+                const partialCredit = gameState.gameMode === 'competition' ? 3 : 0;
+
+                setGameState(prev => ({
+                    ...prev,
+                    showSolution: true,
+                    showFeedback: true,
+                    calculationBreakdown: breakdown,
+                    score: prev.score + partialCredit,
+                    questionsAnswered: prev.questionsAnswered + 1
+                }));
+            };
+
+            const handleNextQuestion = () => {
+                const nextQuestion = generateQuestion(gameState.difficulty);
+                setGameState(prev => ({
+                    ...prev,
+                    currentCompound: nextQuestion,
+                    userAnswer: '',
+                    showFeedback: false,
+                    lastAnswerCorrect: null,
+                    calculationBreakdown: null,
+                    contextualFeedback: '',
+                    inputValidation: { valid: true, error: '' },
+                    incorrectAttempts: 0,
+                    showSolution: false
+                }));
+                if (inputRef.current) inputRef.current.focus();
             };
 
             const handleInputChange = (value) => {
@@ -483,7 +537,8 @@
             };
 
             useEffect(() => {
-                if (gameState.isPlaying && !gameState.gameOver && gameState.timeRemaining > 0) {
+                // Timer only runs in competition mode
+                if (gameState.isPlaying && !gameState.gameOver && gameState.timeRemaining > 0 && gameState.gameMode === 'competition') {
                     timerRef.current = setInterval(() => {
                         setGameState(prev => {
                             if (prev.timeRemaining <= 1) {
@@ -497,7 +552,7 @@
                 return () => {
                     if (timerRef.current) clearInterval(timerRef.current);
                 };
-            }, [gameState.isPlaying, gameState.gameOver, gameState.timeRemaining]);
+            }, [gameState.isPlaying, gameState.gameOver, gameState.timeRemaining, gameState.gameMode]);
 
             useEffect(() => {
                 if (gameState.isPlaying && !gameState.showFeedback && inputRef.current) {
@@ -567,7 +622,7 @@
                             </div>
 
                             <button
-                                onClick={() => setShowInstructions(false)}
+                                onClick={() => setShowModeSelection(true) || setShowInstructions(false)}
                                 className="w-full mt-6 text-white font-bold py-4 px-6 rounded-xl transition-colors duration-200 text-lg"
                                 style={{backgroundColor: 'var(--kvenno-orange)'}}
                                 onMouseOver={(e) => e.target.style.backgroundColor = 'var(--kvenno-orange-dark)'}
@@ -580,7 +635,80 @@
                 );
             }
 
-            if (!gameState.isPlaying && !gameState.gameOver) {
+            // Mode selection screen
+            if (showModeSelection && !gameState.isPlaying && !gameState.gameOver) {
+                return (
+                    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-orange-100 p-8">
+                        <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-2xl p-8">
+                            <h1 className="text-4xl font-bold text-center mb-6" style={{color: 'var(--kvenno-orange)'}}>
+                                ⚖️ Molmassi
+                            </h1>
+
+                            <div className="space-y-6">
+                                <div className="text-center">
+                                    <h2 className="text-2xl font-semibold mb-4" style={{color: 'var(--kvenno-orange)'}}>
+                                        Veldu stillingu:
+                                    </h2>
+                                </div>
+
+                                <div className="space-y-4">
+                                    {/* Practice Mode */}
+                                    <button
+                                        onClick={() => {
+                                            setGameState(prev => ({ ...prev, gameMode: 'practice' }));
+                                            setShowModeSelection(false);
+                                        }}
+                                        className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-6 px-6 rounded-xl transition-colors text-left"
+                                    >
+                                        <div className="flex items-start">
+                                            <div className="text-3xl mr-4">📚</div>
+                                            <div className="flex-1">
+                                                <div className="text-2xl mb-2">Æfingastilling</div>
+                                                <div className="text-sm opacity-90">
+                                                    Æfðu án tímaaðs og sjáðu alla útreikninga.<br/>
+                                                    Engin tímatakmörk • Sjáðu lausnir • Lærðu á þínum hraða
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </button>
+
+                                    {/* Competition Mode */}
+                                    <button
+                                        onClick={() => {
+                                            setGameState(prev => ({ ...prev, gameMode: 'competition' }));
+                                            setShowModeSelection(false);
+                                        }}
+                                        className="w-full text-white font-bold py-6 px-6 rounded-xl transition-colors text-left"
+                                        style={{backgroundColor: 'var(--kvenno-orange)'}}
+                                        onMouseOver={(e) => e.target.style.backgroundColor = 'var(--kvenno-orange-dark)'}
+                                        onMouseOut={(e) => e.target.style.backgroundColor = 'var(--kvenno-orange)'}
+                                    >
+                                        <div className="flex items-start">
+                                            <div className="text-3xl mr-4">🏆</div>
+                                            <div className="flex-1">
+                                                <div className="text-2xl mb-2">Keppnisstilling</div>
+                                                <div className="text-sm opacity-90">
+                                                    Keppu við tímann og fáðu stig.<br/>
+                                                    90 sekúndur • Stigagjöf • Hraðabónus
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </button>
+                                </div>
+
+                                <button
+                                    onClick={() => setShowInstructions(true) || setShowModeSelection(false)}
+                                    className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-3 px-6 rounded-xl transition-colors"
+                                >
+                                    ← Til baka í leiðbeiningar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            if (!gameState.isPlaying && !gameState.gameOver && !showModeSelection) {
                 return (
                     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-orange-100 p-8">
                         <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-2xl p-8">
@@ -731,24 +859,44 @@
                 );
             }
 
+            const modeColor = gameState.gameMode === 'practice' ? '#3b82f6' : 'var(--kvenno-orange)';
+            const modeColorDark = gameState.gameMode === 'practice' ? '#2563eb' : 'var(--kvenno-orange-dark)';
+            const bgGradient = gameState.gameMode === 'practice'
+                ? 'from-blue-50 to-blue-100'
+                : 'from-orange-50 to-orange-100';
+
             return (
-                <div className="min-h-screen bg-gradient-to-br from-orange-50 to-orange-100 p-4 md:p-8">
+                <div className={`min-h-screen bg-gradient-to-br ${bgGradient} p-4 md:p-8`}>
                     <div className="max-w-4xl mx-auto">
                         {/* Header */}
                         <div className="bg-white rounded-2xl shadow-2xl p-6 mb-6">
                             <div className="flex justify-between items-center flex-wrap gap-4">
                                 <div className="flex items-center gap-4">
-                                    <div className="text-center">
-                                        <div className="flex items-center gap-2 text-red-600 mb-1">
-                                            <span>⏰</span>
-                                            <span className="text-3xl font-bold">{gameState.timeRemaining}s</span>
+                                    {/* Timer - Only show in competition mode */}
+                                    {gameState.gameMode === 'competition' && (
+                                        <div className="text-center">
+                                            <div className="flex items-center gap-2 text-red-600 mb-1">
+                                                <span>⏰</span>
+                                                <span className="text-3xl font-bold">{gameState.timeRemaining}s</span>
+                                            </div>
+                                            <div className="text-xs text-gray-600">Tími eftir</div>
                                         </div>
-                                        <div className="text-xs text-gray-600">Tími eftir</div>
-                                    </div>
+                                    )}
+
+                                    {/* Mode indicator in practice mode */}
+                                    {gameState.gameMode === 'practice' && (
+                                        <div className="text-center">
+                                            <div className="flex items-center gap-2 mb-1 text-blue-600">
+                                                <span>📚</span>
+                                                <span className="text-lg font-bold">Æfingastilling</span>
+                                            </div>
+                                            <div className="text-xs text-gray-600">Engin tímatakmörk</div>
+                                        </div>
+                                    )}
 
                                     <div className="text-center">
-                                        <div className="flex items-center gap-2 mb-1" style={{color: 'var(--kvenno-orange)'}}>
-                                            <span>🏆</span>
+                                        <div className="flex items-center gap-2 mb-1" style={{color: modeColor}}>
+                                            <span>{gameState.gameMode === 'practice' ? '📖' : '🏆'}</span>
                                             <span className="text-3xl font-bold">{gameState.score}</span>
                                         </div>
                                         <div className="text-xs text-gray-600">Stig</div>
@@ -763,9 +911,9 @@
                                         <div className="text-xs text-gray-600">Rétt</div>
                                     </div>
 
-                                    {gameState.streak >= 3 && (
+                                    {gameState.streak >= 3 && gameState.gameMode === 'competition' && (
                                         <div className="text-center animate-pulse">
-                                            <div className="flex items-center gap-1 mb-1" style={{color: 'var(--kvenno-orange)'}}>
+                                            <div className="flex items-center gap-1 mb-1" style={{color: modeColor}}>
                                                 <span>⚡</span>
                                                 <span className="text-2xl font-bold">{gameState.streak}</span>
                                             </div>
@@ -775,19 +923,61 @@
                                 </div>
                             </div>
 
-                            <div className="mt-4 bg-gray-200 rounded-full h-2">
-                                <div
-                                    className="h-2 rounded-full transition-all duration-1000"
-                                    style={{
-                                        width: `${(gameState.timeRemaining / 90) * 100}%`,
-                                        background: 'linear-gradient(to right, var(--kvenno-orange), var(--kvenno-orange-dark))'
-                                    }}
-                                />
-                            </div>
+                            {/* Progress bar - Only show in competition mode */}
+                            {gameState.gameMode === 'competition' && (
+                                <div className="mt-4 bg-gray-200 rounded-full h-2">
+                                    <div
+                                        className="h-2 rounded-full transition-all duration-1000"
+                                        style={{
+                                            width: `${(gameState.timeRemaining / 90) * 100}%`,
+                                            background: `linear-gradient(to right, ${modeColor}, ${modeColorDark})`
+                                        }}
+                                    />
+                                </div>
+                            )}
                         </div>
 
+                        {/* Formula Reference Card - Floating */}
+                        {showFormulaReference && (
+                            <div className="fixed top-20 right-4 bg-white rounded-xl shadow-2xl p-4 max-w-xs border-2 border-blue-300 z-50">
+                                <div className="flex justify-between items-center mb-3">
+                                    <h4 className="font-bold text-lg">📐 Formúlur</h4>
+                                    <button
+                                        onClick={() => setShowFormulaReference(false)}
+                                        className="text-gray-500 hover:text-gray-700 font-bold"
+                                    >
+                                        ✕
+                                    </button>
+                                </div>
+                                <div className="text-sm space-y-3">
+                                    <div>
+                                        <div className="font-semibold text-blue-600">Mólþyngd:</div>
+                                        <div className="text-gray-700">Summa (fjöldi × atómamassi)</div>
+                                    </div>
+                                    <div>
+                                        <div className="font-semibold text-blue-600">Umreikningar:</div>
+                                        <div className="text-gray-700">1 g = 1000 mg</div>
+                                        <div className="text-gray-700">1 mol = mólþyngd (g)</div>
+                                    </div>
+                                    <div>
+                                        <div className="font-semibold text-blue-600">Hýdröt:</div>
+                                        <div className="text-gray-700">·xH₂O = x vatnsameindir</div>
+                                        <div className="text-gray-700">Bættu við vatninu!</div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Formula Reference Toggle Button */}
+                        <button
+                            onClick={() => setShowFormulaReference(!showFormulaReference)}
+                            className="fixed top-20 right-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-lg z-40"
+                        >
+                            📐 Formúlur
+                        </button>
+
                         {/* Game Area */}
-                        <div className="bg-white rounded-2xl shadow-2xl p-8">
+                        <div className="bg-white rounded-2xl shadow-2xl p-8 relative">
                             {gameState.currentCompound && (
                                 <>
                                     <div className="mb-6 text-center">
@@ -900,16 +1090,16 @@
                                                         placeholder="Mólþyngd í g/mol"
                                                         className="w-full p-4 text-2xl border-4 rounded-xl focus:outline-none text-center font-bold"
                                                         style={{
-                                                            borderColor: !gameState.inputValidation.valid ? '#ef4444' : 'var(--kvenno-orange)'
+                                                            borderColor: !gameState.inputValidation.valid ? '#ef4444' : modeColor
                                                         }}
                                                         onFocus={(e) => {
                                                             if (gameState.inputValidation.valid) {
-                                                                e.target.style.borderColor = 'var(--kvenno-orange-dark)';
+                                                                e.target.style.borderColor = modeColorDark;
                                                             }
                                                         }}
                                                         onBlur={(e) => {
                                                             if (gameState.inputValidation.valid) {
-                                                                e.target.style.borderColor = 'var(--kvenno-orange)';
+                                                                e.target.style.borderColor = modeColor;
                                                             }
                                                         }}
                                                         autoFocus
@@ -924,9 +1114,9 @@
                                                     onClick={checkAnswer}
                                                     disabled={!gameState.userAnswer.trim() || !gameState.inputValidation.valid}
                                                     className="w-full text-white font-bold py-4 px-6 rounded-xl transition-colors text-xl disabled:bg-gray-300"
-                                                    style={{backgroundColor: (gameState.userAnswer.trim() && gameState.inputValidation.valid) ? 'var(--kvenno-orange)' : undefined}}
-                                                    onMouseOver={(e) => {if (gameState.userAnswer.trim() && gameState.inputValidation.valid) e.target.style.backgroundColor = 'var(--kvenno-orange-dark)'}}
-                                                    onMouseOut={(e) => {if (gameState.userAnswer.trim() && gameState.inputValidation.valid) e.target.style.backgroundColor = 'var(--kvenno-orange)'}}
+                                                    style={{backgroundColor: (gameState.userAnswer.trim() && gameState.inputValidation.valid) ? modeColor : undefined}}
+                                                    onMouseOver={(e) => {if (gameState.userAnswer.trim() && gameState.inputValidation.valid) e.target.style.backgroundColor = modeColorDark}}
+                                                    onMouseOut={(e) => {if (gameState.userAnswer.trim() && gameState.inputValidation.valid) e.target.style.backgroundColor = modeColor}}
                                                 >
                                                     Athuga svar ✓
                                                 </button>
@@ -957,7 +1147,7 @@
 
                                                 {/* Calculation Breakdown */}
                                                 {gameState.calculationBreakdown && (
-                                                    <div className={`text-left p-4 rounded-lg ${gameState.lastAnswerCorrect ? 'bg-green-100' : 'bg-red-100'}`}>
+                                                    <div className={`text-left p-4 rounded-lg mb-4 ${gameState.lastAnswerCorrect ? 'bg-green-100' : 'bg-red-100'}`}>
                                                         <h4 className="font-bold text-center mb-2">Útreikningur:</h4>
                                                         <div className="font-mono text-sm">
                                                             {gameState.calculationBreakdown.map((item, idx) => {
@@ -979,8 +1169,46 @@
                                                                 Samtals: {gameState.currentCompound.molarMass.toFixed(3)} g/mol
                                                             </div>
                                                         </div>
+                                                        {gameState.currentCompound.formula.includes('·') && (
+                                                            <div className="mt-3 text-xs text-blue-700 bg-blue-50 p-2 rounded">
+                                                                💡 <strong>Ábending um hýdröt:</strong> ·5H₂O þýðir 5 vatnsameindir. Reiknaðu 5 × (2×1.008 + 15.999)
+                                                            </div>
+                                                        )}
                                                     </div>
                                                 )}
+
+                                                {/* Action Buttons */}
+                                                <div className="space-y-2 mt-4">
+                                                    {/* Show Solution Button - After 2 incorrect attempts or immediately in practice mode */}
+                                                    {!gameState.lastAnswerCorrect && !gameState.showSolution && (gameState.incorrectAttempts >= 2 || gameState.gameMode === 'practice') && (
+                                                        <button
+                                                            onClick={handleShowSolution}
+                                                            className="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-6 rounded-xl transition-colors"
+                                                        >
+                                                            💡 Sýna lausn {gameState.gameMode === 'competition' && '(+3 stig)'}
+                                                        </button>
+                                                    )}
+
+                                                    {/* Next Question Button - In practice mode, after correct answer, or after showing solution */}
+                                                    {(gameState.gameMode === 'practice' || gameState.showSolution) && (
+                                                        <button
+                                                            onClick={handleNextQuestion}
+                                                            className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-xl transition-colors"
+                                                        >
+                                                            Næsta spurning →
+                                                        </button>
+                                                    )}
+
+                                                    {/* Try Again - When incorrect but not ready for solution */}
+                                                    {!gameState.lastAnswerCorrect && !gameState.showSolution && gameState.incorrectAttempts < 2 && gameState.gameMode === 'competition' && (
+                                                        <button
+                                                            onClick={() => setGameState(prev => ({ ...prev, showFeedback: false, userAnswer: '' }))}
+                                                            className="w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-xl transition-colors"
+                                                        >
+                                                            ↻ Reyna aftur
+                                                        </button>
+                                                    )}
+                                                </div>
                                             </div>
                                         )}
                                     </div>

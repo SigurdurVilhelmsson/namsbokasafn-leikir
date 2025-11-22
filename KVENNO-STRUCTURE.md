@@ -386,10 +386,18 @@ Each app (Lab Reports, AI Tutor, etc.) must include:
 
 > **NOTE**: Update this section for each repo
 
-- **Repo Name**: [e.g., lab-reports-app]
-- **Deployed To**: [e.g., /1-ar/lab-reports/]
-- **Purpose**: [Brief description of what this app does]
-- **Current Status**: [In development / Deployed / Planning]
+- **Repo Name**: ChemistryGames
+- **Deployed To**:
+  - `/1-ar/games/` (Production - 5 games available)
+  - `/2-ar/games/` (In development - placeholder page)
+  - `/3-ar/games/` (In development - placeholder page)
+- **Purpose**: Interactive chemistry games for students at different year levels. Each year has games tailored to their curriculum difficulty level. Currently includes 5 standalone HTML games for 1st year: Nafnakerfið (naming), Einingagreining (unit conversion), Takmarkandi (limiting reactants), Molmassi (molar mass), and Lausnir (solutions).
+- **Current Status**:
+  - 1st year: ✅ Deployed (5 games production-ready)
+  - 2nd year: 🚧 In development (placeholder page created)
+  - 3rd year: 🚧 In development (placeholder page created)
+- **Technology**: Static HTML files with React (via CDN), Tailwind CSS, no build process required
+- **Authentication**: None required - open access for all students
 
 ## 9. Deployment Notes
 

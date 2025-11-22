@@ -11,10 +11,13 @@ An interactive collection of educational chemistry games designed for first-year
 ## Deployment
 
 This repository is configured for deployment to **kvenno.app** at:
-- **Production URL**: `https://kvenno.app/1-ar/games/`
-- **Repository**: `chemistry-games-1ar`
-- **Target Audience**: 1st year chemistry students
-- **Deployment Status**: ✅ Ready for production
+- **Production URLs**:
+  - `https://kvenno.app/1-ar/games/` (1st year - production ready)
+  - `https://kvenno.app/2-ar/games/` (2nd year - in development)
+  - `https://kvenno.app/3-ar/games/` (3rd year - in development)
+- **Repository**: `ChemistryGames`
+- **Target Audience**: Chemistry students (all years)
+- **Deployment Status**: ✅ 1st year ready, 2nd/3rd year in development
 
 ## 🎮 Games Included
 
@@ -22,31 +25,31 @@ This repository is configured for deployment to **kvenno.app** at:
 - **Type:** Memory matching game
 - **Purpose:** Match chemical formulas to their compound names
 - **Difficulty Levels:** Easy, Medium, Hard
-- **File:** `1. ár/nafnakerfið.html`
+- **File:** `1-ar/nafnakerfid.html`
 
 ### 2. **Einingagreining** (Unit Conversion Race)
 - **Type:** Timed speed quiz (60 seconds)
 - **Purpose:** Convert between units (mass, volume, length, temperature)
 - **Difficulty Levels:** Easy, Medium, Hard, Mixed
-- **File:** `1. ár/einingagreining.html`
+- **File:** `1-ar/einingagreining.html`
 
 ### 3. **Takmarkandi** (Limiting Reactant Factory)
 - **Type:** Problem-solving game
 - **Purpose:** Identify limiting reagents and calculate products formed
 - **Difficulty Levels:** Easy, Medium, Hard
-- **File:** `1. ár/takmarkandi.html`
+- **File:** `1-ar/takmarkandi.html`
 
 ### 4. **Molmassi** (Molar Mass Challenge)
 - **Type:** Timed speed quiz (90 seconds)
 - **Purpose:** Calculate molar mass from chemical formulas
 - **Difficulty Levels:** Easy, Medium, Hard, Mixed
-- **File:** `1. ár/molmassi.html`
+- **File:** `1-ar/molmassi.html`
 
 ### 5. **Lausnir** (Solution Lab)
 - **Type:** Problem-solving game
 - **Purpose:** Solve dilution, molarity, and solution mixing problems
 - **Difficulty Levels:** Easy, Medium, Hard
-- **File:** `1. ár/lausnir.html`
+- **File:** `1-ar/lausnir.html`
 
 ## 🚀 Quick Start
 
@@ -55,15 +58,15 @@ All games can be opened directly in any modern web browser - no build process re
 
 ```bash
 # Simply open any game in your browser:
-open "1. ár/nafnakerfið.html"
-open "1. ár/einingagreining.html"
-open "1. ár/takmarkandi.html"
-open "1. ár/molmassi.html"
-open "1. ár/lausnir.html"
+open 1-ar/nafnakerfid.html
+open 1-ar/einingagreining.html
+open 1-ar/takmarkandi.html
+open 1-ar/molmassi.html
+open 1-ar/lausnir.html
 
 # Or serve with a local server:
 python -m http.server 8000
-# Then visit http://localhost:8000
+# Then visit http://localhost:8000/1-ar/
 ```
 
 **Note:** An internet connection is required for CDN-loaded dependencies (React, Tailwind CSS).
@@ -88,20 +91,20 @@ ChemistryGames/
 ├── LICENSE                    # MIT License
 ├── README.md                  # This file
 ├── DEPLOYMENT.md              # Deployment guide for kvenno.app
-├── kvenno_structure.md        # Kvenno site structure and design system
-├── index.html                 # Landing page with game selection
+├── KVENNO-STRUCTURE.md        # Kvenno site structure and design system
 ├── 404.html                   # Error page
-└── 1. ár/                     # Year 1 Chemistry Games
-    ├── nafnakerfið.html      # Compound Name Matchmaker
-    ├── einingagreining.html  # Unit Conversion Race
-    ├── takmarkandi.html      # Limiting Reactant Factory
-    ├── molmassi.html         # Molar Mass Challenge
-    ├── molmassi.tsx          # Source TSX file (reference)
-    ├── lausnir.html          # Solution Lab
-    └── lausnir.tsx           # Source TSX file (reference)
+├── 1-ar/                      # Year 1 Chemistry Games
+│   ├── index.html            # Games hub page for 1st year
+│   ├── nafnakerfid.html      # Compound Name Matchmaker
+│   ├── einingagreining.html  # Unit Conversion Race
+│   ├── takmarkandi.html      # Limiting Reactant Factory
+│   ├── molmassi.html         # Molar Mass Challenge
+│   └── lausnir.html          # Solution Lab
+├── 2-ar/                      # Year 2 Chemistry Games
+│   └── index.html            # Games hub page for 2nd year (coming soon)
+└── 3-ar/                      # Year 3 Chemistry Games
+    └── index.html            # Games hub page for 3rd year (coming soon)
 ```
-
-**Note:** The `.tsx` files are kept for reference but are no longer needed for deployment. All games use the `.html` versions.
 
 ## 🌐 Browser Compatibility
 

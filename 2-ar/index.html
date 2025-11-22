@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="is">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Gagnvirkir efnafræðileikir fyrir 2. árs nemendur. Lærum efnafræði í gegnum skemmtilega, fræðandi leiki.">
+    <meta name="keywords" content="efnafræði, menntun, leikir, námskeið, chemistry, 2. ár">
+    <meta name="author" content="Sigurður E. Vilhelmsson">
+    <title>Efnafræðileikir - 2. ár - Kvenno Efnafræði</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --kvenno-orange: #f36b22;
+            --kvenno-orange-dark: #d95a1a;
+            --kvenno-orange-light: #ff8347;
+        }
+
+        .game-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 2px solid var(--kvenno-orange);
+            border-radius: 8px;
+        }
+
+        .game-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(243, 107, 34, 0.2);
+            border-color: var(--kvenno-orange-dark);
+        }
+
+        .site-header {
+            background: white;
+            border-bottom: 2px solid #e5e7eb;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            height: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .site-logo {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: var(--kvenno-orange);
+            text-decoration: none;
+        }
+
+        .site-logo:hover {
+            color: var(--kvenno-orange-dark);
+        }
+
+        .header-btn {
+            background: white;
+            border: 2px solid var(--kvenno-orange);
+            color: var(--kvenno-orange);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-left: 0.5rem;
+        }
+
+        .header-btn:hover {
+            background: var(--kvenno-orange);
+            color: white;
+        }
+
+        .breadcrumb {
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+
+        .breadcrumb a {
+            color: var(--kvenno-orange);
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .back-btn {
+            background: white;
+            border: 2px solid var(--kvenno-orange);
+            color: var(--kvenno-orange);
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            background: var(--kvenno-orange);
+            color: white;
+        }
+
+        .coming-soon {
+            border: 2px dashed var(--kvenno-orange);
+            border-radius: 8px;
+            background: #fff5f0;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Site Header -->
+    <header class="site-header">
+        <div class="header-content">
+            <a href="/" class="site-logo">Kvenno Efnafræði</a>
+            <div class="header-actions">
+                <button class="header-btn" onclick="alert('Stjórnendaaðgangur í þróun')">Stjórnandi</button>
+                <button class="header-btn" onclick="alert('Hjálp og upplýsingar um leikina')">Upplýsingar</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container mx-auto px-4 py-8 md:py-12" style="max-width: 1200px;">
+        <!-- Breadcrumbs -->
+        <div class="breadcrumb mb-6">
+            <a href="/">Heim</a> > <a href="/2-ar/">2. ár</a> > <span>Leikir</span>
+        </div>
+
+        <!-- Back Button -->
+        <div class="mb-8">
+            <a href="/2-ar/" class="back-btn">
+                <span>←</span>
+                <span>Til baka</span>
+            </a>
+        </div>
+
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl md:text-6xl font-bold mb-4" style="color: var(--kvenno-orange);">
+                🧪 Efnafræðileikir
+            </h1>
+            <p class="text-xl md:text-2xl text-gray-700 mb-2">
+                Gagnvirkir leikir fyrir 2. árs nemendur
+            </p>
+            <p class="text-base md:text-lg text-gray-600">
+                Lærðu efnafræði í gegnum skemmtilega leiki
+            </p>
+        </div>
+
+        <!-- Coming Soon Notice -->
+        <div class="max-w-2xl mx-auto mb-12 coming-soon p-8 text-center">
+            <div class="text-6xl mb-4">🚧</div>
+            <h2 class="text-2xl font-bold mb-4" style="color: var(--kvenno-orange);">Í þróun</h2>
+            <p class="text-gray-700 text-lg mb-4">
+                Efnafræðileikir fyrir 2. árs nemendur eru í þróun og verða fljótlega tiltækir.
+            </p>
+            <p class="text-gray-600">
+                Við erum að vinna að því að búa til spennandi leiki sem eru sérsniðnir að 2. árs námsefni í efnafræði.
+            </p>
+        </div>
+
+        <!-- Planned Features Section -->
+        <div class="max-w-4xl mx-auto mb-12">
+            <h2 class="text-3xl font-bold text-center mb-8 text-gray-800">Væntanlegir eiginleikar</h2>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-white rounded-lg shadow p-6" style="border: 2px solid #f5f5f5;">
+                    <div class="text-3xl mb-3">🎯</div>
+                    <h3 class="text-xl font-bold mb-2" style="color: var(--kvenno-orange);">Mörg erfiðleikastig</h3>
+                    <p class="text-gray-600">Veldu á milli auðvelt, miðlungs, erfitt eða blandað til að passa við þína kunnáttu.</p>
+                </div>
+                <div class="bg-white rounded-lg shadow p-6" style="border: 2px solid #f5f5f5;">
+                    <div class="text-3xl mb-3">🌍</div>
+                    <h3 class="text-xl font-bold mb-2" style="color: var(--kvenno-orange);">Tvítyngt viðmót</h3>
+                    <p class="text-gray-600">Fáanlegt á bæði íslensku og ensku fyrir hámarks aðgengi.</p>
+                </div>
+                <div class="bg-white rounded-lg shadow p-6" style="border: 2px solid #f5f5f5;">
+                    <div class="text-3xl mb-3">📱</div>
+                    <h3 class="text-xl font-bold mb-2" style="color: var(--kvenno-orange);">Símavænt</h3>
+                    <p class="text-gray-600">Sveigjanleg hönnun virkar fullkomlega á símum, spjaldtölvum og tölvum.</p>
+                </div>
+                <div class="bg-white rounded-lg shadow p-6" style="border: 2px solid #f5f5f5;">
+                    <div class="text-3xl mb-3">⏱️</div>
+                    <h3 class="text-xl font-bold mb-2" style="color: var(--kvenno-orange);">Svörun í rauntíma</h3>
+                    <p class="text-gray-600">Fáðu tafarlaust endurgjöf á svörin þín og fylgstu með framförum.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- About Section -->
+        <div class="max-w-3xl mx-auto bg-white rounded-xl shadow-lg p-8 mb-8" style="border: 2px solid #f5f5f5;">
+            <h2 class="text-2xl font-bold mb-4" style="color: var(--kvenno-orange);">Um efnafræðileikina</h2>
+            <p class="text-gray-600 mb-4">
+                Efnafræðileikir fyrir 2. ár munu verða safn gagnvirkra kennsluleikja sem eru hannaðir til að hjálpa
+                2. árs efnafræðinemendum að ná tökum á framhaldsnámsefni í gegnum skemmtilega og hagnýta æfingu.
+            </p>
+            <p class="text-gray-600 mb-4">
+                Þessir leikir verða byggðir með nútíma veftækni þar á meðal React og Tailwind CSS og munu virka á öllum tækjum.
+            </p>
+        </div>
+
+        <!-- Footer -->
+        <footer class="text-center text-gray-600 mt-12 pb-8">
+            <p class="mb-2" style="color: var(--kvenno-orange); font-weight: 600;">Kvennaskólinn í Reykjavík</p>
+            <p class="mb-2">&copy; 2025 Sigurður E. Vilhelmsson</p>
+            <p class="text-sm text-gray-500">MIT leyfi</p>
+        </footer>
+    </div>
+</body>
+</html>

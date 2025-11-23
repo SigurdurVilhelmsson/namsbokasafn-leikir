@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="is">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>pH Titration Master - Kvenno Efnafræði</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Kvenno Brand Colors */
+        :root {
+            --kvenno-orange: #f36b22;
+            --kvenno-orange-dark: #d95a1a;
+        }
+
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+                'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+                sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background: #f9fafb;
+        }
+
+        /* Header Styles */
+        .site-header {
+            background: white;
+            border-bottom: 2px solid #e5e7eb;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            height: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .site-logo {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: var(--kvenno-orange);
+            text-decoration: none;
+        }
+
+        /* Burette Styles */
+        .burette {
+            width: 80px;
+            height: 400px;
+            background: linear-gradient(to bottom, #e0e7ff 0%, #c7d2fe 100%);
+            border: 3px solid #4338ca;
+            border-radius: 10px;
+            position: relative;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .burette-liquid {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to bottom, #3b82f6, #1e40af);
+            transition: height 0.3s ease;
+            border-radius: 0 0 7px 7px;
+        }
+
+        .burette-scale {
+            position: absolute;
+            left: -30px;
+            top: 0;
+            bottom: 0;
+            width: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            font-size: 11px;
+            font-weight: bold;
+            color: #4338ca;
+        }
+
+        /* Flask Styles */
+        .erlenmeyer-flask {
+            width: 200px;
+            height: 250px;
+            position: relative;
+        }
+
+        .flask-neck {
+            width: 60px;
+            height: 80px;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.8), rgba(255,255,255,0.6));
+            border: 3px solid #6366f1;
+            border-bottom: none;
+            margin: 0 auto;
+            border-radius: 5px 5px 0 0;
+        }
+
+        .flask-body {
+            width: 200px;
+            height: 170px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7));
+            border: 3px solid #6366f1;
+            border-radius: 0 0 50% 50%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .flask-solution {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            transition: all 0.5s ease;
+            border-radius: 0 0 45% 45%;
+        }
+
+        .swirl {
+            animation: swirl 2s ease-in-out;
+        }
+
+        @keyframes swirl {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(5deg); }
+            75% { transform: rotate(-5deg); }
+        }
+
+        @keyframes drip {
+            0% { transform: translateY(-10px); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(20px); opacity: 0; }
+        }
+
+        .drip {
+            animation: drip 0.8s ease-out;
+        }
+
+        /* pH Meter Styles */
+        .ph-meter {
+            background: linear-gradient(135deg, #1f2937, #374151);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            border: 3px solid #6b7280;
+        }
+
+        .ph-display {
+            background: #1a1a1a;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.5);
+            border: 2px solid #374151;
+        }
+
+        .ph-value {
+            font-size: 3.5rem;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+            text-shadow: 0 0 20px currentColor;
+        }
+
+        .ph-scale-indicator {
+            height: 30px;
+            background: linear-gradient(to right,
+                #ef4444 0%,
+                #f59e0b 14%,
+                #eab308 28%,
+                #84cc16 42%,
+                #22c55e 50%,
+                #06b6d4 64%,
+                #3b82f6 78%,
+                #8b5cf6 92%,
+                #a855f7 100%);
+            border-radius: 15px;
+            position: relative;
+            margin-top: 15px;
+        }
+
+        .ph-marker {
+            position: absolute;
+            top: -5px;
+            width: 4px;
+            height: 40px;
+            background: white;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+            transition: left 0.3s ease;
+        }
+
+        /* Titration Curve Canvas */
+        .curve-canvas {
+            border: 2px solid #d1d5db;
+            border-radius: 10px;
+            background: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Animations */
+        @keyframes pulse-success {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .pulse-success {
+            animation: pulse-success 0.6s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .shake {
+            animation: shake 0.4s ease-in-out;
+        }
+
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            .burette {
+                width: 60px;
+                height: 300px;
+            }
+
+            .erlenmeyer-flask {
+                width: 150px;
+                height: 200px;
+            }
+
+            .flask-body {
+                width: 150px;
+                height: 120px;
+            }
+
+            .ph-value {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="site-header">
+        <div class="header-content">
+            <a href="../index.html" class="site-logo">Kvenno Efnafræði</a>
+            <div>
+                <span style="font-weight: 600; color: #374151;">pH Titration Master</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- React App Root -->
+    <div id="root"></div>
+
+    <!-- React Application -->
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // Titration Problems Bank
+        const TITRATIONS = [
+            // Beginner Level (Strong/Strong)
+            {
+                id: 1,
+                type: 'strong-strong',
+                name: 'HCl + NaOH',
+                analyte: { formula: 'HCl', volume: 25.0, molarity: 0.100, name: 'Saltssýra' },
+                titrant: { formula: 'NaOH', molarity: 0.100, name: 'Natríumhýdroxíð' },
+                equivalenceVolume: 25.0,
+                equivalencePH: 7.00,
+                initialPH: 1.00,
+                bestIndicator: 'bromothymol-blue',
+                difficulty: 'Byrjandi',
+                Ka: null,
+                pKa: null
+            },
+            {
+                id: 2,
+                type: 'strong-strong',
+                name: 'HNO₃ + KOH',
+                analyte: { formula: 'HNO₃', volume: 30.0, molarity: 0.0500, name: 'Saltpéturssýra' },
+                titrant: { formula: 'KOH', molarity: 0.100, name: 'Kalíumhýdroxíð' },
+                equivalenceVolume: 15.0,
+                equivalencePH: 7.00,
+                initialPH: 1.30,
+                bestIndicator: 'bromothymol-blue',
+                difficulty: 'Byrjandi',
+                Ka: null,
+                pKa: null
+            },
+            {
+                id: 3,
+                type: 'strong-strong',
+                name: 'HCl + NaOH',
+                analyte: { formula: 'HCl', volume: 50.0, molarity: 0.200, name: 'Saltssýra' },
+                titrant: { formula: 'NaOH', molarity: 0.100, name: 'Natríumhýdroxíð' },
+                equivalenceVolume: 100.0,
+                equivalencePH: 7.00,
+                initialPH: 0.70,
+                bestIndicator: 'bromothymol-blue',
+                difficulty: 'Byrjandi',
+                Ka: null,
+                pKa: null
+            },
+            {
+                id: 4,
+                type: 'strong-strong',
+                name: 'HClO₄ + LiOH',
+                analyte: { formula: 'HClO₄', volume: 15.0, molarity: 0.125, name: 'Perklórsýra' },
+                titrant: { formula: 'LiOH', molarity: 0.100, name: 'Litíumhýdroxíð' },
+                equivalenceVolume: 18.75,
+                equivalencePH: 7.00,
+                initialPH: 0.90,
+                bestIndicator: 'phenolphthalein',
+                difficulty: 'Byrjandi',
+                Ka: null,
+                pKa: null
+            },
+            // Intermediate Level (Weak Acid/Strong Base)
+            {
+                id: 5,
+                type: 'weak-strong',
+                name: 'CH₃COOH + NaOH',
+                analyte: { formula: 'CH₃COOH', volume: 25.0, molarity: 0.100, name: 'Ediksýra' },
+                titrant: { formula: 'NaOH', molarity: 0.100, name: 'Natríumhýdroxíð' },
+                equivalenceVolume: 25.0,
+                equivalencePH: 8.72,
+                initialPH: 2.87,
+                halfEquivalencePH: 4.74,
+                bestIndicator: 'phenolphthalein',
+                difficulty: 'Miðlungs',
+                Ka: 1.8e-5,
+                pKa: 4.74
+            },
+            {
+                id: 6,
+                type: 'weak-strong',
+                name: 'HF + NaOH',
+                analyte: { formula: 'HF', volume: 30.0, molarity: 0.150, name: 'Flússýra' },
+                titrant: { formula: 'NaOH', molarity: 0.100, name: 'Natríumhýdroxíð' },
+                equivalenceVolume: 45.0,
+                equivalencePH: 8.08,
+                initialPH: 2.08,
+                halfEquivalencePH: 3.17,
+                bestIndicator: 'phenolphthalein',
+                difficulty: 'Miðlungs',
+                Ka: 6.8e-4,
+                pKa: 3.17
+            },
+            {
+                id: 7,
+                type: 'weak-strong',
+                name: 'HCOOH + KOH',
+                analyte: { formula: 'HCOOH', volume: 20.0, molarity: 0.200, name: 'Maurasýra' },
+                titrant: { formula: 'KOH', molarity: 0.100, name: 'Kalíumhýdroxíð' },
+                equivalenceVolume: 40.0,
+                equivalencePH: 8.35,
+                initialPH: 2.22,
+                halfEquivalencePH: 3.75,
+                bestIndicator: 'phenolphthalein',
+                difficulty: 'Miðlungs',
+                Ka: 1.8e-4,
+                pKa: 3.75
+            },
+            {
+                id: 8,
+                type: 'weak-strong',
+                name: 'C₆H₅COOH + NaOH',
+                analyte: { formula: 'C₆H₅COOH', volume: 25.0, molarity: 0.100, name: 'Bensoesýra' },
+                titrant: { formula: 'NaOH', molarity: 0.100, name: 'Natríumhýdroxíð' },
+                equivalenceVolume: 25.0,
+                equivalencePH: 8.60,
+                initialPH: 2.60,
+                halfEquivalencePH: 4.19,
+                bestIndicator: 'phenolphthalein',
+                difficulty: 'Miðlungs',
+                Ka: 6.5e-5,
+                pKa: 4.19
+            },
+            // Weak Base/Strong Acid
+            {
+                id: 9,
+                type: 'strong-weak',
+                name: 'NH₃ + HCl',
+                analyte: { formula: 'NH₃', volume: 25.0, molarity: 0.100, name: 'Ammoníak' },
+                titrant: { formula: 'HCl', molarity: 0.100, name: 'Saltssýra' },
+                equivalenceVolume: 25.0,
+                equivalencePH: 5.28,
+                initialPH: 11.13,
+                halfEquivalencePH: 9.26,
+                bestIndicator: 'methyl-red',
+                difficulty: 'Miðlungs',
+                Kb: 1.8e-5,
+                pKa: 9.26
+            },
+            {
+                id: 10,
+                type: 'strong-weak',
+                name: 'CH₃NH₂ + HCl',
+                analyte: { formula: 'CH₃NH₂', volume: 25.0, molarity: 0.100, name: 'Metýlamín' },
+                titrant: { formula: 'HCl', molarity: 0.100, name: 'Saltssýra' },
+                equivalenceVolume: 25.0,
+                equivalencePH: 5.82,
+                initialPH: 11.82,
+                halfEquivalencePH: 10.64,
+                bestIndicator: 'methyl-red',
+                difficulty: 'Miðlungs',
+                Kb: 4.4e-4,
+                pKa: 10.64
+            }
+        ];
+
+        // Indicator Database
+        const INDICATORS = {
+            'methyl-orange': {
+                name: 'Methyl Orange',
+                nameIs: 'Metýlappelsínugult',
+                pHRange: [3.1, 4.4],
+                acidColor: '#ff4444',
+                baseColor: '#ffff44',
+                textAcid: 'rauður',
+                textBase: 'gulur'
+            },
+            'methyl-red': {
+                name: 'Methyl Red',
+                nameIs: 'Metýlrautt',
+                pHRange: [4.4, 6.2],
+                acidColor: '#ff0000',
+                baseColor: '#ffff00',
+                textAcid: 'rauður',
+                textBase: 'gulur'
+            },
+            'bromothymol-blue': {
+                name: 'Bromothymol Blue',
+                nameIs: 'Brómótýmólblátt',
+                pHRange: [6.0, 7.6],
+                acidColor: '#ffff00',
+                baseColor: '#4444ff',
+                textAcid: 'gulur',
+                textBase: 'blár'
+            },
+            'phenolphthalein': {
+                name: 'Phenolphthalein',
+                nameIs: 'Fenólftaleín',
+                pHRange: [8.3, 10.0],
+                acidColor: 'transparent',
+                baseColor: '#ff69b4',
+                textAcid: 'litlaus',
+                textBase: 'bleikur'
+            },
+            'thymol-blue': {
+                name: 'Thymol Blue',
+                nameIs: 'Týmólblátt',
+                pHRange: [8.0, 9.6],
+                acidColor: '#ffff00',
+                baseColor: '#4444ff',
+                textAcid: 'gulur',
+                textBase: 'blár'
+            }
+        };
+
+        // pH Calculation Functions
+        const calculateStrongStrongPH = (volumeAcid, molarityAcid, volumeBase, molarityBase) => {
+            const molesAcid = volumeAcid * molarityAcid / 1000;
+            const molesBase = volumeBase * molarityBase / 1000;
+            const totalVolume = (volumeAcid + volumeBase) / 1000;
+
+            if (Math.abs(molesAcid - molesBase) < 1e-10) {
+                return 7.00;
+            } else if (molesAcid > molesBase) {
+                const excessH = (molesAcid - molesBase) / totalVolume;
+                return -Math.log10(excessH);
+            } else {
+                const excessOH = (molesBase - molesAcid) / totalVolume;
+                const pOH = -Math.log10(excessOH);
+                return 14 - pOH;
+            }
+        };
+
+        const calculateWeakStrongPH = (volumeAcid, molarityAcid, Ka, volumeBase, molarityBase) => {
+            const molesAcid = volumeAcid * molarityAcid / 1000;
+            const molesBase = volumeBase * molarityBase / 1000;
+            const totalVolume = (volumeAcid + volumeBase) / 1000;
+            const pKa = -Math.log10(Ka);
+
+            if (molesBase === 0) {
+                // Initial pH (weak acid)
+                const sqrtKaCa = Math.sqrt(Ka * molarityAcid / 1000);
+                return -Math.log10(sqrtKaCa);
+            } else if (molesBase < molesAcid - 1e-10) {
+                // Buffer region (Henderson-Hasselbalch)
+                const molesA = molesBase;
+                const molesHA = molesAcid - molesBase;
+                return pKa + Math.log10(molesA / molesHA);
+            } else if (Math.abs(molesBase - molesAcid) < 1e-10) {
+                // Equivalence point (weak base solution)
+                const Cb = molesBase / totalVolume;
+                const Kb = 1e-14 / Ka;
+                const pOH = 0.5 * (-Math.log10(Kb) - Math.log10(Cb));
+                return 14 - pOH;
+            } else {
+                // Excess strong base
+                const excessOH = (molesBase - molesAcid) / totalVolume;
+                return 14 + Math.log10(excessOH);
+            }
+        };
+
+        const calculateStrongWeakPH = (volumeBase, molarityBase, pKa, volumeAcid, molarityAcid) => {
+            const molesBase = volumeBase * molarityBase / 1000;
+            const molesAcid = volumeAcid * molarityAcid / 1000;
+            const totalVolume = (volumeBase + volumeAcid) / 1000;
+            const Ka = Math.pow(10, -pKa);
+
+            if (molesAcid === 0) {
+                // Initial pH (weak base)
+                const Kb = 1e-14 / Ka;
+                const pOH = 0.5 * (-Math.log10(Kb) - Math.log10(molarityBase / 1000));
+                return 14 - pOH;
+            } else if (molesAcid < molesBase - 1e-10) {
+                // Buffer region
+                const molesBH = molesAcid;
+                const molesB = molesBase - molesAcid;
+                return pKa + Math.log10(molesB / molesBH);
+            } else if (Math.abs(molesAcid - molesBase) < 1e-10) {
+                // Equivalence point (weak acid solution)
+                const Ca = molesAcid / totalVolume;
+                const sqrtKaCa = Math.sqrt(Ka * Ca);
+                return -Math.log10(sqrtKaCa);
+            } else {
+                // Excess strong acid
+                const excessH = (molesAcid - molesBase) / totalVolume;
+                return -Math.log10(excessH);
+            }
+        };
+
+        // Get Indicator Color
+        const getIndicatorColor = (pH, indicatorKey) => {
+            const indicator = INDICATORS[indicatorKey];
+            if (!indicator) return '#e0e7ff';
+
+            const [pHLow, pHHigh] = indicator.pHRange;
+
+            if (pH < pHLow) return indicator.acidColor;
+            if (pH > pHHigh) return indicator.baseColor;
+
+            // Transition zone (simple linear blend)
+            const fraction = (pH - pHLow) / (pHHigh - pHLow);
+
+            if (indicator.acidColor === 'transparent') {
+                return `rgba(255, 105, 180, ${fraction})`;
+            }
+
+            return blendColors(indicator.acidColor, indicator.baseColor, fraction);
+        };
+
+        const blendColors = (color1, color2, fraction) => {
+            const hex1 = color1.replace('#', '');
+            const hex2 = color2.replace('#', '');
+
+            const r1 = parseInt(hex1.substring(0, 2), 16);
+            const g1 = parseInt(hex1.substring(2, 4), 16);
+            const b1 = parseInt(hex1.substring(4, 6), 16);
+
+            const r2 = parseInt(hex2.substring(0, 2), 16);
+            const g2 = parseInt(hex2.substring(2, 4), 16);
+            const b2 = parseInt(hex2.substring(4, 6), 16);
+
+            const r = Math.round(r1 + (r2 - r1) * fraction);
+            const g = Math.round(g1 + (g2 - g1) * fraction);
+            const b = Math.round(b1 + (b2 - b1) * fraction);
+
+            return `rgb(${r}, ${g}, ${b})`;
+        };
+
+        // Get pH Color for display
+        const getPHColor = (pH) => {
+            if (pH < 4) return '#ef4444';
+            if (pH < 6) return '#f59e0b';
+            if (pH < 8) return '#22c55e';
+            return '#3b82f6';
+        };
+
+        // Main Game Component
+        function TitrationGame() {
+            const [screen, setScreen] = useState('menu');
+            const [gameMode, setGameMode] = useState(null);
+            const [currentTitration, setCurrentTitration] = useState(null);
+            const [selectedIndicator, setSelectedIndicator] = useState('bromothymol-blue');
+            const [volumeAdded, setVolumeAdded] = useState(0);
+            const [currentPH, setCurrentPH] = useState(7.0);
+            const [curveData, setCurveData] = useState([]);
+            const [score, setScore] = useState(0);
+            const [questionsAnswered, setQuestionsAnswered] = useState(0);
+            const [feedback, setFeedback] = useState(null);
+            const [showHint, setShowHint] = useState(false);
+            const [isAnimating, setIsAnimating] = useState(false);
+            const [startTime, setStartTime] = useState(null);
+
+            const canvasRef = useRef(null);
+
+            // Start new titration
+            const startNewTitration = (mode) => {
+                const randomTitration = TITRATIONS[Math.floor(Math.random() * TITRATIONS.length)];
+                setGameMode(mode);
+                setCurrentTitration(randomTitration);
+                setSelectedIndicator(randomTitration.bestIndicator);
+                setVolumeAdded(0);
+                setCurveData([]);
+                setFeedback(null);
+                setShowHint(false);
+                setStartTime(Date.now());
+
+                // Calculate initial pH
+                const initialPH = calculatePH(randomTitration, 0);
+                setCurrentPH(initialPH);
+                setCurveData([{ volume: 0, pH: initialPH }]);
+
+                setScreen('game');
+            };
+
+            // Calculate pH based on titration type
+            const calculatePH = (titration, volume) => {
+                if (titration.type === 'strong-strong') {
+                    return calculateStrongStrongPH(
+                        titration.analyte.volume,
+                        titration.analyte.molarity,
+                        volume,
+                        titration.titrant.molarity
+                    );
+                } else if (titration.type === 'weak-strong') {
+                    return calculateWeakStrongPH(
+                        titration.analyte.volume,
+                        titration.analyte.molarity,
+                        titration.Ka,
+                        volume,
+                        titration.titrant.molarity
+                    );
+                } else if (titration.type === 'strong-weak') {
+                    return calculateStrongWeakPH(
+                        titration.analyte.volume,
+                        titration.analyte.molarity,
+                        titration.pKa,
+                        volume,
+                        titration.titrant.molarity
+                    );
+                }
+                return 7.0;
+            };
+
+            // Add titrant
+            const addTitrant = (amount) => {
+                if (!currentTitration || isAnimating) return;
+
+                setIsAnimating(true);
+                const newVolume = Math.min(volumeAdded + amount, 60);
+                const newPH = calculatePH(currentTitration, newVolume);
+
+                setVolumeAdded(newVolume);
+                setCurrentPH(newPH);
+                setCurveData(prev => [...prev, { volume: newVolume, pH: newPH }]);
+
+                setTimeout(() => setIsAnimating(false), 300);
+            };
+
+            // Reset titration
+            const resetTitration = () => {
+                setVolumeAdded(0);
+                const initialPH = calculatePH(currentTitration, 0);
+                setCurrentPH(initialPH);
+                setCurveData([{ volume: 0, pH: initialPH }]);
+                setFeedback(null);
+                setShowHint(false);
+            };
+
+            // Check answer
+            const checkAnswer = () => {
+                if (!currentTitration) return;
+
+                const difference = Math.abs(volumeAdded - currentTitration.equivalenceVolume);
+                const timeElapsed = (Date.now() - startTime) / 1000;
+
+                let points = 0;
+                let message = '';
+                let isCorrect = false;
+
+                if (difference <= 0.05) {
+                    points = 150;
+                    message = 'Fullkomið! Nákvæmni: ±0.05 mL';
+                    isCorrect = true;
+                } else if (difference <= 0.2) {
+                    points = 100;
+                    message = 'Frábært! Innan vikmarka: ±0.2 mL';
+                    isCorrect = true;
+                } else if (difference <= 0.5) {
+                    points = 50;
+                    message = 'Gott! Nálægt réttri upphæð';
+                    isCorrect = true;
+                } else {
+                    points = 0;
+                    message = `Ekki nægjanlega nákvæmt. Jafngildistaður: ${currentTitration.equivalenceVolume.toFixed(2)} mL`;
+                    isCorrect = false;
+                }
+
+                // Indicator bonus
+                if (selectedIndicator === currentTitration.bestIndicator) {
+                    points += 20;
+                }
+
+                // Time bonus (Practice mode)
+                if (gameMode === 'practice' && timeElapsed < 120 && isCorrect) {
+                    points += 30;
+                }
+
+                setScore(score + points);
+                setQuestionsAnswered(questionsAnswered + 1);
+
+                setFeedback({
+                    isCorrect,
+                    message,
+                    points,
+                    difference: difference.toFixed(2),
+                    equivalenceVolume: currentTitration.equivalenceVolume.toFixed(2),
+                    equivalencePH: currentTitration.equivalencePH.toFixed(2),
+                    currentVolume: volumeAdded.toFixed(2),
+                    currentPH: currentPH.toFixed(2),
+                    timeElapsed: timeElapsed.toFixed(1)
+                });
+            };
+
+            // Next question
+            const nextQuestion = () => {
+                startNewTitration(gameMode);
+            };
+
+            // Draw titration curve
+            useEffect(() => {
+                if (!canvasRef.current || curveData.length === 0) return;
+
+                const canvas = canvasRef.current;
+                const ctx = canvas.getContext('2d');
+                const width = canvas.width;
+                const height = canvas.height;
+
+                // Clear canvas
+                ctx.clearRect(0, 0, width, height);
+
+                // Draw grid
+                ctx.strokeStyle = '#e5e7eb';
+                ctx.lineWidth = 1;
+
+                // Vertical grid lines
+                for (let i = 0; i <= 10; i++) {
+                    const x = (i / 10) * width;
+                    ctx.beginPath();
+                    ctx.moveTo(x, 0);
+                    ctx.lineTo(x, height);
+                    ctx.stroke();
+                }
+
+                // Horizontal grid lines
+                for (let i = 0; i <= 14; i++) {
+                    const y = height - (i / 14) * height;
+                    ctx.beginPath();
+                    ctx.moveTo(0, y);
+                    ctx.lineTo(width, y);
+                    ctx.stroke();
+                }
+
+                // Draw axes
+                ctx.strokeStyle = '#374151';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(0, 0, width, height);
+
+                // Draw curve
+                if (curveData.length > 1) {
+                    ctx.strokeStyle = '#3b82f6';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+
+                    curveData.forEach((point, index) => {
+                        const x = (point.volume / 60) * width;
+                        const y = height - (point.pH / 14) * height;
+
+                        if (index === 0) {
+                            ctx.moveTo(x, y);
+                        } else {
+                            ctx.lineTo(x, y);
+                        }
+                    });
+
+                    ctx.stroke();
+
+                    // Draw current point
+                    const lastPoint = curveData[curveData.length - 1];
+                    const x = (lastPoint.volume / 60) * width;
+                    const y = height - (lastPoint.pH / 14) * height;
+
+                    ctx.fillStyle = '#ef4444';
+                    ctx.beginPath();
+                    ctx.arc(x, y, 5, 0, 2 * Math.PI);
+                    ctx.fill();
+                }
+
+                // Draw equivalence point marker (if feedback shown)
+                if (feedback && currentTitration) {
+                    const eqX = (currentTitration.equivalenceVolume / 60) * width;
+                    const eqY = height - (currentTitration.equivalencePH / 14) * height;
+
+                    ctx.fillStyle = '#22c55e';
+                    ctx.font = 'bold 20px sans-serif';
+                    ctx.fillText('⭐', eqX - 10, eqY + 5);
+                }
+
+                // Draw axis labels
+                ctx.fillStyle = '#374151';
+                ctx.font = 'bold 12px sans-serif';
+
+                // X-axis label
+                ctx.fillText('Rúmmál bætt við (mL)', width / 2 - 70, height - 5);
+
+                // Y-axis label
+                ctx.save();
+                ctx.translate(15, height / 2);
+                ctx.rotate(-Math.PI / 2);
+                ctx.fillText('pH', 0, 0);
+                ctx.restore();
+
+                // pH scale numbers
+                for (let i = 0; i <= 14; i += 2) {
+                    const y = height - (i / 14) * height;
+                    ctx.fillText(i.toString(), 5, y + 4);
+                }
+
+                // Volume scale numbers
+                for (let i = 0; i <= 60; i += 10) {
+                    const x = (i / 60) * width;
+                    ctx.fillText(i.toString(), x - 5, height - 20);
+                }
+            }, [curveData, feedback, currentTitration]);
+
+            // Render different screens
+            if (screen === 'menu') {
+                return (
+                    <div className="max-w-4xl mx-auto px-4 py-8">
+                        <div className="bg-white rounded-xl shadow-lg p-8 text-center">
+                            <h1 className="text-4xl font-bold mb-4" style={{ color: 'var(--kvenno-orange)' }}>
+                                pH Þéttigreining Meistari
+                            </h1>
+                            <p className="text-lg text-gray-600 mb-8">
+                                Læðu að framkvæma sýru-basa þéttigreiningar og túlka pH ferla
+                            </p>
+
+                            <div className="grid md:grid-cols-2 gap-6">
+                                <div className="bg-blue-50 p-6 rounded-lg border-2 border-blue-200">
+                                    <h2 className="text-2xl font-bold mb-3 text-blue-900">Æfingahamur</h2>
+                                    <p className="text-gray-700 mb-4">
+                                        • Engin tímatakmörk<br/>
+                                        • Sjá pH stöðugt<br/>
+                                        • Ítarlegar útskýringar<br/>
+                                        • Vísbendingar í boði
+                                    </p>
+                                    <button
+                                        onClick={() => startNewTitration('practice')}
+                                        className="w-full py-3 px-6 rounded-lg font-bold text-white transition"
+                                        style={{ background: 'var(--kvenno-orange)' }}
+                                    >
+                                        Byrja að Æfa
+                                    </button>
+                                </div>
+
+                                <div className="bg-orange-50 p-6 rounded-lg border-2 border-orange-200">
+                                    <h2 className="text-2xl font-bold mb-3 text-orange-900">Keppnishamur</h2>
+                                    <p className="text-gray-700 mb-4">
+                                        • Takmörkuð viðbót<br/>
+                                        • Tíma bónus<br/>
+                                        • Stigatafla<br/>
+                                        • Nákvæmni skipta máli
+                                    </p>
+                                    <button
+                                        onClick={() => startNewTitration('challenge')}
+                                        className="w-full py-3 px-6 rounded-lg font-bold text-white transition"
+                                        style={{ background: 'var(--kvenno-orange-dark)' }}
+                                    >
+                                        Byrja Keppni
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className="mt-8 p-6 bg-gray-50 rounded-lg">
+                                <h3 className="text-xl font-bold mb-3">Hvernig á að spila:</h3>
+                                <ol className="text-left text-gray-700 space-y-2">
+                                    <li>1. Veldu litskipti (indicator) fyrir þéttigreininguna</li>
+                                    <li>2. Bættu við þéttiefni úr burettu í skrefum</li>
+                                    <li>3. Fylgstu með pH breytingum og lit lausnarinnar</li>
+                                    <li>4. Reyndu að ná jafngildisstað eins nákvæmlega og mögulegt er</li>
+                                    <li>5. Túlkaðu þéttigreiningarferilinn</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            if (screen === 'game' && currentTitration) {
+                const solutionColor = getIndicatorColor(currentPH, selectedIndicator);
+                const liquidHeight = Math.min((volumeAdded / 60) * 100, 100);
+                const phColor = getPHColor(currentPH);
+
+                return (
+                    <div className="max-w-7xl mx-auto px-4 py-6">
+                        {/* Header Info */}
+                        <div className="bg-white rounded-lg shadow-md p-4 mb-6 flex justify-between items-center">
+                            <div>
+                                <h2 className="text-2xl font-bold" style={{ color: 'var(--kvenno-orange)' }}>
+                                    {currentTitration.name}
+                                </h2>
+                                <p className="text-gray-600">
+                                    {currentTitration.analyte.volume} mL × {currentTitration.analyte.molarity} M {currentTitration.analyte.formula} + {currentTitration.titrant.molarity} M {currentTitration.titrant.formula}
+                                </p>
+                            </div>
+                            <div className="text-right">
+                                <div className="text-sm text-gray-500">Stig: <span className="font-bold text-2xl" style={{ color: 'var(--kvenno-orange)' }}>{score}</span></div>
+                                <div className="text-sm text-gray-500">Spurningar: {questionsAnswered}</div>
+                            </div>
+                        </div>
+
+                        {/* Main Lab Area */}
+                        <div className="grid lg:grid-cols-3 gap-6 mb-6">
+                            {/* Left: Virtual Lab Equipment */}
+                            <div className="lg:col-span-2 bg-white rounded-lg shadow-md p-6">
+                                <div className="flex justify-around items-end mb-6" style={{ minHeight: '450px' }}>
+                                    {/* Burette */}
+                                    <div className="flex flex-col items-center">
+                                        <h3 className="font-bold mb-2 text-gray-700">Buretta</h3>
+                                        <div className="burette">
+                                            <div className="burette-scale">
+                                                <span>0</span>
+                                                <span>10</span>
+                                                <span>20</span>
+                                                <span>30</span>
+                                                <span>40</span>
+                                                <span>50</span>
+                                            </div>
+                                            <div
+                                                className="burette-liquid"
+                                                style={{ height: `${100 - liquidHeight}%` }}
+                                            />
+                                        </div>
+                                        <div className="mt-2 text-center">
+                                            <div className="text-sm font-bold text-indigo-700">
+                                                {volumeAdded.toFixed(1)} mL
+                                            </div>
+                                            {isAnimating && (
+                                                <div className="text-blue-500 font-bold drip">💧</div>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    {/* Flask */}
+                                    <div className="flex flex-col items-center">
+                                        <h3 className="font-bold mb-2 text-gray-700">Erlenmeyer Kólfur</h3>
+                                        <div className={`erlenmeyer-flask ${isAnimating ? 'swirl' : ''}`}>
+                                            <div className="flask-neck"></div>
+                                            <div className="flask-body">
+                                                <div
+                                                    className="flask-solution"
+                                                    style={{
+                                                        height: '70%',
+                                                        background: solutionColor === 'transparent'
+                                                            ? 'rgba(200, 200, 255, 0.3)'
+                                                            : solutionColor
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="mt-2 text-sm text-gray-600">
+                                            {currentTitration.analyte.volume} mL
+                                        </div>
+                                    </div>
+
+                                    {/* pH Meter */}
+                                    <div className="flex flex-col items-center">
+                                        <h3 className="font-bold mb-2 text-gray-700">pH Mælir</h3>
+                                        <div className="ph-meter">
+                                            <div className="text-xs text-gray-400 text-center mb-2">pH METER</div>
+                                            <div className="ph-display">
+                                                <div
+                                                    className="ph-value"
+                                                    style={{ color: phColor }}
+                                                >
+                                                    {currentPH.toFixed(2)}
+                                                </div>
+                                                <div className="text-xs text-gray-400 mt-2">pH STIG</div>
+                                            </div>
+                                            <div className="ph-scale-indicator mt-4">
+                                                <div
+                                                    className="ph-marker"
+                                                    style={{ left: `${(currentPH / 14) * 100}%` }}
+                                                />
+                                            </div>
+                                            <div className="flex justify-between text-xs text-gray-400 mt-1">
+                                                <span>0</span>
+                                                <span>7</span>
+                                                <span>14</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Controls */}
+                                <div className="grid grid-cols-2 gap-4 mb-4">
+                                    <div>
+                                        <label className="block text-sm font-bold mb-2 text-gray-700">
+                                            Litskipti / Indicator:
+                                        </label>
+                                        <select
+                                            value={selectedIndicator}
+                                            onChange={(e) => setSelectedIndicator(e.target.value)}
+                                            className="w-full p-2 border-2 border-gray-300 rounded-lg"
+                                            disabled={volumeAdded > 0}
+                                        >
+                                            {Object.entries(INDICATORS).map(([key, ind]) => (
+                                                <option key={key} value={key}>
+                                                    {ind.nameIs} (pH {ind.pHRange[0]}-{ind.pHRange[1]})
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-bold mb-2 text-gray-700">
+                                            Núverandi litskipti:
+                                        </label>
+                                        <div
+                                            className="w-full h-10 rounded-lg border-2 border-gray-300"
+                                            style={{
+                                                background: solutionColor === 'transparent'
+                                                    ? 'white'
+                                                    : solutionColor
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Add Buttons */}
+                                <div className="grid grid-cols-4 gap-3">
+                                    <button
+                                        onClick={() => addTitrant(5)}
+                                        disabled={isAnimating || volumeAdded >= 60}
+                                        className="py-3 px-4 bg-blue-500 text-white rounded-lg font-bold hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                                    >
+                                        + 5 mL
+                                    </button>
+                                    <button
+                                        onClick={() => addTitrant(1)}
+                                        disabled={isAnimating || volumeAdded >= 60}
+                                        className="py-3 px-4 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                                    >
+                                        + 1 mL
+                                    </button>
+                                    <button
+                                        onClick={() => addTitrant(0.1)}
+                                        disabled={isAnimating || volumeAdded >= 60}
+                                        className="py-3 px-4 bg-blue-700 text-white rounded-lg font-bold hover:bg-blue-800 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                                    >
+                                        + 0.1 mL
+                                    </button>
+                                    <button
+                                        onClick={resetTitration}
+                                        className="py-3 px-4 bg-gray-500 text-white rounded-lg font-bold hover:bg-gray-600"
+                                    >
+                                        Endurstilla
+                                    </button>
+                                </div>
+
+                                {/* Action Buttons */}
+                                <div className="grid grid-cols-2 gap-3 mt-4">
+                                    <button
+                                        onClick={checkAnswer}
+                                        className="py-3 px-6 rounded-lg font-bold text-white"
+                                        style={{ background: 'var(--kvenno-orange)' }}
+                                    >
+                                        Athuga Svar
+                                    </button>
+                                    {gameMode === 'practice' && (
+                                        <button
+                                            onClick={() => setShowHint(!showHint)}
+                                            className="py-3 px-6 bg-yellow-500 text-white rounded-lg font-bold hover:bg-yellow-600"
+                                        >
+                                            {showHint ? 'Fela Vísbendingu' : 'Sýna Vísbendingu'}
+                                        </button>
+                                    )}
+                                </div>
+
+                                {/* Hint */}
+                                {showHint && gameMode === 'practice' && (
+                                    <div className="mt-4 p-4 bg-yellow-50 border-l-4 border-yellow-500 rounded">
+                                        <p className="font-bold text-yellow-900">💡 Vísbending:</p>
+                                        <p className="text-gray-700">
+                                            Jafngildistaður er þegar mólar sýru = mólar basa. <br/>
+                                            Fyrir {currentTitration.type === 'strong-strong' ? 'sterk-sterk' : 'veik-sterk'} þéttigreiningu,
+                                            leitaðu að brattasta hluta ferlisins.
+                                            {currentTitration.type !== 'strong-strong' && (
+                                                <><br/>Hálf-jafngildistaður er þar sem pH = pKa = {currentTitration.pKa.toFixed(2)}</>
+                                            )}
+                                        </p>
+                                    </div>
+                                )}
+
+                                {/* Feedback */}
+                                {feedback && (
+                                    <div className={`mt-4 p-4 rounded-lg ${feedback.isCorrect ? 'bg-green-50 border-l-4 border-green-500' : 'bg-red-50 border-l-4 border-red-500'}`}>
+                                        <p className={`font-bold text-lg ${feedback.isCorrect ? 'text-green-900' : 'text-red-900'}`}>
+                                            {feedback.isCorrect ? '✓ Rétt!' : '✗ Ekki alveg rétt'}
+                                        </p>
+                                        <p className="text-gray-700 mt-2">{feedback.message}</p>
+                                        <div className="mt-3 text-sm text-gray-600">
+                                            <p>• Þitt rúmmál: {feedback.currentVolume} mL (pH {feedback.currentPH})</p>
+                                            <p>• Jafngildistaður: {feedback.equivalenceVolume} mL (pH {feedback.equivalencePH})</p>
+                                            <p>• Nákvæmni: ±{feedback.difference} mL</p>
+                                            <p>• Tími: {feedback.timeElapsed} sekúndur</p>
+                                            <p className="font-bold mt-2">Stig unnin: +{feedback.points}</p>
+                                        </div>
+                                        <button
+                                            onClick={nextQuestion}
+                                            className="mt-4 py-2 px-6 rounded-lg font-bold text-white"
+                                            style={{ background: 'var(--kvenno-orange)' }}
+                                        >
+                                            Næsta Þéttigreining →
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Right: Titration Curve */}
+                            <div className="bg-white rounded-lg shadow-md p-6">
+                                <h3 className="text-xl font-bold mb-4 text-gray-800">Þéttigreiningarferill</h3>
+                                <canvas
+                                    ref={canvasRef}
+                                    width={350}
+                                    height={400}
+                                    className="curve-canvas w-full"
+                                />
+                                <div className="mt-4 text-sm text-gray-600">
+                                    <p><strong>Núverandi pH:</strong> {currentPH.toFixed(2)}</p>
+                                    <p><strong>Rúmmál bætt við:</strong> {volumeAdded.toFixed(1)} mL</p>
+                                    <p><strong>Erfiðleiki:</strong> {currentTitration.difficulty}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Back to Menu */}
+                        <div className="text-center">
+                            <button
+                                onClick={() => setScreen('menu')}
+                                className="py-2 px-6 border-2 rounded-lg font-bold"
+                                style={{
+                                    borderColor: 'var(--kvenno-orange)',
+                                    color: 'var(--kvenno-orange)'
+                                }}
+                            >
+                                ← Til baka á aðalvalmynd
+                            </button>
+                        </div>
+                    </div>
+                );
+            }
+
+            return null;
+        }
+
+        // Render the app
+        ReactDOM.render(<TitrationGame />, document.getElementById('root'));
+    </script>
+</body>
+</html>

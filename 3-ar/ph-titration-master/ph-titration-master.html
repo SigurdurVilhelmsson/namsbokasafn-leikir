@@ -411,6 +411,323 @@
                 difficulty: 'Miðlungs',
                 Kb: 4.4e-4,
                 pKa: 10.64
+            },
+            // Advanced Level - Polyprotic Acids
+            {
+                id: 11,
+                type: 'polyprotic-diprotic',
+                name: 'H₂SO₃ + NaOH',
+                analyte: { formula: 'H₂SO₃', volume: 25.0, molarity: 0.100, name: 'Brennisteinssýrling' },
+                titrant: { formula: 'NaOH', molarity: 0.100, name: 'Natríumhýdroxíð' },
+                equivalenceVolumes: [25.0, 50.0],
+                equivalencePHs: [4.5, 9.0],
+                initialPH: 1.5,
+                halfEquivalencePHs: [1.9, 7.2],
+                bestIndicator: 'phenolphthalein',
+                difficulty: 'Háþróað',
+                Ka1: 1.3e-2,
+                Ka2: 6.3e-8,
+                pKa1: 1.9,
+                pKa2: 7.2
+            },
+            {
+                id: 12,
+                type: 'polyprotic-diprotic',
+                name: 'H₂C₂O₄ + NaOH',
+                analyte: { formula: 'H₂C₂O₄', volume: 30.0, molarity: 0.0800, name: 'Oxalsýra' },
+                titrant: { formula: 'NaOH', molarity: 0.100, name: 'Natríumhýdroxíð' },
+                equivalenceVolumes: [24.0, 48.0],
+                equivalencePHs: [2.9, 8.4],
+                initialPH: 1.3,
+                halfEquivalencePHs: [1.3, 4.3],
+                bestIndicator: 'phenolphthalein',
+                difficulty: 'Háþróað',
+                Ka1: 5.9e-2,
+                Ka2: 6.4e-5,
+                pKa1: 1.3,
+                pKa2: 4.3
+            },
+            {
+                id: 13,
+                type: 'polyprotic-triprotic',
+                name: 'H₃PO₄ + NaOH',
+                analyte: { formula: 'H₃PO₄', volume: 25.0, molarity: 0.100, name: 'Fosfórsýra' },
+                titrant: { formula: 'NaOH', molarity: 0.100, name: 'Natríumhýdroxíð' },
+                equivalenceVolumes: [25.0, 50.0, 75.0],
+                equivalencePHs: [4.7, 9.8, 12.4],
+                initialPH: 1.6,
+                halfEquivalencePHs: [2.15, 7.20, 12.35],
+                bestIndicator: 'phenolphthalein',
+                difficulty: 'Sérfræðingur',
+                Ka1: 7.1e-3,
+                Ka2: 6.3e-8,
+                Ka3: 4.5e-13,
+                pKa1: 2.15,
+                pKa2: 7.20,
+                pKa3: 12.35
+            },
+            // Amino Acid Titrations
+            {
+                id: 14,
+                type: 'amino-acid',
+                name: 'Glycine + NaOH',
+                analyte: { formula: 'NH₃⁺CH₂COOH', volume: 25.0, molarity: 0.100, name: 'Glýsín (tvíeiginleiki)' },
+                titrant: { formula: 'NaOH', molarity: 0.100, name: 'Natríumhýdroxíð' },
+                equivalenceVolumes: [25.0, 50.0],
+                equivalencePHs: [5.97, 11.3],
+                initialPH: 2.35,
+                halfEquivalencePHs: [2.35, 9.78],
+                bestIndicator: 'phenolphthalein',
+                difficulty: 'Sérfræðingur',
+                pKa1: 2.35,
+                pKa2: 9.78,
+                isoelectricPoint: 6.06
+            },
+            // More Weak Acids with Different pKa Values
+            {
+                id: 15,
+                type: 'weak-strong',
+                name: 'HClO + NaOH',
+                analyte: { formula: 'HClO', volume: 25.0, molarity: 0.100, name: 'Undirklórsýra' },
+                titrant: { formula: 'NaOH', molarity: 0.100, name: 'Natríumhýdroxíð' },
+                equivalenceVolume: 25.0,
+                equivalencePH: 10.3,
+                initialPH: 4.2,
+                halfEquivalencePH: 7.54,
+                bestIndicator: 'phenolphthalein',
+                difficulty: 'Miðlungs',
+                Ka: 2.9e-8,
+                pKa: 7.54
+            },
+            {
+                id: 16,
+                type: 'weak-strong',
+                name: 'HCN + KOH',
+                analyte: { formula: 'HCN', volume: 20.0, molarity: 0.0500, name: 'Blásýra' },
+                titrant: { formula: 'KOH', molarity: 0.100, name: 'Kalíumhýdroxíð' },
+                equivalenceVolume: 10.0,
+                equivalencePH: 10.9,
+                initialPH: 5.15,
+                halfEquivalencePH: 9.31,
+                bestIndicator: 'phenolphthalein',
+                difficulty: 'Erfitt',
+                Ka: 4.9e-10,
+                pKa: 9.31
+            },
+            {
+                id: 17,
+                type: 'weak-strong',
+                name: 'C₆H₅OH + NaOH',
+                analyte: { formula: 'C₆H₅OH', volume: 25.0, molarity: 0.0800, name: 'Fenól' },
+                titrant: { formula: 'NaOH', molarity: 0.100, name: 'Natríumhýdroxíð' },
+                equivalenceVolume: 20.0,
+                equivalencePH: 11.2,
+                initialPH: 5.5,
+                halfEquivalencePH: 9.98,
+                bestIndicator: 'phenolphthalein',
+                difficulty: 'Erfitt',
+                Ka: 1.05e-10,
+                pKa: 9.98
+            },
+            // More Weak Bases
+            {
+                id: 18,
+                type: 'strong-weak',
+                name: 'C₅H₅N + HCl',
+                analyte: { formula: 'C₅H₅N', volume: 25.0, molarity: 0.100, name: 'Pýridín' },
+                titrant: { formula: 'HCl', molarity: 0.100, name: 'Saltssýra' },
+                equivalenceVolume: 25.0,
+                equivalencePH: 2.95,
+                initialPH: 9.12,
+                halfEquivalencePH: 5.23,
+                bestIndicator: 'methyl-red',
+                difficulty: 'Miðlungs',
+                Kb: 1.7e-9,
+                pKa: 5.23
+            },
+            {
+                id: 19,
+                type: 'strong-weak',
+                name: 'C₂H₅NH₂ + HCl',
+                analyte: { formula: 'C₂H₅NH₂', volume: 30.0, molarity: 0.150, name: 'Etýlamín' },
+                titrant: { formula: 'HCl', molarity: 0.100, name: 'Saltssýra' },
+                equivalenceVolume: 45.0,
+                equivalencePH: 5.55,
+                initialPH: 12.03,
+                halfEquivalencePH: 10.73,
+                bestIndicator: 'methyl-red',
+                difficulty: 'Miðlungs',
+                Kb: 5.4e-4,
+                pKa: 10.73
+            },
+            // Unknown Concentration Problems
+            {
+                id: 20,
+                type: 'unknown-concentration',
+                name: 'HCl (óþekkt) + NaOH',
+                analyte: { formula: 'HCl', volume: 25.0, molarity: 0.0856, name: 'Saltssýra (óþekkt styrkur)' },
+                titrant: { formula: 'NaOH', molarity: 0.100, name: 'Natríumhýdroxíð' },
+                equivalenceVolume: 21.4,
+                equivalencePH: 7.00,
+                initialPH: 1.07,
+                bestIndicator: 'bromothymol-blue',
+                difficulty: 'Sérfræðingur',
+                unknownType: 'analyte',
+                Ka: null,
+                pKa: null
+            },
+            {
+                id: 21,
+                type: 'unknown-concentration',
+                name: 'CH₃COOH (óþekkt) + NaOH',
+                analyte: { formula: 'CH₃COOH', volume: 25.0, molarity: 0.134, name: 'Ediksýra (óþekkt styrkur)' },
+                titrant: { formula: 'NaOH', molarity: 0.100, name: 'Natríumhýdroxíð' },
+                equivalenceVolume: 33.5,
+                equivalencePH: 8.85,
+                initialPH: 2.72,
+                halfEquivalencePH: 4.74,
+                bestIndicator: 'phenolphthalein',
+                difficulty: 'Sérfræðingur',
+                unknownType: 'analyte',
+                Ka: 1.8e-5,
+                pKa: 4.74
+            },
+            {
+                id: 22,
+                type: 'unknown-concentration',
+                name: 'HCl + NaOH (óþekkt)',
+                analyte: { formula: 'HCl', volume: 25.0, molarity: 0.100, name: 'Saltssýra' },
+                titrant: { formula: 'NaOH', molarity: 0.0792, name: 'Natríumhýdroxíð (óþekkt styrkur)' },
+                equivalenceVolume: 31.6,
+                equivalencePH: 7.00,
+                initialPH: 1.00,
+                bestIndicator: 'bromothymol-blue',
+                difficulty: 'Sérfræðingur',
+                unknownType: 'titrant',
+                Ka: null,
+                pKa: null
+            },
+            // Mixed Concentrations
+            {
+                id: 23,
+                type: 'strong-strong',
+                name: 'HCl + NaOH (hár styrkur)',
+                analyte: { formula: 'HCl', volume: 25.0, molarity: 0.500, name: 'Saltssýra' },
+                titrant: { formula: 'NaOH', molarity: 0.250, name: 'Natríumhýdroxíð' },
+                equivalenceVolume: 50.0,
+                equivalencePH: 7.00,
+                initialPH: 0.30,
+                bestIndicator: 'bromothymol-blue',
+                difficulty: 'Miðlungs',
+                Ka: null,
+                pKa: null
+            },
+            {
+                id: 24,
+                type: 'weak-strong',
+                name: 'CH₃COOH + NaOH (lágur styrkur)',
+                analyte: { formula: 'CH₃COOH', volume: 50.0, molarity: 0.0250, name: 'Ediksýra' },
+                titrant: { formula: 'NaOH', molarity: 0.0500, name: 'Natríumhýdroxíð' },
+                equivalenceVolume: 25.0,
+                equivalencePH: 8.52,
+                initialPH: 3.17,
+                halfEquivalencePH: 4.74,
+                bestIndicator: 'phenolphthalein',
+                difficulty: 'Erfitt',
+                Ka: 1.8e-5,
+                pKa: 4.74
+            },
+            {
+                id: 25,
+                type: 'weak-strong',
+                name: 'HNO₂ + NaOH',
+                analyte: { formula: 'HNO₂', volume: 25.0, molarity: 0.100, name: 'Nitrósýra' },
+                titrant: { formula: 'NaOH', molarity: 0.100, name: 'Natríumhýdroxíð' },
+                equivalenceVolume: 25.0,
+                equivalencePH: 8.19,
+                initialPH: 2.17,
+                halfEquivalencePH: 3.37,
+                bestIndicator: 'phenolphthalein',
+                difficulty: 'Miðlungs',
+                Ka: 4.3e-4,
+                pKa: 3.37
+            },
+            {
+                id: 26,
+                type: 'weak-strong',
+                name: 'C₆H₄(OH)COOH + NaOH',
+                analyte: { formula: 'C₆H₄(OH)COOH', volume: 25.0, molarity: 0.0750, name: 'Salicýlsýra' },
+                titrant: { formula: 'NaOH', molarity: 0.100, name: 'Natríumhýdroxíð' },
+                equivalenceVolume: 18.75,
+                equivalencePH: 8.35,
+                initialPH: 2.26,
+                halfEquivalencePH: 2.98,
+                bestIndicator: 'phenolphthalein',
+                difficulty: 'Erfitt',
+                Ka: 1.05e-3,
+                pKa: 2.98
+            },
+            {
+                id: 27,
+                type: 'strong-weak',
+                name: '(CH₃)₃N + HCl',
+                analyte: { formula: '(CH₃)₃N', volume: 25.0, molarity: 0.100, name: 'Trímetýlamín' },
+                titrant: { formula: 'HCl', molarity: 0.100, name: 'Saltssýra' },
+                equivalenceVolume: 25.0,
+                equivalencePH: 5.50,
+                initialPH: 11.70,
+                halfEquivalencePH: 9.80,
+                bestIndicator: 'methyl-red',
+                difficulty: 'Miðlungs',
+                Kb: 6.3e-5,
+                pKa: 9.80
+            },
+            {
+                id: 28,
+                type: 'polyprotic-diprotic',
+                name: 'H₂CO₃ + NaOH',
+                analyte: { formula: 'H₂CO₃', volume: 25.0, molarity: 0.100, name: 'Kolsýra' },
+                titrant: { formula: 'NaOH', molarity: 0.100, name: 'Natríumhýdroxíð' },
+                equivalenceVolumes: [25.0, 50.0],
+                equivalencePHs: [8.3, 11.3],
+                initialPH: 3.7,
+                halfEquivalencePHs: [6.35, 10.33],
+                bestIndicator: 'phenolphthalein',
+                difficulty: 'Háþróað',
+                Ka1: 4.5e-7,
+                Ka2: 4.7e-11,
+                pKa1: 6.35,
+                pKa2: 10.33
+            },
+            {
+                id: 29,
+                type: 'weak-strong',
+                name: 'CH₃CH₂COOH + NaOH',
+                analyte: { formula: 'CH₃CH₂COOH', volume: 30.0, molarity: 0.120, name: 'Própanósýra' },
+                titrant: { formula: 'NaOH', molarity: 0.100, name: 'Natríumhýdroxíð' },
+                equivalenceVolume: 36.0,
+                equivalencePH: 8.61,
+                initialPH: 2.64,
+                halfEquivalencePH: 4.87,
+                bestIndicator: 'phenolphthalein',
+                difficulty: 'Miðlungs',
+                Ka: 1.35e-5,
+                pKa: 4.87
+            },
+            {
+                id: 30,
+                type: 'weak-strong',
+                name: 'CH₂ClCOOH + NaOH',
+                analyte: { formula: 'CH₂ClCOOH', volume: 25.0, molarity: 0.100, name: 'Klórediksýra' },
+                titrant: { formula: 'NaOH', molarity: 0.100, name: 'Natríumhýdroxíð' },
+                equivalenceVolume: 25.0,
+                equivalencePH: 8.97,
+                initialPH: 1.89,
+                halfEquivalencePH: 2.87,
+                bestIndicator: 'phenolphthalein',
+                difficulty: 'Erfitt',
+                Ka: 1.35e-3,
+                pKa: 2.87
             }
         ];
 
@@ -537,6 +854,143 @@
             }
         };
 
+        // Polyprotic Acid Calculations
+        const calculatePolyproticDiproticPH = (volumeAcid, molarityAcid, Ka1, Ka2, volumeBase, molarityBase) => {
+            const molesAcid = volumeAcid * molarityAcid / 1000;
+            const molesBase = volumeBase * molarityBase / 1000;
+            const totalVolume = (volumeAcid + volumeBase) / 1000;
+            const pKa1 = -Math.log10(Ka1);
+            const pKa2 = -Math.log10(Ka2);
+
+            if (molesBase === 0) {
+                // Initial pH - diprotic acid (use Ka1 only)
+                const sqrtKaCa = Math.sqrt(Ka1 * molarityAcid / 1000);
+                return -Math.log10(sqrtKaCa);
+            } else if (molesBase < molesAcid * 0.5 - 1e-10) {
+                // First buffer region (H2A/HA-)
+                const molesHA = molesBase;
+                const molesH2A = molesAcid - molesBase;
+                return pKa1 + Math.log10(molesHA / molesH2A);
+            } else if (Math.abs(molesBase - molesAcid * 0.5) < 1e-10) {
+                // First half-equivalence point
+                return pKa1;
+            } else if (molesBase < molesAcid - 1e-10) {
+                // Between half-eq and first eq point
+                const molesHA = molesAcid - molesBase;
+                const molesA = molesBase - molesHA;
+                return pKa1 + Math.log10(molesA / molesHA);
+            } else if (Math.abs(molesBase - molesAcid) < 1e-10) {
+                // First equivalence point (HA- amphoteric)
+                return (pKa1 + pKa2) / 2;
+            } else if (molesBase < molesAcid * 1.5 - 1e-10) {
+                // Second buffer region (HA-/A2-)
+                const molesA = molesBase - molesAcid;
+                const molesHA = 2 * molesAcid - molesBase;
+                return pKa2 + Math.log10(molesA / molesHA);
+            } else if (Math.abs(molesBase - molesAcid * 1.5) < 1e-10) {
+                // Second half-equivalence point
+                return pKa2;
+            } else if (molesBase < molesAcid * 2 - 1e-10) {
+                // Between second half-eq and second eq
+                const molesHA = molesAcid * 2 - molesBase;
+                const molesA = molesBase - molesAcid;
+                return pKa2 + Math.log10(molesA / molesHA);
+            } else if (Math.abs(molesBase - molesAcid * 2) < 1e-10) {
+                // Second equivalence point (A2- weak base)
+                const Cb = molesBase / totalVolume;
+                const Kb = 1e-14 / Ka2;
+                const pOH = 0.5 * (-Math.log10(Kb) - Math.log10(Cb));
+                return 14 - pOH;
+            } else {
+                // Excess strong base
+                const excessOH = (molesBase - molesAcid * 2) / totalVolume;
+                return 14 + Math.log10(excessOH);
+            }
+        };
+
+        const calculatePolyproticTriproticPH = (volumeAcid, molarityAcid, Ka1, Ka2, Ka3, volumeBase, molarityBase) => {
+            const molesAcid = volumeAcid * molarityAcid / 1000;
+            const molesBase = volumeBase * molarityBase / 1000;
+            const totalVolume = (volumeAcid + volumeBase) / 1000;
+            const pKa1 = -Math.log10(Ka1);
+            const pKa2 = -Math.log10(Ka2);
+            const pKa3 = -Math.log10(Ka3);
+
+            if (molesBase === 0) {
+                // Initial pH - triprotic acid
+                const sqrtKaCa = Math.sqrt(Ka1 * molarityAcid / 1000);
+                return -Math.log10(sqrtKaCa);
+            } else if (molesBase < molesAcid * 0.5) {
+                // First buffer region (H3A/H2A-)
+                const molesH2A = molesBase;
+                const molesH3A = molesAcid - molesBase;
+                return pKa1 + Math.log10(molesH2A / molesH3A);
+            } else if (Math.abs(molesBase - molesAcid) < 1e-10) {
+                // First equivalence point
+                return (pKa1 + pKa2) / 2;
+            } else if (molesBase < molesAcid * 1.5) {
+                // Second buffer region (H2A-/HA2-)
+                const molesHA = molesBase - molesAcid;
+                const molesH2A = 2 * molesAcid - molesBase;
+                return pKa2 + Math.log10(molesHA / molesH2A);
+            } else if (Math.abs(molesBase - molesAcid * 2) < 1e-10) {
+                // Second equivalence point
+                return (pKa2 + pKa3) / 2;
+            } else if (molesBase < molesAcid * 2.5) {
+                // Third buffer region (HA2-/A3-)
+                const molesA = molesBase - 2 * molesAcid;
+                const molesHA = 3 * molesAcid - molesBase;
+                return pKa3 + Math.log10(molesA / molesHA);
+            } else if (Math.abs(molesBase - molesAcid * 3) < 1e-10) {
+                // Third equivalence point
+                const Cb = molesBase / totalVolume;
+                const Kb = 1e-14 / Ka3;
+                const pOH = 0.5 * (-Math.log10(Kb) - Math.log10(Cb));
+                return 14 - pOH;
+            } else {
+                // Excess strong base
+                const excessOH = (molesBase - molesAcid * 3) / totalVolume;
+                return 14 + Math.log10(excessOH);
+            }
+        };
+
+        const calculateAminoAcidPH = (volumeAcid, molarityAcid, pKa1, pKa2, volumeBase, molarityBase) => {
+            // Amino acids are amphoteric (zwitterionic)
+            const molesAcid = volumeAcid * molarityAcid / 1000;
+            const molesBase = volumeBase * molarityBase / 1000;
+            const totalVolume = (volumeAcid + volumeBase) / 1000;
+            const Ka1 = Math.pow(10, -pKa1);
+            const Ka2 = Math.pow(10, -pKa2);
+
+            if (molesBase === 0) {
+                // Initial pH - cationic form (NH3+CH2COOH)
+                return (pKa1 + pKa2) / 2;  // At isoelectric point initially
+            } else if (molesBase < molesAcid - 1e-10) {
+                // First buffer region (deprotonation of COOH)
+                const molesCOO = molesBase;
+                const molesCOOH = molesAcid - molesBase;
+                return pKa1 + Math.log10(molesCOO / molesCOOH);
+            } else if (Math.abs(molesBase - molesAcid) < 1e-10) {
+                // First equivalence point (zwitterion)
+                return (pKa1 + pKa2) / 2;
+            } else if (molesBase < molesAcid * 2 - 1e-10) {
+                // Second buffer region (deprotonation of NH3+)
+                const molesNH2 = molesBase - molesAcid;
+                const molesNH3 = 2 * molesAcid - molesBase;
+                return pKa2 + Math.log10(molesNH2 / molesNH3);
+            } else if (Math.abs(molesBase - molesAcid * 2) < 1e-10) {
+                // Second equivalence point (anionic form)
+                const Cb = molesBase / totalVolume;
+                const Kb = 1e-14 / Ka2;
+                const pOH = 0.5 * (-Math.log10(Kb) - Math.log10(Cb));
+                return 14 - pOH;
+            } else {
+                // Excess strong base
+                const excessOH = (molesBase - molesAcid * 2) / totalVolume;
+                return 14 + Math.log10(excessOH);
+            }
+        };
+
         // Get Indicator Color
         const getIndicatorColor = (pH, indicatorKey) => {
             const indicator = INDICATORS[indicatorKey];
@@ -599,8 +1053,69 @@
             const [showHint, setShowHint] = useState(false);
             const [isAnimating, setIsAnimating] = useState(false);
             const [startTime, setStartTime] = useState(null);
+            const [highScore, setHighScore] = useState(0);
+            const [totalTitrations, setTotalTitrations] = useState(0);
 
             const canvasRef = useRef(null);
+
+            // Load progress from localStorage
+            useEffect(() => {
+                const savedHighScore = localStorage.getItem('titrationHighScore');
+                const savedTotal = localStorage.getItem('titrationTotal');
+                if (savedHighScore) setHighScore(parseInt(savedHighScore));
+                if (savedTotal) setTotalTitrations(parseInt(savedTotal));
+            }, []);
+
+            // Save progress to localStorage
+            useEffect(() => {
+                if (questionsAnswered > 0) {
+                    localStorage.setItem('titrationHighScore', Math.max(highScore, score).toString());
+                    localStorage.setItem('titrationTotal', totalTitrations.toString());
+                }
+            }, [score, questionsAnswered]);
+
+            // Keyboard shortcuts
+            useEffect(() => {
+                const handleKeyPress = (e) => {
+                    if (screen !== 'game' || !currentTitration) return;
+
+                    switch(e.key.toLowerCase()) {
+                        case ' ':
+                            e.preventDefault();
+                            addTitrant(0.1);
+                            break;
+                        case 'arrowup':
+                            e.preventDefault();
+                            addTitrant(0.1);
+                            break;
+                        case 'arrowdown':
+                            e.preventDefault();
+                            // Could subtract if we implement that
+                            break;
+                        case 'r':
+                            e.preventDefault();
+                            resetTitration();
+                            break;
+                        case 'h':
+                            e.preventDefault();
+                            if (gameMode === 'practice') {
+                                setShowHint(!showHint);
+                            }
+                            break;
+                        case 'enter':
+                            e.preventDefault();
+                            if (!feedback) {
+                                checkAnswer();
+                            } else {
+                                nextQuestion();
+                            }
+                            break;
+                    }
+                };
+
+                window.addEventListener('keydown', handleKeyPress);
+                return () => window.removeEventListener('keydown', handleKeyPress);
+            }, [screen, currentTitration, volumeAdded, isAnimating, feedback, showHint, gameMode]);
 
             // Start new titration
             const startNewTitration = (mode) => {
@@ -624,7 +1139,7 @@
 
             // Calculate pH based on titration type
             const calculatePH = (titration, volume) => {
-                if (titration.type === 'strong-strong') {
+                if (titration.type === 'strong-strong' || titration.type === 'unknown-concentration') {
                     return calculateStrongStrongPH(
                         titration.analyte.volume,
                         titration.analyte.molarity,
@@ -644,6 +1159,34 @@
                         titration.analyte.volume,
                         titration.analyte.molarity,
                         titration.pKa,
+                        volume,
+                        titration.titrant.molarity
+                    );
+                } else if (titration.type === 'polyprotic-diprotic') {
+                    return calculatePolyproticDiproticPH(
+                        titration.analyte.volume,
+                        titration.analyte.molarity,
+                        titration.Ka1,
+                        titration.Ka2,
+                        volume,
+                        titration.titrant.molarity
+                    );
+                } else if (titration.type === 'polyprotic-triprotic') {
+                    return calculatePolyproticTriproticPH(
+                        titration.analyte.volume,
+                        titration.analyte.molarity,
+                        titration.Ka1,
+                        titration.Ka2,
+                        titration.Ka3,
+                        volume,
+                        titration.titrant.molarity
+                    );
+                } else if (titration.type === 'amino-acid') {
+                    return calculateAminoAcidPH(
+                        titration.analyte.volume,
+                        titration.analyte.molarity,
+                        titration.pKa1,
+                        titration.pKa2,
                         volume,
                         titration.titrant.molarity
                     );
@@ -676,11 +1219,103 @@
                 setShowHint(false);
             };
 
+            // Generate detailed analysis
+            const generateAnalysis = () => {
+                if (!currentTitration) return null;
+
+                const analysis = {
+                    molarity: null,
+                    moles: null,
+                    hendersonHasselbalch: null,
+                    bufferCapacity: null,
+                    equivalencePoints: []
+                };
+
+                // Calculate moles
+                const molesAnalyte = (currentTitration.analyte.volume * currentTitration.analyte.molarity) / 1000;
+                const molesTitrant = (volumeAdded * currentTitration.titrant.molarity) / 1000;
+
+                analysis.moles = {
+                    analyte: molesAnalyte.toExponential(3),
+                    titrant: molesTitrant.toExponential(3),
+                    analyteValue: molesAnalyte,
+                    titrantValue: molesTitrant
+                };
+
+                // Henderson-Hasselbalch for weak acids/bases
+                if (currentTitration.type === 'weak-strong' && currentTitration.pKa) {
+                    if (molesTitrant > 0 && molesTitrant < molesAnalyte) {
+                        const molesAcid = molesAnalyte - molesTitrant;
+                        const molesBase = molesTitrant;
+                        const ratio = molesBase / molesAcid;
+                        const calculatedPH = currentTitration.pKa + Math.log10(ratio);
+
+                        analysis.hendersonHasselbalch = {
+                            pKa: currentTitration.pKa.toFixed(2),
+                            molesAcid: molesAcid.toExponential(3),
+                            molesBase: molesBase.toExponential(3),
+                            ratio: ratio.toFixed(3),
+                            calculatedPH: calculatedPH.toFixed(2),
+                            formula: `pH = pKa + log([A⁻]/[HA]) = ${currentTitration.pKa.toFixed(2)} + log(${ratio.toFixed(3)}) = ${calculatedPH.toFixed(2)}`
+                        };
+                    }
+                }
+
+                // Equivalence point information
+                if (currentTitration.equivalenceVolume) {
+                    analysis.equivalencePoints.push({
+                        volume: currentTitration.equivalenceVolume.toFixed(2),
+                        pH: currentTitration.equivalencePH.toFixed(2),
+                        halfEquivalencePH: currentTitration.halfEquivalencePH?.toFixed(2)
+                    });
+                } else if (currentTitration.equivalenceVolumes) {
+                    currentTitration.equivalenceVolumes.forEach((vol, idx) => {
+                        analysis.equivalencePoints.push({
+                            number: idx + 1,
+                            volume: vol.toFixed(2),
+                            pH: currentTitration.equivalencePHs[idx].toFixed(2),
+                            halfEquivalencePH: currentTitration.halfEquivalencePHs?.[idx]?.toFixed(2)
+                        });
+                    });
+                }
+
+                // Ka calculation from half-equivalence point
+                if (currentTitration.halfEquivalencePH && volumeAdded >= (currentTitration.equivalenceVolume || currentTitration.equivalenceVolumes?.[0])) {
+                    analysis.kaCalculation = {
+                        pKa: currentTitration.pKa || currentTitration.pKa1,
+                        Ka: Math.pow(10, -(currentTitration.pKa || currentTitration.pKa1)).toExponential(2),
+                        explanation: `På halvpunkten: pH = pKa = ${(currentTitration.pKa || currentTitration.pKa1).toFixed(2)}`
+                    };
+                }
+
+                return analysis;
+            };
+
             // Check answer
             const checkAnswer = () => {
                 if (!currentTitration) return;
 
-                const difference = Math.abs(volumeAdded - currentTitration.equivalenceVolume);
+                // Determine target equivalence point
+                let targetVolume, targetPH;
+                if (currentTitration.equivalenceVolume) {
+                    targetVolume = currentTitration.equivalenceVolume;
+                    targetPH = currentTitration.equivalencePH;
+                } else if (currentTitration.equivalenceVolumes) {
+                    // For polyprotic, check which equivalence point is closest
+                    let minDiff = Infinity;
+                    let closestIdx = 0;
+                    currentTitration.equivalenceVolumes.forEach((vol, idx) => {
+                        const diff = Math.abs(volumeAdded - vol);
+                        if (diff < minDiff) {
+                            minDiff = diff;
+                            closestIdx = idx;
+                        }
+                    });
+                    targetVolume = currentTitration.equivalenceVolumes[closestIdx];
+                    targetPH = currentTitration.equivalencePHs[closestIdx];
+                }
+
+                const difference = Math.abs(volumeAdded - targetVolume);
                 const timeElapsed = (Date.now() - startTime) / 1000;
 
                 let points = 0;
@@ -701,7 +1336,7 @@
                     isCorrect = true;
                 } else {
                     points = 0;
-                    message = `Ekki nægjanlega nákvæmt. Jafngildistaður: ${currentTitration.equivalenceVolume.toFixed(2)} mL`;
+                    message = `Ekki nægjanlega nákvæmt. Jafngildistaður: ${targetVolume.toFixed(2)} mL`;
                     isCorrect = false;
                 }
 
@@ -717,23 +1352,116 @@
 
                 setScore(score + points);
                 setQuestionsAnswered(questionsAnswered + 1);
+                setTotalTitrations(totalTitrations + 1);
+                if (score + points > highScore) {
+                    setHighScore(score + points);
+                }
+
+                const analysis = generateAnalysis();
 
                 setFeedback({
                     isCorrect,
                     message,
                     points,
                     difference: difference.toFixed(2),
-                    equivalenceVolume: currentTitration.equivalenceVolume.toFixed(2),
-                    equivalencePH: currentTitration.equivalencePH.toFixed(2),
+                    equivalenceVolume: targetVolume.toFixed(2),
+                    equivalencePH: targetPH.toFixed(2),
                     currentVolume: volumeAdded.toFixed(2),
                     currentPH: currentPH.toFixed(2),
-                    timeElapsed: timeElapsed.toFixed(1)
+                    timeElapsed: timeElapsed.toFixed(1),
+                    analysis
                 });
             };
 
             // Next question
             const nextQuestion = () => {
                 startNewTitration(gameMode);
+            };
+
+            // Export data as CSV
+            const exportToCSV = () => {
+                if (curveData.length === 0) return;
+
+                let csvContent = "data:text/csv;charset=utf-8,";
+                csvContent += "Volume (mL),pH\n";
+
+                curveData.forEach(point => {
+                    csvContent += `${point.volume.toFixed(2)},${point.pH.toFixed(2)}\n`;
+                });
+
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", `titration_${currentTitration.name.replace(/\s+/g, '_')}_${Date.now()}.csv`);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            };
+
+            // Export detailed report
+            const exportDetailedReport = () => {
+                if (!currentTitration) return;
+
+                let report = `pH TITRATION REPORT\n`;
+                report += `==================\n\n`;
+                report += `Titration: ${currentTitration.name}\n`;
+                report += `Date: ${new Date().toLocaleString('is-IS')}\n\n`;
+                report += `SETUP:\n`;
+                report += `- Analyte: ${currentTitration.analyte.formula} (${currentTitration.analyte.molarity} M, ${currentTitration.analyte.volume} mL)\n`;
+                report += `- Titrant: ${currentTitration.titrant.formula} (${currentTitration.titrant.molarity} M)\n`;
+                report += `- Indicator: ${INDICATORS[selectedIndicator].nameIs}\n`;
+                report += `- Type: ${currentTitration.type}\n`;
+                report += `- Difficulty: ${currentTitration.difficulty}\n\n`;
+
+                if (currentTitration.pKa || currentTitration.pKa1) {
+                    report += `ACID/BASE PROPERTIES:\n`;
+                    if (currentTitration.pKa) {
+                        report += `- pKa: ${currentTitration.pKa}\n`;
+                        report += `- Ka: ${Math.pow(10, -currentTitration.pKa).toExponential(2)}\n`;
+                    } else if (currentTitration.pKa1) {
+                        report += `- pKa1: ${currentTitration.pKa1}\n`;
+                        report += `- pKa2: ${currentTitration.pKa2}\n`;
+                        if (currentTitration.pKa3) report += `- pKa3: ${currentTitration.pKa3}\n`;
+                    }
+                    report += `\n`;
+                }
+
+                report += `EQUIVALENCE POINT(S):\n`;
+                if (currentTitration.equivalenceVolume) {
+                    report += `- Volume: ${currentTitration.equivalenceVolume} mL\n`;
+                    report += `- pH: ${currentTitration.equivalencePH}\n`;
+                } else if (currentTitration.equivalenceVolumes) {
+                    currentTitration.equivalenceVolumes.forEach((vol, idx) => {
+                        report += `- Point ${idx + 1}: ${vol} mL (pH ${currentTitration.equivalencePHs[idx]})\n`;
+                    });
+                }
+                report += `\n`;
+
+                report += `TITRATION DATA:\n`;
+                report += `Volume (mL)\tpH\n`;
+                curveData.forEach(point => {
+                    report += `${point.volume.toFixed(2)}\t${point.pH.toFixed(2)}\n`;
+                });
+
+                if (feedback) {
+                    report += `\n\nRESULTS:\n`;
+                    report += `- Your volume: ${feedback.currentVolume} mL\n`;
+                    report += `- Your pH: ${feedback.currentPH}\n`;
+                    report += `- Accuracy: ±${feedback.difference} mL\n`;
+                    report += `- Time: ${feedback.timeElapsed} seconds\n`;
+                    report += `- Score: ${feedback.points} points\n`;
+                    report += `- Result: ${feedback.isCorrect ? 'CORRECT' : 'INCORRECT'}\n`;
+                }
+
+                const blob = new Blob([report], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement("a");
+                link.setAttribute("href", url);
+                link.setAttribute("download", `titration_report_${currentTitration.name.replace(/\s+/g, '_')}_${Date.now()}.txt`);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
             };
 
             // Draw titration curve
@@ -805,14 +1533,148 @@
                     ctx.fill();
                 }
 
-                // Draw equivalence point marker (if feedback shown)
-                if (feedback && currentTitration) {
-                    const eqX = (currentTitration.equivalenceVolume / 60) * width;
-                    const eqY = height - (currentTitration.equivalencePH / 14) * height;
+                // Draw buffer regions (if weak acid/base or polyprotic)
+                if (currentTitration && (currentTitration.type === 'weak-strong' ||
+                    currentTitration.type === 'strong-weak' ||
+                    currentTitration.type === 'polyprotic-diprotic' ||
+                    currentTitration.type === 'polyprotic-triprotic' ||
+                    currentTitration.type === 'amino-acid')) {
 
-                    ctx.fillStyle = '#22c55e';
-                    ctx.font = 'bold 20px sans-serif';
-                    ctx.fillText('⭐', eqX - 10, eqY + 5);
+                    ctx.fillStyle = 'rgba(255, 193, 7, 0.15)'; // Light yellow/orange for buffer region
+
+                    if (currentTitration.type === 'weak-strong' || currentTitration.type === 'strong-weak') {
+                        const pKa = currentTitration.pKa || currentTitration.pKa1;
+                        if (pKa) {
+                            const pKaY = height - (pKa / 14) * height;
+                            const bufferTop = height - ((pKa + 1) / 14) * height;
+                            const bufferBottom = height - ((pKa - 1) / 14) * height;
+                            ctx.fillRect(0, bufferTop, width, bufferBottom - bufferTop);
+
+                            // Draw pKa line
+                            ctx.strokeStyle = '#f59e0b';
+                            ctx.setLineDash([5, 5]);
+                            ctx.lineWidth = 2;
+                            ctx.beginPath();
+                            ctx.moveTo(0, pKaY);
+                            ctx.lineTo(width, pKaY);
+                            ctx.stroke();
+                            ctx.setLineDash([]);
+
+                            // Label pKa
+                            ctx.fillStyle = '#f59e0b';
+                            ctx.font = 'bold 12px sans-serif';
+                            ctx.fillText(`pKa = ${pKa.toFixed(2)}`, width - 80, pKaY - 5);
+                        }
+                    } else if (currentTitration.type === 'polyprotic-diprotic' ||
+                               currentTitration.type === 'amino-acid') {
+                        // Draw two buffer regions
+                        [currentTitration.pKa1, currentTitration.pKa2].forEach((pKa, idx) => {
+                            if (pKa) {
+                                const pKaY = height - (pKa / 14) * height;
+                                const bufferTop = height - ((pKa + 1) / 14) * height;
+                                const bufferBottom = height - ((pKa - 1) / 14) * height;
+                                ctx.fillStyle = idx === 0 ? 'rgba(255, 193, 7, 0.15)' : 'rgba(147, 197, 253, 0.15)';
+                                ctx.fillRect(0, bufferTop, width, bufferBottom - bufferTop);
+
+                                // Draw pKa line
+                                ctx.strokeStyle = idx === 0 ? '#f59e0b' : '#3b82f6';
+                                ctx.setLineDash([5, 5]);
+                                ctx.lineWidth = 2;
+                                ctx.beginPath();
+                                ctx.moveTo(0, pKaY);
+                                ctx.lineTo(width, pKaY);
+                                ctx.stroke();
+                                ctx.setLineDash([]);
+
+                                // Label pKa
+                                ctx.fillStyle = idx === 0 ? '#f59e0b' : '#3b82f6';
+                                ctx.font = 'bold 11px sans-serif';
+                                ctx.fillText(`pKa${idx + 1} = ${pKa.toFixed(2)}`, width - 85, pKaY - 5);
+                            }
+                        });
+                    } else if (currentTitration.type === 'polyprotic-triprotic') {
+                        // Draw three buffer regions
+                        [currentTitration.pKa1, currentTitration.pKa2, currentTitration.pKa3].forEach((pKa, idx) => {
+                            if (pKa) {
+                                const pKaY = height - (pKa / 14) * height;
+                                const bufferTop = height - ((pKa + 1) / 14) * height;
+                                const bufferBottom = height - ((pKa - 1) / 14) * height;
+                                const colors = ['rgba(255, 193, 7, 0.15)', 'rgba(147, 197, 253, 0.15)', 'rgba(134, 239, 172, 0.15)'];
+                                ctx.fillStyle = colors[idx];
+                                ctx.fillRect(0, bufferTop, width, bufferBottom - bufferTop);
+
+                                // Draw pKa line
+                                const lineColors = ['#f59e0b', '#3b82f6', '#22c55e'];
+                                ctx.strokeStyle = lineColors[idx];
+                                ctx.setLineDash([5, 5]);
+                                ctx.lineWidth = 2;
+                                ctx.beginPath();
+                                ctx.moveTo(0, pKaY);
+                                ctx.lineTo(width, pKaY);
+                                ctx.stroke();
+                                ctx.setLineDash([]);
+
+                                // Label pKa
+                                ctx.fillStyle = lineColors[idx];
+                                ctx.font = 'bold 11px sans-serif';
+                                ctx.fillText(`pKa${idx + 1} = ${pKa.toFixed(2)}`, width - 85, pKaY - 5);
+                            }
+                        });
+                    }
+                }
+
+                // Draw half-equivalence point markers
+                if (currentTitration && curveData.length > 5) {
+                    if (currentTitration.halfEquivalencePH) {
+                        const halfEqVol = (currentTitration.equivalenceVolume || currentTitration.equivalenceVolumes?.[0]) / 2;
+                        const halfEqX = (halfEqVol / 60) * width;
+                        const halfEqY = height - (currentTitration.halfEquivalencePH / 14) * height;
+
+                        ctx.fillStyle = '#f59e0b';
+                        ctx.font = 'bold 18px sans-serif';
+                        ctx.fillText('◆', halfEqX - 7, halfEqY + 6);
+                    } else if (currentTitration.halfEquivalencePHs) {
+                        currentTitration.halfEquivalencePHs.forEach((halfPH, idx) => {
+                            const eqVols = currentTitration.equivalenceVolumes;
+                            let halfEqVol;
+                            if (idx === 0) {
+                                halfEqVol = eqVols[0] / 2;
+                            } else {
+                                halfEqVol = (eqVols[idx - 1] + eqVols[idx]) / 2;
+                            }
+                            const halfEqX = (halfEqVol / 60) * width;
+                            const halfEqY = height - (halfPH / 14) * height;
+
+                            const colors = ['#f59e0b', '#3b82f6', '#22c55e'];
+                            ctx.fillStyle = colors[idx] || '#f59e0b';
+                            ctx.font = 'bold 18px sans-serif';
+                            ctx.fillText('◆', halfEqX - 7, halfEqY + 6);
+                        });
+                    }
+                }
+
+                // Draw equivalence point marker(s) (if feedback shown)
+                if (feedback && currentTitration) {
+                    if (currentTitration.equivalenceVolume) {
+                        // Single equivalence point
+                        const eqX = (currentTitration.equivalenceVolume / 60) * width;
+                        const eqY = height - (currentTitration.equivalencePH / 14) * height;
+
+                        ctx.fillStyle = '#22c55e';
+                        ctx.font = 'bold 20px sans-serif';
+                        ctx.fillText('⭐', eqX - 10, eqY + 5);
+                    } else if (currentTitration.equivalenceVolumes) {
+                        // Multiple equivalence points (polyprotic or amino acid)
+                        currentTitration.equivalenceVolumes.forEach((eqVol, idx) => {
+                            const eqX = (eqVol / 60) * width;
+                            const eqY = height - (currentTitration.equivalencePHs[idx] / 14) * height;
+
+                            const colors = ['#22c55e', '#3b82f6', '#f59e0b'];
+                            ctx.fillStyle = colors[idx] || '#22c55e';
+                            ctx.font = 'bold 20px sans-serif';
+                            ctx.fillText('⭐', eqX - 10, eqY + 5);
+                        });
+                    }
                 }
 
                 // Draw axis labels
@@ -845,27 +1707,41 @@
             // Render different screens
             if (screen === 'menu') {
                 return (
-                    <div className="max-w-4xl mx-auto px-4 py-8">
-                        <div className="bg-white rounded-xl shadow-lg p-8 text-center">
-                            <h1 className="text-4xl font-bold mb-4" style={{ color: 'var(--kvenno-orange)' }}>
-                                pH Þéttigreining Meistari
-                            </h1>
-                            <p className="text-lg text-gray-600 mb-8">
-                                Læðu að framkvæma sýru-basa þéttigreiningar og túlka pH ferla
-                            </p>
+                    <div className="max-w-6xl mx-auto px-4 py-8">
+                        <div className="bg-white rounded-xl shadow-lg p-8">
+                            <div className="text-center mb-8">
+                                <h1 className="text-4xl font-bold mb-4" style={{ color: 'var(--kvenno-orange)' }}>
+                                    pH Þéttigreining Meistari
+                                </h1>
+                                <p className="text-lg text-gray-600 mb-4">
+                                    Læðu að framkvæma sýru-basa þéttigreiningar og túlka pH ferla
+                                </p>
+                                {/* Progress Stats */}
+                                {(highScore > 0 || totalTitrations > 0) && (
+                                    <div className="flex justify-center gap-6 text-sm">
+                                        <div className="bg-yellow-50 px-4 py-2 rounded-lg border border-yellow-200">
+                                            <span className="font-bold text-yellow-800">🏆 Hæsta stig: {highScore}</span>
+                                        </div>
+                                        <div className="bg-blue-50 px-4 py-2 rounded-lg border border-blue-200">
+                                            <span className="font-bold text-blue-800">🧪 Fjöldi þéttigr.: {totalTitrations}</span>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
 
-                            <div className="grid md:grid-cols-2 gap-6">
+                            <div className="grid md:grid-cols-2 gap-6 mb-8">
                                 <div className="bg-blue-50 p-6 rounded-lg border-2 border-blue-200">
                                     <h2 className="text-2xl font-bold mb-3 text-blue-900">Æfingahamur</h2>
                                     <p className="text-gray-700 mb-4">
                                         • Engin tímatakmörk<br/>
                                         • Sjá pH stöðugt<br/>
                                         • Ítarlegar útskýringar<br/>
+                                        • Henderson-Hasselbalch greining<br/>
                                         • Vísbendingar í boði
                                     </p>
                                     <button
                                         onClick={() => startNewTitration('practice')}
-                                        className="w-full py-3 px-6 rounded-lg font-bold text-white transition"
+                                        className="w-full py-3 px-6 rounded-lg font-bold text-white transition hover:opacity-90"
                                         style={{ background: 'var(--kvenno-orange)' }}
                                     >
                                         Byrja að Æfa
@@ -878,11 +1754,12 @@
                                         • Takmörkuð viðbót<br/>
                                         • Tíma bónus<br/>
                                         • Stigatafla<br/>
-                                        • Nákvæmni skipta máli
+                                        • Nákvæmni skipta máli<br/>
+                                        • Hraða keppni
                                     </p>
                                     <button
                                         onClick={() => startNewTitration('challenge')}
-                                        className="w-full py-3 px-6 rounded-lg font-bold text-white transition"
+                                        className="w-full py-3 px-6 rounded-lg font-bold text-white transition hover:opacity-90"
                                         style={{ background: 'var(--kvenno-orange-dark)' }}
                                     >
                                         Byrja Keppni
@@ -890,15 +1767,95 @@
                                 </div>
                             </div>
 
-                            <div className="mt-8 p-6 bg-gray-50 rounded-lg">
-                                <h3 className="text-xl font-bold mb-3">Hvernig á að spila:</h3>
+                            <div className="grid md:grid-cols-2 gap-6 mb-8">
+                                <div className="p-6 bg-gray-50 rounded-lg">
+                                    <h3 className="text-xl font-bold mb-3 text-gray-800">📚 Gerðir Þéttigreininga:</h3>
+                                    <div className="text-sm text-gray-700 space-y-2">
+                                        <div className="bg-white p-3 rounded border-l-4 border-green-500">
+                                            <strong>Sterk-Sterk:</strong> HCl + NaOH → pH = 7.00 við jafngildi
+                                        </div>
+                                        <div className="bg-white p-3 rounded border-l-4 border-blue-500">
+                                            <strong>Veik-Sterk:</strong> CH₃COOH + NaOH → pH &gt; 7 við jafngildi (buffer svæði)
+                                        </div>
+                                        <div className="bg-white p-3 rounded border-l-4 border-purple-500">
+                                            <strong>Fjölprótón:</strong> H₃PO₄ → 3 jafngildistaðir, 3 pKa gildi
+                                        </div>
+                                        <div className="bg-white p-3 rounded border-l-4 border-yellow-500">
+                                            <strong>Amínósýrur:</strong> Glycine → tvíeiginleiki, isoelectrisk punktur
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="p-6 bg-gray-50 rounded-lg">
+                                    <h3 className="text-xl font-bold mb-3 text-gray-800">🌍 Raunveruleg Notkun:</h3>
+                                    <div className="text-sm text-gray-700 space-y-2">
+                                        <div className="bg-white p-2 rounded">
+                                            <strong>🏭 Iðnaður:</strong> Brennisteinssýru framleiðsla, vatnshreinsun
+                                        </div>
+                                        <div className="bg-white p-2 rounded">
+                                            <strong>🏥 Læknisfræði:</strong> Blóð pH mælingar, æðadropar (IV)
+                                        </div>
+                                        <div className="bg-white p-2 rounded">
+                                            <strong>🌊 Umhverfi:</strong> Súrt regn, súrnun sjávar, jarðvegsgreining
+                                        </div>
+                                        <div className="bg-white p-2 rounded">
+                                            <strong>🍷 Matvæli:</strong> Víngerð, ostaframleiðsla, gerjun
+                                        </div>
+                                        <div className="bg-white p-2 rounded">
+                                            <strong>⚗️ Rannsóknir:</strong> Einangrun próteina, ensím uppskrift
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="p-6 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border-2 border-blue-200 mb-8">
+                                <h3 className="text-xl font-bold mb-3 text-gray-800">🎯 Það sem þú lærir:</h3>
+                                <div className="grid md:grid-cols-3 gap-4 text-sm text-gray-700">
+                                    <div>
+                                        <strong className="text-blue-800">Útreikningar:</strong>
+                                        <ul className="mt-1 ml-4 list-disc">
+                                            <li>Henderson-Hasselbalch</li>
+                                            <li>pH, pKa, Ka tengsl</li>
+                                            <li>Mólatala útreikningar</li>
+                                            <li>Buffer svæði</li>
+                                        </ul>
+                                    </div>
+                                    <div>
+                                        <strong className="text-purple-800">Túlkun:</strong>
+                                        <ul className="mt-1 ml-4 list-disc">
+                                            <li>Þéttigreiningarferlar</li>
+                                            <li>Jafngildistaðir</li>
+                                            <li>Hálf-jafngildi punktar</li>
+                                            <li>Litskipti val</li>
+                                        </ul>
+                                    </div>
+                                    <div>
+                                        <strong className="text-green-800">Verkleg færni:</strong>
+                                        <ul className="mt-1 ml-4 list-disc">
+                                            <li>Buretta notkun</li>
+                                            <li>pH mælingar</li>
+                                            <li>Nákvæmni og villur</li>
+                                            <li>Gagnaskráning</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="p-6 bg-gray-50 rounded-lg">
+                                <h3 className="text-xl font-bold mb-3">💡 Hvernig á að spila:</h3>
                                 <ol className="text-left text-gray-700 space-y-2">
-                                    <li>1. Veldu litskipti (indicator) fyrir þéttigreininguna</li>
-                                    <li>2. Bættu við þéttiefni úr burettu í skrefum</li>
-                                    <li>3. Fylgstu með pH breytingum og lit lausnarinnar</li>
-                                    <li>4. Reyndu að ná jafngildisstað eins nákvæmlega og mögulegt er</li>
-                                    <li>5. Túlkaðu þéttigreiningarferilinn</li>
+                                    <li><strong>1.</strong> Veldu litskipti (indicator) fyrir þéttigreininguna</li>
+                                    <li><strong>2.</strong> Bættu við þéttiefni úr burettu í skrefum (5 mL, 1 mL, eða 0.1 mL)</li>
+                                    <li><strong>3.</strong> Fylgstu með pH breytingum og lit lausnarinnar í kólfunni</li>
+                                    <li><strong>4.</strong> Notaðu flýtilykla: <kbd className="px-2 py-1 bg-white border rounded text-xs">Space</kbd> fyrir 0.1 mL, <kbd className="px-2 py-1 bg-white border rounded text-xs">R</kbd> til að endurstilla</li>
+                                    <li><strong>5.</strong> Reyndu að ná jafngildisstað eins nákvæmlega og mögulegt er (±0.05 mL fyrir hámarksstig!)</li>
+                                    <li><strong>6.</strong> Túlkaðu ferilinn - sjáðu buffer svæði, pKa gildi, og jafngildistaði</li>
+                                    <li><strong>7.</strong> Sæktu gögn þín (CSV) eða skýrslu fyrir frekari greiningu</li>
                                 </ol>
+                            </div>
+
+                            <div className="mt-8 text-center text-sm text-gray-500">
+                                <p>Nú með 30 þéttigreiningar! • Fjölprótón sýrur • Amínósýrur • Óþekktur styrkur</p>
                             </div>
                         </div>
                     </div>
@@ -1124,12 +2081,65 @@
                                             <p>• Tími: {feedback.timeElapsed} sekúndur</p>
                                             <p className="font-bold mt-2">Stig unnin: +{feedback.points}</p>
                                         </div>
+
+                                        {/* Detailed Analysis */}
+                                        {feedback.analysis && gameMode === 'practice' && (
+                                            <div className="mt-4 p-3 bg-white rounded border-2 border-blue-200">
+                                                <h4 className="font-bold text-blue-900 mb-2">📊 Ítarleg Greining:</h4>
+
+                                                {/* Moles Calculation */}
+                                                {feedback.analysis.moles && (
+                                                    <div className="mb-3 text-sm">
+                                                        <p className="font-semibold text-gray-700">Mólmagn:</p>
+                                                        <p className="ml-3">• Sýra/Basi: {feedback.analysis.moles.analyte} mól</p>
+                                                        <p className="ml-3">• Þéttiefni: {feedback.analysis.moles.titrant} mól</p>
+                                                    </div>
+                                                )}
+
+                                                {/* Henderson-Hasselbalch */}
+                                                {feedback.analysis.hendersonHasselbalch && (
+                                                    <div className="mb-3 text-sm bg-yellow-50 p-2 rounded">
+                                                        <p className="font-semibold text-gray-700">Henderson-Hasselbalch jafna:</p>
+                                                        <p className="ml-3 font-mono text-xs mt-1">{feedback.analysis.hendersonHasselbalch.formula}</p>
+                                                        <p className="ml-3 mt-1">• Hlutfall [A⁻]/[HA]: {feedback.analysis.hendersonHasselbalch.ratio}</p>
+                                                        <p className="ml-3">• pKa: {feedback.analysis.hendersonHasselbalch.pKa}</p>
+                                                    </div>
+                                                )}
+
+                                                {/* Equivalence Points */}
+                                                {feedback.analysis.equivalencePoints.length > 0 && (
+                                                    <div className="mb-3 text-sm">
+                                                        <p className="font-semibold text-gray-700">Jafngildistaðir:</p>
+                                                        {feedback.analysis.equivalencePoints.map((ep, idx) => (
+                                                            <div key={idx} className="ml-3">
+                                                                {ep.number && <span className="font-bold">Punktur {ep.number}: </span>}
+                                                                <span>{ep.volume} mL (pH {ep.pH})</span>
+                                                                {ep.halfEquivalencePH && (
+                                                                    <span className="text-gray-500"> | Hálf-jafng.: pH {ep.halfEquivalencePH}</span>
+                                                                )}
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                )}
+
+                                                {/* Ka Calculation */}
+                                                {feedback.analysis.kaCalculation && (
+                                                    <div className="text-sm bg-green-50 p-2 rounded">
+                                                        <p className="font-semibold text-gray-700">Ka útreikningur:</p>
+                                                        <p className="ml-3">• pKa = {feedback.analysis.kaCalculation.pKa}</p>
+                                                        <p className="ml-3">• Ka = {feedback.analysis.kaCalculation.Ka}</p>
+                                                        <p className="ml-3 text-xs text-gray-600">{feedback.analysis.kaCalculation.explanation}</p>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
+
                                         <button
                                             onClick={nextQuestion}
                                             className="mt-4 py-2 px-6 rounded-lg font-bold text-white"
                                             style={{ background: 'var(--kvenno-orange)' }}
                                         >
-                                            Næsta Þéttigreining →
+                                            Næsta Þéttigreining → (Enter)
                                         </button>
                                     </div>
                                 )}
@@ -1148,6 +2158,35 @@
                                     <p><strong>Núverandi pH:</strong> {currentPH.toFixed(2)}</p>
                                     <p><strong>Rúmmál bætt við:</strong> {volumeAdded.toFixed(1)} mL</p>
                                     <p><strong>Erfiðleiki:</strong> {currentTitration.difficulty}</p>
+                                </div>
+
+                                {/* Export Buttons */}
+                                {curveData.length > 1 && (
+                                    <div className="mt-4 space-y-2">
+                                        <button
+                                            onClick={exportToCSV}
+                                            className="w-full py-2 px-4 bg-green-600 text-white rounded-lg text-sm font-semibold hover:bg-green-700"
+                                        >
+                                            📊 Sækja gögn (CSV)
+                                        </button>
+                                        <button
+                                            onClick={exportDetailedReport}
+                                            className="w-full py-2 px-4 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700"
+                                        >
+                                            📄 Sækja skýrslu
+                                        </button>
+                                    </div>
+                                )}
+
+                                {/* Keyboard Shortcuts Reference */}
+                                <div className="mt-4 p-3 bg-gray-50 rounded text-xs">
+                                    <p className="font-bold text-gray-700 mb-2">⌨️ Flýtilyklar:</p>
+                                    <div className="space-y-1 text-gray-600">
+                                        <p>• <kbd className="px-2 py-1 bg-white border rounded">Space</kbd> / <kbd className="px-2 py-1 bg-white border rounded">↑</kbd> Bæta við 0.1 mL</p>
+                                        <p>• <kbd className="px-2 py-1 bg-white border rounded">R</kbd> Endurstilla</p>
+                                        <p>• <kbd className="px-2 py-1 bg-white border rounded">H</kbd> Vísbending (æfing)</p>
+                                        <p>• <kbd className="px-2 py-1 bg-white border rounded">Enter</kbd> Athuga svar</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>

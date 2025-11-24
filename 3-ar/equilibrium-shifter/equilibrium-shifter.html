@@ -471,8 +471,388 @@
         // ============================================
 
         const EQUILIBRIUM_BANK = [
+            // ============================================
+            // BEGINNER LEVEL (10 Equilibria)
+            // ============================================
             {
                 id: 1,
+                equation: 'N₂O₄(g) ⇌ 2NO₂(g)',
+                name: 'Dinitrogen Tetroxide',
+                nameIs: 'Díköfnunarefnisoxíð',
+                difficulty: 'beginner',
+
+                reactants: [
+                    { formula: 'N₂O₄', coefficient: 1, phase: 'g', display: '⚫' }
+                ],
+
+                products: [
+                    { formula: 'NO₂', coefficient: 2, phase: 'g', display: '🟤' }
+                ],
+
+                deltaH: 58,
+
+                totalGasMoles: {
+                    reactants: 1,
+                    products: 2
+                },
+
+                description: 'Colorless N₂O₄ gas converts to brown NO₂ gas when heated.',
+                descriptionIs: 'Litlaust N₂O₄ gas breytist í brúnt NO₂ gas við upphitun.',
+
+                possibleStresses: [
+                    { type: 'add-reactant', target: 'N₂O₄' },
+                    { type: 'add-product', target: 'NO₂' },
+                    { type: 'remove-reactant', target: 'N₂O₄' },
+                    { type: 'remove-product', target: 'NO₂' },
+                    { type: 'increase-temp', target: null },
+                    { type: 'decrease-temp', target: null },
+                    { type: 'increase-pressure', target: null },
+                    { type: 'decrease-pressure', target: null },
+                    { type: 'add-catalyst', target: null }
+                ]
+            },
+            {
+                id: 2,
+                equation: 'H₂(g) + I₂(g) ⇌ 2HI(g)',
+                name: 'Hydrogen Iodide Formation',
+                nameIs: 'Vetnisjóðíðmyndun',
+                difficulty: 'beginner',
+
+                reactants: [
+                    { formula: 'H₂', coefficient: 1, phase: 'g', display: '⚪⚪' },
+                    { formula: 'I₂', coefficient: 1, phase: 'g', display: '🟣🟣' }
+                ],
+
+                products: [
+                    { formula: 'HI', coefficient: 2, phase: 'g', display: '⚪🟣' }
+                ],
+
+                deltaH: 53,
+
+                totalGasMoles: {
+                    reactants: 2,
+                    products: 2
+                },
+
+                description: 'Simple formation reaction used to teach equilibrium constants.',
+                descriptionIs: 'Einfalt myndunarhvarf sem notað er til að kenna jafnvægisfasta.',
+
+                possibleStresses: [
+                    { type: 'add-reactant', target: 'H₂' },
+                    { type: 'add-reactant', target: 'I₂' },
+                    { type: 'add-product', target: 'HI' },
+                    { type: 'remove-reactant', target: 'H₂' },
+                    { type: 'remove-product', target: 'HI' },
+                    { type: 'increase-temp', target: null },
+                    { type: 'decrease-temp', target: null },
+                    { type: 'increase-pressure', target: null },
+                    { type: 'add-catalyst', target: null }
+                ]
+            },
+            {
+                id: 3,
+                equation: 'PCl₅(g) ⇌ PCl₃(g) + Cl₂(g)',
+                name: 'Phosphorus Pentachloride',
+                nameIs: 'Fosfórpentaklóríð',
+                difficulty: 'beginner',
+
+                reactants: [
+                    { formula: 'PCl₅', coefficient: 1, phase: 'g', display: '🔷' }
+                ],
+
+                products: [
+                    { formula: 'PCl₃', coefficient: 1, phase: 'g', display: '🔹' },
+                    { formula: 'Cl₂', coefficient: 1, phase: 'g', display: '🟢🟢' }
+                ],
+
+                deltaH: 88,
+
+                totalGasMoles: {
+                    reactants: 1,
+                    products: 2
+                },
+
+                description: 'Decomposition of PCl₅ upon heating.',
+                descriptionIs: 'Umbreyting PCl₅ við upphitun.',
+
+                possibleStresses: [
+                    { type: 'add-reactant', target: 'PCl₅' },
+                    { type: 'add-product', target: 'PCl₃' },
+                    { type: 'add-product', target: 'Cl₂' },
+                    { type: 'remove-reactant', target: 'PCl₅' },
+                    { type: 'remove-product', target: 'Cl₂' },
+                    { type: 'increase-temp', target: null },
+                    { type: 'decrease-temp', target: null },
+                    { type: 'increase-pressure', target: null },
+                    { type: 'decrease-pressure', target: null },
+                    { type: 'add-catalyst', target: null }
+                ]
+            },
+            {
+                id: 4,
+                equation: 'CO(g) + 2H₂(g) ⇌ CH₃OH(g)',
+                name: 'Methanol Synthesis',
+                nameIs: 'Metanólsamsetning',
+                difficulty: 'beginner',
+
+                reactants: [
+                    { formula: 'CO', coefficient: 1, phase: 'g', display: '⚫🔴' },
+                    { formula: 'H₂', coefficient: 2, phase: 'g', display: '⚪⚪' }
+                ],
+
+                products: [
+                    { formula: 'CH₃OH', coefficient: 1, phase: 'g', display: '🧪' }
+                ],
+
+                deltaH: -91,
+
+                totalGasMoles: {
+                    reactants: 3,
+                    products: 1
+                },
+
+                description: 'Industrial production of methanol for fuel and chemicals.',
+                descriptionIs: 'Iðnaðarframleiðsla á metanóli sem eldsneyti og efni.',
+
+                possibleStresses: [
+                    { type: 'add-reactant', target: 'CO' },
+                    { type: 'add-reactant', target: 'H₂' },
+                    { type: 'add-product', target: 'CH₃OH' },
+                    { type: 'remove-reactant', target: 'CO' },
+                    { type: 'remove-product', target: 'CH₃OH' },
+                    { type: 'increase-temp', target: null },
+                    { type: 'decrease-temp', target: null },
+                    { type: 'increase-pressure', target: null },
+                    { type: 'decrease-pressure', target: null },
+                    { type: 'add-catalyst', target: null }
+                ]
+            },
+            {
+                id: 5,
+                equation: 'CaCO₃(s) ⇌ CaO(s) + CO₂(g)',
+                name: 'Calcium Carbonate Decomposition',
+                nameIs: 'Kalksteinsuppleysing',
+                difficulty: 'beginner',
+
+                reactants: [
+                    { formula: 'CaCO₃', coefficient: 1, phase: 's', display: '🪨' }
+                ],
+
+                products: [
+                    { formula: 'CaO', coefficient: 1, phase: 's', display: '⚪' },
+                    { formula: 'CO₂', coefficient: 1, phase: 'g', display: '⚫🔴🔴' }
+                ],
+
+                deltaH: 178,
+
+                totalGasMoles: {
+                    reactants: 0,
+                    products: 1
+                },
+
+                description: 'Limestone decomposition, used in cement production.',
+                descriptionIs: 'Kalksteinn við upphitun, notað í sementframleiðslu.',
+
+                possibleStresses: [
+                    { type: 'add-product', target: 'CO₂' },
+                    { type: 'remove-product', target: 'CO₂' },
+                    { type: 'increase-temp', target: null },
+                    { type: 'decrease-temp', target: null },
+                    { type: 'increase-pressure', target: null },
+                    { type: 'decrease-pressure', target: null },
+                    { type: 'add-catalyst', target: null }
+                ]
+            },
+            {
+                id: 6,
+                equation: 'Fe³⁺(aq) + SCN⁻(aq) ⇌ FeSCN²⁺(aq)',
+                name: 'Iron Thiocyanate Complex',
+                nameIs: 'Járnþíósýanatkomplexinn',
+                difficulty: 'beginner',
+
+                reactants: [
+                    { formula: 'Fe³⁺', coefficient: 1, phase: 'aq', display: '🟡⁺' },
+                    { formula: 'SCN⁻', coefficient: 1, phase: 'aq', display: '⚪⁻' }
+                ],
+
+                products: [
+                    { formula: 'FeSCN²⁺', coefficient: 1, phase: 'aq', display: '🔴' }
+                ],
+
+                deltaH: -20,
+
+                totalGasMoles: {
+                    reactants: 0,
+                    products: 0
+                },
+
+                description: 'Blood-red complex ion, used in chemistry demonstrations.',
+                descriptionIs: 'Blóðrauður komplexjón, notaður í efnafræðisýningum.',
+
+                possibleStresses: [
+                    { type: 'add-reactant', target: 'Fe³⁺' },
+                    { type: 'add-reactant', target: 'SCN⁻' },
+                    { type: 'add-product', target: 'FeSCN²⁺' },
+                    { type: 'remove-reactant', target: 'Fe³⁺' },
+                    { type: 'remove-product', target: 'FeSCN²⁺' },
+                    { type: 'increase-temp', target: null },
+                    { type: 'decrease-temp', target: null },
+                    { type: 'add-catalyst', target: null }
+                ]
+            },
+            {
+                id: 7,
+                equation: 'H₂O(l) ⇌ H⁺(aq) + OH⁻(aq)',
+                name: 'Water Autoionization',
+                nameIs: 'Sjálfjöfnun vatns',
+                difficulty: 'beginner',
+
+                reactants: [
+                    { formula: 'H₂O', coefficient: 1, phase: 'l', display: '💧' }
+                ],
+
+                products: [
+                    { formula: 'H⁺', coefficient: 1, phase: 'aq', display: '⊕' },
+                    { formula: 'OH⁻', coefficient: 1, phase: 'aq', display: '⊖' }
+                ],
+
+                deltaH: 56,
+
+                totalGasMoles: {
+                    reactants: 0,
+                    products: 0
+                },
+
+                description: 'Self-ionization of water, basis of pH system.',
+                descriptionIs: 'Sjálfjafnvægi vatns, grunnur pH kerfis.',
+
+                possibleStresses: [
+                    { type: 'add-product', target: 'H⁺' },
+                    { type: 'add-product', target: 'OH⁻' },
+                    { type: 'remove-product', target: 'H⁺' },
+                    { type: 'remove-product', target: 'OH⁻' },
+                    { type: 'increase-temp', target: null },
+                    { type: 'decrease-temp', target: null },
+                    { type: 'add-catalyst', target: null }
+                ]
+            },
+            {
+                id: 8,
+                equation: 'CH₃COOH(aq) ⇌ CH₃COO⁻(aq) + H⁺(aq)',
+                name: 'Acetic Acid Dissociation',
+                nameIs: 'Ediksýrusundrun',
+                difficulty: 'beginner',
+
+                reactants: [
+                    { formula: 'CH₃COOH', coefficient: 1, phase: 'aq', display: '🧪' }
+                ],
+
+                products: [
+                    { formula: 'CH₃COO⁻', coefficient: 1, phase: 'aq', display: '🧪⁻' },
+                    { formula: 'H⁺', coefficient: 1, phase: 'aq', display: '⊕' }
+                ],
+
+                deltaH: 5,
+
+                totalGasMoles: {
+                    reactants: 0,
+                    products: 0
+                },
+
+                description: 'Acetic acid, typical weak acid equilibrium.',
+                descriptionIs: 'Ediksýra, dæmigert veikt sýrujafnvægi.',
+
+                possibleStresses: [
+                    { type: 'add-reactant', target: 'CH₃COOH' },
+                    { type: 'add-product', target: 'H⁺' },
+                    { type: 'add-product', target: 'CH₃COO⁻' },
+                    { type: 'remove-reactant', target: 'CH₃COOH' },
+                    { type: 'remove-product', target: 'H⁺' },
+                    { type: 'increase-temp', target: null },
+                    { type: 'decrease-temp', target: null },
+                    { type: 'add-catalyst', target: null }
+                ]
+            },
+            {
+                id: 9,
+                equation: 'NH₃(aq) + H₂O(l) ⇌ NH₄⁺(aq) + OH⁻(aq)',
+                name: 'Ammonia Base',
+                nameIs: 'Ammóníakbasi',
+                difficulty: 'beginner',
+
+                reactants: [
+                    { formula: 'NH₃', coefficient: 1, phase: 'aq', display: '🔷' },
+                    { formula: 'H₂O', coefficient: 1, phase: 'l', display: '💧' }
+                ],
+
+                products: [
+                    { formula: 'NH₄⁺', coefficient: 1, phase: 'aq', display: '🔷⁺' },
+                    { formula: 'OH⁻', coefficient: 1, phase: 'aq', display: '⊖' }
+                ],
+
+                deltaH: -3,
+
+                totalGasMoles: {
+                    reactants: 0,
+                    products: 0
+                },
+
+                description: 'Ammonia as a weak base in water.',
+                descriptionIs: 'Ammóníak sem veikur basi í vatni.',
+
+                possibleStresses: [
+                    { type: 'add-reactant', target: 'NH₃' },
+                    { type: 'add-product', target: 'NH₄⁺' },
+                    { type: 'add-product', target: 'OH⁻' },
+                    { type: 'remove-reactant', target: 'NH₃' },
+                    { type: 'remove-product', target: 'OH⁻' },
+                    { type: 'increase-temp', target: null },
+                    { type: 'decrease-temp', target: null },
+                    { type: 'add-catalyst', target: null }
+                ]
+            },
+            {
+                id: 10,
+                equation: 'AgCl(s) ⇌ Ag⁺(aq) + Cl⁻(aq)',
+                name: 'Silver Chloride Precipitation',
+                nameIs: 'Silfurklóríðleysnijafnvægi',
+                difficulty: 'beginner',
+
+                reactants: [
+                    { formula: 'AgCl', coefficient: 1, phase: 's', display: '🔘' }
+                ],
+
+                products: [
+                    { formula: 'Ag⁺', coefficient: 1, phase: 'aq', display: '⚪⁺' },
+                    { formula: 'Cl⁻', coefficient: 1, phase: 'aq', display: '🟢⁻' }
+                ],
+
+                deltaH: 65,
+
+                totalGasMoles: {
+                    reactants: 0,
+                    products: 0
+                },
+
+                description: 'Solubility equilibrium of silver chloride, white precipitate.',
+                descriptionIs: 'Leysnijafnvægi silfurklóríðs, hvítur fellur út.',
+
+                possibleStresses: [
+                    { type: 'add-product', target: 'Ag⁺' },
+                    { type: 'add-product', target: 'Cl⁻' },
+                    { type: 'remove-product', target: 'Ag⁺' },
+                    { type: 'remove-product', target: 'Cl⁻' },
+                    { type: 'increase-temp', target: null },
+                    { type: 'decrease-temp', target: null },
+                    { type: 'add-catalyst', target: null }
+                ]
+            },
+
+            // ============================================
+            // INTERMEDIATE LEVEL (12 Equilibria)
+            // ============================================
+            {
+                id: 11,
                 equation: 'N₂(g) + 3H₂(g) ⇌ 2NH₃(g)',
                 name: 'Haber Process',
                 nameIs: 'Haber-aðferð',
@@ -511,44 +891,7 @@
                 ]
             },
             {
-                id: 2,
-                equation: 'N₂O₄(g) ⇌ 2NO₂(g)',
-                name: 'Dinitrogen Tetroxide',
-                nameIs: 'Díköfnunarefnisoxíð',
-                difficulty: 'beginner',
-
-                reactants: [
-                    { formula: 'N₂O₄', coefficient: 1, phase: 'g', display: '⚫' }
-                ],
-
-                products: [
-                    { formula: 'NO₂', coefficient: 2, phase: 'g', display: '🟤' }
-                ],
-
-                deltaH: 58,
-
-                totalGasMoles: {
-                    reactants: 1,
-                    products: 2
-                },
-
-                description: 'Colorless N₂O₄ gas converts to brown NO₂ gas when heated.',
-                descriptionIs: 'Litlaust N₂O₄ gas breytist í brúnt NO₂ gas við upphitun.',
-
-                possibleStresses: [
-                    { type: 'add-reactant', target: 'N₂O₄' },
-                    { type: 'add-product', target: 'NO₂' },
-                    { type: 'remove-reactant', target: 'N₂O₄' },
-                    { type: 'remove-product', target: 'NO₂' },
-                    { type: 'increase-temp', target: null },
-                    { type: 'decrease-temp', target: null },
-                    { type: 'increase-pressure', target: null },
-                    { type: 'decrease-pressure', target: null },
-                    { type: 'add-catalyst', target: null }
-                ]
-            },
-            {
-                id: 3,
+                id: 12,
                 equation: '2SO₂(g) + O₂(g) ⇌ 2SO₃(g)',
                 name: 'Contact Process',
                 nameIs: 'Snertiaðferð',
@@ -587,37 +930,79 @@
                 ]
             },
             {
-                id: 4,
-                equation: 'H₂(g) + I₂(g) ⇌ 2HI(g)',
-                name: 'Hydrogen Iodide Formation',
-                nameIs: 'Vetnisjóðíðmyndun',
-                difficulty: 'beginner',
+                id: 13,
+                equation: '4NH₃(g) + 5O₂(g) ⇌ 4NO(g) + 6H₂O(g)',
+                name: 'Ostwald Process',
+                nameIs: 'Ostwald-aðferð',
+                difficulty: 'intermediate',
 
                 reactants: [
-                    { formula: 'H₂', coefficient: 1, phase: 'g', display: '⚪⚪' },
-                    { formula: 'I₂', coefficient: 1, phase: 'g', display: '🟣🟣' }
+                    { formula: 'NH₃', coefficient: 4, phase: 'g', display: '🔷' },
+                    { formula: 'O₂', coefficient: 5, phase: 'g', display: '🔴🔴' }
                 ],
 
                 products: [
-                    { formula: 'HI', coefficient: 2, phase: 'g', display: '⚪🟣' }
+                    { formula: 'NO', coefficient: 4, phase: 'g', display: '🔴⚫' },
+                    { formula: 'H₂O', coefficient: 6, phase: 'g', display: '💧' }
                 ],
 
-                deltaH: 53,
+                deltaH: -905,
+
+                totalGasMoles: {
+                    reactants: 9,
+                    products: 10
+                },
+
+                description: 'Nitrogen oxide production for nitric acid.',
+                descriptionIs: 'Köfnunarefnisoxíðframleiðsla fyrir salpeturssýru.',
+
+                possibleStresses: [
+                    { type: 'add-reactant', target: 'NH₃' },
+                    { type: 'add-reactant', target: 'O₂' },
+                    { type: 'add-product', target: 'NO' },
+                    { type: 'remove-reactant', target: 'NH₃' },
+                    { type: 'remove-product', target: 'NO' },
+                    { type: 'increase-temp', target: null },
+                    { type: 'decrease-temp', target: null },
+                    { type: 'increase-pressure', target: null },
+                    { type: 'decrease-pressure', target: null },
+                    { type: 'add-catalyst', target: null }
+                ]
+            },
+            {
+                id: 14,
+                equation: 'CO(g) + H₂O(g) ⇌ CO₂(g) + H₂(g)',
+                name: 'Water Gas Shift',
+                nameIs: 'Vatnsgashliðrun',
+                difficulty: 'intermediate',
+
+                reactants: [
+                    { formula: 'CO', coefficient: 1, phase: 'g', display: '⚫🔴' },
+                    { formula: 'H₂O', coefficient: 1, phase: 'g', display: '💧' }
+                ],
+
+                products: [
+                    { formula: 'CO₂', coefficient: 1, phase: 'g', display: '⚫🔴🔴' },
+                    { formula: 'H₂', coefficient: 1, phase: 'g', display: '⚪⚪' }
+                ],
+
+                deltaH: -41,
 
                 totalGasMoles: {
                     reactants: 2,
                     products: 2
                 },
 
-                description: 'Simple formation reaction used to teach equilibrium constants.',
-                descriptionIs: 'Einfalt myndunarhvarf sem notað er til að kenna jafnvægisfasta.',
+                description: 'Important in hydrogen production and industry.',
+                descriptionIs: 'Mikilvægt í vetniframleiðslu og iðnaði.',
 
                 possibleStresses: [
-                    { type: 'add-reactant', target: 'H₂' },
-                    { type: 'add-reactant', target: 'I₂' },
-                    { type: 'add-product', target: 'HI' },
-                    { type: 'remove-reactant', target: 'H₂' },
-                    { type: 'remove-product', target: 'HI' },
+                    { type: 'add-reactant', target: 'CO' },
+                    { type: 'add-reactant', target: 'H₂O' },
+                    { type: 'add-product', target: 'CO₂' },
+                    { type: 'add-product', target: 'H₂' },
+                    { type: 'remove-reactant', target: 'CO' },
+                    { type: 'remove-product', target: 'H₂' },
                     { type: 'increase-temp', target: null },
                     { type: 'decrease-temp', target: null },
                     { type: 'increase-pressure', target: null },
@@ -625,37 +1010,600 @@
                 ]
             },
             {
-                id: 5,
-                equation: 'CO(g) + 2H₂(g) ⇌ CH₃OH(g)',
-                name: 'Methanol Synthesis',
-                nameIs: 'Metanólsamsetning',
-                difficulty: 'beginner',
+                id: 15,
+                equation: '2NO(g) + O₂(g) ⇌ 2NO₂(g)',
+                name: 'Nitrogen Oxide Formation',
+                nameIs: 'Köfnunarefnisoxíðmyndun',
+                difficulty: 'intermediate',
 
                 reactants: [
-                    { formula: 'CO', coefficient: 1, phase: 'g', display: '⚫🔴' },
-                    { formula: 'H₂', coefficient: 2, phase: 'g', display: '⚪⚪' }
+                    { formula: 'NO', coefficient: 2, phase: 'g', display: '🔴⚫' },
+                    { formula: 'O₂', coefficient: 1, phase: 'g', display: '🔴🔴' }
                 ],
 
                 products: [
-                    { formula: 'CH₃OH', coefficient: 1, phase: 'g', display: '🧪' }
+                    { formula: 'NO₂', coefficient: 2, phase: 'g', display: '🟤' }
                 ],
 
-                deltaH: -91,
+                deltaH: -114,
 
                 totalGasMoles: {
                     reactants: 3,
-                    products: 1
+                    products: 2
                 },
 
-                description: 'Industrial production of methanol for fuel and chemicals.',
-                descriptionIs: 'Iðnaðarframleiðsla á metanóli sem eldsneyti og efni.',
+                description: 'Air pollution and industrial reaction.',
+                descriptionIs: 'Loftmengun og iðnaðarhvarf.',
 
                 possibleStresses: [
-                    { type: 'add-reactant', target: 'CO' },
+                    { type: 'add-reactant', target: 'NO' },
+                    { type: 'add-reactant', target: 'O₂' },
+                    { type: 'add-product', target: 'NO₂' },
+                    { type: 'remove-reactant', target: 'NO' },
+                    { type: 'remove-product', target: 'NO₂' },
+                    { type: 'increase-temp', target: null },
+                    { type: 'decrease-temp', target: null },
+                    { type: 'increase-pressure', target: null },
+                    { type: 'decrease-pressure', target: null },
+                    { type: 'add-catalyst', target: null }
+                ]
+            },
+            {
+                id: 16,
+                equation: 'C(s) + CO₂(g) ⇌ 2CO(g)',
+                name: 'Boudouard Reaction',
+                nameIs: 'Boudouard-hvarf',
+                difficulty: 'intermediate',
+
+                reactants: [
+                    { formula: 'C', coefficient: 1, phase: 's', display: '⚫' },
+                    { formula: 'CO₂', coefficient: 1, phase: 'g', display: '⚫🔴🔴' }
+                ],
+
+                products: [
+                    { formula: 'CO', coefficient: 2, phase: 'g', display: '⚫🔴' }
+                ],
+
+                deltaH: 172,
+
+                totalGasMoles: {
+                    reactants: 1,
+                    products: 2
+                },
+
+                description: 'Carbon reaction in high-temperature furnaces and metallurgy.',
+                descriptionIs: 'Kolefnishvarf í háhitasmíði og málmvinnslu.',
+
+                possibleStresses: [
+                    { type: 'add-reactant', target: 'CO₂' },
+                    { type: 'add-product', target: 'CO' },
+                    { type: 'remove-reactant', target: 'CO₂' },
+                    { type: 'remove-product', target: 'CO' },
+                    { type: 'increase-temp', target: null },
+                    { type: 'decrease-temp', target: null },
+                    { type: 'increase-pressure', target: null },
+                    { type: 'decrease-pressure', target: null },
+                    { type: 'add-catalyst', target: null }
+                ]
+            },
+            {
+                id: 17,
+                equation: 'CH₄(g) + H₂O(g) ⇌ CO(g) + 3H₂(g)',
+                name: 'Steam Reforming',
+                nameIs: 'Gufuumbræða',
+                difficulty: 'intermediate',
+
+                reactants: [
+                    { formula: 'CH₄', coefficient: 1, phase: 'g', display: '⚫⚪' },
+                    { formula: 'H₂O', coefficient: 1, phase: 'g', display: '💧' }
+                ],
+
+                products: [
+                    { formula: 'CO', coefficient: 1, phase: 'g', display: '⚫🔴' },
+                    { formula: 'H₂', coefficient: 3, phase: 'g', display: '⚪⚪' }
+                ],
+
+                deltaH: 206,
+
+                totalGasMoles: {
+                    reactants: 2,
+                    products: 4
+                },
+
+                description: 'Primary method for hydrogen production from natural gas.',
+                descriptionIs: 'Helsta aðferð við vetniframleiðslu úr náttúrugasi.',
+
+                possibleStresses: [
+                    { type: 'add-reactant', target: 'CH₄' },
+                    { type: 'add-reactant', target: 'H₂O' },
+                    { type: 'add-product', target: 'CO' },
+                    { type: 'add-product', target: 'H₂' },
+                    { type: 'remove-reactant', target: 'CH₄' },
+                    { type: 'remove-product', target: 'H₂' },
+                    { type: 'increase-temp', target: null },
+                    { type: 'decrease-temp', target: null },
+                    { type: 'increase-pressure', target: null },
+                    { type: 'decrease-pressure', target: null },
+                    { type: 'add-catalyst', target: null }
+                ]
+            },
+            {
+                id: 18,
+                equation: 'H₂(g) + CO₂(g) ⇌ H₂O(g) + CO(g)',
+                name: 'Reverse Water Gas',
+                nameIs: 'Andhverfvatnsgas',
+                difficulty: 'intermediate',
+
+                reactants: [
+                    { formula: 'H₂', coefficient: 1, phase: 'g', display: '⚪⚪' },
+                    { formula: 'CO₂', coefficient: 1, phase: 'g', display: '⚫🔴🔴' }
+                ],
+
+                products: [
+                    { formula: 'H₂O', coefficient: 1, phase: 'g', display: '💧' },
+                    { formula: 'CO', coefficient: 1, phase: 'g', display: '⚫🔴' }
+                ],
+
+                deltaH: 41,
+
+                totalGasMoles: {
+                    reactants: 2,
+                    products: 2
+                },
+
+                description: 'Reverse of the Water Gas Shift reaction.',
+                descriptionIs: 'Andhverfa Water Gas Shift hvarfsins.',
+
+                possibleStresses: [
                     { type: 'add-reactant', target: 'H₂' },
-                    { type: 'add-product', target: 'CH₃OH' },
-                    { type: 'remove-reactant', target: 'CO' },
-                    { type: 'remove-product', target: 'CH₃OH' },
+                    { type: 'add-reactant', target: 'CO₂' },
+                    { type: 'add-product', target: 'H₂O' },
+                    { type: 'add-product', target: 'CO' },
+                    { type: 'remove-reactant', target: 'H₂' },
+                    { type: 'remove-product', target: 'CO' },
+                    { type: 'increase-temp', target: null },
+                    { type: 'decrease-temp', target: null },
+                    { type: 'increase-pressure', target: null },
+                    { type: 'add-catalyst', target: null }
+                ]
+            },
+            {
+                id: 19,
+                equation: 'N₂(g) + O₂(g) ⇌ 2NO(g)',
+                name: 'Nitrogen Fixation',
+                nameIs: 'Köfnunarefnisbinding',
+                difficulty: 'intermediate',
+
+                reactants: [
+                    { formula: 'N₂', coefficient: 1, phase: 'g', display: '🔵🔵' },
+                    { formula: 'O₂', coefficient: 1, phase: 'g', display: '🔴🔴' }
+                ],
+
+                products: [
+                    { formula: 'NO', coefficient: 2, phase: 'g', display: '🔴⚫' }
+                ],
+
+                deltaH: 181,
+
+                totalGasMoles: {
+                    reactants: 2,
+                    products: 2
+                },
+
+                description: 'Lightning in atmosphere fixes nitrogen.',
+                descriptionIs: 'Eldingar í andrúmslofti binda köfnunarefni.',
+
+                possibleStresses: [
+                    { type: 'add-reactant', target: 'N₂' },
+                    { type: 'add-reactant', target: 'O₂' },
+                    { type: 'add-product', target: 'NO' },
+                    { type: 'remove-reactant', target: 'N₂' },
+                    { type: 'remove-product', target: 'NO' },
+                    { type: 'increase-temp', target: null },
+                    { type: 'decrease-temp', target: null },
+                    { type: 'increase-pressure', target: null },
+                    { type: 'add-catalyst', target: null }
+                ]
+            },
+            {
+                id: 20,
+                equation: '2H₂S(g) + 3O₂(g) ⇌ 2H₂O(g) + 2SO₂(g)',
+                name: 'Hydrogen Sulfide Oxidation',
+                nameIs: 'Vetisbrennssteinsoxun',
+                difficulty: 'intermediate',
+
+                reactants: [
+                    { formula: 'H₂S', coefficient: 2, phase: 'g', display: '💛⚪' },
+                    { formula: 'O₂', coefficient: 3, phase: 'g', display: '🔴🔴' }
+                ],
+
+                products: [
+                    { formula: 'H₂O', coefficient: 2, phase: 'g', display: '💧' },
+                    { formula: 'SO₂', coefficient: 2, phase: 'g', display: '💛' }
+                ],
+
+                deltaH: -1036,
+
+                totalGasMoles: {
+                    reactants: 5,
+                    products: 4
+                },
+
+                description: 'Combustion of hydrogen sulfide, rotten egg smell.',
+                descriptionIs: 'Brennsla vetisbrennsisteinss, lykt af rotnum eggjum.',
+
+                possibleStresses: [
+                    { type: 'add-reactant', target: 'H₂S' },
+                    { type: 'add-reactant', target: 'O₂' },
+                    { type: 'add-product', target: 'H₂O' },
+                    { type: 'add-product', target: 'SO₂' },
+                    { type: 'remove-reactant', target: 'H₂S' },
+                    { type: 'remove-product', target: 'SO₂' },
+                    { type: 'increase-temp', target: null },
+                    { type: 'decrease-temp', target: null },
+                    { type: 'increase-pressure', target: null },
+                    { type: 'decrease-pressure', target: null },
+                    { type: 'add-catalyst', target: null }
+                ]
+            },
+            {
+                id: 21,
+                equation: 'H₂CO₃(aq) ⇌ H⁺(aq) + HCO₃⁻(aq)',
+                name: 'Carbonic Acid',
+                nameIs: 'Kolsýra',
+                difficulty: 'intermediate',
+
+                reactants: [
+                    { formula: 'H₂CO₃', coefficient: 1, phase: 'aq', display: '💧⚫' }
+                ],
+
+                products: [
+                    { formula: 'H⁺', coefficient: 1, phase: 'aq', display: '⊕' },
+                    { formula: 'HCO₃⁻', coefficient: 1, phase: 'aq', display: '⊖' }
+                ],
+
+                deltaH: 10,
+
+                totalGasMoles: {
+                    reactants: 0,
+                    products: 0
+                },
+
+                description: 'Carbonic acid in water, important in blood buffer system.',
+                descriptionIs: 'Kolsýra í vatni, mikilvægt í blóðpufferkerfi.',
+
+                possibleStresses: [
+                    { type: 'add-reactant', target: 'H₂CO₃' },
+                    { type: 'add-product', target: 'H⁺' },
+                    { type: 'add-product', target: 'HCO₃⁻' },
+                    { type: 'remove-reactant', target: 'H₂CO₃' },
+                    { type: 'remove-product', target: 'H⁺' },
+                    { type: 'increase-temp', target: null },
+                    { type: 'decrease-temp', target: null },
+                    { type: 'add-catalyst', target: null }
+                ]
+            },
+            {
+                id: 22,
+                equation: 'Cu(NH₃)₄²⁺(aq) ⇌ Cu²⁺(aq) + 4NH₃(aq)',
+                name: 'Copper Ammonia Complex',
+                nameIs: 'Koparammóníakkomplexinn',
+                difficulty: 'intermediate',
+
+                reactants: [
+                    { formula: 'Cu(NH₃)₄²⁺', coefficient: 1, phase: 'aq', display: '🔵' }
+                ],
+
+                products: [
+                    { formula: 'Cu²⁺', coefficient: 1, phase: 'aq', display: '💙' },
+                    { formula: 'NH₃', coefficient: 4, phase: 'aq', display: '🔷' }
+                ],
+
+                deltaH: 42,
+
+                totalGasMoles: {
+                    reactants: 0,
+                    products: 0
+                },
+
+                description: 'Deep blue copper-ammonia complex, example of ligand exchange.',
+                descriptionIs: 'Djúpblár koparammóníakkomplexinn, dæmi um ligandskipti.',
+
+                possibleStresses: [
+                    { type: 'add-reactant', target: 'Cu(NH₃)₄²⁺' },
+                    { type: 'add-product', target: 'Cu²⁺' },
+                    { type: 'add-product', target: 'NH₃' },
+                    { type: 'remove-reactant', target: 'Cu(NH₃)₄²⁺' },
+                    { type: 'remove-product', target: 'NH₃' },
+                    { type: 'increase-temp', target: null },
+                    { type: 'decrease-temp', target: null },
+                    { type: 'add-catalyst', target: null }
+                ]
+            },
+
+            // ============================================
+            // ADVANCED LEVEL (8 Equilibria)
+            // ============================================
+            {
+                id: 23,
+                equation: '2C(s) + O₂(g) ⇌ 2CO(g)',
+                name: 'Carbon Combustion',
+                nameIs: 'Kolefnisbrennsla',
+                difficulty: 'advanced',
+
+                reactants: [
+                    { formula: 'C', coefficient: 2, phase: 's', display: '⚫' },
+                    { formula: 'O₂', coefficient: 1, phase: 'g', display: '🔴🔴' }
+                ],
+
+                products: [
+                    { formula: 'CO', coefficient: 2, phase: 'g', display: '⚫🔴' }
+                ],
+
+                deltaH: -221,
+
+                totalGasMoles: {
+                    reactants: 1,
+                    products: 2
+                },
+
+                description: 'Carbon combustion, first step in coupled reactions.',
+                descriptionIs: 'Kolefnisbrennsla, fyrsta skref í samtengdum hvörfum.',
+
+                possibleStresses: [
+                    { type: 'add-reactant', target: 'O₂' },
+                    { type: 'add-product', target: 'CO' },
+                    { type: 'remove-reactant', target: 'O₂' },
+                    { type: 'remove-product', target: 'CO' },
+                    { type: 'increase-temp', target: null },
+                    { type: 'decrease-temp', target: null },
+                    { type: 'increase-pressure', target: null },
+                    { type: 'decrease-pressure', target: null },
+                    { type: 'add-catalyst', target: null }
+                ]
+            },
+            {
+                id: 24,
+                equation: 'CH₃COOH(aq) + H₂O(l) ⇌ CH₃COO⁻(aq) + H₃O⁺(aq)',
+                name: 'Acetate Buffer System',
+                nameIs: 'Ediksýrupufferkerfi',
+                difficulty: 'advanced',
+
+                reactants: [
+                    { formula: 'CH₃COOH', coefficient: 1, phase: 'aq', display: '🧪' },
+                    { formula: 'H₂O', coefficient: 1, phase: 'l', display: '💧' }
+                ],
+
+                products: [
+                    { formula: 'CH₃COO⁻', coefficient: 1, phase: 'aq', display: '🧪⁻' },
+                    { formula: 'H₃O⁺', coefficient: 1, phase: 'aq', display: '⊕' }
+                ],
+
+                deltaH: 0,
+
+                totalGasMoles: {
+                    reactants: 0,
+                    products: 0
+                },
+
+                description: 'Buffer system that maintains stable pH.',
+                descriptionIs: 'Bufferkerfi sem viðheldur pH stöðugu.',
+
+                possibleStresses: [
+                    { type: 'add-reactant', target: 'CH₃COOH' },
+                    { type: 'add-product', target: 'CH₃COO⁻' },
+                    { type: 'add-product', target: 'H₃O⁺' },
+                    { type: 'remove-product', target: 'H₃O⁺' },
+                    { type: 'increase-temp', target: null },
+                    { type: 'add-catalyst', target: null }
+                ]
+            },
+            {
+                id: 25,
+                equation: 'N₂(g) + 3H₂(g) ⇌ 2NH₃(g) [K vs T]',
+                name: 'Temperature-Dependent K',
+                nameIs: 'Hitastig-háður K',
+                difficulty: 'advanced',
+
+                reactants: [
+                    { formula: 'N₂', coefficient: 1, phase: 'g', display: '🔵🔵' },
+                    { formula: 'H₂', coefficient: 3, phase: 'g', display: '⚪⚪' }
+                ],
+
+                products: [
+                    { formula: 'NH₃', coefficient: 2, phase: 'g', display: '🔷' }
+                ],
+
+                deltaH: -92,
+
+                totalGasMoles: {
+                    reactants: 4,
+                    products: 2
+                },
+
+                description: 'How equilibrium constant changes with temperature.',
+                descriptionIs: 'Hvernig jafnvægisfasti breytist með hitastigi.',
+
+                possibleStresses: [
+                    { type: 'add-reactant', target: 'N₂' },
+                    { type: 'add-product', target: 'NH₃' },
+                    { type: 'increase-temp', target: null },
+                    { type: 'decrease-temp', target: null },
+                    { type: 'increase-pressure', target: null },
+                    { type: 'add-catalyst', target: null }
+                ]
+            },
+            {
+                id: 26,
+                equation: 'N₂(g) + 3H₂(g) ⇌ 2NH₃(g) [Industrial]',
+                name: 'Pressure-Dependent Industrial',
+                nameIs: 'Þrýstings-háður iðnaður',
+                difficulty: 'advanced',
+
+                reactants: [
+                    { formula: 'N₂', coefficient: 1, phase: 'g', display: '🔵🔵' },
+                    { formula: 'H₂', coefficient: 3, phase: 'g', display: '⚪⚪' }
+                ],
+
+                products: [
+                    { formula: 'NH₃', coefficient: 2, phase: 'g', display: '🔷' }
+                ],
+
+                deltaH: -92,
+
+                totalGasMoles: {
+                    reactants: 4,
+                    products: 2
+                },
+
+                description: 'Real industrial optimization with trade-offs.',
+                descriptionIs: 'Raunveruleg iðnaðarbestun með mótsögnum.',
+
+                possibleStresses: [
+                    { type: 'add-reactant', target: 'N₂' },
+                    { type: 'increase-temp', target: null },
+                    { type: 'decrease-temp', target: null },
+                    { type: 'increase-pressure', target: null },
+                    { type: 'decrease-pressure', target: null },
+                    { type: 'add-catalyst', target: null }
+                ]
+            },
+            {
+                id: 27,
+                equation: 'H₃PO₄(aq) ⇌ H⁺(aq) + H₂PO₄⁻(aq)',
+                name: 'Phosphoric Acid (First Step)',
+                nameIs: 'Fosfórsýra (fyrsta þrep)',
+                difficulty: 'advanced',
+
+                reactants: [
+                    { formula: 'H₃PO₄', coefficient: 1, phase: 'aq', display: '🔶' }
+                ],
+
+                products: [
+                    { formula: 'H⁺', coefficient: 1, phase: 'aq', display: '⊕' },
+                    { formula: 'H₂PO₄⁻', coefficient: 1, phase: 'aq', display: '🔶⁻' }
+                ],
+
+                deltaH: 15,
+
+                totalGasMoles: {
+                    reactants: 0,
+                    products: 0
+                },
+
+                description: 'Stepwise deprotonation of phosphoric acid (first step).',
+                descriptionIs: 'Þrepin deprotonun fosforsýru (fyrsta þrep).',
+
+                possibleStresses: [
+                    { type: 'add-reactant', target: 'H₃PO₄' },
+                    { type: 'add-product', target: 'H⁺' },
+                    { type: 'remove-product', target: 'H⁺' },
+                    { type: 'increase-temp', target: null },
+                    { type: 'decrease-temp', target: null },
+                    { type: 'add-catalyst', target: null }
+                ]
+            },
+            {
+                id: 28,
+                equation: 'N₂(g) + 3H₂(g) ⇌ 2NH₃(g) [Catalyst]',
+                name: 'Heterogeneous Catalysis',
+                nameIs: 'Ólíkfasa hvötunaraðferð',
+                difficulty: 'advanced',
+
+                reactants: [
+                    { formula: 'N₂', coefficient: 1, phase: 'g', display: '🔵🔵' },
+                    { formula: 'H₂', coefficient: 3, phase: 'g', display: '⚪⚪' }
+                ],
+
+                products: [
+                    { formula: 'NH₃', coefficient: 2, phase: 'g', display: '🔷' }
+                ],
+
+                deltaH: -92,
+
+                totalGasMoles: {
+                    reactants: 4,
+                    products: 2
+                },
+
+                description: 'How catalysts speed equilibrium without shifting it.',
+                descriptionIs: 'Hvernig hvatar flýta fyrir jafnvægi án þess að hliðra því.',
+
+                possibleStresses: [
+                    { type: 'add-reactant', target: 'N₂' },
+                    { type: 'add-product', target: 'NH₃' },
+                    { type: 'increase-temp', target: null },
+                    { type: 'increase-pressure', target: null },
+                    { type: 'add-catalyst', target: null }
+                ]
+            },
+            {
+                id: 29,
+                equation: 'Hb(aq) + 4O₂(g) ⇌ Hb(O₂)₄(aq)',
+                name: 'Hemoglobin Oxygen Binding',
+                nameIs: 'Hemóglóbínsúrefnisbinding',
+                difficulty: 'advanced',
+
+                reactants: [
+                    { formula: 'Hb', coefficient: 1, phase: 'aq', display: '🔴' },
+                    { formula: 'O₂', coefficient: 4, phase: 'g', display: '🔴🔴' }
+                ],
+
+                products: [
+                    { formula: 'Hb(O₂)₄', coefficient: 1, phase: 'aq', display: '🩸' }
+                ],
+
+                deltaH: -50,
+
+                totalGasMoles: {
+                    reactants: 4,
+                    products: 0
+                },
+
+                description: 'Hemoglobin binding oxygen in blood.',
+                descriptionIs: 'Hemóglóbín binding súrefnis í blóði.',
+
+                possibleStresses: [
+                    { type: 'add-reactant', target: 'Hb' },
+                    { type: 'add-reactant', target: 'O₂' },
+                    { type: 'add-product', target: 'Hb(O₂)₄' },
+                    { type: 'remove-reactant', target: 'O₂' },
+                    { type: 'increase-temp', target: null },
+                    { type: 'decrease-temp', target: null },
+                    { type: 'increase-pressure', target: null },
+                    { type: 'decrease-pressure', target: null },
+                    { type: 'add-catalyst', target: null }
+                ]
+            },
+            {
+                id: 30,
+                equation: '2SO₂(g) + O₂(g) ⇌ 2SO₃(g) [Optimization]',
+                name: 'Industrial Optimization Problem',
+                nameIs: 'Iðnaðarbestunarvandamál',
+                difficulty: 'advanced',
+
+                reactants: [
+                    { formula: 'SO₂', coefficient: 2, phase: 'g', display: '💛' },
+                    { formula: 'O₂', coefficient: 1, phase: 'g', display: '🔴🔴' }
+                ],
+
+                products: [
+                    { formula: 'SO₃', coefficient: 2, phase: 'g', display: '🟡' }
+                ],
+
+                deltaH: -198,
+
+                totalGasMoles: {
+                    reactants: 3,
+                    products: 2
+                },
+
+                description: 'Real industrial decision-making with multiple variables.',
+                descriptionIs: 'Raunveruleg iðnaðarákvörðun með mörgum breytum.',
+
+                possibleStresses: [
+                    { type: 'add-reactant', target: 'SO₂' },
+                    { type: 'add-reactant', target: 'O₂' },
                     { type: 'increase-temp', target: null },
                     { type: 'decrease-temp', target: null },
                     { type: 'increase-pressure', target: null },

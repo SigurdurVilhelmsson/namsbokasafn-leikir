@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Gagnvirkir efnafræðileikir fyrir 3. árs nemendur. Lærum efnafræði í gegnum skemmtilega, fræðandi leiki.">
-    <meta name="keywords" content="efnafræði, menntun, leikir, námskeið, chemistry, 3. ár">
+    <meta name="keywords" content="efnafræði, menntun, leikir, námskeið, chemistry, 3. ár, buffer, equilibrium, gas laws, titration, thermodynamics">
     <meta name="author" content="Sigurður E. Vilhelmsson">
     <title>Efnafræðileikir - 3. ár - Kvenno Efnafræði</title>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -105,12 +105,6 @@
             background: var(--kvenno-orange);
             color: white;
         }
-
-        .coming-soon {
-            border: 2px dashed var(--kvenno-orange);
-            border-radius: 8px;
-            background: #fff5f0;
-        }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
@@ -152,21 +146,102 @@
             </p>
         </div>
 
-        <!-- Coming Soon Notice -->
-        <div class="max-w-2xl mx-auto mb-12 coming-soon p-8 text-center">
-            <div class="text-6xl mb-4">🚧</div>
-            <h2 class="text-2xl font-bold mb-4" style="color: var(--kvenno-orange);">Í þróun</h2>
-            <p class="text-gray-700 text-lg mb-4">
-                Efnafræðileikir fyrir 3. árs nemendur eru í þróun og verða fljótlega tiltækir.
-            </p>
-            <p class="text-gray-600">
-                Við erum að vinna að því að búa til spennandi leiki sem eru sérsniðnir að 3. árs námsefni í efnafræði.
-            </p>
+        <!-- Game Cards Grid -->
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto mb-12">
+            <!-- Card 1: pH Titration Master -->
+            <a href="games/ph-titration-master/ph-titration-master.html" class="game-card bg-white p-6 block">
+                <div class="flex items-center mb-4">
+                    <div class="text-4xl mr-3">🧪</div>
+                    <h2 class="text-2xl font-bold" style="color: var(--kvenno-orange);">pH Titration Master</h2>
+                </div>
+                <p class="text-gray-700 font-semibold mb-2">Sýru-basa títrun og pH kúrfur</p>
+                <p class="text-gray-600 text-sm mb-4">
+                    Lærðu um títrur með sjónrænni hermun og æfðu þig í að greina pH kúrfur.
+                </p>
+                <div class="flex flex-wrap gap-2 mb-3">
+                    <span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">Auðvelt</span>
+                    <span class="px-2 py-1 bg-yellow-100 text-yellow-700 text-xs rounded-full">Miðlungs</span>
+                    <span class="px-2 py-1 bg-red-100 text-red-700 text-xs rounded-full">Erfitt</span>
+                </div>
+                <p class="text-xs text-gray-500">Tegund: Hermun og dæmaleysn</p>
+            </a>
+
+            <!-- Card 2: Buffer Recipe Creator -->
+            <a href="games/buffer-recipe-creator/buffer-recipe-creator.html" class="game-card bg-white p-6 block">
+                <div class="flex items-center mb-4">
+                    <div class="text-4xl mr-3">🧬</div>
+                    <h2 class="text-2xl font-bold" style="color: var(--kvenno-orange);">Púfferuppskrift</h2>
+                </div>
+                <p class="text-gray-700 font-semibold mb-2">Búðu til réttu púfferlausnina</p>
+                <p class="text-gray-600 text-sm mb-4">
+                    Búðu til púfferlausnir með réttum pH gildum og lærðu um Henderson-Hasselbalch jöfnuna.
+                </p>
+                <div class="flex flex-wrap gap-2 mb-3">
+                    <span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">Auðvelt</span>
+                    <span class="px-2 py-1 bg-yellow-100 text-yellow-700 text-xs rounded-full">Miðlungs</span>
+                    <span class="px-2 py-1 bg-red-100 text-red-700 text-xs rounded-full">Erfitt</span>
+                </div>
+                <p class="text-xs text-gray-500">Tegund: Dæmaleysn</p>
+            </a>
+
+            <!-- Card 3: Equilibrium Shifter -->
+            <a href="games/equilibrium-shifter/equilibrium-shifter.html" class="game-card bg-white p-6 block">
+                <div class="flex items-center mb-4">
+                    <div class="text-4xl mr-3">⚖️</div>
+                    <h2 class="text-2xl font-bold" style="color: var(--kvenno-orange);">Equilibrium Shifter</h2>
+                </div>
+                <p class="text-gray-700 font-semibold mb-2">Le Chatelier reglan í verki</p>
+                <p class="text-gray-600 text-sm mb-4">
+                    Spáðu fyrir um hvert jafnvægi mun hliðrast þegar aðstæður breytast.
+                </p>
+                <div class="flex flex-wrap gap-2 mb-3">
+                    <span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">Auðvelt</span>
+                    <span class="px-2 py-1 bg-yellow-100 text-yellow-700 text-xs rounded-full">Miðlungs</span>
+                    <span class="px-2 py-1 bg-red-100 text-red-700 text-xs rounded-full">Erfitt</span>
+                </div>
+                <p class="text-xs text-gray-500">Tegund: Spáspurningar</p>
+            </a>
+
+            <!-- Card 4: Gas Law Challenge -->
+            <a href="games/gas-law-challenge/gas-law-challenge.html" class="game-card bg-white p-6 block">
+                <div class="flex items-center mb-4">
+                    <div class="text-4xl mr-3">💨</div>
+                    <h2 class="text-2xl font-bold" style="color: var(--kvenno-orange);">Gas Law Challenge</h2>
+                </div>
+                <p class="text-gray-700 font-semibold mb-2">Lofttegundalögmál í æfingu</p>
+                <p class="text-gray-600 text-sm mb-4">
+                    Leystu dæmi um PV=nRT, Boyle, Charles og önnur lofttegundalögmál.
+                </p>
+                <div class="flex flex-wrap gap-2 mb-3">
+                    <span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">Auðvelt</span>
+                    <span class="px-2 py-1 bg-yellow-100 text-yellow-700 text-xs rounded-full">Miðlungs</span>
+                    <span class="px-2 py-1 bg-red-100 text-red-700 text-xs rounded-full">Erfitt</span>
+                </div>
+                <p class="text-xs text-gray-500">Tegund: Dæmaleysn</p>
+            </a>
+
+            <!-- Card 5: Thermodynamics Predictor -->
+            <a href="games/thermodynamics-predictor/thermodynamics-predictor.html" class="game-card bg-white p-6 block">
+                <div class="flex items-center mb-4">
+                    <div class="text-4xl mr-3">🔥</div>
+                    <h2 class="text-2xl font-bold" style="color: var(--kvenno-orange);">Varmafræði Spámaður</h2>
+                </div>
+                <p class="text-gray-700 font-semibold mb-2">Spáðu fyrir um sjálfsprottni hvarf</p>
+                <p class="text-gray-600 text-sm mb-4">
+                    Notaðu ΔH, ΔS og ΔG til að spá fyrir um hvort hvarfið er sjálfsprottið.
+                </p>
+                <div class="flex flex-wrap gap-2 mb-3">
+                    <span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">Auðvelt</span>
+                    <span class="px-2 py-1 bg-yellow-100 text-yellow-700 text-xs rounded-full">Miðlungs</span>
+                    <span class="px-2 py-1 bg-red-100 text-red-700 text-xs rounded-full">Erfitt</span>
+                </div>
+                <p class="text-xs text-gray-500">Tegund: Spáspurningar</p>
+            </a>
         </div>
 
-        <!-- Planned Features Section -->
+        <!-- Features Section -->
         <div class="max-w-4xl mx-auto mb-12">
-            <h2 class="text-3xl font-bold text-center mb-8 text-gray-800">Væntanlegir eiginleikar</h2>
+            <h2 class="text-3xl font-bold text-center mb-8 text-gray-800">Eiginleikar</h2>
             <div class="grid md:grid-cols-2 gap-6">
                 <div class="bg-white rounded-lg shadow p-6" style="border: 2px solid #f5f5f5;">
                     <div class="text-3xl mb-3">🎯</div>
@@ -195,12 +270,18 @@
         <div class="max-w-3xl mx-auto bg-white rounded-xl shadow-lg p-8 mb-8" style="border: 2px solid #f5f5f5;">
             <h2 class="text-2xl font-bold mb-4" style="color: var(--kvenno-orange);">Um efnafræðileikina</h2>
             <p class="text-gray-600 mb-4">
-                Efnafræðileikir fyrir 3. ár munu verða safn gagnvirkra kennsluleikja sem eru hannaðir til að hjálpa
-                3. árs efnafræðinemendum að ná tökum á framhaldsnámsefni í gegnum skemmtilega og hagnýta æfingu.
+                Efnafræðileikir eru safn gagnvirkra kennsluleikja sem eru hannaðir til að hjálpa 3. árs efnafræðinemendum
+                að ná tökum á framhaldsnámsefni í gegnum skemmtilega og hagnýta æfingu. Hver leikur einbeitir sér að tilteknum
+                námsþætti, allt frá títrunum til varmafræði.
             </p>
             <p class="text-gray-600 mb-4">
-                Þessir leikir verða byggðir með nútíma veftækni þar á meðal React og Tailwind CSS og munu virka á öllum tækjum.
+                Þessir leikir eru byggðir með nútíma veftækni þar á meðal React og Tailwind CSS og virka á öllum tækjum.
             </p>
+            <div class="flex items-center text-sm text-gray-500 mt-6">
+                <span class="mr-4">📊 5 leikir</span>
+                <span class="mr-4">🌐 2 tungumál</span>
+                <span>🎓 100+ spurningar</span>
+            </div>
         </div>
 
         <!-- Footer -->
@@ -208,6 +289,9 @@
             <p class="mb-2" style="color: var(--kvenno-orange); font-weight: 600;">Kvennaskólinn í Reykjavík</p>
             <p class="mb-2">&copy; 2025 Sigurður E. Vilhelmsson</p>
             <p class="text-sm text-gray-500">MIT leyfi</p>
+            <p class="text-xs text-gray-400 mt-4">
+                Smíðað með React 18, Tailwind CSS og TypeScript
+            </p>
         </footer>
     </div>
 </body>

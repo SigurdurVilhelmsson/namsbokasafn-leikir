@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="is">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Einingagreining - Námsleiðin</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .primary-orange {
+            color: #f36b22;
+        }
+
+        .bg-primary-orange {
+            background-color: #f36b22;
+        }
+
+        .bg-dark-orange {
+            background-color: #d95a1a;
+        }
+
+        .border-primary-orange {
+            border-color: #f36b22;
+        }
+
+        .hover-orange:hover {
+            background-color: #f36b22;
+        }
+
+        .animate-fill {
+            animation: fillUp 2s ease-in-out;
+        }
+
+        @keyframes fillUp {
+            from { height: 0%; }
+            to { height: 100%; }
+        }
+
+        .cancel-animation {
+            animation: cancelOut 0.5s ease-out;
+        }
+
+        @keyframes cancelOut {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+            100% { opacity: 0; transform: scale(0); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useCallback } = React;
+
+        // ==================== DATA BANKS ====================
+
+        const lessons = [
+            {
+                id: 1,
+                title: "Hvað er umbreytingarstuðull?",
+                content: "Umbreytingarstuðull er brot sem jafngildir 1. Vegna þess að teljari og nefnari tákna sama magn, getum við margfaldað með honum án þess að breyta raunverulegu magni.",
+                animation: "beakers",
+                quiz: {
+                    question: "Hvaða gildi hefur 1000 mL / 1 L?",
+                    options: ["0.001", "1", "1000", "1000000"],
+                    correct: 1,
+                    explanation: "Vegna þess að 1000 mL = 1 L þá er þessi brot jafn og 1"
+                }
+            },
+            {
+                id: 2,
+                title: "Af hverju strikast einingar út?",
+                content: "Þegar sama einingin birtist bæði í teljara og nefnara getum við strikað hana út, alveg eins og með tölur í brotum.",
+                animation: "cancellation",
+                quiz: {
+                    question: "Hvaða pör strikast út? (Veldu öll rétt)",
+                    options: ["g/g", "mL/L", "kg/g", "cm/cm"],
+                    correct: [0, 3],
+                    multiSelect: true,
+                    explanation: "Aðeins nákvæmlega sama einingin strikast út: g með g, cm með cm"
+                }
+            },
+            {
+                id: 3,
+                title: "Hvernig vel ég rétta stefnu?",
+                content: "Til að velja rétta stefnu á umbreytingarstuðli þarftu að hugsa um hvaða eining þarf að vera í nefnara til að strikast út við upphafseiningu.",
+                animation: "orientation",
+                quiz: {
+                    question: "Til að breyta g → kg, hvaða stuðull er réttur?",
+                    options: ["1 kg / 1000 g", "1000 g / 1 kg", "Báðir virka", "Hvorugur virkar"],
+                    correct: 0,
+                    explanation: "Við þurfum 'g' í nefnara til að strika út við upphafs 'g', svo 1 kg / 1000 g er rétt"
+                }
+            }
+        ];
+
+        const level1Questions = [
+            {
+                id: 'L1-1',
+                type: 'equivalence',
+                prompt: 'Hvað af þessu jafngildir 1? (Veldu öll rétt)',
+                options: [
+                    { text: '1000 mL / 1 L', correct: true },
+                    { text: '1000 g / 1 kg', correct: true },
+                    { text: '100 mL / 1 L', correct: false },
+                    { text: '60 s / 1 mín', correct: true },
+                    { text: '50 cm / 1 m', correct: false }
+                ],
+                multiSelect: true,
+                explanationRequired: false
+            },
+            {
+                id: 'L1-2',
+                type: 'cancellation_prediction',
+                prompt: 'Ef þú byrjar með 2000 g og margfaldar með (1 kg / 1000 g), hvað verður eftir?',
+                options: ['g', 'kg', 'g·kg', 'g/kg'],
+                correct: 1,
+                explanationRequired: true,
+                explanationOptions: [
+                    { text: 'Vegna þess að g strikast út og kg verður eftir', correct: true },
+                    { text: 'Vegna þess að kg er stærra', correct: false },
+                    { text: 'Vegna þess að talan minnkar', correct: false }
+                ]
+            },
+            {
+                id: 'L1-3',
+                type: 'factor_selection',
+                prompt: 'Þú þarft að breyta úr mL í L. Hvaða stuðul velur þú?',
+                factors: [
+                    { text: '1000 mL / 1 L', correct: false },
+                    { text: '1 L / 1000 mL', correct: true }
+                ],
+                explanationOptions: [
+                    { text: 'Vegna þess að mL þarf að vera í nefnara til að strikast út', correct: true },
+                    { text: 'Vegna þess að L er stærri eining', correct: false },
+                    { text: 'Vegna þess að þetta er einfaldara', correct: false }
+                ]
+            },
+            {
+                id: 'L1-4',
+                type: 'error_identification',
+                prompt: 'Anna reyndi að breyta 5000 mg í g. Hún notaði (1000 mg / 1 g). Hvað fór úrskeiðis?',
+                options: [
+                    'Hún notaði rangan stuðul',
+                    'Stuðullinn er rétt snúinn',
+                    'Hún þurfti fleiri stuðla',
+                    'Ekkert fór úrskeiðis'
+                ],
+                correct: 1,
+                correctText: 'Stuðullinn er rangur snúinn - mg þarf að vera í nefnara',
+                visualization: 'Útkoman yrði 5000000 mg²/g í stað 5 g'
+            },
+            {
+                id: 'L1-5',
+                type: 'conceptual',
+                prompt: 'Af hverju breytist talan þegar við breytum einingum, þó magn efnisins sé það sama?',
+                options: [
+                    'Vegna þess að mismunandi einingar mæla mismunandi magn',
+                    'Vegna þess að einingar af mismunandi stærð þurfa mismunandi fjölda til að tákna sama magn',
+                    'Vegna þess að umbreyting breytir efninu',
+                    'Talan breytist ekki'
+                ],
+                correct: 1
+            },
+            {
+                id: 'L1-6',
+                type: 'equivalence',
+                prompt: 'Hvað af þessu jafngildir 1? (Veldu öll rétt)',
+                options: [
+                    { text: '100 cm / 1 m', correct: true },
+                    { text: '1 km / 100 m', correct: false },
+                    { text: '1000 mm / 1 m', correct: true },
+                    { text: '24 klst / 1 dagur', correct: true },
+                    { text: '100 g / 1 kg', correct: false }
+                ],
+                multiSelect: true
+            },
+            {
+                id: 'L1-7',
+                type: 'cancellation_prediction',
+                prompt: 'Ef þú byrjar með 500 mL og margfaldar með (1 L / 1000 mL), hvað verður eftir?',
+                options: ['mL', 'L', 'mL·L', 'mL/L'],
+                correct: 1,
+                explanationRequired: true,
+                explanationOptions: [
+                    { text: 'Vegna þess að mL strikast út og L verður eftir', correct: true },
+                    { text: 'Vegna þess að við deildum með 1000', correct: false },
+                    { text: 'Vegna þess að L er í teljaranum', correct: false }
+                ]
+            },
+            {
+                id: 'L1-8',
+                type: 'factor_selection',
+                prompt: 'Þú þarft að breyta úr km í m. Hvaða stuðul velur þú?',
+                factors: [
+                    { text: '1 km / 1000 m', correct: false },
+                    { text: '1000 m / 1 km', correct: true }
+                ],
+                explanationOptions: [
+                    { text: 'Vegna þess að km þarf að vera í nefnara til að strikast út', correct: true },
+                    { text: 'Vegna þess að 1000 er stærri tala', correct: false },
+                    { text: 'Vegna þess að m er minni eining', correct: false }
+                ]
+            },
+            {
+                id: 'L1-9',
+                type: 'error_identification',
+                prompt: 'Jón reyndi að breyta 2 L í mL. Hann notaði (1 L / 1000 mL). Hvað fór úrskeiðis?',
+                options: [
+                    'Hann notaði rangan stuðul',
+                    'Stuðullinn er rangur snúinn',
+                    'Hann þurfti fleiri stuðla',
+                    'Ekkert fór úrskeiðis'
+                ],
+                correct: 1,
+                correctText: 'Stuðullinn er rangur snúinn - L þarf að vera í nefnara',
+                visualization: 'Útkoman yrði 0.002 L²/mL í stað 2000 mL'
+            },
+            {
+                id: 'L1-10',
+                type: 'conceptual',
+                prompt: 'Hvað gerir umbreytingarstuðul svo gagnlegan?',
+                options: [
+                    'Hann breytir magninu',
+                    'Hann jafngildir 1 svo að margföldun breytir ekki raunverulegu magni',
+                    'Hann gerir tölurnar stærri',
+                    'Hann eyðir einingunum'
+                ],
+                correct: 1
+            }
+        ];
+
+        // ==================== UTILITY FUNCTIONS ====================
+
+        const saveProgress = (gameState) => {
+            localStorage.setItem('dimensionalAnalysisProgress', JSON.stringify(gameState));
+        };
+
+        const loadProgress = () => {
+            const saved = localStorage.getItem('dimensionalAnalysisProgress');
+            if (saved) {
+                return JSON.parse(saved);
+            }
+            return null;
+        };
+
+        const checkLevel1Mastery = (level1Data) => {
+            const { questionsCorrect, questionsAnswered, explanationScores } = level1Data;
+            if (questionsAnswered < 10) return false;
+
+            const avgExplanation = explanationScores.length > 0
+                ? explanationScores.reduce((a, b) => a + b, 0) / explanationScores.length
+                : 1;
+
+            return questionsCorrect >= 8 && avgExplanation >= 0.7;
+        };
+
+        // ==================== COMPONENTS ====================
+
+        function AnimationDisplay({ type }) {
+            if (type === 'beakers') {
+                return (
+                    <div className="flex justify-center items-end gap-8 h-64 p-8">
+                        <div className="text-center">
+                            <div className="relative w-32 h-48 border-4 border-blue-500 rounded-b-lg bg-blue-100">
+                                <div className="absolute bottom-0 w-full h-full bg-blue-400 animate-fill rounded-b-lg"></div>
+                            </div>
+                            <p className="mt-2 font-bold">1000 mL</p>
+                        </div>
+                        <div className="text-2xl font-bold self-center">=</div>
+                        <div className="text-center">
+                            <div className="relative w-32 h-48 border-4 border-green-500 rounded-b-lg bg-green-100">
+                                <div className="absolute bottom-0 w-full h-full bg-green-400 animate-fill rounded-b-lg"></div>
+                            </div>
+                            <p className="mt-2 font-bold">1 L</p>
+                        </div>
+                    </div>
+                );
+            }
+
+            if (type === 'cancellation') {
+                return (
+                    <div className="flex flex-col items-center justify-center h-64 p-8">
+                        <div className="text-4xl mb-8">
+                            <span className="inline-block relative">
+                                <span className="text-red-600 font-bold">g</span>
+                                <span className="absolute top-1/2 left-0 w-full h-0.5 bg-red-600"></span>
+                            </span>
+                            <span className="mx-2">/</span>
+                            <span className="inline-block relative">
+                                <span className="text-red-600 font-bold">g</span>
+                                <span className="absolute top-1/2 left-0 w-full h-0.5 bg-red-600"></span>
+                            </span>
+                            <span className="mx-4">=</span>
+                            <span className="font-bold text-green-600">1</span>
+                        </div>
+                        <p className="text-lg text-gray-700">Sama einingin strikast út!</p>
+                    </div>
+                );
+            }
+
+            if (type === 'orientation') {
+                return (
+                    <div className="flex flex-col items-center justify-center h-64 p-8 space-y-4">
+                        <div className="text-2xl">
+                            500 <span className="text-blue-600 font-bold">g</span>
+                            <span className="mx-2">×</span>
+                            <span className="border-2 border-green-500 px-3 py-1 rounded">
+                                1 kg / 1000 <span className="text-blue-600 font-bold">g</span>
+                            </span>
+                        </div>
+                        <div className="text-xl text-green-600">✓ g strikast út!</div>
+                        <div className="h-px w-64 bg-gray-300 my-4"></div>
+                        <div className="text-2xl">
+                            500 <span className="text-blue-600 font-bold">g</span>
+                            <span className="mx-2">×</span>
+                            <span className="border-2 border-red-500 px-3 py-1 rounded">
+                                1000 <span className="text-blue-600 font-bold">g</span> / 1 kg
+                            </span>
+                        </div>
+                        <div className="text-xl text-red-600">✗ g margfaldast!</div>
+                    </div>
+                );
+            }
+
+            return null;
+        }
+
+        function LessonScreen({ lesson, onComplete }) {
+            const [quizAnswer, setQuizAnswer] = useState(null);
+            const [selectedOptions, setSelectedOptions] = useState([]);
+            const [showFeedback, setShowFeedback] = useState(false);
+
+            const handleSubmit = () => {
+                if (lesson.quiz.multiSelect) {
+                    const correct = selectedOptions.length === lesson.quiz.correct.length &&
+                        selectedOptions.every(idx => lesson.quiz.correct.includes(idx));
+                    setShowFeedback(true);
+                    if (correct) {
+                        setTimeout(() => onComplete(), 2000);
+                    }
+                } else {
+                    setShowFeedback(true);
+                    if (quizAnswer === lesson.quiz.correct) {
+                        setTimeout(() => onComplete(), 2000);
+                    }
+                }
+            };
+
+            const toggleOption = (idx) => {
+                if (selectedOptions.includes(idx)) {
+                    setSelectedOptions(selectedOptions.filter(i => i !== idx));
+                } else {
+                    setSelectedOptions([...selectedOptions, idx]);
+                }
+            };
+
+            return (
+                <div className="min-h-screen bg-gray-50 p-4">
+                    <div className="max-w-4xl mx-auto">
+                        <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
+                            <h2 className="text-2xl font-bold primary-orange mb-4">
+                                Kennsla {lesson.id}/3: {lesson.title}
+                            </h2>
+
+                            <div className="mb-6">
+                                <AnimationDisplay type={lesson.animation} />
+                            </div>
+
+                            <p className="text-lg text-gray-700 mb-6">{lesson.content}</p>
+
+                            <div className="border-t pt-6">
+                                <h3 className="text-xl font-semibold mb-4">{lesson.quiz.question}</h3>
+
+                                <div className="space-y-3">
+                                    {lesson.quiz.options.map((option, idx) => (
+                                        <button
+                                            key={idx}
+                                            onClick={() => {
+                                                if (lesson.quiz.multiSelect) {
+                                                    toggleOption(idx);
+                                                } else {
+                                                    setQuizAnswer(idx);
+                                                }
+                                            }}
+                                            className={`w-full p-4 rounded-lg border-2 text-left transition-all ${
+                                                lesson.quiz.multiSelect
+                                                    ? selectedOptions.includes(idx)
+                                                        ? 'border-primary-orange bg-orange-50'
+                                                        : 'border-gray-300 hover:border-gray-400'
+                                                    : quizAnswer === idx
+                                                        ? 'border-primary-orange bg-orange-50'
+                                                        : 'border-gray-300 hover:border-gray-400'
+                                            }`}
+                                        >
+                                            {option}
+                                        </button>
+                                    ))}
+                                </div>
+
+                                {showFeedback && (
+                                    <div className={`mt-4 p-4 rounded-lg ${
+                                        (lesson.quiz.multiSelect
+                                            ? selectedOptions.length === lesson.quiz.correct.length &&
+                                              selectedOptions.every(idx => lesson.quiz.correct.includes(idx))
+                                            : quizAnswer === lesson.quiz.correct)
+                                            ? 'bg-green-100 text-green-800'
+                                            : 'bg-red-100 text-red-800'
+                                    }`}>
+                                        {(lesson.quiz.multiSelect
+                                            ? selectedOptions.length === lesson.quiz.correct.length &&
+                                              selectedOptions.every(idx => lesson.quiz.correct.includes(idx))
+                                            : quizAnswer === lesson.quiz.correct) ? (
+                                            <>
+                                                <p className="font-bold">✓ Rétt!</p>
+                                                <p>{lesson.quiz.explanation}</p>
+                                            </>
+                                        ) : (
+                                            <p className="font-bold">✗ Reyndu aftur</p>
+                                        )}
+                                    </div>
+                                )}
+
+                                <button
+                                    onClick={handleSubmit}
+                                    disabled={lesson.quiz.multiSelect ? selectedOptions.length === 0 : quizAnswer === null}
+                                    className="mt-6 w-full bg-primary-orange text-white py-3 rounded-lg font-bold hover:bg-dark-orange disabled:bg-gray-300 disabled:cursor-not-allowed"
+                                >
+                                    Staðfesta svar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        function QuestionScreen({ question, questionNumber, totalQuestions, onAnswer, onBack }) {
+            const [selectedAnswer, setSelectedAnswer] = useState(null);
+            const [selectedOptions, setSelectedOptions] = useState([]);
+            const [selectedExplanation, setSelectedExplanation] = useState(null);
+            const [showFeedback, setShowFeedback] = useState(false);
+            const [isCorrect, setIsCorrect] = useState(false);
+
+            const handleSubmit = () => {
+                let correct = false;
+                let explanationCorrect = true;
+
+                if (question.multiSelect) {
+                    const correctOptions = question.options
+                        .map((opt, idx) => opt.correct ? idx : -1)
+                        .filter(idx => idx !== -1);
+                    correct = selectedOptions.length === correctOptions.length &&
+                        selectedOptions.every(idx => correctOptions.includes(idx));
+                } else if (question.type === 'factor_selection') {
+                    correct = question.factors[selectedAnswer]?.correct || false;
+                    if (question.explanationOptions && selectedExplanation !== null) {
+                        explanationCorrect = question.explanationOptions[selectedExplanation]?.correct || false;
+                    }
+                } else {
+                    correct = selectedAnswer === question.correct;
+                }
+
+                if (question.explanationRequired && selectedExplanation !== null) {
+                    explanationCorrect = question.explanationOptions[selectedExplanation]?.correct || false;
+                }
+
+                const finalCorrect = correct && explanationCorrect;
+                setIsCorrect(finalCorrect);
+                setShowFeedback(true);
+            };
+
+            const handleContinue = () => {
+                onAnswer(isCorrect, question.explanationRequired ? (selectedExplanation !== null && question.explanationOptions[selectedExplanation]?.correct) : true);
+            };
+
+            const toggleOption = (idx) => {
+                if (selectedOptions.includes(idx)) {
+                    setSelectedOptions(selectedOptions.filter(i => i !== idx));
+                } else {
+                    setSelectedOptions([...selectedOptions, idx]);
+                }
+            };
+
+            const canSubmit = () => {
+                if (question.multiSelect) {
+                    return selectedOptions.length > 0;
+                }
+                if (question.explanationRequired || question.type === 'factor_selection') {
+                    return selectedAnswer !== null && selectedExplanation !== null;
+                }
+                return selectedAnswer !== null;
+            };
+
+            return (
+                <div className="min-h-screen bg-gray-50 p-4">
+                    <div className="max-w-4xl mx-auto">
+                        <div className="mb-4 flex items-center justify-between">
+                            <button
+                                onClick={onBack}
+                                className="text-gray-600 hover:text-gray-800 flex items-center gap-2"
+                            >
+                                ← Til baka
+                            </button>
+                            <span className="text-gray-600">
+                                Spurning {questionNumber} / {totalQuestions}
+                            </span>
+                        </div>
+
+                        <div className="bg-white rounded-lg shadow-lg p-6">
+                            <h2 className="text-2xl font-bold mb-6">{question.prompt}</h2>
+
+                            {question.type === 'error_identification' && question.visualization && (
+                                <div className="mb-4 p-4 bg-yellow-50 border-l-4 border-yellow-400">
+                                    <p className="text-sm text-yellow-800">{question.visualization}</p>
+                                </div>
+                            )}
+
+                            <div className="space-y-3 mb-6">
+                                {question.multiSelect ? (
+                                    question.options.map((option, idx) => (
+                                        <button
+                                            key={idx}
+                                            onClick={() => !showFeedback && toggleOption(idx)}
+                                            disabled={showFeedback}
+                                            className={`w-full p-4 rounded-lg border-2 text-left transition-all ${
+                                                selectedOptions.includes(idx)
+                                                    ? 'border-primary-orange bg-orange-50'
+                                                    : 'border-gray-300 hover:border-gray-400'
+                                            } ${showFeedback ? 'cursor-not-allowed' : ''}`}
+                                        >
+                                            {option.text || option}
+                                        </button>
+                                    ))
+                                ) : question.type === 'factor_selection' ? (
+                                    question.factors.map((factor, idx) => (
+                                        <button
+                                            key={idx}
+                                            onClick={() => !showFeedback && setSelectedAnswer(idx)}
+                                            disabled={showFeedback}
+                                            className={`w-full p-4 rounded-lg border-2 text-left transition-all ${
+                                                selectedAnswer === idx
+                                                    ? 'border-primary-orange bg-orange-50'
+                                                    : 'border-gray-300 hover:border-gray-400'
+                                            } ${showFeedback ? 'cursor-not-allowed' : ''}`}
+                                        >
+                                            {factor.text}
+                                        </button>
+                                    ))
+                                ) : (
+                                    question.options.map((option, idx) => (
+                                        <button
+                                            key={idx}
+                                            onClick={() => !showFeedback && setSelectedAnswer(idx)}
+                                            disabled={showFeedback}
+                                            className={`w-full p-4 rounded-lg border-2 text-left transition-all ${
+                                                selectedAnswer === idx
+                                                    ? 'border-primary-orange bg-orange-50'
+                                                    : 'border-gray-300 hover:border-gray-400'
+                                            } ${showFeedback ? 'cursor-not-allowed' : ''}`}
+                                        >
+                                            {option}
+                                        </button>
+                                    ))
+                                )}
+                            </div>
+
+                            {(question.explanationRequired || question.type === 'factor_selection') && selectedAnswer !== null && (
+                                <div className="mb-6 p-4 bg-blue-50 rounded-lg">
+                                    <h3 className="font-semibold mb-3">Af hverju?</h3>
+                                    <div className="space-y-2">
+                                        {question.explanationOptions.map((exp, idx) => (
+                                            <button
+                                                key={idx}
+                                                onClick={() => !showFeedback && setSelectedExplanation(idx)}
+                                                disabled={showFeedback}
+                                                className={`w-full p-3 rounded border-2 text-left text-sm transition-all ${
+                                                    selectedExplanation === idx
+                                                        ? 'border-blue-500 bg-blue-100'
+                                                        : 'border-gray-300 hover:border-gray-400'
+                                                } ${showFeedback ? 'cursor-not-allowed' : ''}`}
+                                            >
+                                                {exp.text}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {showFeedback && (
+                                <div className={`mb-6 p-4 rounded-lg ${
+                                    isCorrect ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                                }`}>
+                                    <p className="font-bold text-lg mb-2">
+                                        {isCorrect ? '✓ Rétt svar!' : '✗ Rangt svar'}
+                                    </p>
+                                    {question.type === 'error_identification' && !isCorrect && question.correctText && (
+                                        <p>{question.correctText}</p>
+                                    )}
+                                    {!isCorrect && question.explanationRequired && (
+                                        <p className="mt-2">Athugaðu bæði svarið og útskýringuna.</p>
+                                    )}
+                                </div>
+                            )}
+
+                            {!showFeedback ? (
+                                <button
+                                    onClick={handleSubmit}
+                                    disabled={!canSubmit()}
+                                    className="w-full bg-primary-orange text-white py-3 rounded-lg font-bold hover:bg-dark-orange disabled:bg-gray-300 disabled:cursor-not-allowed"
+                                >
+                                    Staðfesta svar
+                                </button>
+                            ) : (
+                                <button
+                                    onClick={handleContinue}
+                                    className="w-full bg-primary-orange text-white py-3 rounded-lg font-bold hover:bg-dark-orange"
+                                >
+                                    Halda áfram
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        function Level1({ onComplete, onBack, initialProgress }) {
+            const [phase, setPhase] = useState(initialProgress?.lessonsCompleted?.length === 3 ? 'questions' : 'lessons');
+            const [currentLesson, setCurrentLesson] = useState(
+                initialProgress?.lessonsCompleted?.length || 0
+            );
+            const [currentQuestion, setCurrentQuestion] = useState(
+                initialProgress?.questionsAnswered || 0
+            );
+            const [progress, setProgress] = useState(
+                initialProgress || {
+                    lessonsCompleted: [],
+                    questionsAnswered: 0,
+                    questionsCorrect: 0,
+                    explanationScores: [],
+                    mastered: false
+                }
+            );
+
+            const completeLesson = () => {
+                const newProgress = {
+                    ...progress,
+                    lessonsCompleted: [...progress.lessonsCompleted, lessons[currentLesson].id]
+                };
+                setProgress(newProgress);
+
+                if (currentLesson < lessons.length - 1) {
+                    setCurrentLesson(currentLesson + 1);
+                } else {
+                    setPhase('questions');
+                }
+
+                // Save progress
+                const saved = loadProgress() || { levelProgress: {} };
+                saved.levelProgress.level1 = newProgress;
+                saveProgress(saved);
+            };
+
+            const answerQuestion = (correct, explanationCorrect) => {
+                const newProgress = {
+                    ...progress,
+                    questionsAnswered: progress.questionsAnswered + 1,
+                    questionsCorrect: progress.questionsCorrect + (correct ? 1 : 0),
+                    explanationScores: [...progress.explanationScores, explanationCorrect ? 1 : 0]
+                };
+
+                setProgress(newProgress);
+
+                // Save progress
+                const saved = loadProgress() || { levelProgress: {} };
+                saved.levelProgress.level1 = newProgress;
+
+                // Check mastery
+                if (newProgress.questionsAnswered === 10) {
+                    newProgress.mastered = checkLevel1Mastery(newProgress);
+                    saved.levelProgress.level1 = newProgress;
+                }
+
+                saveProgress(saved);
+
+                if (currentQuestion < level1Questions.length - 1) {
+                    setCurrentQuestion(currentQuestion + 1);
+                } else {
+                    onComplete(newProgress);
+                }
+            };
+
+            if (phase === 'lessons') {
+                return (
+                    <LessonScreen
+                        lesson={lessons[currentLesson]}
+                        onComplete={completeLesson}
+                    />
+                );
+            }
+
+            return (
+                <QuestionScreen
+                    question={level1Questions[currentQuestion]}
+                    questionNumber={currentQuestion + 1}
+                    totalQuestions={level1Questions.length}
+                    onAnswer={answerQuestion}
+                    onBack={onBack}
+                />
+            );
+        }
+
+        function MainMenu({ onStartLevel1, onViewStats, onReset, progress }) {
+            const level1Progress = progress?.levelProgress?.level1 || {
+                questionsAnswered: 0,
+                questionsCorrect: 0,
+                mastered: false
+            };
+
+            const level1Percentage = level1Progress.questionsAnswered > 0
+                ? Math.round((level1Progress.questionsCorrect / 10) * 100)
+                : 0;
+
+            return (
+                <div className="min-h-screen bg-gray-50 p-4">
+                    <div className="max-w-4xl mx-auto">
+                        <div className="text-center mb-8">
+                            <h1 className="text-4xl font-bold primary-orange mb-2">🔬 EININGAGREINING</h1>
+                            <p className="text-xl text-gray-600">Námsleiðin</p>
+                        </div>
+
+                        <div className="space-y-4">
+                            {/* Level 1 */}
+                            <div className="bg-white rounded-lg shadow-lg p-6">
+                                <div className="flex items-center justify-between mb-4">
+                                    <h2 className="text-2xl font-bold">Level 1: Skilningur</h2>
+                                    <button
+                                        onClick={onStartLevel1}
+                                        className="bg-primary-orange text-white px-6 py-2 rounded-lg font-bold hover:bg-dark-orange"
+                                    >
+                                        {level1Progress.questionsAnswered > 0 ? 'Halda áfram' : 'Byrja'}
+                                    </button>
+                                </div>
+                                <div className="mb-2">
+                                    <div className="w-full bg-gray-200 rounded-full h-4">
+                                        <div
+                                            className="bg-primary-orange h-4 rounded-full transition-all"
+                                            style={{ width: `${level1Percentage}%` }}
+                                        ></div>
+                                    </div>
+                                </div>
+                                <p className="text-gray-600">
+                                    {level1Progress.questionsCorrect}/10 rétt
+                                    {level1Progress.mastered && <span className="ml-2 text-green-600 font-bold">✓ Námsmarkmið náð!</span>}
+                                </p>
+                                <p className="text-sm text-gray-500 mt-2">
+                                    Þarfnast: 8/10 rétt með útskýringum
+                                </p>
+                            </div>
+
+                            {/* Level 2 */}
+                            <div className="bg-white rounded-lg shadow-lg p-6 opacity-50">
+                                <div className="flex items-center justify-between mb-4">
+                                    <h2 className="text-2xl font-bold">Level 2: Beiting</h2>
+                                    <button
+                                        disabled
+                                        className="bg-gray-300 text-gray-500 px-6 py-2 rounded-lg font-bold cursor-not-allowed"
+                                    >
+                                        🔒 Læst
+                                    </button>
+                                </div>
+                                <p className="text-gray-600">Kláraðu Level 1 til að opna</p>
+                            </div>
+
+                            {/* Level 3 */}
+                            <div className="bg-white rounded-lg shadow-lg p-6 opacity-50">
+                                <div className="flex items-center justify-between mb-4">
+                                    <h2 className="text-2xl font-bold">Level 3: Greining</h2>
+                                    <button
+                                        disabled
+                                        className="bg-gray-300 text-gray-500 px-6 py-2 rounded-lg font-bold cursor-not-allowed"
+                                    >
+                                        🔒 Læst
+                                    </button>
+                                </div>
+                                <p className="text-gray-600">Kláraðu Level 2 til að opna</p>
+                            </div>
+                        </div>
+
+                        <div className="mt-8 flex gap-4 justify-center">
+                            <button
+                                onClick={onViewStats}
+                                className="border-2 border-gray-300 px-6 py-2 rounded-lg hover:border-gray-400"
+                            >
+                                Sjá tölfræði
+                            </button>
+                            <button
+                                onClick={onReset}
+                                className="border-2 border-red-300 text-red-600 px-6 py-2 rounded-lg hover:border-red-400"
+                            >
+                                Byrja aftur
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        function StatsScreen({ progress, onBack }) {
+            const level1Progress = progress?.levelProgress?.level1 || {
+                questionsAnswered: 0,
+                questionsCorrect: 0,
+                explanationScores: []
+            };
+
+            const explanationAvg = level1Progress.explanationScores.length > 0
+                ? Math.round((level1Progress.explanationScores.reduce((a, b) => a + b, 0) / level1Progress.explanationScores.length) * 100)
+                : 0;
+
+            return (
+                <div className="min-h-screen bg-gray-50 p-4">
+                    <div className="max-w-4xl mx-auto">
+                        <button
+                            onClick={onBack}
+                            className="mb-4 text-gray-600 hover:text-gray-800 flex items-center gap-2"
+                        >
+                            ← Til baka
+                        </button>
+
+                        <div className="bg-white rounded-lg shadow-lg p-6">
+                            <h2 className="text-2xl font-bold mb-6">Tölfræði</h2>
+
+                            <div className="space-y-6">
+                                <div>
+                                    <h3 className="text-xl font-semibold mb-3 primary-orange">Level 1: Skilningur</h3>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="p-4 bg-gray-50 rounded">
+                                            <p className="text-sm text-gray-600">Spurningar svaraðar</p>
+                                            <p className="text-2xl font-bold">{level1Progress.questionsAnswered}/10</p>
+                                        </div>
+                                        <div className="p-4 bg-gray-50 rounded">
+                                            <p className="text-sm text-gray-600">Rétt svör</p>
+                                            <p className="text-2xl font-bold">{level1Progress.questionsCorrect}/10</p>
+                                        </div>
+                                        <div className="p-4 bg-gray-50 rounded">
+                                            <p className="text-sm text-gray-600">Útskýringar</p>
+                                            <p className="text-2xl font-bold">{explanationAvg}%</p>
+                                        </div>
+                                        <div className="p-4 bg-gray-50 rounded">
+                                            <p className="text-sm text-gray-600">Staða</p>
+                                            <p className="text-2xl font-bold">
+                                                {level1Progress.mastered ? '✓ Náð' : '⋯ Í vinnslu'}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="border-t pt-6">
+                                    <h3 className="text-lg font-semibold mb-2">Námsmarkmið Level 1</h3>
+                                    <ul className="space-y-2 text-sm">
+                                        <li className={level1Progress.questionsCorrect >= 8 ? 'text-green-600' : 'text-gray-600'}>
+                                            {level1Progress.questionsCorrect >= 8 ? '✓' : '○'} 8/10 rétt svör
+                                        </li>
+                                        <li className={explanationAvg >= 70 ? 'text-green-600' : 'text-gray-600'}>
+                                            {explanationAvg >= 70 ? '✓' : '○'} 70%+ á útskýringum
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        function App() {
+            const [gameState, setGameState] = useState({
+                screen: 'menu',
+                progress: loadProgress() || {
+                    currentLevel: 1,
+                    levelProgress: {
+                        level1: {
+                            lessonsCompleted: [],
+                            questionsAnswered: 0,
+                            questionsCorrect: 0,
+                            explanationScores: [],
+                            mastered: false
+                        }
+                    }
+                }
+            });
+
+            const handleStartLevel1 = () => {
+                setGameState({ ...gameState, screen: 'level1' });
+            };
+
+            const handleLevel1Complete = (level1Progress) => {
+                const newProgress = { ...gameState.progress };
+                newProgress.levelProgress.level1 = level1Progress;
+                saveProgress(newProgress);
+                setGameState({ ...gameState, progress: newProgress, screen: 'menu' });
+            };
+
+            const handleViewStats = () => {
+                setGameState({ ...gameState, screen: 'stats' });
+            };
+
+            const handleReset = () => {
+                if (confirm('Ertu viss um að þú viljir eyða öllum framförum?')) {
+                    localStorage.removeItem('dimensionalAnalysisProgress');
+                    setGameState({
+                        screen: 'menu',
+                        progress: {
+                            currentLevel: 1,
+                            levelProgress: {
+                                level1: {
+                                    lessonsCompleted: [],
+                                    questionsAnswered: 0,
+                                    questionsCorrect: 0,
+                                    explanationScores: [],
+                                    mastered: false
+                                }
+                            }
+                        }
+                    });
+                }
+            };
+
+            const handleBack = () => {
+                setGameState({ ...gameState, screen: 'menu' });
+            };
+
+            if (gameState.screen === 'level1') {
+                return (
+                    <Level1
+                        onComplete={handleLevel1Complete}
+                        onBack={handleBack}
+                        initialProgress={gameState.progress.levelProgress.level1}
+                    />
+                );
+            }
+
+            if (gameState.screen === 'stats') {
+                return (
+                    <StatsScreen
+                        progress={gameState.progress}
+                        onBack={handleBack}
+                    />
+                );
+            }
+
+            return (
+                <MainMenu
+                    onStartLevel1={handleStartLevel1}
+                    onViewStats={handleViewStats}
+                    onReset={handleReset}
+                    progress={gameState.progress}
+                />
+            );
+        }
+
+        // Render the app
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>

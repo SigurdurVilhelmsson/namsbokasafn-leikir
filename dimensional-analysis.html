@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+<html lang="is">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Víddargreining - Æfingatól</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Kvennaskólinn brand colors */
+        :root {
+            --primary-orange: #f36b22;
+            --dark-orange: #d95a1a;
+        }
+
+        /* Custom animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes poof {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.5); opacity: 0.5; }
+            100% { transform: scale(0); opacity: 0; }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes balance {
+            0% { transform: rotate(-2deg); }
+            50% { transform: rotate(2deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        .float-animation {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .poof-animation {
+            animation: poof 0.6s ease-out forwards;
+        }
+
+        .slide-in {
+            animation: slideIn 0.4s ease-out;
+        }
+
+        .balance-animation {
+            animation: balance 2s ease-in-out;
+        }
+
+        .unit-tile {
+            transition: all 0.3s ease;
+        }
+
+        .unit-tile:hover {
+            transform: scale(1.05);
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-orange);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--dark-orange);
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary': '#f36b22',
+                        'primary-dark': '#d95a1a',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // Conversion factors database
+        const CONVERSION_FACTORS = {
+            length: [
+                { from: 'm', to: 'cm', factor: 100, name: 'metrar í sentímetra' },
+                { from: 'cm', to: 'm', factor: 0.01, name: 'sentímetrar í metra' },
+                { from: 'km', to: 'm', factor: 1000, name: 'kílómetrar í metra' },
+                { from: 'm', to: 'km', factor: 0.001, name: 'metrar í kílómetra' },
+                { from: 'cm', to: 'mm', factor: 10, name: 'sentímetrar í millimetra' },
+                { from: 'mm', to: 'cm', factor: 0.1, name: 'millímetrar í sentímetra' },
+            ],
+            mass: [
+                { from: 'kg', to: 'g', factor: 1000, name: 'kílógrömm í grömm' },
+                { from: 'g', to: 'kg', factor: 0.001, name: 'grömm í kílógrömm' },
+                { from: 'g', to: 'mg', factor: 1000, name: 'grömm í milligrömm' },
+                { from: 'mg', to: 'g', factor: 0.001, name: 'milligrömm í grömm' },
+                { from: 'kg', to: 'mg', factor: 1000000, name: 'kílógrömm í milligrömm' },
+            ],
+            volume: [
+                { from: 'L', to: 'mL', factor: 1000, name: 'lítrar í millilítra' },
+                { from: 'mL', to: 'L', factor: 0.001, name: 'millilítrar í lítra' },
+                { from: 'L', to: 'cm³', factor: 1000, name: 'lítrar í teningsentímetra' },
+                { from: 'm³', to: 'L', factor: 1000, name: 'teningmetrar í lítra' },
+            ],
+            time: [
+                { from: 'h', to: 'min', factor: 60, name: 'klukkustundir í mínútur' },
+                { from: 'min', to: 's', factor: 60, name: 'mínútur í sekúndur' },
+                { from: 'h', to: 's', factor: 3600, name: 'klukkustundir í sekúndur' },
+                { from: 's', to: 'min', factor: 1/60, name: 'sekúndur í mínútur' },
+                { from: 'min', to: 'h', factor: 1/60, name: 'mínútur í klukkustundir' },
+            ],
+        };
+
+        // Practice problems
+        const PRACTICE_PROBLEMS = [
+            { value: 5000, from: 'g', to: 'kg', category: 'mass', difficulty: 'easy' },
+            { value: 2.5, from: 'kg', to: 'g', category: 'mass', difficulty: 'easy' },
+            { value: 150, from: 'cm', to: 'm', category: 'length', difficulty: 'easy' },
+            { value: 3.2, from: 'km', to: 'm', category: 'length', difficulty: 'easy' },
+            { value: 2500, from: 'mL', to: 'L', category: 'volume', difficulty: 'easy' },
+            { value: 1.5, from: 'h', to: 'min', category: 'time', difficulty: 'easy' },
+            { value: 0.05, from: 'kg', to: 'mg', category: 'mass', difficulty: 'medium' },
+            { value: 2.5, from: 'km', to: 'cm', category: 'length', difficulty: 'medium' },
+            { value: 90, from: 'min', to: 'h', category: 'time', difficulty: 'medium' },
+        ];
+
+        // Worked examples with step-by-step explanations
+        const WORKED_EXAMPLES = [
+            {
+                problem: { value: 5000, from: 'g', to: 'kg' },
+                steps: [
+                    {
+                        text: "Við höfum 5000 grömm og viljum breyta í kílógrömm.",
+                        visual: { current: "5000 g", target: "? kg" }
+                    },
+                    {
+                        text: "Við vitum að 1 kg = 1000 g. Þetta þýðir að (1 kg)/(1000 g) = 1.",
+                        visual: { factor: "1 kg / 1000 g", equals: "1" }
+                    },
+                    {
+                        text: "Þegar við margföldum með 1, breytist gildið ekki - bara einingin!",
+                        visual: { equation: "5000 g × (1 kg / 1000 g)" }
+                    },
+                    {
+                        text: "Athugaðu: 'g' er í teljara OG nefnara, þannig að það strikast út.",
+                        visual: { cancel: "g", numerator: ["g"], denominator: ["g"] }
+                    },
+                    {
+                        text: "Eftir stendur: 5000 × (1/1000) kg = 5 kg ✓",
+                        visual: { result: "5 kg" }
+                    }
+                ]
+            },
+            {
+                problem: { value: 2.5, from: 'km', to: 'm' },
+                steps: [
+                    {
+                        text: "Við höfum 2.5 kílómetra og viljum breyta í metra.",
+                        visual: { current: "2.5 km", target: "? m" }
+                    },
+                    {
+                        text: "Við vitum að 1 km = 1000 m, þannig að (1000 m)/(1 km) = 1.",
+                        visual: { factor: "1000 m / 1 km", equals: "1" }
+                    },
+                    {
+                        text: "Við margföldum upphafsgildi með umbreytingarstuðli.",
+                        visual: { equation: "2.5 km × (1000 m / 1 km)" }
+                    },
+                    {
+                        text: "'km' strikast út þar sem það er bæði í teljara og nefnara.",
+                        visual: { cancel: "km", numerator: ["km"], denominator: ["km"] }
+                    },
+                    {
+                        text: "Niðurstaðan: 2.5 × 1000 m = 2500 m ✓",
+                        visual: { result: "2500 m" }
+                    }
+                ]
+            },
+            {
+                problem: { value: 150, from: 'cm', to: 'm' },
+                steps: [
+                    {
+                        text: "Við höfum 150 sentímetra og viljum breyta í metra.",
+                        visual: { current: "150 cm", target: "? m" }
+                    },
+                    {
+                        text: "Við vitum að 100 cm = 1 m, þannig að (1 m)/(100 cm) = 1.",
+                        visual: { factor: "1 m / 100 cm", equals: "1" }
+                    },
+                    {
+                        text: "Við margföldum: 150 cm × (1 m / 100 cm)",
+                        visual: { equation: "150 cm × (1 m / 100 cm)" }
+                    },
+                    {
+                        text: "'cm' strikast út.",
+                        visual: { cancel: "cm", numerator: ["cm"], denominator: ["cm"] }
+                    },
+                    {
+                        text: "Niðurstaðan: 150/100 m = 1.5 m ✓",
+                        visual: { result: "1.5 m" }
+                    }
+                ]
+            }
+        ];
+
+        // Concept check questions
+        const CONCEPT_QUESTIONS = [
+            {
+                question: "Af hverju settum við 'g' í nefnara stuðulsins?",
+                options: [
+                    { text: "Til að 'g' strikist út við 'g' í upphafsgildi", correct: true },
+                    { text: "Til að fá stærri tölu", correct: false, feedback: "Nei - stefna stuðuls ákvarðast af því hvaða einingar þurfa að strikast út, ekki af því hvort talan verður stærri eða minni." },
+                    { text: "Af því að grömm eru minni en kílógrömm", correct: false, feedback: "Nei - það skiptir ekki máli hver er stærri eða minni. Það sem skiptir máli er að einingarnar strikist út." },
+                    { text: "Það skiptir ekki máli", correct: false, feedback: "Jú, það skiptir miklu máli! Ef við setjum 'g' í teljara í staðinn, fáum við rangar einingar." }
+                ]
+            },
+            {
+                question: "Hvað gerist ef þú snýrð umbreytingarstuðlinum við?",
+                options: [
+                    { text: "Ekkert sérstakt", correct: false, feedback: "Það breytir mjög miklu! Ef við snúum stuðlinum við, þá verða einingarnar rangar." },
+                    { text: "Einingarnar strikast ekki rétt út", correct: true },
+                    { text: "Talan verður stærri", correct: false, feedback: "Það fer eftir stuðlinum. En mikilvægara er að einingarnar verða rangar." },
+                    { text: "Það er sama niðurstaðan", correct: false, feedback: "Nei, ef við snúum stuðlinum við fáum við alveg aðra niðurstöðu - bæði tölu og einingar." }
+                ]
+            },
+            {
+                question: "Hvers vegna jafngildir umbreytingarstuðull 1?",
+                options: [
+                    { text: "Af því að teljari og nefnari eru jafnstórir", correct: true },
+                    { text: "Af því að við viljum að svo sé", correct: false, feedback: "Nei, það er ekki af því að við viljum það - það er raunverulegt stærðfræðilegt jafngildi. 1 kg = 1000 g, þannig að hlutfallið þeirra er 1." },
+                    { text: "Það jafngildir ekki alltaf 1", correct: false, feedback: "Jú, umbreytingarstuðull jafngildir alltaf 1 af því að teljari og nefnari tákna sama magn." },
+                    { text: "Af því að við deilum með sama tölunni", correct: false, feedback: "Það er rétt að við deilum með jafnstæðri stærð, en mikilvægara er að skilja að 1 kg og 1000 g eru nákvæmlega sama magn." }
+                ]
+            }
+        ];
+
+        // Balance Scale Component
+        function BalanceScale({ leftValue, leftUnit, rightValue, rightUnit, balanced }) {
+            return (
+                <div className="flex flex-col items-center justify-center p-8 bg-gradient-to-b from-blue-50 to-white rounded-xl">
+                    <div className={`relative w-full max-w-md ${balanced ? 'balance-animation' : ''}`}>
+                        {/* Fulcrum */}
+                        <div className="absolute left-1/2 top-16 transform -translate-x-1/2 w-0 h-0 border-l-[20px] border-r-[20px] border-b-[30px] border-transparent border-b-gray-700"></div>
+
+                        {/* Balance beam */}
+                        <div className={`h-3 bg-gradient-to-r from-gray-600 to-gray-700 rounded-full shadow-lg transition-transform duration-1000 ${balanced ? 'rotate-0' : 'rotate-3'}`}>
+                            {/* Left pan */}
+                            <div className="absolute left-0 -top-12 transform -translate-x-1/2 flex flex-col items-center">
+                                <div className="w-32 h-24 bg-yellow-400 rounded-b-full border-4 border-yellow-600 flex items-center justify-center shadow-lg">
+                                    <div className="text-center">
+                                        <div className="text-2xl font-bold text-gray-800">{leftValue}</div>
+                                        <div className="text-sm font-semibold text-gray-700">{leftUnit}</div>
+                                    </div>
+                                </div>
+                                <div className="w-1 h-8 bg-gray-600"></div>
+                            </div>
+
+                            {/* Right pan */}
+                            <div className="absolute right-0 -top-12 transform translate-x-1/2 flex flex-col items-center">
+                                <div className="w-32 h-24 bg-yellow-400 rounded-b-full border-4 border-yellow-600 flex items-center justify-center shadow-lg">
+                                    <div className="text-center">
+                                        <div className="text-2xl font-bold text-gray-800">{rightValue}</div>
+                                        <div className="text-sm font-semibold text-gray-700">{rightUnit}</div>
+                                    </div>
+                                </div>
+                                <div className="w-1 h-8 bg-gray-600"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="mt-24 text-center">
+                        <p className="text-lg font-semibold text-gray-700">
+                            {leftValue} {leftUnit} = {rightValue} {rightUnit}
+                        </p>
+                        <p className="text-md text-gray-600 mt-2">
+                            þannig að <span className="font-bold text-primary">{leftValue} {leftUnit} / {rightValue} {rightUnit} = 1</span>
+                        </p>
+                    </div>
+                </div>
+            );
+        }
+
+        // Unit Tile Component
+        function UnitTile({ unit, position, onCancel, cancelling }) {
+            return (
+                <div
+                    className={`unit-tile inline-block px-4 py-2 m-1 rounded-lg font-semibold text-white shadow-lg ${
+                        position === 'numerator' ? 'bg-blue-500' : 'bg-green-500'
+                    } ${cancelling ? 'poof-animation' : ''}`}
+                >
+                    {unit}
+                </div>
+            );
+        }
+
+        // Unit Cancellation Visualizer
+        function UnitCancellationVisualizer({ numeratorUnits, denominatorUnits, onCancel }) {
+            const [cancelling, setCancelling] = useState(null);
+
+            const handleCancel = (unit) => {
+                setCancelling(unit);
+                setTimeout(() => {
+                    onCancel(unit);
+                    setCancelling(null);
+                }, 600);
+            };
+
+            return (
+                <div className="bg-white p-6 rounded-xl shadow-lg">
+                    <div className="mb-4">
+                        <h3 className="text-sm font-semibold text-gray-600 mb-2">Teljari:</h3>
+                        <div className="min-h-[50px] border-2 border-dashed border-blue-300 rounded-lg p-2 bg-blue-50">
+                            {numeratorUnits.map((unit, idx) => (
+                                <UnitTile
+                                    key={`num-${idx}`}
+                                    unit={unit}
+                                    position="numerator"
+                                    cancelling={cancelling === unit}
+                                />
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="border-t-4 border-gray-800 my-4"></div>
+
+                    <div>
+                        <h3 className="text-sm font-semibold text-gray-600 mb-2">Nefnari:</h3>
+                        <div className="min-h-[50px] border-2 border-dashed border-green-300 rounded-lg p-2 bg-green-50">
+                            {denominatorUnits.map((unit, idx) => (
+                                <UnitTile
+                                    key={`denom-${idx}`}
+                                    unit={unit}
+                                    position="denominator"
+                                    cancelling={cancelling === unit}
+                                />
+                            ))}
+                        </div>
+                    </div>
+
+                    {numeratorUnits.length > 0 && denominatorUnits.length > 0 && (
+                        <div className="mt-4">
+                            <button
+                                onClick={() => {
+                                    const common = numeratorUnits.find(u => denominatorUnits.includes(u));
+                                    if (common) handleCancel(common);
+                                }}
+                                className="w-full bg-primary hover:bg-primary-dark text-white font-semibold py-2 px-4 rounded-lg transition-colors"
+                                disabled={!numeratorUnits.some(u => denominatorUnits.includes(u))}
+                            >
+                                Strika út sameiginlegar einingar
+                            </button>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        // Tutorial Module Component
+        function TutorialModule() {
+            const [currentExample, setCurrentExample] = useState(0);
+            const [currentStep, setCurrentStep] = useState(0);
+            const [showBalanceDemo, setShowBalanceDemo] = useState(true);
+
+            const example = WORKED_EXAMPLES[currentExample];
+            const step = example.steps[currentStep];
+
+            return (
+                <div className="max-w-4xl mx-auto p-4 slide-in">
+                    <h2 className="text-3xl font-bold text-gray-800 mb-6">Kynning - Víddargreining</h2>
+
+                    {showBalanceDemo ? (
+                        <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
+                            <h3 className="text-xl font-bold text-gray-700 mb-4">Hugtakið um jafnvægi</h3>
+                            <BalanceScale
+                                leftValue={1000}
+                                leftUnit="g"
+                                rightValue={1}
+                                rightUnit="kg"
+                                balanced={true}
+                            />
+                            <div className="mt-6 text-center">
+                                <button
+                                    onClick={() => setShowBalanceDemo(false)}
+                                    className="bg-primary hover:bg-primary-dark text-white font-semibold py-3 px-8 rounded-lg transition-colors"
+                                >
+                                    Áfram í dæmi →
+                                </button>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="bg-white rounded-xl shadow-lg p-6">
+                            <div className="mb-6">
+                                <div className="flex justify-between items-center mb-4">
+                                    <h3 className="text-xl font-bold text-gray-700">
+                                        Dæmi {currentExample + 1} af {WORKED_EXAMPLES.length}
+                                    </h3>
+                                    <span className="text-sm text-gray-500">
+                                        Skref {currentStep + 1} af {example.steps.length}
+                                    </span>
+                                </div>
+
+                                <div className="bg-gray-50 rounded-lg p-4 mb-4">
+                                    <p className="text-lg text-gray-700 font-medium mb-2">
+                                        Breyta: {example.problem.value} {example.problem.from} → ? {example.problem.to}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="bg-blue-50 rounded-lg p-6 mb-6 min-h-[200px] slide-in">
+                                <p className="text-lg text-gray-800 mb-4">{step.text}</p>
+
+                                {step.visual.equation && (
+                                    <div className="text-center text-2xl font-mono bg-white rounded-lg p-4 shadow">
+                                        {step.visual.equation}
+                                    </div>
+                                )}
+
+                                {step.visual.factor && (
+                                    <div className="text-center">
+                                        <span className="inline-block text-xl font-mono bg-white rounded-lg px-6 py-3 shadow">
+                                            {step.visual.factor}
+                                        </span>
+                                        {step.visual.equals && (
+                                            <span className="text-2xl font-bold text-primary ml-4">
+                                                = {step.visual.equals}
+                                            </span>
+                                        )}
+                                    </div>
+                                )}
+
+                                {step.visual.cancel && (
+                                    <div className="flex justify-center items-center gap-8 mt-4">
+                                        <div className="text-center">
+                                            <p className="text-sm text-gray-600 mb-2">Teljari</p>
+                                            <div className="bg-blue-500 text-white px-4 py-2 rounded-lg font-semibold">
+                                                {step.visual.cancel}
+                                            </div>
+                                        </div>
+                                        <div className="text-4xl text-red-500 font-bold">✕</div>
+                                        <div className="text-center">
+                                            <p className="text-sm text-gray-600 mb-2">Nefnari</p>
+                                            <div className="bg-green-500 text-white px-4 py-2 rounded-lg font-semibold">
+                                                {step.visual.cancel}
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {step.visual.result && (
+                                    <div className="text-center">
+                                        <div className="inline-block text-3xl font-bold text-green-600 bg-green-50 rounded-lg px-8 py-4 shadow-lg">
+                                            {step.visual.result}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="flex justify-between items-center">
+                                <button
+                                    onClick={() => {
+                                        if (currentStep > 0) {
+                                            setCurrentStep(currentStep - 1);
+                                        } else if (currentExample > 0) {
+                                            setCurrentExample(currentExample - 1);
+                                            setCurrentStep(WORKED_EXAMPLES[currentExample - 1].steps.length - 1);
+                                        } else {
+                                            setShowBalanceDemo(true);
+                                        }
+                                    }}
+                                    className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-6 rounded-lg transition-colors"
+                                >
+                                    ← Fyrra
+                                </button>
+
+                                <button
+                                    onClick={() => {
+                                        if (currentStep < example.steps.length - 1) {
+                                            setCurrentStep(currentStep + 1);
+                                        } else if (currentExample < WORKED_EXAMPLES.length - 1) {
+                                            setCurrentExample(currentExample + 1);
+                                            setCurrentStep(0);
+                                        }
+                                    }}
+                                    className="bg-primary hover:bg-primary-dark text-white font-semibold py-2 px-6 rounded-lg transition-colors"
+                                    disabled={currentExample === WORKED_EXAMPLES.length - 1 && currentStep === example.steps.length - 1}
+                                >
+                                    {currentStep < example.steps.length - 1 ? 'Næsta →' : 'Næsta dæmi →'}
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        // Sandbox Playground Component
+        function SandboxPlayground({ onUpdateStats }) {
+            const [currentProblem, setCurrentProblem] = useState(null);
+            const [selectedFactors, setSelectedFactors] = useState([]);
+            const [showSolution, setShowSolution] = useState(false);
+            const [numeratorUnits, setNumeratorUnits] = useState([]);
+            const [denominatorUnits, setDenominatorUnits] = useState([]);
+            const [currentValue, setCurrentValue] = useState(0);
+
+            useEffect(() => {
+                generateNewProblem();
+            }, []);
+
+            const generateNewProblem = () => {
+                const problem = PRACTICE_PROBLEMS[Math.floor(Math.random() * PRACTICE_PROBLEMS.length)];
+                setCurrentProblem(problem);
+                setSelectedFactors([]);
+                setShowSolution(false);
+                setNumeratorUnits([problem.from]);
+                setDenominatorUnits([]);
+                setCurrentValue(problem.value);
+                onUpdateStats('conversionsExplored');
+            };
+
+            const getAvailableFactors = () => {
+                if (!currentProblem) return [];
+                const category = currentProblem.category;
+                const allFactors = CONVERSION_FACTORS[category] || [];
+
+                // Include both correct and distractor factors
+                return allFactors;
+            };
+
+            const addFactor = (factor) => {
+                const newFactors = [...selectedFactors, factor];
+                setSelectedFactors(newFactors);
+
+                // Update units
+                const newNumerator = [...numeratorUnits, factor.to];
+                const newDenominator = [...denominatorUnits, factor.from];
+                setNumeratorUnits(newNumerator);
+                setDenominatorUnits(newDenominator);
+
+                // Update value
+                setCurrentValue(currentValue * factor.factor);
+                onUpdateStats('pathsTried');
+            };
+
+            const removeFactor = (index) => {
+                const factor = selectedFactors[index];
+                const newFactors = selectedFactors.filter((_, i) => i !== index);
+                setSelectedFactors(newFactors);
+
+                // Recalculate from scratch
+                recalculateFromFactors(newFactors);
+            };
+
+            const flipFactor = (index) => {
+                const factor = selectedFactors[index];
+                const flipped = {
+                    from: factor.to,
+                    to: factor.from,
+                    factor: 1 / factor.factor,
+                    name: factor.name
+                };
+                const newFactors = [...selectedFactors];
+                newFactors[index] = flipped;
+                setSelectedFactors(newFactors);
+                recalculateFromFactors(newFactors);
+            };
+
+            const recalculateFromFactors = (factors) => {
+                let value = currentProblem.value;
+                let numUnits = [currentProblem.from];
+                let denomUnits = [];
+
+                factors.forEach(factor => {
+                    value *= factor.factor;
+                    numUnits.push(factor.to);
+                    denomUnits.push(factor.from);
+                });
+
+                setCurrentValue(value);
+                setNumeratorUnits(numUnits);
+                setDenominatorUnits(denomUnits);
+            };
+
+            const cancelUnits = (unit) => {
+                setNumeratorUnits(numeratorUnits.filter((u, i) => i !== numeratorUnits.indexOf(unit)));
+                setDenominatorUnits(denominatorUnits.filter((u, i) => i !== denominatorUnits.indexOf(unit)));
+            };
+
+            const getSolution = () => {
+                if (!currentProblem) return [];
+
+                // Find the conversion path
+                const allFactors = CONVERSION_FACTORS[currentProblem.category] || [];
+                const solution = allFactors.filter(f =>
+                    f.from === currentProblem.from && f.to === currentProblem.to
+                );
+
+                return solution;
+            };
+
+            const isCorrect = () => {
+                const finalUnit = numeratorUnits.filter(u => !denominatorUnits.includes(u)).slice(-1)[0];
+                return finalUnit === currentProblem.to && Math.abs(currentValue - (currentProblem.value * getSolution()[0]?.factor || 0)) < 0.001;
+            };
+
+            if (!currentProblem) {
+                return <div className="text-center p-8">Hleð...</div>;
+            }
+
+            return (
+                <div className="max-w-6xl mx-auto p-4 slide-in">
+                    <h2 className="text-3xl font-bold text-gray-800 mb-6">Leiksvæði - Frjáls könnun</h2>
+
+                    {/* Problem statement */}
+                    <div className="bg-gradient-to-r from-primary to-primary-dark text-white rounded-xl shadow-lg p-6 mb-6">
+                        <div className="flex items-center justify-between flex-wrap gap-4">
+                            <div>
+                                <p className="text-sm opacity-90 mb-1">Upphafsgild:</p>
+                                <p className="text-3xl font-bold">{currentProblem.value} {currentProblem.from}</p>
+                            </div>
+                            <div className="text-4xl">→</div>
+                            <div>
+                                <p className="text-sm opacity-90 mb-1">Markgildi:</p>
+                                <p className="text-3xl font-bold">? {currentProblem.to}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Unit tracking */}
+                    <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
+                        <h3 className="text-lg font-bold text-gray-700 mb-4">Einingar núna:</h3>
+                        <UnitCancellationVisualizer
+                            numeratorUnits={numeratorUnits}
+                            denominatorUnits={denominatorUnits}
+                            onCancel={cancelUnits}
+                        />
+
+                        <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+                            <p className="text-sm text-gray-600 mb-1">Núverandi gildi:</p>
+                            <p className="text-2xl font-bold text-gray-800">
+                                {currentValue.toFixed(4)} {numeratorUnits.filter(u => !denominatorUnits.includes(u)).slice(-1)[0] || '?'}
+                            </p>
+
+                            {isCorrect() && (
+                                <div className="mt-2 text-green-600 font-semibold flex items-center gap-2">
+                                    <span className="text-2xl">✓</span>
+                                    Rétt! Vel gert!
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Selected factors */}
+                    {selectedFactors.length > 0 && (
+                        <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
+                            <h3 className="text-lg font-bold text-gray-700 mb-4">Valdir stuðlar:</h3>
+                            <div className="space-y-2">
+                                {selectedFactors.map((factor, index) => (
+                                    <div key={index} className="flex items-center gap-2 bg-gray-50 rounded-lg p-3">
+                                        <span className="flex-1 font-mono text-lg">
+                                            {factor.to} / {factor.from}
+                                        </span>
+                                        <button
+                                            onClick={() => flipFactor(index)}
+                                            className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded transition-colors"
+                                            title="Snúa við stuðli"
+                                        >
+                                            ⇅
+                                        </button>
+                                        <button
+                                            onClick={() => removeFactor(index)}
+                                            className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded transition-colors"
+                                        >
+                                            ×
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Available factors */}
+                    <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
+                        <h3 className="text-lg font-bold text-gray-700 mb-4">Tiltækir umbreytingarstuðlar:</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                            {getAvailableFactors().map((factor, index) => (
+                                <button
+                                    key={index}
+                                    onClick={() => addFactor(factor)}
+                                    className="bg-gray-100 hover:bg-primary hover:text-white text-gray-800 font-semibold py-3 px-4 rounded-lg transition-colors text-left"
+                                >
+                                    <div className="font-mono text-lg mb-1">
+                                        {factor.to} / {factor.from}
+                                    </div>
+                                    <div className="text-xs opacity-75">
+                                        {factor.name}
+                                    </div>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Solution display */}
+                    {showSolution && (
+                        <div className="bg-green-50 border-2 border-green-200 rounded-xl shadow-lg p-6 mb-6 slide-in">
+                            <h3 className="text-lg font-bold text-green-800 mb-4">💡 Lausn:</h3>
+                            <div className="space-y-2">
+                                {getSolution().map((factor, index) => (
+                                    <div key={index} className="bg-white rounded-lg p-3">
+                                        <p className="font-mono text-lg">
+                                            {currentProblem.value} {factor.from} × ({factor.to} / {factor.from}) = {(currentProblem.value * factor.factor).toFixed(4)} {factor.to}
+                                        </p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Action buttons */}
+                    <div className="flex flex-wrap gap-3 justify-center">
+                        <button
+                            onClick={() => {
+                                setSelectedFactors([]);
+                                setNumeratorUnits([currentProblem.from]);
+                                setDenominatorUnits([]);
+                                setCurrentValue(currentProblem.value);
+                            }}
+                            className="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+                        >
+                            Hreinsa
+                        </button>
+                        <button
+                            onClick={() => setShowSolution(!showSolution)}
+                            className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+                        >
+                            {showSolution ? 'Fela lausn' : 'Sýna lausn'}
+                        </button>
+                        <button
+                            onClick={generateNewProblem}
+                            className="bg-primary hover:bg-primary-dark text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+                        >
+                            Nýtt dæmi
+                        </button>
+                    </div>
+                </div>
+            );
+        }
+
+        // Concept Check Component
+        function ConceptCheck() {
+            const [currentQuestion, setCurrentQuestion] = useState(0);
+            const [selectedAnswer, setSelectedAnswer] = useState(null);
+            const [showFeedback, setShowFeedback] = useState(false);
+
+            const question = CONCEPT_QUESTIONS[currentQuestion];
+
+            const handleAnswer = (index) => {
+                setSelectedAnswer(index);
+                setShowFeedback(true);
+            };
+
+            const nextQuestion = () => {
+                setSelectedAnswer(null);
+                setShowFeedback(false);
+                setCurrentQuestion((currentQuestion + 1) % CONCEPT_QUESTIONS.length);
+            };
+
+            return (
+                <div className="max-w-3xl mx-auto p-4 slide-in">
+                    <h2 className="text-3xl font-bold text-gray-800 mb-6">Skilningsspurningar</h2>
+
+                    <div className="bg-white rounded-xl shadow-lg p-6">
+                        <div className="mb-6">
+                            <span className="text-sm text-gray-500">
+                                Spurning {currentQuestion + 1} af {CONCEPT_QUESTIONS.length}
+                            </span>
+                            <h3 className="text-xl font-bold text-gray-800 mt-2">
+                                {question.question}
+                            </h3>
+                        </div>
+
+                        <div className="space-y-3 mb-6">
+                            {question.options.map((option, index) => (
+                                <button
+                                    key={index}
+                                    onClick={() => handleAnswer(index)}
+                                    disabled={showFeedback}
+                                    className={`w-full text-left p-4 rounded-lg font-medium transition-colors ${
+                                        showFeedback
+                                            ? option.correct
+                                                ? 'bg-green-100 border-2 border-green-500 text-green-800'
+                                                : selectedAnswer === index
+                                                ? 'bg-red-100 border-2 border-red-500 text-red-800'
+                                                : 'bg-gray-100 text-gray-600'
+                                            : 'bg-gray-100 hover:bg-gray-200 text-gray-800'
+                                    }`}
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <span className="flex-shrink-0 w-8 h-8 rounded-full bg-white flex items-center justify-center font-bold">
+                                            {String.fromCharCode(65 + index)}
+                                        </span>
+                                        <span>{option.text}</span>
+                                        {showFeedback && option.correct && (
+                                            <span className="ml-auto text-2xl">✓</span>
+                                        )}
+                                    </div>
+                                </button>
+                            ))}
+                        </div>
+
+                        {showFeedback && (
+                            <div className="mb-6 slide-in">
+                                {question.options[selectedAnswer].correct ? (
+                                    <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded">
+                                        <p className="text-green-800 font-semibold">
+                                            ✓ Rétt svar! Vel gert!
+                                        </p>
+                                    </div>
+                                ) : (
+                                    <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded">
+                                        <p className="text-yellow-800 font-semibold mb-2">
+                                            Ekki alveg rétt, en það er allt í lagi!
+                                        </p>
+                                        <p className="text-yellow-700">
+                                            {question.options[selectedAnswer].feedback}
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {showFeedback && (
+                            <button
+                                onClick={nextQuestion}
+                                className="w-full bg-primary hover:bg-primary-dark text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+                            >
+                                Næsta spurning →
+                            </button>
+                        )}
+                    </div>
+                </div>
+            );
+        }
+
+        // Reference Library Component
+        function ReferenceLibrary() {
+            const [selectedCategory, setSelectedCategory] = useState('mass');
+
+            return (
+                <div className="max-w-5xl mx-auto p-4 slide-in">
+                    <h2 className="text-3xl font-bold text-gray-800 mb-6">Uppflettirit</h2>
+
+                    {/* Category tabs */}
+                    <div className="flex flex-wrap gap-2 mb-6">
+                        {Object.keys(CONVERSION_FACTORS).map(category => (
+                            <button
+                                key={category}
+                                onClick={() => setSelectedCategory(category)}
+                                className={`px-6 py-3 rounded-lg font-semibold transition-colors ${
+                                    selectedCategory === category
+                                        ? 'bg-primary text-white'
+                                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                                }`}
+                            >
+                                {category === 'length' ? 'Lengd' :
+                                 category === 'mass' ? 'Massi' :
+                                 category === 'volume' ? 'Rúmmál' :
+                                 category === 'time' ? 'Tími' : category}
+                            </button>
+                        ))}
+                    </div>
+
+                    {/* Conversion factors */}
+                    <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
+                        <h3 className="text-xl font-bold text-gray-700 mb-4">Umbreytingarstuðlar</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {CONVERSION_FACTORS[selectedCategory].map((factor, index) => (
+                                <div key={index} className="bg-gray-50 rounded-lg p-4 border-2 border-gray-200">
+                                    <div className="font-mono text-lg font-bold text-gray-800 mb-2">
+                                        1 {factor.from} = {factor.factor} {factor.to}
+                                    </div>
+                                    <div className="text-sm text-gray-600 mb-3">
+                                        {factor.name}
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <div className="flex-1 bg-blue-100 rounded px-3 py-2 text-sm">
+                                            <span className="font-mono">{factor.to} / {factor.from}</span>
+                                        </div>
+                                        <div className="flex-1 bg-green-100 rounded px-3 py-2 text-sm">
+                                            <span className="font-mono">{factor.from} / {factor.to}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Common mistakes */}
+                    <div className="bg-white rounded-xl shadow-lg p-6">
+                        <h3 className="text-xl font-bold text-gray-700 mb-4">Algengar villur</h3>
+                        <div className="space-y-4">
+                            <div className="border-l-4 border-red-500 bg-red-50 p-4 rounded">
+                                <h4 className="font-bold text-red-800 mb-2">❌ Villa: Stuðull snýr röngu megin</h4>
+                                <p className="text-red-700 mb-2">
+                                    <span className="font-mono">1000 g × (1000 g / 1 kg) = 1,000,000 g²/kg</span>
+                                </p>
+                                <p className="text-red-600 text-sm">
+                                    Einingarnar strikast ekki út! Þetta gerist þegar við veljum ranga stefnu á stuðlinum.
+                                </p>
+                            </div>
+
+                            <div className="border-l-4 border-green-500 bg-green-50 p-4 rounded">
+                                <h4 className="font-bold text-green-800 mb-2">✓ Rétt: Stuðullinn snýr rétt</h4>
+                                <p className="text-green-700 mb-2">
+                                    <span className="font-mono">1000 g × (1 kg / 1000 g) = 1 kg</span>
+                                </p>
+                                <p className="text-green-600 text-sm">
+                                    'g' er í teljara upphafsgildis og nefnara stuðuls, þannig að það strikast út. Rétt!
+                                </p>
+                            </div>
+
+                            <div className="border-l-4 border-red-500 bg-red-50 p-4 rounded">
+                                <h4 className="font-bold text-red-800 mb-2">❌ Villa: Að gleyma milliskrefi</h4>
+                                <p className="text-red-700 mb-2">
+                                    Breyta beint úr km í cm án þess að fara í gegnum metra
+                                </p>
+                                <p className="text-red-600 text-sm">
+                                    Stundum þarf að nota marga stuðla í röð til að komast að réttum einingu.
+                                </p>
+                            </div>
+
+                            <div className="border-l-4 border-green-500 bg-green-50 p-4 rounded">
+                                <h4 className="font-bold text-green-800 mb-2">✓ Rétt: Nota keðju af stuðlum</h4>
+                                <p className="text-green-700 mb-2">
+                                    <span className="font-mono">2 km × (1000 m / 1 km) × (100 cm / 1 m) = 200,000 cm</span>
+                                </p>
+                                <p className="text-green-600 text-sm">
+                                    Við notum tvær umbreytingar: fyrst í metra, síðan í sentímetra.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Progress Component
+        function ProgressDisplay({ stats, checklist, onChecklistToggle, badges }) {
+            return (
+                <div className="max-w-4xl mx-auto p-4 slide-in">
+                    <h2 className="text-3xl font-bold text-gray-800 mb-6">Mín framvinda</h2>
+
+                    {/* Exploration stats */}
+                    <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
+                        <h3 className="text-xl font-bold text-gray-700 mb-4">Könnunarskrá</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div className="bg-blue-50 rounded-lg p-4 text-center">
+                                <div className="text-4xl font-bold text-blue-600 mb-2">
+                                    {stats.conversionsExplored}
+                                </div>
+                                <div className="text-sm text-gray-600">
+                                    Umbreytingar skoðaðar
+                                </div>
+                            </div>
+                            <div className="bg-green-50 rounded-lg p-4 text-center">
+                                <div className="text-4xl font-bold text-green-600 mb-2">
+                                    {stats.pathsTried}
+                                </div>
+                                <div className="text-sm text-gray-600">
+                                    Leiðir reyndar
+                                </div>
+                            </div>
+                            <div className="bg-purple-50 rounded-lg p-4 text-center">
+                                <div className="text-4xl font-bold text-purple-600 mb-2">
+                                    {stats.timeSpent}
+                                </div>
+                                <div className="text-sm text-gray-600">
+                                    Mínútur í leik
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Badges */}
+                    <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
+                        <h3 className="text-xl font-bold text-gray-700 mb-4">Merki</h3>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            {badges.map((badge, index) => (
+                                <div
+                                    key={index}
+                                    className={`text-center p-4 rounded-lg transition-all ${
+                                        badge.earned
+                                            ? 'bg-gradient-to-br from-yellow-400 to-yellow-600 text-white shadow-lg'
+                                            : 'bg-gray-100 text-gray-400'
+                                    }`}
+                                >
+                                    <div className="text-4xl mb-2">{badge.icon}</div>
+                                    <div className="font-semibold text-sm">{badge.name}</div>
+                                    {badge.earned && (
+                                        <div className="text-xs mt-1 opacity-90">✓ Unnið!</div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Self-assessment checklist */}
+                    <div className="bg-white rounded-xl shadow-lg p-6">
+                        <h3 className="text-xl font-bold text-gray-700 mb-4">Skilningslisti - sjálfsmat</h3>
+                        <p className="text-sm text-gray-600 mb-4">
+                            Hakaðu við þegar þú finnur þér öryggi í hverjum lið:
+                        </p>
+                        <div className="space-y-3">
+                            {checklist.map((item, index) => (
+                                <label
+                                    key={index}
+                                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
+                                >
+                                    <input
+                                        type="checkbox"
+                                        checked={item.checked}
+                                        onChange={() => onChecklistToggle(index)}
+                                        className="w-5 h-5 text-primary focus:ring-primary rounded"
+                                    />
+                                    <span className={`flex-1 ${item.checked ? 'text-gray-700 font-medium' : 'text-gray-600'}`}>
+                                        {item.text}
+                                    </span>
+                                    {item.checked && (
+                                        <span className="text-green-600 text-xl">✓</span>
+                                    )}
+                                </label>
+                            ))}
+                        </div>
+
+                        {checklist.every(item => item.checked) && (
+                            <div className="mt-6 bg-green-50 border-2 border-green-200 rounded-lg p-4 text-center">
+                                <p className="text-green-800 font-bold text-lg mb-2">
+                                    🎉 Frábært! Þú hefur unnið í gegnum alla liðina!
+                                </p>
+                                <p className="text-green-700 text-sm">
+                                    Þú ert tilbúin/n til að prófa skoruð æfingaverkefni!
+                                </p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        }
+
+        // Main App Component
+        function App() {
+            const [currentModule, setCurrentModule] = useState('tutorial');
+            const [stats, setStats] = useState({
+                conversionsExplored: 0,
+                pathsTried: 0,
+                timeSpent: 0
+            });
+            const [checklist, setChecklist] = useState([
+                { text: 'Ég skil af hverju umbreytingarstuðlar jafngilda 1', checked: false },
+                { text: 'Ég skil hvernig einingar strikast út', checked: false },
+                { text: 'Ég get valið rétta stefnu stuðla', checked: false },
+                { text: 'Ég get keðjað saman marga stuðla', checked: false }
+            ]);
+            const [badges, setBadges] = useState([
+                { name: 'Byrjandi', icon: '🌱', earned: true },
+                { name: 'Könnuður', icon: '🔍', earned: false, requirement: 'conversionsExplored', count: 10 },
+                { name: 'Tilraunagjarn', icon: '🧪', earned: false, requirement: 'pathsTried', count: 20 },
+                { name: 'Áhugasamur', icon: '⭐', earned: false, requirement: 'timeSpent', count: 30 }
+            ]);
+
+            // Load from localStorage
+            useEffect(() => {
+                const saved = localStorage.getItem('dimensionalAnalysisProgress');
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    setStats(data.stats || stats);
+                    setChecklist(data.checklist || checklist);
+                    setBadges(data.badges || badges);
+                }
+            }, []);
+
+            // Save to localStorage
+            useEffect(() => {
+                localStorage.setItem('dimensionalAnalysisProgress', JSON.stringify({
+                    stats,
+                    checklist,
+                    badges
+                }));
+            }, [stats, checklist, badges]);
+
+            // Track time spent
+            useEffect(() => {
+                const interval = setInterval(() => {
+                    setStats(prev => ({ ...prev, timeSpent: prev.timeSpent + 1 }));
+                }, 60000); // Every minute
+
+                return () => clearInterval(interval);
+            }, []);
+
+            // Update badges based on stats
+            useEffect(() => {
+                setBadges(prev => prev.map(badge => {
+                    if (badge.requirement && stats[badge.requirement] >= badge.count) {
+                        return { ...badge, earned: true };
+                    }
+                    return badge;
+                }));
+            }, [stats]);
+
+            const updateStats = (key) => {
+                setStats(prev => ({
+                    ...prev,
+                    [key]: prev[key] + 1
+                }));
+            };
+
+            const toggleChecklistItem = (index) => {
+                setChecklist(prev => prev.map((item, i) =>
+                    i === index ? { ...item, checked: !item.checked } : item
+                ));
+            };
+
+            const resetProgress = () => {
+                if (confirm('Ertu viss um að þú viljir núllstilla alla framvindu?')) {
+                    setStats({
+                        conversionsExplored: 0,
+                        pathsTried: 0,
+                        timeSpent: 0
+                    });
+                    setChecklist(checklist.map(item => ({ ...item, checked: false })));
+                    setBadges(badges.map((badge, i) => ({ ...badge, earned: i === 0 })));
+                    localStorage.removeItem('dimensionalAnalysisProgress');
+                }
+            };
+
+            return (
+                <div className="min-h-screen bg-gray-50">
+                    {/* Header */}
+                    <header className="bg-gradient-to-r from-primary to-primary-dark text-white shadow-lg">
+                        <div className="max-w-7xl mx-auto px-4 py-6">
+                            <h1 className="text-3xl md:text-4xl font-bold">Víddargreining - Æfingatól</h1>
+                            <p className="text-sm md:text-base opacity-90 mt-2">
+                                Kannaðu og lærðu víddargreiningu án álagspressu
+                            </p>
+                        </div>
+                    </header>
+
+                    {/* Navigation */}
+                    <nav className="bg-white shadow-md sticky top-0 z-10">
+                        <div className="max-w-7xl mx-auto px-4">
+                            <div className="flex flex-wrap gap-2 py-4">
+                                <button
+                                    onClick={() => setCurrentModule('tutorial')}
+                                    className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+                                        currentModule === 'tutorial'
+                                            ? 'bg-primary text-white'
+                                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                    }`}
+                                >
+                                    Kynning
+                                </button>
+                                <button
+                                    onClick={() => setCurrentModule('sandbox')}
+                                    className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+                                        currentModule === 'sandbox'
+                                            ? 'bg-primary text-white'
+                                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                    }`}
+                                >
+                                    Leiksvæði
+                                </button>
+                                <button
+                                    onClick={() => setCurrentModule('concepts')}
+                                    className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+                                        currentModule === 'concepts'
+                                            ? 'bg-primary text-white'
+                                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                    }`}
+                                >
+                                    Skilningsspurningar
+                                </button>
+                                <button
+                                    onClick={() => setCurrentModule('library')}
+                                    className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+                                        currentModule === 'library'
+                                            ? 'bg-primary text-white'
+                                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                    }`}
+                                >
+                                    Uppflettirit
+                                </button>
+                                <button
+                                    onClick={() => setCurrentModule('progress')}
+                                    className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+                                        currentModule === 'progress'
+                                            ? 'bg-primary text-white'
+                                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                    }`}
+                                >
+                                    Mín framvinda
+                                </button>
+                            </div>
+                        </div>
+                    </nav>
+
+                    {/* Main content */}
+                    <main className="py-8">
+                        {currentModule === 'tutorial' && <TutorialModule />}
+                        {currentModule === 'sandbox' && <SandboxPlayground onUpdateStats={updateStats} />}
+                        {currentModule === 'concepts' && <ConceptCheck />}
+                        {currentModule === 'library' && <ReferenceLibrary />}
+                        {currentModule === 'progress' && (
+                            <ProgressDisplay
+                                stats={stats}
+                                checklist={checklist}
+                                onChecklistToggle={toggleChecklistItem}
+                                badges={badges}
+                            />
+                        )}
+                    </main>
+
+                    {/* Footer */}
+                    <footer className="bg-gray-800 text-white py-6 mt-12">
+                        <div className="max-w-7xl mx-auto px-4 text-center">
+                            <p className="text-sm opacity-75 mb-2">
+                                Víddargreining - Æfingatól | Kvennaskólinn
+                            </p>
+                            <button
+                                onClick={resetProgress}
+                                className="text-xs text-gray-400 hover:text-white transition-colors underline"
+                            >
+                                Núllstilla alla framvindu
+                            </button>
+                        </div>
+                    </footer>
+                </div>
+            );
+        }
+
+        // Render the app
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
+</body>
+</html>

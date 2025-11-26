@@ -239,6 +239,180 @@
             }
         ];
 
+        const conversionFactors = [
+            { num: '1 kg', den: '1000 g', units: ['kg', 'g'] },
+            { num: '1000 g', den: '1 kg', units: ['g', 'kg'] },
+            { num: '1 g', den: '1000 mg', units: ['g', 'mg'] },
+            { num: '1000 mg', den: '1 g', units: ['mg', 'g'] },
+            { num: '1 L', den: '1000 mL', units: ['L', 'mL'] },
+            { num: '1000 mL', den: '1 L', units: ['mL', 'L'] },
+            { num: '1 km', den: '1000 m', units: ['km', 'm'] },
+            { num: '1000 m', den: '1 km', units: ['m', 'km'] },
+            { num: '1 m', den: '100 cm', units: ['m', 'cm'] },
+            { num: '100 cm', den: '1 m', units: ['cm', 'm'] },
+            { num: '1 m', den: '1000 mm', units: ['m', 'mm'] },
+            { num: '1000 mm', den: '1 m', units: ['mm', 'm'] },
+            { num: '1 klst', den: '3600 s', units: ['klst', 's'] },
+            { num: '3600 s', den: '1 klst', units: ['s', 'klst'] },
+            { num: '1 klst', den: '60 mín', units: ['klst', 'mín'] },
+            { num: '60 mín', den: '1 klst', units: ['mín', 'klst'] },
+            { num: '1 mín', den: '60 s', units: ['mín', 's'] },
+            { num: '60 s', den: '1 mín', units: ['s', 'mín'] }
+        ];
+
+        const level2Problems = [
+            {
+                id: 'L2-1',
+                difficulty: 'scaffolded_high',
+                context: 'Lyfjagjöf er 500 mg. Umbúðirnar sýna styrk í g.',
+                startValue: 500,
+                startUnit: 'mg',
+                targetUnit: 'g',
+                correctPath: ['1 g / 1000 mg'],
+                scaffoldingLevel: 3
+            },
+            {
+                id: 'L2-2',
+                difficulty: 'scaffolded_high',
+                context: 'Breyttu rúmmáli úr mL í L.',
+                startValue: 2500,
+                startUnit: 'mL',
+                targetUnit: 'L',
+                correctPath: ['1 L / 1000 mL'],
+                scaffoldingLevel: 3
+            },
+            {
+                id: 'L2-3',
+                difficulty: 'scaffolded_high',
+                context: 'Breyttu massa úr g í kg.',
+                startValue: 3500,
+                startUnit: 'g',
+                targetUnit: 'kg',
+                correctPath: ['1 kg / 1000 g'],
+                scaffoldingLevel: 3
+            },
+            {
+                id: 'L2-4',
+                difficulty: 'scaffolded_high',
+                context: 'Breyttu lengd úr cm í m.',
+                startValue: 250,
+                startUnit: 'cm',
+                targetUnit: 'm',
+                correctPath: ['1 m / 100 cm'],
+                scaffoldingLevel: 3
+            },
+            {
+                id: 'L2-5',
+                difficulty: 'scaffolded_high',
+                context: 'Breyttu massa úr kg í g.',
+                startValue: 2.5,
+                startUnit: 'kg',
+                targetUnit: 'g',
+                correctPath: ['1000 g / 1 kg'],
+                scaffoldingLevel: 3
+            },
+            {
+                id: 'L2-6',
+                difficulty: 'medium',
+                context: 'Breyttu lengd úr km í cm.',
+                startValue: 0.5,
+                startUnit: 'km',
+                targetUnit: 'cm',
+                correctPath: ['1000 m / 1 km', '100 cm / 1 m'],
+                scaffoldingLevel: 2
+            },
+            {
+                id: 'L2-7',
+                difficulty: 'medium',
+                context: 'Breyttu massa úr mg í kg.',
+                startValue: 5000,
+                startUnit: 'mg',
+                targetUnit: 'kg',
+                correctPath: ['1 g / 1000 mg', '1 kg / 1000 g'],
+                scaffoldingLevel: 2
+            },
+            {
+                id: 'L2-8',
+                difficulty: 'medium',
+                context: 'Breyttu hraða úr km/klst í m/s.',
+                startValue: 90,
+                startUnit: 'km/klst',
+                targetUnit: 'm/s',
+                correctPath: ['1000 m / 1 km', '1 klst / 3600 s'],
+                scaffoldingLevel: 2
+            },
+            {
+                id: 'L2-9',
+                difficulty: 'medium',
+                context: 'Breyttu tíma úr klst í s.',
+                startValue: 2,
+                startUnit: 'klst',
+                targetUnit: 's',
+                correctPath: ['3600 s / 1 klst'],
+                scaffoldingLevel: 2
+            },
+            {
+                id: 'L2-10',
+                difficulty: 'medium',
+                context: 'Breyttu lengd úr mm í km.',
+                startValue: 5000000,
+                startUnit: 'mm',
+                targetUnit: 'km',
+                correctPath: ['1 m / 1000 mm', '1 km / 1000 m'],
+                scaffoldingLevel: 2
+            },
+            {
+                id: 'L2-11',
+                difficulty: 'advanced',
+                context: 'Breyttu hraða úr m/s í km/klst.',
+                startValue: 25,
+                startUnit: 'm/s',
+                targetUnit: 'km/klst',
+                correctPath: ['1 km / 1000 m', '3600 s / 1 klst'],
+                scaffoldingLevel: 1
+            },
+            {
+                id: 'L2-12',
+                difficulty: 'advanced',
+                context: 'Breyttu lengd úr cm í km.',
+                startValue: 150000,
+                startUnit: 'cm',
+                targetUnit: 'km',
+                correctPath: ['1 m / 100 cm', '1 km / 1000 m'],
+                scaffoldingLevel: 1
+            },
+            {
+                id: 'L2-13',
+                difficulty: 'advanced',
+                context: 'Breyttu rúmmál úr mL í L og síðan aftur í mL með öðru gildi.',
+                startValue: 500,
+                startUnit: 'mL',
+                targetUnit: 'L',
+                correctPath: ['1 L / 1000 mL'],
+                scaffoldingLevel: 1
+            },
+            {
+                id: 'L2-14',
+                difficulty: 'advanced',
+                context: 'Breyttu tíma úr s í klst.',
+                startValue: 7200,
+                startUnit: 's',
+                targetUnit: 'klst',
+                correctPath: ['1 klst / 3600 s'],
+                scaffoldingLevel: 1
+            },
+            {
+                id: 'L2-15',
+                difficulty: 'advanced',
+                context: 'Breyttu eðlismassa úr g/mL í kg/L.',
+                startValue: 1.5,
+                startUnit: 'g/mL',
+                targetUnit: 'kg/L',
+                correctPath: ['1 kg / 1000 g', '1000 mL / 1 L'],
+                scaffoldingLevel: 1
+            }
+        ];
+
         // ==================== UTILITY FUNCTIONS ====================
 
         const saveProgress = (gameState) => {
@@ -262,6 +436,52 @@
                 : 1;
 
             return questionsCorrect >= 8 && avgExplanation >= 0.7;
+        };
+
+        const checkLevel2Mastery = (level2Data) => {
+            const { problemsCompleted, predictionsMade, predictionsCorrect, finalAnswersCorrect } = level2Data;
+            if (problemsCompleted < 15) return false;
+
+            const predictionAccuracy = predictionsMade > 0 ? predictionsCorrect / predictionsMade : 0;
+            const answerAccuracy = problemsCompleted > 0 ? finalAnswersCorrect / problemsCompleted : 0;
+
+            return predictionAccuracy >= 0.7 && answerAccuracy >= 0.8;
+        };
+
+        const parseUnit = (unitString) => {
+            // Parse compound units like "km/klst" or simple units like "g"
+            if (unitString.includes('/')) {
+                const [num, den] = unitString.split('/');
+                return { numerator: num.trim(), denominator: den.trim() };
+            }
+            return { numerator: unitString.trim(), denominator: null };
+        };
+
+        const predictResultingUnit = (currentUnit, factor) => {
+            // Predict what unit will result from applying a factor
+            const current = parseUnit(currentUnit);
+            const factorParsed = { numerator: factor.num.split(' ')[1], denominator: factor.den.split(' ')[1] };
+
+            if (!current.denominator) {
+                // Simple unit
+                if (current.numerator === factorParsed.denominator) {
+                    return factorParsed.numerator;
+                }
+                return currentUnit; // No cancellation
+            } else {
+                // Compound unit - this is simplified for now
+                let newNum = current.numerator;
+                let newDen = current.denominator;
+
+                if (current.numerator === factorParsed.denominator) {
+                    newNum = factorParsed.numerator;
+                }
+                if (current.denominator === factorParsed.numerator) {
+                    newDen = factorParsed.denominator;
+                }
+
+                return `${newNum}/${newDen}`;
+            }
         };
 
         // ==================== COMPONENTS ====================
@@ -634,6 +854,332 @@
             );
         }
 
+        function PredictionModal({ factor, currentUnit, onPredict, onClose }) {
+            const [prediction, setPrediction] = useState('');
+            const [feedback, setFeedback] = useState(null);
+
+            const handleSubmit = () => {
+                const actualResult = predictResultingUnit(currentUnit, factor);
+                const isCorrect = prediction.trim().toLowerCase() === actualResult.toLowerCase();
+
+                setFeedback({
+                    correct: isCorrect,
+                    expected: actualResult
+                });
+
+                if (isCorrect) {
+                    setTimeout(() => {
+                        onPredict(true, actualResult);
+                        onClose();
+                    }, 1500);
+                }
+            };
+
+            return (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+                    <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+                        <h3 className="text-xl font-bold mb-4">Spá um niðurstöðu</h3>
+
+                        <div className="mb-4 p-4 bg-gray-50 rounded">
+                            <p className="text-sm text-gray-600 mb-2">Þú valdir:</p>
+                            <p className="text-lg font-mono font-bold text-center">
+                                {factor.num} / {factor.den}
+                            </p>
+                        </div>
+
+                        <p className="mb-4">
+                            Ef þú bætir þessum stuðli við <span className="font-bold">{currentUnit}</span>,
+                            hvaða eining verður útkoman?
+                        </p>
+
+                        <input
+                            type="text"
+                            value={prediction}
+                            onChange={(e) => setPrediction(e.target.value)}
+                            placeholder="t.d. kg, m/s, L"
+                            className="w-full p-3 border-2 border-gray-300 rounded-lg mb-4 font-mono"
+                            autoFocus
+                        />
+
+                        {feedback && (
+                            <div className={`mb-4 p-3 rounded ${
+                                feedback.correct ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                            }`}>
+                                {feedback.correct ? (
+                                    <p className="font-bold">✓ Rétt! Einingin verður {feedback.expected}</p>
+                                ) : (
+                                    <>
+                                        <p className="font-bold">✗ Rangt</p>
+                                        <p className="text-sm mt-1">Rétt svar: {feedback.expected}</p>
+                                        <p className="text-sm mt-2">Reyndu aftur eða veldu annan stuðul.</p>
+                                    </>
+                                )}
+                            </div>
+                        )}
+
+                        <div className="flex gap-3">
+                            {!feedback?.correct && (
+                                <>
+                                    <button
+                                        onClick={handleSubmit}
+                                        disabled={!prediction.trim()}
+                                        className="flex-1 bg-primary-orange text-white py-2 rounded-lg font-bold hover:bg-dark-orange disabled:bg-gray-300"
+                                    >
+                                        Staðfesta spá
+                                    </button>
+                                    <button
+                                        onClick={onClose}
+                                        className="px-4 border-2 border-gray-300 rounded-lg hover:border-gray-400"
+                                    >
+                                        Hætta við
+                                    </button>
+                                </>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        function Level2({ onComplete, onBack, initialProgress }) {
+            const [currentProblemIndex, setCurrentProblemIndex] = useState(
+                initialProgress?.problemsCompleted || 0
+            );
+            const [progress, setProgress] = useState(
+                initialProgress || {
+                    problemsCompleted: 0,
+                    predictionsMade: 0,
+                    predictionsCorrect: 0,
+                    finalAnswersCorrect: 0,
+                    mastered: false
+                }
+            );
+            const [selectedFactors, setSelectedFactors] = useState([]);
+            const [currentUnit, setCurrentUnit] = useState('');
+            const [currentValue, setCurrentValue] = useState(0);
+            const [showPredictionModal, setShowPredictionModal] = useState(false);
+            const [pendingFactor, setPendingFactor] = useState(null);
+            const [showFeedback, setShowFeedback] = useState(false);
+            const [isCorrect, setIsCorrect] = useState(false);
+
+            const problem = level2Problems[currentProblemIndex];
+
+            useEffect(() => {
+                if (problem) {
+                    setCurrentUnit(problem.startUnit);
+                    setCurrentValue(problem.startValue);
+                    setSelectedFactors([]);
+                    setShowFeedback(false);
+                }
+            }, [currentProblemIndex]);
+
+            const getAvailableFactors = () => {
+                // Filter factors based on scaffolding level
+                if (problem.scaffoldingLevel === 3) {
+                    // Only show factors that contain current unit
+                    return conversionFactors.filter(f =>
+                        f.units.includes(currentUnit) ||
+                        (currentUnit.includes('/') && f.units.some(u => currentUnit.includes(u)))
+                    );
+                }
+                return conversionFactors; // Show all for lower scaffolding
+            };
+
+            const handleFactorClick = (factor) => {
+                setPendingFactor(factor);
+                setShowPredictionModal(true);
+            };
+
+            const handlePrediction = (correct, resultingUnit) => {
+                const newProgress = {
+                    ...progress,
+                    predictionsMade: progress.predictionsMade + 1,
+                    predictionsCorrect: progress.predictionsCorrect + (correct ? 1 : 0)
+                };
+                setProgress(newProgress);
+
+                if (correct) {
+                    // Apply the factor
+                    setSelectedFactors([...selectedFactors, pendingFactor]);
+                    setCurrentUnit(resultingUnit);
+
+                    // Calculate new value (simplified)
+                    const factorNum = parseFloat(pendingFactor.num.split(' ')[0]);
+                    const factorDen = parseFloat(pendingFactor.den.split(' ')[0]);
+                    setCurrentValue(currentValue * factorNum / factorDen);
+                }
+
+                setPendingFactor(null);
+            };
+
+            const handleSubmit = () => {
+                // Check if path matches correct path
+                const selectedPath = selectedFactors.map(f => `${f.num} / ${f.den}`);
+                const pathCorrect = problem.correctPath.every((step, idx) => selectedPath[idx] === step);
+                const finalUnitCorrect = currentUnit === problem.targetUnit;
+
+                const finalCorrect = pathCorrect && finalUnitCorrect;
+                setIsCorrect(finalCorrect);
+                setShowFeedback(true);
+
+                const newProgress = {
+                    ...progress,
+                    finalAnswersCorrect: progress.finalAnswersCorrect + (finalCorrect ? 1 : 0)
+                };
+                setProgress(newProgress);
+
+                // Save progress
+                const saved = loadProgress() || { levelProgress: {} };
+                saved.levelProgress.level2 = newProgress;
+                saveProgress(saved);
+            };
+
+            const handleContinue = () => {
+                const newProgress = {
+                    ...progress,
+                    problemsCompleted: progress.problemsCompleted + 1
+                };
+
+                // Check mastery after 15 problems
+                if (newProgress.problemsCompleted >= 15) {
+                    newProgress.mastered = checkLevel2Mastery(newProgress);
+                }
+
+                setProgress(newProgress);
+
+                const saved = loadProgress() || { levelProgress: {} };
+                saved.levelProgress.level2 = newProgress;
+                saveProgress(saved);
+
+                if (currentProblemIndex < level2Problems.length - 1) {
+                    setCurrentProblemIndex(currentProblemIndex + 1);
+                } else {
+                    onComplete(newProgress);
+                }
+            };
+
+            if (!problem) return null;
+
+            const predictionAccuracy = progress.predictionsMade > 0
+                ? Math.round((progress.predictionsCorrect / progress.predictionsMade) * 100)
+                : 0;
+
+            return (
+                <div className="min-h-screen bg-gray-50 p-4">
+                    <div className="max-w-4xl mx-auto">
+                        <div className="mb-4 flex items-center justify-between">
+                            <button
+                                onClick={onBack}
+                                className="text-gray-600 hover:text-gray-800 flex items-center gap-2"
+                            >
+                                ← Til baka
+                            </button>
+                            <div className="text-sm text-gray-600">
+                                <span>Vandamál {progress.problemsCompleted + 1} / 15</span>
+                                <span className="ml-4">Spágæði: {predictionAccuracy}%</span>
+                            </div>
+                        </div>
+
+                        <div className="bg-white rounded-lg shadow-lg p-6">
+                            <div className="mb-6 p-4 bg-blue-50 rounded-lg">
+                                <p className="text-sm text-gray-600 mb-1">Samhengi:</p>
+                                <p className="font-semibold">{problem.context}</p>
+                            </div>
+
+                            <div className="mb-6 p-6 bg-gray-50 rounded-lg text-center">
+                                <p className="text-sm text-gray-600 mb-2">Núverandi gildi:</p>
+                                <p className="text-3xl font-bold primary-orange">
+                                    {currentValue.toFixed(3)} {currentUnit}
+                                </p>
+                                <p className="text-sm text-gray-600 mt-4">Markeiining: {problem.targetUnit}</p>
+                            </div>
+
+                            {selectedFactors.length > 0 && (
+                                <div className="mb-6">
+                                    <p className="text-sm font-semibold mb-2">Stuðlar notaðir:</p>
+                                    <div className="flex flex-wrap gap-2">
+                                        {selectedFactors.map((factor, idx) => (
+                                            <div key={idx} className="px-3 py-1 bg-green-100 text-green-800 rounded-lg text-sm font-mono">
+                                                {factor.num} / {factor.den}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {!showFeedback && (
+                                <>
+                                    <div className="mb-6">
+                                        <p className="font-semibold mb-3">Veldu umbreytingarstuðul:</p>
+                                        <div className="grid grid-cols-2 gap-3">
+                                            {getAvailableFactors().map((factor, idx) => (
+                                                <button
+                                                    key={idx}
+                                                    onClick={() => handleFactorClick(factor)}
+                                                    className="p-3 border-2 border-gray-300 rounded-lg hover:border-primary-orange hover:bg-orange-50 transition-all font-mono text-sm"
+                                                >
+                                                    {factor.num} / {factor.den}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <button
+                                        onClick={handleSubmit}
+                                        disabled={selectedFactors.length === 0}
+                                        className="w-full bg-primary-orange text-white py-3 rounded-lg font-bold hover:bg-dark-orange disabled:bg-gray-300"
+                                    >
+                                        Athuga svar
+                                    </button>
+                                </>
+                            )}
+
+                            {showFeedback && (
+                                <>
+                                    <div className={`mb-6 p-4 rounded-lg ${
+                                        isCorrect ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                                    }`}>
+                                        <p className="font-bold text-lg mb-2">
+                                            {isCorrect ? '✓ Frábært! Rétt svar!' : '✗ Ekki alveg rétt'}
+                                        </p>
+                                        {!isCorrect && (
+                                            <div className="text-sm mt-2">
+                                                <p>Rétt leið:</p>
+                                                <div className="mt-1 space-y-1">
+                                                    {problem.correctPath.map((step, idx) => (
+                                                        <div key={idx} className="font-mono">{step}</div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <button
+                                        onClick={handleContinue}
+                                        className="w-full bg-primary-orange text-white py-3 rounded-lg font-bold hover:bg-dark-orange"
+                                    >
+                                        {currentProblemIndex < level2Problems.length - 1 ? 'Næsta vandamál' : 'Ljúka'}
+                                    </button>
+                                </>
+                            )}
+                        </div>
+                    </div>
+
+                    {showPredictionModal && pendingFactor && (
+                        <PredictionModal
+                            factor={pendingFactor}
+                            currentUnit={currentUnit}
+                            onPredict={handlePrediction}
+                            onClose={() => {
+                                setShowPredictionModal(false);
+                                setPendingFactor(null);
+                            }}
+                        />
+                    )}
+                </div>
+            );
+        }
+
         function Level1({ onComplete, onBack, initialProgress }) {
             const [phase, setPhase] = useState(initialProgress?.lessonsCompleted?.length === 3 ? 'questions' : 'lessons');
             const [currentLesson, setCurrentLesson] = useState(
@@ -720,16 +1266,30 @@
             );
         }
 
-        function MainMenu({ onStartLevel1, onViewStats, onReset, progress }) {
+        function MainMenu({ onStartLevel1, onStartLevel2, onViewStats, onReset, progress }) {
             const level1Progress = progress?.levelProgress?.level1 || {
                 questionsAnswered: 0,
                 questionsCorrect: 0,
                 mastered: false
             };
 
+            const level2Progress = progress?.levelProgress?.level2 || {
+                problemsCompleted: 0,
+                predictionsMade: 0,
+                predictionsCorrect: 0,
+                finalAnswersCorrect: 0,
+                mastered: false
+            };
+
             const level1Percentage = level1Progress.questionsAnswered > 0
                 ? Math.round((level1Progress.questionsCorrect / 10) * 100)
                 : 0;
+
+            const level2Percentage = level2Progress.problemsCompleted > 0
+                ? Math.round((level2Progress.finalAnswersCorrect / level2Progress.problemsCompleted) * 100)
+                : 0;
+
+            const level2Unlocked = level1Progress.mastered;
 
             return (
                 <div className="min-h-screen bg-gray-50 p-4">
@@ -769,17 +1329,42 @@
                             </div>
 
                             {/* Level 2 */}
-                            <div className="bg-white rounded-lg shadow-lg p-6 opacity-50">
+                            <div className={`bg-white rounded-lg shadow-lg p-6 ${!level2Unlocked ? 'opacity-50' : ''}`}>
                                 <div className="flex items-center justify-between mb-4">
                                     <h2 className="text-2xl font-bold">Level 2: Beiting</h2>
                                     <button
-                                        disabled
-                                        className="bg-gray-300 text-gray-500 px-6 py-2 rounded-lg font-bold cursor-not-allowed"
+                                        onClick={onStartLevel2}
+                                        disabled={!level2Unlocked}
+                                        className={`px-6 py-2 rounded-lg font-bold ${
+                                            level2Unlocked
+                                                ? 'bg-primary-orange text-white hover:bg-dark-orange'
+                                                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                        }`}
                                     >
-                                        🔒 Læst
+                                        {!level2Unlocked ? '🔒 Læst' : level2Progress.problemsCompleted > 0 ? 'Halda áfram' : 'Byrja'}
                                     </button>
                                 </div>
-                                <p className="text-gray-600">Kláraðu Level 1 til að opna</p>
+                                {level2Unlocked ? (
+                                    <>
+                                        <div className="mb-2">
+                                            <div className="w-full bg-gray-200 rounded-full h-4">
+                                                <div
+                                                    className="bg-primary-orange h-4 rounded-full transition-all"
+                                                    style={{ width: `${(level2Progress.problemsCompleted / 15) * 100}%` }}
+                                                ></div>
+                                            </div>
+                                        </div>
+                                        <p className="text-gray-600">
+                                            {level2Progress.problemsCompleted}/15 vandamál
+                                            {level2Progress.mastered && <span className="ml-2 text-green-600 font-bold">✓ Námsmarkmið náð!</span>}
+                                        </p>
+                                        <p className="text-sm text-gray-500 mt-2">
+                                            Þarfnast: 15 vandamál, 70%+ spágæði, 80%+ rétt svör
+                                        </p>
+                                    </>
+                                ) : (
+                                    <p className="text-gray-600">Kláraðu Level 1 til að opna</p>
+                                )}
                             </div>
 
                             {/* Level 3 */}
@@ -823,8 +1408,24 @@
                 explanationScores: []
             };
 
+            const level2Progress = progress?.levelProgress?.level2 || {
+                problemsCompleted: 0,
+                predictionsMade: 0,
+                predictionsCorrect: 0,
+                finalAnswersCorrect: 0,
+                mastered: false
+            };
+
             const explanationAvg = level1Progress.explanationScores.length > 0
                 ? Math.round((level1Progress.explanationScores.reduce((a, b) => a + b, 0) / level1Progress.explanationScores.length) * 100)
+                : 0;
+
+            const predictionAccuracy = level2Progress.predictionsMade > 0
+                ? Math.round((level2Progress.predictionsCorrect / level2Progress.predictionsMade) * 100)
+                : 0;
+
+            const answerAccuracy = level2Progress.problemsCompleted > 0
+                ? Math.round((level2Progress.finalAnswersCorrect / level2Progress.problemsCompleted) * 100)
                 : 0;
 
             return (
@@ -876,6 +1477,49 @@
                                         </li>
                                     </ul>
                                 </div>
+
+                                {level1Progress.mastered && (
+                                    <>
+                                        <div className="border-t pt-6">
+                                            <h3 className="text-xl font-semibold mb-3 primary-orange">Level 2: Beiting</h3>
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <div className="p-4 bg-gray-50 rounded">
+                                                    <p className="text-sm text-gray-600">Vandamál leyst</p>
+                                                    <p className="text-2xl font-bold">{level2Progress.problemsCompleted}/15</p>
+                                                </div>
+                                                <div className="p-4 bg-gray-50 rounded">
+                                                    <p className="text-sm text-gray-600">Spágæði</p>
+                                                    <p className="text-2xl font-bold">{predictionAccuracy}%</p>
+                                                </div>
+                                                <div className="p-4 bg-gray-50 rounded">
+                                                    <p className="text-sm text-gray-600">Rétt svör</p>
+                                                    <p className="text-2xl font-bold">{answerAccuracy}%</p>
+                                                </div>
+                                                <div className="p-4 bg-gray-50 rounded">
+                                                    <p className="text-sm text-gray-600">Staða</p>
+                                                    <p className="text-2xl font-bold">
+                                                        {level2Progress.mastered ? '✓ Náð' : '⋯ Í vinnslu'}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="border-t pt-6">
+                                            <h3 className="text-lg font-semibold mb-2">Námsmarkmið Level 2</h3>
+                                            <ul className="space-y-2 text-sm">
+                                                <li className={level2Progress.problemsCompleted >= 15 ? 'text-green-600' : 'text-gray-600'}>
+                                                    {level2Progress.problemsCompleted >= 15 ? '✓' : '○'} 15 vandamál lokið
+                                                </li>
+                                                <li className={predictionAccuracy >= 70 ? 'text-green-600' : 'text-gray-600'}>
+                                                    {predictionAccuracy >= 70 ? '✓' : '○'} 70%+ spágæði
+                                                </li>
+                                                <li className={answerAccuracy >= 80 ? 'text-green-600' : 'text-gray-600'}>
+                                                    {answerAccuracy >= 80 ? '✓' : '○'} 80%+ rétt svör
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -895,6 +1539,13 @@
                             questionsCorrect: 0,
                             explanationScores: [],
                             mastered: false
+                        },
+                        level2: {
+                            problemsCompleted: 0,
+                            predictionsMade: 0,
+                            predictionsCorrect: 0,
+                            finalAnswersCorrect: 0,
+                            mastered: false
                         }
                     }
                 }
@@ -904,9 +1555,20 @@
                 setGameState({ ...gameState, screen: 'level1' });
             };
 
+            const handleStartLevel2 = () => {
+                setGameState({ ...gameState, screen: 'level2' });
+            };
+
             const handleLevel1Complete = (level1Progress) => {
                 const newProgress = { ...gameState.progress };
                 newProgress.levelProgress.level1 = level1Progress;
+                saveProgress(newProgress);
+                setGameState({ ...gameState, progress: newProgress, screen: 'menu' });
+            };
+
+            const handleLevel2Complete = (level2Progress) => {
+                const newProgress = { ...gameState.progress };
+                newProgress.levelProgress.level2 = level2Progress;
                 saveProgress(newProgress);
                 setGameState({ ...gameState, progress: newProgress, screen: 'menu' });
             };
@@ -929,6 +1591,13 @@
                                     questionsCorrect: 0,
                                     explanationScores: [],
                                     mastered: false
+                                },
+                                level2: {
+                                    problemsCompleted: 0,
+                                    predictionsMade: 0,
+                                    predictionsCorrect: 0,
+                                    finalAnswersCorrect: 0,
+                                    mastered: false
                                 }
                             }
                         }
@@ -950,6 +1619,16 @@
                 );
             }
 
+            if (gameState.screen === 'level2') {
+                return (
+                    <Level2
+                        onComplete={handleLevel2Complete}
+                        onBack={handleBack}
+                        initialProgress={gameState.progress.levelProgress.level2}
+                    />
+                );
+            }
+
             if (gameState.screen === 'stats') {
                 return (
                     <StatsScreen
@@ -962,6 +1641,7 @@
             return (
                 <MainMenu
                     onStartLevel1={handleStartLevel1}
+                    onStartLevel2={handleStartLevel2}
                     onViewStats={handleViewStats}
                     onReset={handleReset}
                     progress={gameState.progress}

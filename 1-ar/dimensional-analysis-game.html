@@ -53,6 +53,77 @@
             50% { opacity: 0.5; transform: scale(1.2); }
             100% { opacity: 0; transform: scale(0); }
         }
+
+        /* Accessibility Features */
+        /* Text Size Options */
+        .text-small { font-size: 14px; }
+        .text-medium { font-size: 16px; }
+        .text-large { font-size: 18px; }
+
+        /* High Contrast Mode */
+        .high-contrast {
+            --bg-primary: #000000;
+            --bg-secondary: #ffffff;
+            --text-primary: #ffffff;
+            --text-secondary: #000000;
+            --border-color: #ffff00;
+            --focus-color: #ffff00;
+        }
+
+        .high-contrast body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        .high-contrast .bg-white {
+            background-color: #1a1a1a !important;
+            color: #ffffff !important;
+        }
+
+        .high-contrast .bg-gray-50,
+        .high-contrast .bg-gray-100 {
+            background-color: #2a2a2a !important;
+            color: #ffffff !important;
+        }
+
+        .high-contrast .text-gray-600,
+        .high-contrast .text-gray-700,
+        .high-contrast .text-gray-800 {
+            color: #e0e0e0 !important;
+        }
+
+        .high-contrast .border-gray-300 {
+            border-color: var(--border-color) !important;
+        }
+
+        .high-contrast button:focus,
+        .high-contrast input:focus,
+        .high-contrast textarea:focus {
+            outline: 3px solid var(--focus-color) !important;
+            outline-offset: 2px;
+        }
+
+        /* Focus visible for keyboard navigation */
+        *:focus-visible {
+            outline: 2px solid #f36b22;
+            outline-offset: 2px;
+        }
+
+        /* Skip to content link for screen readers */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: #f36b22;
+            color: white;
+            padding: 8px;
+            text-decoration: none;
+            z-index: 100;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -1836,15 +1907,27 @@
                 return () => window.removeEventListener('keydown', handleKeyPress);
             }, [showFeedback, selectedFactors, wrongPredictions, showHint, currentUnit]);
 
+            const getDynamicScaffoldingLevel = () => {
+                // Dynamic scaffolding based on problems completed
+                const completed = progress.problemsCompleted;
+                if (completed < 5) return 3;      // Beginner: problems 1-5
+                if (completed < 10) return 2;     // Intermediate: problems 6-10
+                if (completed < 15) return 1;     // Advanced: problems 11-15
+                return 0;                          // Free practice: 15+
+            };
+
             const getAvailableFactors = () => {
+                // Use dynamic scaffolding level instead of fixed problem scaffolding
+                const scaffoldingLevel = getDynamicScaffoldingLevel();
+
                 // Filter factors based on scaffolding level
-                if (problem.scaffoldingLevel === 3) {
+                if (scaffoldingLevel === 3) {
                     // Level 3 (Beginner): Only show factors that contain current unit
                     return conversionFactors.filter(f =>
                         f.units.includes(currentUnit) ||
                         (currentUnit.includes('/') && f.units.some(u => currentUnit.includes(u)))
                     );
-                } else if (problem.scaffoldingLevel === 2) {
+                } else if (scaffoldingLevel === 2) {
                     // Level 2 (Intermediate): Show all relevant factors (no obvious distractors)
                     // Relevant means: units that could be part of a conversion path to target
                     const targetUnit = problem.targetUnit;
@@ -1855,7 +1938,7 @@
                                (currentUnit.includes('/') && f.units.some(u => currentUnit.includes(u))) ||
                                (targetUnit.includes('/') && f.units.some(u => targetUnit.includes(u)));
                     });
-                } else if (problem.scaffoldingLevel === 1) {
+                } else if (scaffoldingLevel === 1) {
                     // Level 1 (Advanced): Show all factors including distractors
                     return conversionFactors;
                 } else {
@@ -2054,19 +2137,26 @@
                                         <p className="font-semibold mb-3">
                                             Veldu umbreytingarstuðul:
                                             <span className="ml-2 text-sm text-gray-500">
-                                                (Stig {problem.scaffoldingLevel === 3 ? 'Byrjandi' : problem.scaffoldingLevel === 2 ? 'Miðlungs' : 'Framþróað'})
+                                                (Stig {(() => {
+                                                    const level = getDynamicScaffoldingLevel();
+                                                    if (level === 3) return 'Byrjandi';
+                                                    if (level === 2) return 'Miðlungs';
+                                                    if (level === 1) return 'Framþróað';
+                                                    return 'Frjálst';
+                                                })()})
                                             </span>
                                         </p>
                                         <div className="grid grid-cols-2 gap-3">
                                             {getAvailableFactors().map((factor, idx) => {
                                                 const relevant = isFactorRelevant(factor);
                                                 const correct = isFactorCorrect(factor);
+                                                const scaffoldingLevel = getDynamicScaffoldingLevel();
 
                                                 // Scaffolding level 3: Gray out incorrect factors
-                                                const isGrayed = problem.scaffoldingLevel === 3 && !relevant;
+                                                const isGrayed = scaffoldingLevel === 3 && !relevant;
 
                                                 // Scaffolding level 2: Show warning on hover for incorrect
-                                                const showWarning = problem.scaffoldingLevel === 2 && !relevant;
+                                                const showWarning = scaffoldingLevel === 2 && !relevant;
 
                                                 return (
                                                     <div key={idx} className="relative group">
@@ -2289,46 +2379,53 @@
             const level3Unlocked = level2Progress.mastered;
 
             return (
-                <div className="min-h-screen bg-gray-50 p-4">
+                <div className="min-h-screen bg-gray-50 p-4" role="main">
                     <div className="max-w-4xl mx-auto">
-                        <div className="text-center mb-8">
+                        <header className="text-center mb-8">
                             <h1 className="text-4xl font-bold primary-orange mb-2">🔬 EININGAGREINING</h1>
                             <p className="text-xl text-gray-600">Námsleiðin</p>
-                        </div>
+                        </header>
 
-                        <div className="space-y-4">
+                        <nav className="space-y-4" aria-label="Stigveldi leikja">
                             {/* Level 1 */}
-                            <div className="bg-white rounded-lg shadow-lg p-6">
+                            <section className="bg-white rounded-lg shadow-lg p-6" aria-labelledby="level1-heading">
                                 <div className="flex items-center justify-between mb-4">
-                                    <h2 className="text-2xl font-bold">Level 1: Skilningur</h2>
+                                    <h2 id="level1-heading" className="text-2xl font-bold">Level 1: Skilningur</h2>
                                     <button
                                         onClick={onStartLevel1}
                                         className="bg-primary-orange text-white px-6 py-2 rounded-lg font-bold hover:bg-dark-orange"
+                                        aria-label={level1Progress.questionsAnswered > 0 ? 'Halda áfram í Level 1' : 'Byrja Level 1'}
                                     >
                                         {level1Progress.questionsAnswered > 0 ? 'Halda áfram' : 'Byrja'}
                                     </button>
                                 </div>
-                                <div className="mb-2">
-                                    <div className="w-full bg-gray-200 rounded-full h-4">
+                                <div className="mb-2" role="group" aria-label="Framvinda Level 1">
+                                    <div className="w-full bg-gray-200 rounded-full h-4" role="progressbar"
+                                         aria-valuenow={level1Percentage}
+                                         aria-valuemin="0"
+                                         aria-valuemax="100"
+                                         aria-label={`${level1Percentage}% lokið`}>
                                         <div
                                             className="bg-primary-orange h-4 rounded-full transition-all"
                                             style={{ width: `${level1Percentage}%` }}
                                         ></div>
                                     </div>
                                 </div>
-                                <p className="text-gray-600">
+                                <p className="text-gray-600" aria-live="polite">
                                     {level1Progress.questionsCorrect}/10 rétt
-                                    {level1Progress.mastered && <span className="ml-2 text-green-600 font-bold">✓ Námsmarkmið náð!</span>}
+                                    {level1Progress.mastered && <span className="ml-2 text-green-600 font-bold" role="status">✓ Námsmarkmið náð!</span>}
                                 </p>
                                 <p className="text-sm text-gray-500 mt-2">
                                     Þarfnast: 8/10 rétt með útskýringum
                                 </p>
-                            </div>
+                            </section>
 
                             {/* Level 2 */}
-                            <div className={`bg-white rounded-lg shadow-lg p-6 ${!level2Unlocked ? 'opacity-50' : ''}`}>
+                            <section className={`bg-white rounded-lg shadow-lg p-6 ${!level2Unlocked ? 'opacity-50' : ''}`}
+                                     aria-labelledby="level2-heading"
+                                     aria-disabled={!level2Unlocked}>
                                 <div className="flex items-center justify-between mb-4">
-                                    <h2 className="text-2xl font-bold">Level 2: Beiting</h2>
+                                    <h2 id="level2-heading" className="text-2xl font-bold">Level 2: Beiting</h2>
                                     <button
                                         onClick={onStartLevel2}
                                         disabled={!level2Unlocked}
@@ -2337,6 +2434,8 @@
                                                 ? 'bg-primary-orange text-white hover:bg-dark-orange'
                                                 : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                                         }`}
+                                        aria-label={!level2Unlocked ? 'Level 2 er læstur - kláraðu Level 1 fyrst' :
+                                                   level2Progress.problemsCompleted > 0 ? 'Halda áfram í Level 2' : 'Byrja Level 2'}
                                     >
                                         {!level2Unlocked ? '🔒 Læst' : level2Progress.problemsCompleted > 0 ? 'Halda áfram' : 'Byrja'}
                                     </button>
@@ -2463,18 +2562,79 @@
                 ? Math.round((level2Progress.finalAnswersCorrect / level2Progress.problemsCompleted) * 100)
                 : 0;
 
+            const handleExportData = () => {
+                const exportData = {
+                    exportTimestamp: new Date().toISOString(),
+                    studentProgress: progress,
+                    summary: {
+                        level1: {
+                            questionsAnswered: level1Progress.questionsAnswered,
+                            questionsCorrect: level1Progress.questionsCorrect,
+                            accuracy: level1Progress.questionsAnswered > 0
+                                ? Math.round((level1Progress.questionsCorrect / level1Progress.questionsAnswered) * 100)
+                                : 0,
+                            explanationAverage: explanationAvg,
+                            mastered: level1Progress.mastered
+                        },
+                        level2: {
+                            problemsCompleted: level2Progress.problemsCompleted,
+                            predictionsMade: level2Progress.predictionsMade,
+                            predictionsCorrect: level2Progress.predictionsCorrect,
+                            predictionAccuracy: predictionAccuracy,
+                            finalAnswersCorrect: level2Progress.finalAnswersCorrect,
+                            answerAccuracy: answerAccuracy,
+                            mastered: level2Progress.mastered
+                        },
+                        level3: progress?.levelProgress?.level3 ? {
+                            problemsCompleted: progress.levelProgress.level3.problemsCompleted,
+                            compositeScores: progress.levelProgress.level3.compositeScores,
+                            averageCompositeScore: progress.levelProgress.level3.compositeScores.length > 0
+                                ? Math.round((progress.levelProgress.level3.compositeScores.reduce((a, b) => a + b, 0) /
+                                   progress.levelProgress.level3.compositeScores.length) * 100)
+                                : 0,
+                            achievements: progress.levelProgress.level3.achievements,
+                            mastered: progress.levelProgress.level3.mastered
+                        } : null
+                    }
+                };
+
+                const dataStr = JSON.stringify(exportData, null, 2);
+                const dataBlob = new Blob([dataStr], { type: 'application/json' });
+                const url = URL.createObjectURL(dataBlob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `einingagreining-toflraedi-${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+            };
+
             return (
                 <div className="min-h-screen bg-gray-50 p-4">
                     <div className="max-w-4xl mx-auto">
-                        <button
-                            onClick={onBack}
-                            className="mb-4 text-gray-600 hover:text-gray-800 flex items-center gap-2"
-                        >
-                            ← Til baka
-                        </button>
+                        <div className="mb-4 flex items-center justify-between">
+                            <button
+                                onClick={onBack}
+                                className="text-gray-600 hover:text-gray-800 flex items-center gap-2"
+                            >
+                                ← Til baka
+                            </button>
+                            <button
+                                onClick={handleExportData}
+                                className="bg-primary-orange text-white px-4 py-2 rounded-lg font-semibold hover:bg-dark-orange flex items-center gap-2"
+                                aria-label="Sækja gögn sem JSON">
+                                📥 Sækja gögn (JSON)
+                            </button>
+                        </div>
 
                         <div className="bg-white rounded-lg shadow-lg p-6">
-                            <h2 className="text-2xl font-bold mb-6">Tölfræði</h2>
+                            <div className="flex items-center justify-between mb-6">
+                                <h2 className="text-2xl font-bold">Tölfræði</h2>
+                                <span className="text-sm text-gray-500">
+                                    Fyrir kennara: Nota "Sækja gögn" til að fá ítarlegt JSON skjal
+                                </span>
+                            </div>
 
                             <div className="space-y-6">
                                 <div>
@@ -2627,6 +2787,16 @@
         }
 
         function App() {
+            const [accessibilitySettings, setAccessibilitySettings] = useState(() => {
+                const saved = localStorage.getItem('accessibilitySettings');
+                return saved ? JSON.parse(saved) : {
+                    highContrast: false,
+                    textSize: 'medium' // 'small', 'medium', 'large'
+                };
+            });
+
+            const [showAccessibilityMenu, setShowAccessibilityMenu] = useState(false);
+
             const [gameState, setGameState] = useState({
                 screen: 'menu',
                 progress: loadProgress() || {
@@ -2656,6 +2826,32 @@
                     }
                 }
             });
+
+            // Apply accessibility settings to document
+            useEffect(() => {
+                const root = document.documentElement;
+
+                // Apply high contrast mode
+                if (accessibilitySettings.highContrast) {
+                    root.classList.add('high-contrast');
+                } else {
+                    root.classList.remove('high-contrast');
+                }
+
+                // Apply text size
+                root.classList.remove('text-small', 'text-medium', 'text-large');
+                root.classList.add(`text-${accessibilitySettings.textSize}`);
+
+                // Save to localStorage
+                localStorage.setItem('accessibilitySettings', JSON.stringify(accessibilitySettings));
+            }, [accessibilitySettings]);
+
+            const updateAccessibilitySetting = (key, value) => {
+                setAccessibilitySettings(prev => ({
+                    ...prev,
+                    [key]: value
+                }));
+            };
 
             const handleStartLevel1 = () => {
                 setGameState({ ...gameState, screen: 'level1' });
@@ -2733,54 +2929,179 @@
                 setGameState({ ...gameState, screen: 'menu' });
             };
 
+            // Accessibility Menu Component
+            const AccessibilityMenu = () => (
+                <div className={`fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center ${showAccessibilityMenu ? '' : 'hidden'}`}
+                     onClick={() => setShowAccessibilityMenu(false)}
+                     role="dialog"
+                     aria-label="Aðgengisst illingar"
+                     aria-modal="true">
+                    <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4"
+                         onClick={(e) => e.stopPropagation()}>
+                        <h2 className="text-2xl font-bold mb-4">⚙️ Aðgengis stilling ar</h2>
+
+                        <div className="space-y-6">
+                            {/* High Contrast Toggle */}
+                            <div>
+                                <label className="flex items-center justify-between cursor-pointer">
+                                    <span className="font-semibold">Há birtustkil</span>
+                                    <button
+                                        onClick={() => updateAccessibilitySetting('highContrast', !accessibilitySettings.highContrast)}
+                                        className={`relative w-14 h-8 rounded-full transition-colors ${
+                                            accessibilitySettings.highContrast ? 'bg-primary-orange' : 'bg-gray-300'
+                                        }`}
+                                        aria-pressed={accessibilitySettings.highContrast}
+                                        aria-label="Kveikja/slökkva á háum birtuskili">
+                                        <span className={`absolute top-1 left-1 w-6 h-6 bg-white rounded-full transition-transform ${
+                                            accessibilitySettings.highContrast ? 'transform translate-x-6' : ''
+                                        }`}></span>
+                                    </button>
+                                </label>
+                                <p className="text-sm text-gray-600 mt-1">Eykur lesanleika með háum lit askili</p>
+                            </div>
+
+                            {/* Text Size */}
+                            <div>
+                                <label className="font-semibold block mb-2">Leturs tærð</label>
+                                <div className="flex gap-2">
+                                    {['small', 'medium', 'large'].map(size => (
+                                        <button
+                                            key={size}
+                                            onClick={() => updateAccessibilitySetting('textSize', size)}
+                                            className={`flex-1 py-2 px-4 rounded border-2 transition-all ${
+                                                accessibilitySettings.textSize === size
+                                                    ? 'border-primary-orange bg-orange-50 font-bold'
+                                                    : 'border-gray-300 hover:border-gray-400'
+                                            }`}
+                                            aria-pressed={accessibilitySettings.textSize === size}>
+                                            {size === 'small' && 'Lítið'}
+                                            {size === 'medium' && 'Miðlungs'}
+                                            {size === 'large' && 'Stórt'}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Keyboard Shortcuts Info */}
+                            <div className="border-t pt-4">
+                                <p className="font-semibold mb-2">⌨️ Lyklaborðs flýtileiðir</p>
+                                <ul className="text-sm text-gray-600 space-y-1">
+                                    <li>• Tab: Fara á milli hluta</li>
+                                    <li>• Enter: Staðfesta val</li>
+                                    <li>• Esc: Hætta við/fara til baka</li>
+                                    <li>• 1-9: Velja valkosti (Level 2)</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <button
+                            onClick={() => setShowAccessibilityMenu(false)}
+                            className="mt-6 w-full bg-primary-orange text-white py-2 rounded-lg font-bold hover:bg-dark-orange">
+                            Loka
+                        </button>
+                    </div>
+                </div>
+            );
+
             if (gameState.screen === 'level1') {
                 return (
-                    <Level1
-                        onComplete={handleLevel1Complete}
-                        onBack={handleBack}
-                        initialProgress={gameState.progress.levelProgress.level1}
-                    />
+                    <>
+                        <a href="#main-content" className="skip-link">Hoppa að efni</a>
+                        <AccessibilityMenu />
+                        <button
+                            onClick={() => setShowAccessibilityMenu(true)}
+                            className="fixed bottom-4 right-4 bg-primary-orange text-white p-3 rounded-full shadow-lg hover:bg-dark-orange z-40"
+                            aria-label="Opna aðgengis stillingar"
+                            title="Aðgengis stilling ar">
+                            ⚙️
+                        </button>
+                        <Level1
+                            onComplete={handleLevel1Complete}
+                            onBack={handleBack}
+                            initialProgress={gameState.progress.levelProgress.level1}
+                        />
+                    </>
                 );
             }
 
             if (gameState.screen === 'level2') {
                 return (
-                    <Level2
-                        onComplete={handleLevel2Complete}
-                        onBack={handleBack}
-                        initialProgress={gameState.progress.levelProgress.level2}
-                    />
+                    <>
+                        <a href="#main-content" className="skip-link">Hoppa að efni</a>
+                        <AccessibilityMenu />
+                        <button
+                            onClick={() => setShowAccessibilityMenu(true)}
+                            className="fixed bottom-4 right-4 bg-primary-orange text-white p-3 rounded-full shadow-lg hover:bg-dark-orange z-40"
+                            aria-label="Opna aðgengis stillingar">
+                            ⚙️
+                        </button>
+                        <Level2
+                            onComplete={handleLevel2Complete}
+                            onBack={handleBack}
+                            initialProgress={gameState.progress.levelProgress.level2}
+                        />
+                    </>
                 );
             }
 
             if (gameState.screen === 'level3') {
                 return (
-                    <Level3
+                    <>
+                        <a href="#main-content" className="skip-link">Hoppa að efni</a>
+                        <AccessibilityMenu />
+                        <button
+                            onClick={() => setShowAccessibilityMenu(true)}
+                            className="fixed bottom-4 right-4 bg-primary-orange text-white p-3 rounded-full shadow-lg hover:bg-dark-orange z-40"
+                            aria-label="Opna aðgengis stillingar">
+                            ⚙️
+                        </button>
+                        <Level3
                         onComplete={handleLevel3Complete}
                         onBack={handleBack}
                         initialProgress={gameState.progress.levelProgress.level3}
                     />
+                    </>
                 );
             }
 
             if (gameState.screen === 'stats') {
                 return (
-                    <StatsScreen
-                        progress={gameState.progress}
-                        onBack={handleBack}
-                    />
+                    <>
+                        <a href="#main-content" className="skip-link">Hoppa að efni</a>
+                        <AccessibilityMenu />
+                        <button
+                            onClick={() => setShowAccessibilityMenu(true)}
+                            className="fixed bottom-4 right-4 bg-primary-orange text-white p-3 rounded-full shadow-lg hover:bg-dark-orange z-40"
+                            aria-label="Opna aðgengis stillingar">
+                            ⚙️
+                        </button>
+                        <StatsScreen
+                            progress={gameState.progress}
+                            onBack={handleBack}
+                        />
+                    </>
                 );
             }
 
             return (
-                <MainMenu
-                    onStartLevel1={handleStartLevel1}
-                    onStartLevel2={handleStartLevel2}
-                    onStartLevel3={handleStartLevel3}
-                    onViewStats={handleViewStats}
-                    onReset={handleReset}
-                    progress={gameState.progress}
-                />
+                <>
+                    <a href="#main-content" className="skip-link">Hoppa að efni</a>
+                    <AccessibilityMenu />
+                    <button
+                        onClick={() => setShowAccessibilityMenu(true)}
+                        className="fixed bottom-4 right-4 bg-primary-orange text-white p-3 rounded-full shadow-lg hover:bg-dark-orange z-40"
+                        aria-label="Opna aðgengis stillingar">
+                        ⚙️
+                    </button>
+                    <MainMenu
+                        onStartLevel1={handleStartLevel1}
+                        onStartLevel2={handleStartLevel2}
+                        onStartLevel3={handleStartLevel3}
+                        onViewStats={handleViewStats}
+                        onReset={handleReset}
+                        progress={gameState.progress}
+                    />
+                </>
             );
         }
 

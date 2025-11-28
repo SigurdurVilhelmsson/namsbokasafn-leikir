@@ -299,6 +299,204 @@
             border-left-color: #ef4444;
         }
 
+        /* Priority 3: Enhanced Visual Effects */
+
+        /* Particle Effects */
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(300px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes sparkle {
+            0%, 100% {
+                transform: scale(0) rotate(0deg);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.5) rotate(180deg);
+                opacity: 1;
+            }
+        }
+
+        .confetti-particle {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            z-index: 1000;
+            animation: confetti-fall 2s ease-out forwards;
+            pointer-events: none;
+        }
+
+        .sparkle-effect {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            animation: sparkle 0.8s ease-out;
+            pointer-events: none;
+        }
+
+        /* Enhanced Molecule Animations */
+        @keyframes molecule-increase {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes molecule-decrease {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(0.7); opacity: 0.5; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes particle-flow-right {
+            0% {
+                transform: translateX(0) scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: translateX(50%) scale(0.8);
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateX(100%) scale(0);
+                opacity: 0;
+            }
+        }
+
+        @keyframes particle-flow-left {
+            0% {
+                transform: translateX(0) scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: translateX(-50%) scale(0.8);
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateX(-100%) scale(0);
+                opacity: 0;
+            }
+        }
+
+        .molecule-increasing {
+            animation: molecule-increase 1s ease-in-out;
+        }
+
+        .molecule-decreasing {
+            animation: molecule-decrease 1s ease-in-out;
+        }
+
+        /* Stressed Component Highlighting */
+        .stressed-component {
+            position: relative;
+            animation: stress-pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes stress-pulse {
+            0%, 100% {
+                transform: scale(1);
+                filter: brightness(1);
+            }
+            50% {
+                transform: scale(1.1);
+                filter: brightness(1.3) drop-shadow(0 0 10px rgba(251, 146, 60, 0.8));
+            }
+        }
+
+        /* Enhanced Shift Animations */
+        .equilibrium-arrows.shift-right-enhanced {
+            animation: shift-right-flow 1.5s ease-in-out;
+        }
+
+        .equilibrium-arrows.shift-left-enhanced {
+            animation: shift-left-flow 1.5s ease-in-out;
+        }
+
+        @keyframes shift-right-flow {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(10px); color: #4ade80; }
+            50% { transform: translateX(20px); color: #22c55e; }
+            75% { transform: translateX(10px); color: #4ade80; }
+        }
+
+        @keyframes shift-left-flow {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); color: #60a5fa; }
+            50% { transform: translateX(-20px); color: #3b82f6; }
+            75% { transform: translateX(-10px); color: #60a5fa; }
+        }
+
+        /* Celebration Effect */
+        @keyframes celebrate {
+            0% { transform: scale(1) rotate(0deg); }
+            25% { transform: scale(1.1) rotate(-5deg); }
+            50% { transform: scale(1.2) rotate(5deg); }
+            75% { transform: scale(1.1) rotate(-5deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        .celebrate {
+            animation: celebrate 0.6s ease-in-out;
+        }
+
+        /* Enhanced Thermodynamics Indicator */
+        .thermo-indicator-enhanced {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .thermo-indicator-enhanced::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            to { left: 100%; }
+        }
+
+        /* Sound Toggle Button */
+        .sound-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+
+        .sound-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(139, 92, 246, 0.6);
+        }
+
+        .sound-toggle.muted {
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+            opacity: 0.7;
+        }
+
         /* Mobile Optimizations */
         @media (max-width: 768px) {
             .molecule {
@@ -317,6 +515,14 @@
             .stress-btn {
                 font-size: 0.75rem;
                 padding: 10px 15px;
+            }
+
+            .sound-toggle {
+                bottom: 15px;
+                right: 15px;
+                width: 45px;
+                height: 45px;
+                font-size: 1.25rem;
             }
         }
     </style>
@@ -358,6 +564,11 @@
             nextEquilibrium: "Næsta jafnvægi",
             instructions: "Leiðbeiningar",
             tryAgain: "Reyndu aftur",
+            // Challenge Mode translations
+            question: "Spurning",
+            nextQuestion: "Næsta spurning",
+            showResults: "Sýna úrslit",
+            appliedStress: "Beitt álag",
         };
 
         // ============================================
@@ -471,8 +682,388 @@
         // ============================================
 
         const EQUILIBRIUM_BANK = [
+            // ============================================
+            // BEGINNER LEVEL (10 Equilibria)
+            // ============================================
             {
                 id: 1,
+                equation: 'N₂O₄(g) ⇌ 2NO₂(g)',
+                name: 'Dinitrogen Tetroxide',
+                nameIs: 'Díköfnunarefnisoxíð',
+                difficulty: 'beginner',
+
+                reactants: [
+                    { formula: 'N₂O₄', coefficient: 1, phase: 'g', display: '⚫' }
+                ],
+
+                products: [
+                    { formula: 'NO₂', coefficient: 2, phase: 'g', display: '🟤' }
+                ],
+
+                deltaH: 58,
+
+                totalGasMoles: {
+                    reactants: 1,
+                    products: 2
+                },
+
+                description: 'Colorless N₂O₄ gas converts to brown NO₂ gas when heated.',
+                descriptionIs: 'Litlaust N₂O₄ gas breytist í brúnt NO₂ gas við upphitun.',
+
+                possibleStresses: [
+                    { type: 'add-reactant', target: 'N₂O₄' },
+                    { type: 'add-product', target: 'NO₂' },
+                    { type: 'remove-reactant', target: 'N₂O₄' },
+                    { type: 'remove-product', target: 'NO₂' },
+                    { type: 'increase-temp', target: null },
+                    { type: 'decrease-temp', target: null },
+                    { type: 'increase-pressure', target: null },
+                    { type: 'decrease-pressure', target: null },
+                    { type: 'add-catalyst', target: null }
+                ]
+            },
+            {
+                id: 2,
+                equation: 'H₂(g) + I₂(g) ⇌ 2HI(g)',
+                name: 'Hydrogen Iodide Formation',
+                nameIs: 'Vetnisjóðíðmyndun',
+                difficulty: 'beginner',
+
+                reactants: [
+                    { formula: 'H₂', coefficient: 1, phase: 'g', display: '⚪⚪' },
+                    { formula: 'I₂', coefficient: 1, phase: 'g', display: '🟣🟣' }
+                ],
+
+                products: [
+                    { formula: 'HI', coefficient: 2, phase: 'g', display: '⚪🟣' }
+                ],
+
+                deltaH: 53,
+
+                totalGasMoles: {
+                    reactants: 2,
+                    products: 2
+                },
+
+                description: 'Simple formation reaction used to teach equilibrium constants.',
+                descriptionIs: 'Einfalt myndunarhvarf sem notað er til að kenna jafnvægisfasta.',
+
+                possibleStresses: [
+                    { type: 'add-reactant', target: 'H₂' },
+                    { type: 'add-reactant', target: 'I₂' },
+                    { type: 'add-product', target: 'HI' },
+                    { type: 'remove-reactant', target: 'H₂' },
+                    { type: 'remove-product', target: 'HI' },
+                    { type: 'increase-temp', target: null },
+                    { type: 'decrease-temp', target: null },
+                    { type: 'increase-pressure', target: null },
+                    { type: 'add-catalyst', target: null }
+                ]
+            },
+            {
+                id: 3,
+                equation: 'PCl₅(g) ⇌ PCl₃(g) + Cl₂(g)',
+                name: 'Phosphorus Pentachloride',
+                nameIs: 'Fosfórpentaklóríð',
+                difficulty: 'beginner',
+
+                reactants: [
+                    { formula: 'PCl₅', coefficient: 1, phase: 'g', display: '🔷' }
+                ],
+
+                products: [
+                    { formula: 'PCl₃', coefficient: 1, phase: 'g', display: '🔹' },
+                    { formula: 'Cl₂', coefficient: 1, phase: 'g', display: '🟢🟢' }
+                ],
+
+                deltaH: 88,
+
+                totalGasMoles: {
+                    reactants: 1,
+                    products: 2
+                },
+
+                description: 'Decomposition of PCl₅ upon heating.',
+                descriptionIs: 'Umbreyting PCl₅ við upphitun.',
+
+                possibleStresses: [
+                    { type: 'add-reactant', target: 'PCl₅' },
+                    { type: 'add-product', target: 'PCl₃' },
+                    { type: 'add-product', target: 'Cl₂' },
+                    { type: 'remove-reactant', target: 'PCl₅' },
+                    { type: 'remove-product', target: 'Cl₂' },
+                    { type: 'increase-temp', target: null },
+                    { type: 'decrease-temp', target: null },
+                    { type: 'increase-pressure', target: null },
+                    { type: 'decrease-pressure', target: null },
+                    { type: 'add-catalyst', target: null }
+                ]
+            },
+            {
+                id: 4,
+                equation: 'CO(g) + 2H₂(g) ⇌ CH₃OH(g)',
+                name: 'Methanol Synthesis',
+                nameIs: 'Metanólsamsetning',
+                difficulty: 'beginner',
+
+                reactants: [
+                    { formula: 'CO', coefficient: 1, phase: 'g', display: '⚫🔴' },
+                    { formula: 'H₂', coefficient: 2, phase: 'g', display: '⚪⚪' }
+                ],
+
+                products: [
+                    { formula: 'CH₃OH', coefficient: 1, phase: 'g', display: '🧪' }
+                ],
+
+                deltaH: -91,
+
+                totalGasMoles: {
+                    reactants: 3,
+                    products: 1
+                },
+
+                description: 'Industrial production of methanol for fuel and chemicals.',
+                descriptionIs: 'Iðnaðarframleiðsla á metanóli sem eldsneyti og efni.',
+
+                possibleStresses: [
+                    { type: 'add-reactant', target: 'CO' },
+                    { type: 'add-reactant', target: 'H₂' },
+                    { type: 'add-product', target: 'CH₃OH' },
+                    { type: 'remove-reactant', target: 'CO' },
+                    { type: 'remove-product', target: 'CH₃OH' },
+                    { type: 'increase-temp', target: null },
+                    { type: 'decrease-temp', target: null },
+                    { type: 'increase-pressure', target: null },
+                    { type: 'decrease-pressure', target: null },
+                    { type: 'add-catalyst', target: null }
+                ]
+            },
+            {
+                id: 5,
+                equation: 'CaCO₃(s) ⇌ CaO(s) + CO₂(g)',
+                name: 'Calcium Carbonate Decomposition',
+                nameIs: 'Kalksteinsuppleysing',
+                difficulty: 'beginner',
+
+                reactants: [
+                    { formula: 'CaCO₃', coefficient: 1, phase: 's', display: '🪨' }
+                ],
+
+                products: [
+                    { formula: 'CaO', coefficient: 1, phase: 's', display: '⚪' },
+                    { formula: 'CO₂', coefficient: 1, phase: 'g', display: '⚫🔴🔴' }
+                ],
+
+                deltaH: 178,
+
+                totalGasMoles: {
+                    reactants: 0,
+                    products: 1
+                },
+
+                description: 'Limestone decomposition, used in cement production.',
+                descriptionIs: 'Kalksteinn við upphitun, notað í sementframleiðslu.',
+
+                possibleStresses: [
+                    { type: 'add-product', target: 'CO₂' },
+                    { type: 'remove-product', target: 'CO₂' },
+                    { type: 'increase-temp', target: null },
+                    { type: 'decrease-temp', target: null },
+                    { type: 'increase-pressure', target: null },
+                    { type: 'decrease-pressure', target: null },
+                    { type: 'add-catalyst', target: null }
+                ]
+            },
+            {
+                id: 6,
+                equation: 'Fe³⁺(aq) + SCN⁻(aq) ⇌ FeSCN²⁺(aq)',
+                name: 'Iron Thiocyanate Complex',
+                nameIs: 'Járnþíósýanatkomplexinn',
+                difficulty: 'beginner',
+
+                reactants: [
+                    { formula: 'Fe³⁺', coefficient: 1, phase: 'aq', display: '🟡⁺' },
+                    { formula: 'SCN⁻', coefficient: 1, phase: 'aq', display: '⚪⁻' }
+                ],
+
+                products: [
+                    { formula: 'FeSCN²⁺', coefficient: 1, phase: 'aq', display: '🔴' }
+                ],
+
+                deltaH: -20,
+
+                totalGasMoles: {
+                    reactants: 0,
+                    products: 0
+                },
+
+                description: 'Blood-red complex ion, used in chemistry demonstrations.',
+                descriptionIs: 'Blóðrauður komplexjón, notaður í efnafræðisýningum.',
+
+                possibleStresses: [
+                    { type: 'add-reactant', target: 'Fe³⁺' },
+                    { type: 'add-reactant', target: 'SCN⁻' },
+                    { type: 'add-product', target: 'FeSCN²⁺' },
+                    { type: 'remove-reactant', target: 'Fe³⁺' },
+                    { type: 'remove-product', target: 'FeSCN²⁺' },
+                    { type: 'increase-temp', target: null },
+                    { type: 'decrease-temp', target: null },
+                    { type: 'add-catalyst', target: null }
+                ]
+            },
+            {
+                id: 7,
+                equation: 'H₂O(l) ⇌ H⁺(aq) + OH⁻(aq)',
+                name: 'Water Autoionization',
+                nameIs: 'Sjálfjöfnun vatns',
+                difficulty: 'beginner',
+
+                reactants: [
+                    { formula: 'H₂O', coefficient: 1, phase: 'l', display: '💧' }
+                ],
+
+                products: [
+                    { formula: 'H⁺', coefficient: 1, phase: 'aq', display: '⊕' },
+                    { formula: 'OH⁻', coefficient: 1, phase: 'aq', display: '⊖' }
+                ],
+
+                deltaH: 56,
+
+                totalGasMoles: {
+                    reactants: 0,
+                    products: 0
+                },
+
+                description: 'Self-ionization of water, basis of pH system.',
+                descriptionIs: 'Sjálfjafnvægi vatns, grunnur pH kerfis.',
+
+                possibleStresses: [
+                    { type: 'add-product', target: 'H⁺' },
+                    { type: 'add-product', target: 'OH⁻' },
+                    { type: 'remove-product', target: 'H⁺' },
+                    { type: 'remove-product', target: 'OH⁻' },
+                    { type: 'increase-temp', target: null },
+                    { type: 'decrease-temp', target: null },
+                    { type: 'add-catalyst', target: null }
+                ]
+            },
+            {
+                id: 8,
+                equation: 'CH₃COOH(aq) ⇌ CH₃COO⁻(aq) + H⁺(aq)',
+                name: 'Acetic Acid Dissociation',
+                nameIs: 'Ediksýrusundrun',
+                difficulty: 'beginner',
+
+                reactants: [
+                    { formula: 'CH₃COOH', coefficient: 1, phase: 'aq', display: '🧪' }
+                ],
+
+                products: [
+                    { formula: 'CH₃COO⁻', coefficient: 1, phase: 'aq', display: '🧪⁻' },
+                    { formula: 'H⁺', coefficient: 1, phase: 'aq', display: '⊕' }
+                ],
+
+                deltaH: 5,
+
+                totalGasMoles: {
+                    reactants: 0,
+                    products: 0
+                },
+
+                description: 'Acetic acid, typical weak acid equilibrium.',
+                descriptionIs: 'Ediksýra, dæmigert veikt sýrujafnvægi.',
+
+                possibleStresses: [
+                    { type: 'add-reactant', target: 'CH₃COOH' },
+                    { type: 'add-product', target: 'H⁺' },
+                    { type: 'add-product', target: 'CH₃COO⁻' },
+                    { type: 'remove-reactant', target: 'CH₃COOH' },
+                    { type: 'remove-product', target: 'H⁺' },
+                    { type: 'increase-temp', target: null },
+                    { type: 'decrease-temp', target: null },
+                    { type: 'add-catalyst', target: null }
+                ]
+            },
+            {
+                id: 9,
+                equation: 'NH₃(aq) + H₂O(l) ⇌ NH₄⁺(aq) + OH⁻(aq)',
+                name: 'Ammonia Base',
+                nameIs: 'Ammóníakbasi',
+                difficulty: 'beginner',
+
+                reactants: [
+                    { formula: 'NH₃', coefficient: 1, phase: 'aq', display: '🔷' },
+                    { formula: 'H₂O', coefficient: 1, phase: 'l', display: '💧' }
+                ],
+
+                products: [
+                    { formula: 'NH₄⁺', coefficient: 1, phase: 'aq', display: '🔷⁺' },
+                    { formula: 'OH⁻', coefficient: 1, phase: 'aq', display: '⊖' }
+                ],
+
+                deltaH: -3,
+
+                totalGasMoles: {
+                    reactants: 0,
+                    products: 0
+                },
+
+                description: 'Ammonia as a weak base in water.',
+                descriptionIs: 'Ammóníak sem veikur basi í vatni.',
+
+                possibleStresses: [
+                    { type: 'add-reactant', target: 'NH₃' },
+                    { type: 'add-product', target: 'NH₄⁺' },
+                    { type: 'add-product', target: 'OH⁻' },
+                    { type: 'remove-reactant', target: 'NH₃' },
+                    { type: 'remove-product', target: 'OH⁻' },
+                    { type: 'increase-temp', target: null },
+                    { type: 'decrease-temp', target: null },
+                    { type: 'add-catalyst', target: null }
+                ]
+            },
+            {
+                id: 10,
+                equation: 'AgCl(s) ⇌ Ag⁺(aq) + Cl⁻(aq)',
+                name: 'Silver Chloride Precipitation',
+                nameIs: 'Silfurklóríðleysnijafnvægi',
+                difficulty: 'beginner',
+
+                reactants: [
+                    { formula: 'AgCl', coefficient: 1, phase: 's', display: '🔘' }
+                ],
+
+                products: [
+                    { formula: 'Ag⁺', coefficient: 1, phase: 'aq', display: '⚪⁺' },
+                    { formula: 'Cl⁻', coefficient: 1, phase: 'aq', display: '🟢⁻' }
+                ],
+
+                deltaH: 65,
+
+                totalGasMoles: {
+                    reactants: 0,
+                    products: 0
+                },
+
+                description: 'Solubility equilibrium of silver chloride, white precipitate.',
+                descriptionIs: 'Leysnijafnvægi silfurklóríðs, hvítur fellur út.',
+
+                possibleStresses: [
+                    { type: 'add-product', target: 'Ag⁺' },
+                    { type: 'add-product', target: 'Cl⁻' },
+                    { type: 'remove-product', target: 'Ag⁺' },
+                    { type: 'remove-product', target: 'Cl⁻' },
+                    { type: 'increase-temp', target: null },
+                    { type: 'decrease-temp', target: null },
+                    { type: 'add-catalyst', target: null }
+                ]
+            },
+
+            // ============================================
+            // INTERMEDIATE LEVEL (12 Equilibria)
+            // ============================================
+            {
+                id: 11,
                 equation: 'N₂(g) + 3H₂(g) ⇌ 2NH₃(g)',
                 name: 'Haber Process',
                 nameIs: 'Haber-aðferð',
@@ -511,44 +1102,7 @@
                 ]
             },
             {
-                id: 2,
-                equation: 'N₂O₄(g) ⇌ 2NO₂(g)',
-                name: 'Dinitrogen Tetroxide',
-                nameIs: 'Díköfnunarefnisoxíð',
-                difficulty: 'beginner',
-
-                reactants: [
-                    { formula: 'N₂O₄', coefficient: 1, phase: 'g', display: '⚫' }
-                ],
-
-                products: [
-                    { formula: 'NO₂', coefficient: 2, phase: 'g', display: '🟤' }
-                ],
-
-                deltaH: 58,
-
-                totalGasMoles: {
-                    reactants: 1,
-                    products: 2
-                },
-
-                description: 'Colorless N₂O₄ gas converts to brown NO₂ gas when heated.',
-                descriptionIs: 'Litlaust N₂O₄ gas breytist í brúnt NO₂ gas við upphitun.',
-
-                possibleStresses: [
-                    { type: 'add-reactant', target: 'N₂O₄' },
-                    { type: 'add-product', target: 'NO₂' },
-                    { type: 'remove-reactant', target: 'N₂O₄' },
-                    { type: 'remove-product', target: 'NO₂' },
-                    { type: 'increase-temp', target: null },
-                    { type: 'decrease-temp', target: null },
-                    { type: 'increase-pressure', target: null },
-                    { type: 'decrease-pressure', target: null },
-                    { type: 'add-catalyst', target: null }
-                ]
-            },
-            {
-                id: 3,
+                id: 12,
                 equation: '2SO₂(g) + O₂(g) ⇌ 2SO₃(g)',
                 name: 'Contact Process',
                 nameIs: 'Snertiaðferð',
@@ -587,37 +1141,79 @@
                 ]
             },
             {
-                id: 4,
-                equation: 'H₂(g) + I₂(g) ⇌ 2HI(g)',
-                name: 'Hydrogen Iodide Formation',
-                nameIs: 'Vetnisjóðíðmyndun',
-                difficulty: 'beginner',
+                id: 13,
+                equation: '4NH₃(g) + 5O₂(g) ⇌ 4NO(g) + 6H₂O(g)',
+                name: 'Ostwald Process',
+                nameIs: 'Ostwald-aðferð',
+                difficulty: 'intermediate',
 
                 reactants: [
-                    { formula: 'H₂', coefficient: 1, phase: 'g', display: '⚪⚪' },
-                    { formula: 'I₂', coefficient: 1, phase: 'g', display: '🟣🟣' }
+                    { formula: 'NH₃', coefficient: 4, phase: 'g', display: '🔷' },
+                    { formula: 'O₂', coefficient: 5, phase: 'g', display: '🔴🔴' }
                 ],
 
                 products: [
-                    { formula: 'HI', coefficient: 2, phase: 'g', display: '⚪🟣' }
+                    { formula: 'NO', coefficient: 4, phase: 'g', display: '🔴⚫' },
+                    { formula: 'H₂O', coefficient: 6, phase: 'g', display: '💧' }
                 ],
 
-                deltaH: 53,
+                deltaH: -905,
+
+                totalGasMoles: {
+                    reactants: 9,
+                    products: 10
+                },
+
+                description: 'Nitrogen oxide production for nitric acid.',
+                descriptionIs: 'Köfnunarefnisoxíðframleiðsla fyrir salpeturssýru.',
+
+                possibleStresses: [
+                    { type: 'add-reactant', target: 'NH₃' },
+                    { type: 'add-reactant', target: 'O₂' },
+                    { type: 'add-product', target: 'NO' },
+                    { type: 'remove-reactant', target: 'NH₃' },
+                    { type: 'remove-product', target: 'NO' },
+                    { type: 'increase-temp', target: null },
+                    { type: 'decrease-temp', target: null },
+                    { type: 'increase-pressure', target: null },
+                    { type: 'decrease-pressure', target: null },
+                    { type: 'add-catalyst', target: null }
+                ]
+            },
+            {
+                id: 14,
+                equation: 'CO(g) + H₂O(g) ⇌ CO₂(g) + H₂(g)',
+                name: 'Water Gas Shift',
+                nameIs: 'Vatnsgashliðrun',
+                difficulty: 'intermediate',
+
+                reactants: [
+                    { formula: 'CO', coefficient: 1, phase: 'g', display: '⚫🔴' },
+                    { formula: 'H₂O', coefficient: 1, phase: 'g', display: '💧' }
+                ],
+
+                products: [
+                    { formula: 'CO₂', coefficient: 1, phase: 'g', display: '⚫🔴🔴' },
+                    { formula: 'H₂', coefficient: 1, phase: 'g', display: '⚪⚪' }
+                ],
+
+                deltaH: -41,
 
                 totalGasMoles: {
                     reactants: 2,
                     products: 2
                 },
 
-                description: 'Simple formation reaction used to teach equilibrium constants.',
-                descriptionIs: 'Einfalt myndunarhvarf sem notað er til að kenna jafnvægisfasta.',
+                description: 'Important in hydrogen production and industry.',
+                descriptionIs: 'Mikilvægt í vetniframleiðslu og iðnaði.',
 
                 possibleStresses: [
-                    { type: 'add-reactant', target: 'H₂' },
-                    { type: 'add-reactant', target: 'I₂' },
-                    { type: 'add-product', target: 'HI' },
-                    { type: 'remove-reactant', target: 'H₂' },
-                    { type: 'remove-product', target: 'HI' },
+                    { type: 'add-reactant', target: 'CO' },
+                    { type: 'add-reactant', target: 'H₂O' },
+                    { type: 'add-product', target: 'CO₂' },
+                    { type: 'add-product', target: 'H₂' },
+                    { type: 'remove-reactant', target: 'CO' },
+                    { type: 'remove-product', target: 'H₂' },
                     { type: 'increase-temp', target: null },
                     { type: 'decrease-temp', target: null },
                     { type: 'increase-pressure', target: null },
@@ -625,37 +1221,600 @@
                 ]
             },
             {
-                id: 5,
-                equation: 'CO(g) + 2H₂(g) ⇌ CH₃OH(g)',
-                name: 'Methanol Synthesis',
-                nameIs: 'Metanólsamsetning',
-                difficulty: 'beginner',
+                id: 15,
+                equation: '2NO(g) + O₂(g) ⇌ 2NO₂(g)',
+                name: 'Nitrogen Oxide Formation',
+                nameIs: 'Köfnunarefnisoxíðmyndun',
+                difficulty: 'intermediate',
 
                 reactants: [
-                    { formula: 'CO', coefficient: 1, phase: 'g', display: '⚫🔴' },
-                    { formula: 'H₂', coefficient: 2, phase: 'g', display: '⚪⚪' }
+                    { formula: 'NO', coefficient: 2, phase: 'g', display: '🔴⚫' },
+                    { formula: 'O₂', coefficient: 1, phase: 'g', display: '🔴🔴' }
                 ],
 
                 products: [
-                    { formula: 'CH₃OH', coefficient: 1, phase: 'g', display: '🧪' }
+                    { formula: 'NO₂', coefficient: 2, phase: 'g', display: '🟤' }
                 ],
 
-                deltaH: -91,
+                deltaH: -114,
 
                 totalGasMoles: {
                     reactants: 3,
-                    products: 1
+                    products: 2
                 },
 
-                description: 'Industrial production of methanol for fuel and chemicals.',
-                descriptionIs: 'Iðnaðarframleiðsla á metanóli sem eldsneyti og efni.',
+                description: 'Air pollution and industrial reaction.',
+                descriptionIs: 'Loftmengun og iðnaðarhvarf.',
 
                 possibleStresses: [
-                    { type: 'add-reactant', target: 'CO' },
+                    { type: 'add-reactant', target: 'NO' },
+                    { type: 'add-reactant', target: 'O₂' },
+                    { type: 'add-product', target: 'NO₂' },
+                    { type: 'remove-reactant', target: 'NO' },
+                    { type: 'remove-product', target: 'NO₂' },
+                    { type: 'increase-temp', target: null },
+                    { type: 'decrease-temp', target: null },
+                    { type: 'increase-pressure', target: null },
+                    { type: 'decrease-pressure', target: null },
+                    { type: 'add-catalyst', target: null }
+                ]
+            },
+            {
+                id: 16,
+                equation: 'C(s) + CO₂(g) ⇌ 2CO(g)',
+                name: 'Boudouard Reaction',
+                nameIs: 'Boudouard-hvarf',
+                difficulty: 'intermediate',
+
+                reactants: [
+                    { formula: 'C', coefficient: 1, phase: 's', display: '⚫' },
+                    { formula: 'CO₂', coefficient: 1, phase: 'g', display: '⚫🔴🔴' }
+                ],
+
+                products: [
+                    { formula: 'CO', coefficient: 2, phase: 'g', display: '⚫🔴' }
+                ],
+
+                deltaH: 172,
+
+                totalGasMoles: {
+                    reactants: 1,
+                    products: 2
+                },
+
+                description: 'Carbon reaction in high-temperature furnaces and metallurgy.',
+                descriptionIs: 'Kolefnishvarf í háhitasmíði og málmvinnslu.',
+
+                possibleStresses: [
+                    { type: 'add-reactant', target: 'CO₂' },
+                    { type: 'add-product', target: 'CO' },
+                    { type: 'remove-reactant', target: 'CO₂' },
+                    { type: 'remove-product', target: 'CO' },
+                    { type: 'increase-temp', target: null },
+                    { type: 'decrease-temp', target: null },
+                    { type: 'increase-pressure', target: null },
+                    { type: 'decrease-pressure', target: null },
+                    { type: 'add-catalyst', target: null }
+                ]
+            },
+            {
+                id: 17,
+                equation: 'CH₄(g) + H₂O(g) ⇌ CO(g) + 3H₂(g)',
+                name: 'Steam Reforming',
+                nameIs: 'Gufuumbræða',
+                difficulty: 'intermediate',
+
+                reactants: [
+                    { formula: 'CH₄', coefficient: 1, phase: 'g', display: '⚫⚪' },
+                    { formula: 'H₂O', coefficient: 1, phase: 'g', display: '💧' }
+                ],
+
+                products: [
+                    { formula: 'CO', coefficient: 1, phase: 'g', display: '⚫🔴' },
+                    { formula: 'H₂', coefficient: 3, phase: 'g', display: '⚪⚪' }
+                ],
+
+                deltaH: 206,
+
+                totalGasMoles: {
+                    reactants: 2,
+                    products: 4
+                },
+
+                description: 'Primary method for hydrogen production from natural gas.',
+                descriptionIs: 'Helsta aðferð við vetniframleiðslu úr náttúrugasi.',
+
+                possibleStresses: [
+                    { type: 'add-reactant', target: 'CH₄' },
+                    { type: 'add-reactant', target: 'H₂O' },
+                    { type: 'add-product', target: 'CO' },
+                    { type: 'add-product', target: 'H₂' },
+                    { type: 'remove-reactant', target: 'CH₄' },
+                    { type: 'remove-product', target: 'H₂' },
+                    { type: 'increase-temp', target: null },
+                    { type: 'decrease-temp', target: null },
+                    { type: 'increase-pressure', target: null },
+                    { type: 'decrease-pressure', target: null },
+                    { type: 'add-catalyst', target: null }
+                ]
+            },
+            {
+                id: 18,
+                equation: 'H₂(g) + CO₂(g) ⇌ H₂O(g) + CO(g)',
+                name: 'Reverse Water Gas',
+                nameIs: 'Andhverfvatnsgas',
+                difficulty: 'intermediate',
+
+                reactants: [
+                    { formula: 'H₂', coefficient: 1, phase: 'g', display: '⚪⚪' },
+                    { formula: 'CO₂', coefficient: 1, phase: 'g', display: '⚫🔴🔴' }
+                ],
+
+                products: [
+                    { formula: 'H₂O', coefficient: 1, phase: 'g', display: '💧' },
+                    { formula: 'CO', coefficient: 1, phase: 'g', display: '⚫🔴' }
+                ],
+
+                deltaH: 41,
+
+                totalGasMoles: {
+                    reactants: 2,
+                    products: 2
+                },
+
+                description: 'Reverse of the Water Gas Shift reaction.',
+                descriptionIs: 'Andhverfa Water Gas Shift hvarfsins.',
+
+                possibleStresses: [
                     { type: 'add-reactant', target: 'H₂' },
-                    { type: 'add-product', target: 'CH₃OH' },
-                    { type: 'remove-reactant', target: 'CO' },
-                    { type: 'remove-product', target: 'CH₃OH' },
+                    { type: 'add-reactant', target: 'CO₂' },
+                    { type: 'add-product', target: 'H₂O' },
+                    { type: 'add-product', target: 'CO' },
+                    { type: 'remove-reactant', target: 'H₂' },
+                    { type: 'remove-product', target: 'CO' },
+                    { type: 'increase-temp', target: null },
+                    { type: 'decrease-temp', target: null },
+                    { type: 'increase-pressure', target: null },
+                    { type: 'add-catalyst', target: null }
+                ]
+            },
+            {
+                id: 19,
+                equation: 'N₂(g) + O₂(g) ⇌ 2NO(g)',
+                name: 'Nitrogen Fixation',
+                nameIs: 'Köfnunarefnisbinding',
+                difficulty: 'intermediate',
+
+                reactants: [
+                    { formula: 'N₂', coefficient: 1, phase: 'g', display: '🔵🔵' },
+                    { formula: 'O₂', coefficient: 1, phase: 'g', display: '🔴🔴' }
+                ],
+
+                products: [
+                    { formula: 'NO', coefficient: 2, phase: 'g', display: '🔴⚫' }
+                ],
+
+                deltaH: 181,
+
+                totalGasMoles: {
+                    reactants: 2,
+                    products: 2
+                },
+
+                description: 'Lightning in atmosphere fixes nitrogen.',
+                descriptionIs: 'Eldingar í andrúmslofti binda köfnunarefni.',
+
+                possibleStresses: [
+                    { type: 'add-reactant', target: 'N₂' },
+                    { type: 'add-reactant', target: 'O₂' },
+                    { type: 'add-product', target: 'NO' },
+                    { type: 'remove-reactant', target: 'N₂' },
+                    { type: 'remove-product', target: 'NO' },
+                    { type: 'increase-temp', target: null },
+                    { type: 'decrease-temp', target: null },
+                    { type: 'increase-pressure', target: null },
+                    { type: 'add-catalyst', target: null }
+                ]
+            },
+            {
+                id: 20,
+                equation: '2H₂S(g) + 3O₂(g) ⇌ 2H₂O(g) + 2SO₂(g)',
+                name: 'Hydrogen Sulfide Oxidation',
+                nameIs: 'Vetisbrennssteinsoxun',
+                difficulty: 'intermediate',
+
+                reactants: [
+                    { formula: 'H₂S', coefficient: 2, phase: 'g', display: '💛⚪' },
+                    { formula: 'O₂', coefficient: 3, phase: 'g', display: '🔴🔴' }
+                ],
+
+                products: [
+                    { formula: 'H₂O', coefficient: 2, phase: 'g', display: '💧' },
+                    { formula: 'SO₂', coefficient: 2, phase: 'g', display: '💛' }
+                ],
+
+                deltaH: -1036,
+
+                totalGasMoles: {
+                    reactants: 5,
+                    products: 4
+                },
+
+                description: 'Combustion of hydrogen sulfide, rotten egg smell.',
+                descriptionIs: 'Brennsla vetisbrennsisteinss, lykt af rotnum eggjum.',
+
+                possibleStresses: [
+                    { type: 'add-reactant', target: 'H₂S' },
+                    { type: 'add-reactant', target: 'O₂' },
+                    { type: 'add-product', target: 'H₂O' },
+                    { type: 'add-product', target: 'SO₂' },
+                    { type: 'remove-reactant', target: 'H₂S' },
+                    { type: 'remove-product', target: 'SO₂' },
+                    { type: 'increase-temp', target: null },
+                    { type: 'decrease-temp', target: null },
+                    { type: 'increase-pressure', target: null },
+                    { type: 'decrease-pressure', target: null },
+                    { type: 'add-catalyst', target: null }
+                ]
+            },
+            {
+                id: 21,
+                equation: 'H₂CO₃(aq) ⇌ H⁺(aq) + HCO₃⁻(aq)',
+                name: 'Carbonic Acid',
+                nameIs: 'Kolsýra',
+                difficulty: 'intermediate',
+
+                reactants: [
+                    { formula: 'H₂CO₃', coefficient: 1, phase: 'aq', display: '💧⚫' }
+                ],
+
+                products: [
+                    { formula: 'H⁺', coefficient: 1, phase: 'aq', display: '⊕' },
+                    { formula: 'HCO₃⁻', coefficient: 1, phase: 'aq', display: '⊖' }
+                ],
+
+                deltaH: 10,
+
+                totalGasMoles: {
+                    reactants: 0,
+                    products: 0
+                },
+
+                description: 'Carbonic acid in water, important in blood buffer system.',
+                descriptionIs: 'Kolsýra í vatni, mikilvægt í blóðpufferkerfi.',
+
+                possibleStresses: [
+                    { type: 'add-reactant', target: 'H₂CO₃' },
+                    { type: 'add-product', target: 'H⁺' },
+                    { type: 'add-product', target: 'HCO₃⁻' },
+                    { type: 'remove-reactant', target: 'H₂CO₃' },
+                    { type: 'remove-product', target: 'H⁺' },
+                    { type: 'increase-temp', target: null },
+                    { type: 'decrease-temp', target: null },
+                    { type: 'add-catalyst', target: null }
+                ]
+            },
+            {
+                id: 22,
+                equation: 'Cu(NH₃)₄²⁺(aq) ⇌ Cu²⁺(aq) + 4NH₃(aq)',
+                name: 'Copper Ammonia Complex',
+                nameIs: 'Koparammóníakkomplexinn',
+                difficulty: 'intermediate',
+
+                reactants: [
+                    { formula: 'Cu(NH₃)₄²⁺', coefficient: 1, phase: 'aq', display: '🔵' }
+                ],
+
+                products: [
+                    { formula: 'Cu²⁺', coefficient: 1, phase: 'aq', display: '💙' },
+                    { formula: 'NH₃', coefficient: 4, phase: 'aq', display: '🔷' }
+                ],
+
+                deltaH: 42,
+
+                totalGasMoles: {
+                    reactants: 0,
+                    products: 0
+                },
+
+                description: 'Deep blue copper-ammonia complex, example of ligand exchange.',
+                descriptionIs: 'Djúpblár koparammóníakkomplexinn, dæmi um ligandskipti.',
+
+                possibleStresses: [
+                    { type: 'add-reactant', target: 'Cu(NH₃)₄²⁺' },
+                    { type: 'add-product', target: 'Cu²⁺' },
+                    { type: 'add-product', target: 'NH₃' },
+                    { type: 'remove-reactant', target: 'Cu(NH₃)₄²⁺' },
+                    { type: 'remove-product', target: 'NH₃' },
+                    { type: 'increase-temp', target: null },
+                    { type: 'decrease-temp', target: null },
+                    { type: 'add-catalyst', target: null }
+                ]
+            },
+
+            // ============================================
+            // ADVANCED LEVEL (8 Equilibria)
+            // ============================================
+            {
+                id: 23,
+                equation: '2C(s) + O₂(g) ⇌ 2CO(g)',
+                name: 'Carbon Combustion',
+                nameIs: 'Kolefnisbrennsla',
+                difficulty: 'advanced',
+
+                reactants: [
+                    { formula: 'C', coefficient: 2, phase: 's', display: '⚫' },
+                    { formula: 'O₂', coefficient: 1, phase: 'g', display: '🔴🔴' }
+                ],
+
+                products: [
+                    { formula: 'CO', coefficient: 2, phase: 'g', display: '⚫🔴' }
+                ],
+
+                deltaH: -221,
+
+                totalGasMoles: {
+                    reactants: 1,
+                    products: 2
+                },
+
+                description: 'Carbon combustion, first step in coupled reactions.',
+                descriptionIs: 'Kolefnisbrennsla, fyrsta skref í samtengdum hvörfum.',
+
+                possibleStresses: [
+                    { type: 'add-reactant', target: 'O₂' },
+                    { type: 'add-product', target: 'CO' },
+                    { type: 'remove-reactant', target: 'O₂' },
+                    { type: 'remove-product', target: 'CO' },
+                    { type: 'increase-temp', target: null },
+                    { type: 'decrease-temp', target: null },
+                    { type: 'increase-pressure', target: null },
+                    { type: 'decrease-pressure', target: null },
+                    { type: 'add-catalyst', target: null }
+                ]
+            },
+            {
+                id: 24,
+                equation: 'CH₃COOH(aq) + H₂O(l) ⇌ CH₃COO⁻(aq) + H₃O⁺(aq)',
+                name: 'Acetate Buffer System',
+                nameIs: 'Ediksýrupufferkerfi',
+                difficulty: 'advanced',
+
+                reactants: [
+                    { formula: 'CH₃COOH', coefficient: 1, phase: 'aq', display: '🧪' },
+                    { formula: 'H₂O', coefficient: 1, phase: 'l', display: '💧' }
+                ],
+
+                products: [
+                    { formula: 'CH₃COO⁻', coefficient: 1, phase: 'aq', display: '🧪⁻' },
+                    { formula: 'H₃O⁺', coefficient: 1, phase: 'aq', display: '⊕' }
+                ],
+
+                deltaH: 0,
+
+                totalGasMoles: {
+                    reactants: 0,
+                    products: 0
+                },
+
+                description: 'Buffer system that maintains stable pH.',
+                descriptionIs: 'Bufferkerfi sem viðheldur pH stöðugu.',
+
+                possibleStresses: [
+                    { type: 'add-reactant', target: 'CH₃COOH' },
+                    { type: 'add-product', target: 'CH₃COO⁻' },
+                    { type: 'add-product', target: 'H₃O⁺' },
+                    { type: 'remove-product', target: 'H₃O⁺' },
+                    { type: 'increase-temp', target: null },
+                    { type: 'add-catalyst', target: null }
+                ]
+            },
+            {
+                id: 25,
+                equation: 'N₂(g) + 3H₂(g) ⇌ 2NH₃(g) [K vs T]',
+                name: 'Temperature-Dependent K',
+                nameIs: 'Hitastig-háður K',
+                difficulty: 'advanced',
+
+                reactants: [
+                    { formula: 'N₂', coefficient: 1, phase: 'g', display: '🔵🔵' },
+                    { formula: 'H₂', coefficient: 3, phase: 'g', display: '⚪⚪' }
+                ],
+
+                products: [
+                    { formula: 'NH₃', coefficient: 2, phase: 'g', display: '🔷' }
+                ],
+
+                deltaH: -92,
+
+                totalGasMoles: {
+                    reactants: 4,
+                    products: 2
+                },
+
+                description: 'How equilibrium constant changes with temperature.',
+                descriptionIs: 'Hvernig jafnvægisfasti breytist með hitastigi.',
+
+                possibleStresses: [
+                    { type: 'add-reactant', target: 'N₂' },
+                    { type: 'add-product', target: 'NH₃' },
+                    { type: 'increase-temp', target: null },
+                    { type: 'decrease-temp', target: null },
+                    { type: 'increase-pressure', target: null },
+                    { type: 'add-catalyst', target: null }
+                ]
+            },
+            {
+                id: 26,
+                equation: 'N₂(g) + 3H₂(g) ⇌ 2NH₃(g) [Industrial]',
+                name: 'Pressure-Dependent Industrial',
+                nameIs: 'Þrýstings-háður iðnaður',
+                difficulty: 'advanced',
+
+                reactants: [
+                    { formula: 'N₂', coefficient: 1, phase: 'g', display: '🔵🔵' },
+                    { formula: 'H₂', coefficient: 3, phase: 'g', display: '⚪⚪' }
+                ],
+
+                products: [
+                    { formula: 'NH₃', coefficient: 2, phase: 'g', display: '🔷' }
+                ],
+
+                deltaH: -92,
+
+                totalGasMoles: {
+                    reactants: 4,
+                    products: 2
+                },
+
+                description: 'Real industrial optimization with trade-offs.',
+                descriptionIs: 'Raunveruleg iðnaðarbestun með mótsögnum.',
+
+                possibleStresses: [
+                    { type: 'add-reactant', target: 'N₂' },
+                    { type: 'increase-temp', target: null },
+                    { type: 'decrease-temp', target: null },
+                    { type: 'increase-pressure', target: null },
+                    { type: 'decrease-pressure', target: null },
+                    { type: 'add-catalyst', target: null }
+                ]
+            },
+            {
+                id: 27,
+                equation: 'H₃PO₄(aq) ⇌ H⁺(aq) + H₂PO₄⁻(aq)',
+                name: 'Phosphoric Acid (First Step)',
+                nameIs: 'Fosfórsýra (fyrsta þrep)',
+                difficulty: 'advanced',
+
+                reactants: [
+                    { formula: 'H₃PO₄', coefficient: 1, phase: 'aq', display: '🔶' }
+                ],
+
+                products: [
+                    { formula: 'H⁺', coefficient: 1, phase: 'aq', display: '⊕' },
+                    { formula: 'H₂PO₄⁻', coefficient: 1, phase: 'aq', display: '🔶⁻' }
+                ],
+
+                deltaH: 15,
+
+                totalGasMoles: {
+                    reactants: 0,
+                    products: 0
+                },
+
+                description: 'Stepwise deprotonation of phosphoric acid (first step).',
+                descriptionIs: 'Þrepin deprotonun fosforsýru (fyrsta þrep).',
+
+                possibleStresses: [
+                    { type: 'add-reactant', target: 'H₃PO₄' },
+                    { type: 'add-product', target: 'H⁺' },
+                    { type: 'remove-product', target: 'H⁺' },
+                    { type: 'increase-temp', target: null },
+                    { type: 'decrease-temp', target: null },
+                    { type: 'add-catalyst', target: null }
+                ]
+            },
+            {
+                id: 28,
+                equation: 'N₂(g) + 3H₂(g) ⇌ 2NH₃(g) [Catalyst]',
+                name: 'Heterogeneous Catalysis',
+                nameIs: 'Ólíkfasa hvötunaraðferð',
+                difficulty: 'advanced',
+
+                reactants: [
+                    { formula: 'N₂', coefficient: 1, phase: 'g', display: '🔵🔵' },
+                    { formula: 'H₂', coefficient: 3, phase: 'g', display: '⚪⚪' }
+                ],
+
+                products: [
+                    { formula: 'NH₃', coefficient: 2, phase: 'g', display: '🔷' }
+                ],
+
+                deltaH: -92,
+
+                totalGasMoles: {
+                    reactants: 4,
+                    products: 2
+                },
+
+                description: 'How catalysts speed equilibrium without shifting it.',
+                descriptionIs: 'Hvernig hvatar flýta fyrir jafnvægi án þess að hliðra því.',
+
+                possibleStresses: [
+                    { type: 'add-reactant', target: 'N₂' },
+                    { type: 'add-product', target: 'NH₃' },
+                    { type: 'increase-temp', target: null },
+                    { type: 'increase-pressure', target: null },
+                    { type: 'add-catalyst', target: null }
+                ]
+            },
+            {
+                id: 29,
+                equation: 'Hb(aq) + 4O₂(g) ⇌ Hb(O₂)₄(aq)',
+                name: 'Hemoglobin Oxygen Binding',
+                nameIs: 'Hemóglóbínsúrefnisbinding',
+                difficulty: 'advanced',
+
+                reactants: [
+                    { formula: 'Hb', coefficient: 1, phase: 'aq', display: '🔴' },
+                    { formula: 'O₂', coefficient: 4, phase: 'g', display: '🔴🔴' }
+                ],
+
+                products: [
+                    { formula: 'Hb(O₂)₄', coefficient: 1, phase: 'aq', display: '🩸' }
+                ],
+
+                deltaH: -50,
+
+                totalGasMoles: {
+                    reactants: 4,
+                    products: 0
+                },
+
+                description: 'Hemoglobin binding oxygen in blood.',
+                descriptionIs: 'Hemóglóbín binding súrefnis í blóði.',
+
+                possibleStresses: [
+                    { type: 'add-reactant', target: 'Hb' },
+                    { type: 'add-reactant', target: 'O₂' },
+                    { type: 'add-product', target: 'Hb(O₂)₄' },
+                    { type: 'remove-reactant', target: 'O₂' },
+                    { type: 'increase-temp', target: null },
+                    { type: 'decrease-temp', target: null },
+                    { type: 'increase-pressure', target: null },
+                    { type: 'decrease-pressure', target: null },
+                    { type: 'add-catalyst', target: null }
+                ]
+            },
+            {
+                id: 30,
+                equation: '2SO₂(g) + O₂(g) ⇌ 2SO₃(g) [Optimization]',
+                name: 'Industrial Optimization Problem',
+                nameIs: 'Iðnaðarbestunarvandamál',
+                difficulty: 'advanced',
+
+                reactants: [
+                    { formula: 'SO₂', coefficient: 2, phase: 'g', display: '💛' },
+                    { formula: 'O₂', coefficient: 1, phase: 'g', display: '🔴🔴' }
+                ],
+
+                products: [
+                    { formula: 'SO₃', coefficient: 2, phase: 'g', display: '🟡' }
+                ],
+
+                deltaH: -198,
+
+                totalGasMoles: {
+                    reactants: 3,
+                    products: 2
+                },
+
+                description: 'Real industrial decision-making with multiple variables.',
+                descriptionIs: 'Raunveruleg iðnaðarákvörðun með mörgum breytum.',
+
+                possibleStresses: [
+                    { type: 'add-reactant', target: 'SO₂' },
+                    { type: 'add-reactant', target: 'O₂' },
                     { type: 'increase-temp', target: null },
                     { type: 'decrease-temp', target: null },
                     { type: 'increase-pressure', target: null },
@@ -680,22 +1839,270 @@
                 showExplanation: false,
                 animationState: 'balanced',
                 feedbackClass: '',
+                // Challenge Mode states
+                score: 0,
+                streak: 0,
+                questionNumber: 0,
+                totalQuestions: 10,
+                timeLeft: 20,
+                questionStartTime: null,
+                correctCount: 0,
+                incorrectCount: 0,
+                bestStreak: 0,
+                questionHistory: [],
+                // Priority 3: Enhanced visuals
+                soundEnabled: true,
             });
+
+            const [timerInterval, setTimerInterval] = useState(null);
 
             const currentEquilibrium = EQUILIBRIUM_BANK[gameState.currentEquilibriumIndex];
 
+            // ============================================
+            // PRIORITY 3: SOUND EFFECTS
+            // ============================================
+
+            const playSound = (type) => {
+                if (!gameState.soundEnabled) return;
+
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+
+                // Different frequencies for different sounds
+                switch(type) {
+                    case 'correct':
+                        oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime); // C5
+                        oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.1); // E5
+                        oscillator.frequency.setValueAtTime(783.99, audioContext.currentTime + 0.2); // G5
+                        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+                        oscillator.start(audioContext.currentTime);
+                        oscillator.stop(audioContext.currentTime + 0.5);
+                        break;
+                    case 'incorrect':
+                        oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
+                        gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                        oscillator.start(audioContext.currentTime);
+                        oscillator.stop(audioContext.currentTime + 0.3);
+                        break;
+                    case 'shift':
+                        oscillator.frequency.setValueAtTime(440, audioContext.currentTime);
+                        oscillator.frequency.exponentialRampToValueAtTime(880, audioContext.currentTime + 0.2);
+                        gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                        oscillator.start(audioContext.currentTime);
+                        oscillator.stop(audioContext.currentTime + 0.3);
+                        break;
+                    case 'click':
+                        oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+                        gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+                        oscillator.start(audioContext.currentTime);
+                        oscillator.stop(audioContext.currentTime + 0.1);
+                        break;
+                }
+            };
+
+            const toggleSound = () => {
+                setGameState(prev => ({
+                    ...prev,
+                    soundEnabled: !prev.soundEnabled
+                }));
+                playSound('click');
+            };
+
+            // ============================================
+            // PRIORITY 3: PARTICLE EFFECTS
+            // ============================================
+
+            const createConfetti = () => {
+                const colors = ['#22c55e', '#3b82f6', '#f59e0b', '#ec4899', '#8b5cf6'];
+                const confettiCount = 30;
+
+                for (let i = 0; i < confettiCount; i++) {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti-particle';
+                    confetti.style.left = `${Math.random() * 100}%`;
+                    confetti.style.top = '0';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.animationDelay = `${Math.random() * 0.3}s`;
+                    confetti.style.animationDuration = `${1.5 + Math.random() * 0.5}s`;
+
+                    document.body.appendChild(confetti);
+
+                    setTimeout(() => {
+                        confetti.remove();
+                    }, 2000);
+                }
+            };
+
+            const createSparkles = (element) => {
+                if (!element) return;
+
+                const rect = element.getBoundingClientRect();
+                const sparkleCount = 5;
+
+                for (let i = 0; i < sparkleCount; i++) {
+                    const sparkle = document.createElement('div');
+                    sparkle.className = 'sparkle-effect';
+                    sparkle.textContent = '✨';
+                    sparkle.style.left = `${rect.left + rect.width / 2}px`;
+                    sparkle.style.top = `${rect.top + rect.height / 2}px`;
+                    sparkle.style.animationDelay = `${i * 0.1}s`;
+
+                    document.body.appendChild(sparkle);
+
+                    setTimeout(() => {
+                        sparkle.remove();
+                    }, 1000);
+                }
+            };
+
+            // ============================================
+            // CHALLENGE MODE: Timer Management
+            // ============================================
+
+            useEffect(() => {
+                if (gameState.mode === 'challenge' && gameState.screen === 'playing' &&
+                    gameState.appliedStress && !gameState.userPrediction && gameState.timeLeft > 0) {
+
+                    const interval = setInterval(() => {
+                        setGameState(prev => {
+                            if (prev.timeLeft <= 1) {
+                                // Time's up! Auto-submit as timeout
+                                handleTimeout();
+                                return prev;
+                            }
+                            return {
+                                ...prev,
+                                timeLeft: prev.timeLeft - 1
+                            };
+                        });
+                    }, 1000);
+
+                    setTimerInterval(interval);
+                    return () => clearInterval(interval);
+                }
+            }, [gameState.mode, gameState.screen, gameState.appliedStress, gameState.userPrediction, gameState.timeLeft]);
+
+            const handleTimeout = () => {
+                // Calculate correct answer
+                const result = calculateShift(
+                    currentEquilibrium,
+                    gameState.appliedStress.type,
+                    gameState.appliedStress.target
+                );
+
+                setGameState(prev => ({
+                    ...prev,
+                    userPrediction: 'timeout',
+                    correctShift: result,
+                    showExplanation: true,
+                    animationState: result.shift === 'left' ? 'shifting-left' :
+                                   result.shift === 'right' ? 'shifting-right' : 'no-shift',
+                    feedbackClass: 'incorrect',
+                    streak: 0, // Reset streak on timeout
+                    incorrectCount: prev.incorrectCount + 1,
+                    questionHistory: [...prev.questionHistory, {
+                        equilibrium: currentEquilibrium.name,
+                        correct: false,
+                        timeout: true,
+                        timeSpent: 20
+                    }]
+                }));
+            };
+
+            // ============================================
+            // CHALLENGE MODE: Random Selection
+            // ============================================
+
+            const selectRandomEquilibrium = () => {
+                return Math.floor(Math.random() * EQUILIBRIUM_BANK.length);
+            };
+
+            const selectRandomStress = (equilibrium) => {
+                const stresses = equilibrium.possibleStresses;
+                const randomStress = stresses[Math.floor(Math.random() * stresses.length)];
+                return randomStress;
+            };
+
+            // ============================================
+            // CHALLENGE MODE: Scoring
+            // ============================================
+
+            const calculatePoints = (difficulty, timeSpent, streak) => {
+                let basePoints = 0;
+                if (difficulty === 'beginner') basePoints = 10;
+                else if (difficulty === 'intermediate') basePoints = 20;
+                else if (difficulty === 'advanced') basePoints = 30;
+
+                // Speed bonus if answered in < 10 seconds
+                const speedBonus = timeSpent < 10 ? 5 : 0;
+
+                // Streak bonus: +5, +10, +15, +20, +25 (max)
+                const streakBonus = Math.min(streak * 5, 25);
+
+                return basePoints + speedBonus + streakBonus;
+            };
+
             const startGame = (mode) => {
-                setGameState({
-                    screen: 'playing',
-                    mode: mode,
-                    currentEquilibriumIndex: 0,
-                    appliedStress: null,
-                    userPrediction: null,
-                    correctShift: null,
-                    showExplanation: false,
-                    animationState: 'balanced',
-                    feedbackClass: '',
-                });
+                if (mode === 'challenge') {
+                    // Challenge Mode: Start with random equilibrium and auto-apply stress
+                    const randomIndex = selectRandomEquilibrium();
+                    const randomEq = EQUILIBRIUM_BANK[randomIndex];
+                    const randomStress = selectRandomStress(randomEq);
+
+                    setGameState({
+                        screen: 'playing',
+                        mode: mode,
+                        currentEquilibriumIndex: randomIndex,
+                        appliedStress: { type: randomStress.type, target: randomStress.target },
+                        userPrediction: null,
+                        correctShift: null,
+                        showExplanation: false,
+                        animationState: 'balanced',
+                        feedbackClass: '',
+                        // Challenge Mode specific
+                        score: 0,
+                        streak: 0,
+                        questionNumber: 1,
+                        totalQuestions: 10,
+                        timeLeft: 20,
+                        questionStartTime: Date.now(),
+                        correctCount: 0,
+                        incorrectCount: 0,
+                        bestStreak: 0,
+                        questionHistory: [],
+                    });
+                } else {
+                    // Learning Mode: No timer, no auto-stress
+                    setGameState({
+                        screen: 'playing',
+                        mode: mode,
+                        currentEquilibriumIndex: 0,
+                        appliedStress: null,
+                        userPrediction: null,
+                        correctShift: null,
+                        showExplanation: false,
+                        animationState: 'balanced',
+                        feedbackClass: '',
+                        score: 0,
+                        streak: 0,
+                        questionNumber: 0,
+                        totalQuestions: 10,
+                        timeLeft: 20,
+                        questionStartTime: null,
+                        correctCount: 0,
+                        incorrectCount: 0,
+                        bestStreak: 0,
+                        questionHistory: [],
+                    });
+                }
             };
 
             const applyStress = (stressType, stressTarget) => {
@@ -718,28 +2125,106 @@
 
                 const isCorrect = result.shift === prediction;
 
-                setGameState(prev => ({
-                    ...prev,
-                    userPrediction: prediction,
-                    correctShift: result,
-                    showExplanation: true,
-                    animationState: result.shift === 'left' ? 'shifting-left' :
-                                   result.shift === 'right' ? 'shifting-right' : 'no-shift',
-                    feedbackClass: isCorrect ? 'correct' : 'incorrect',
-                }));
+                // Priority 3: Sound and visual effects
+                if (isCorrect) {
+                    playSound('correct');
+                    createConfetti();
+                } else {
+                    playSound('incorrect');
+                }
+                playSound('shift');
+
+                if (gameState.mode === 'challenge') {
+                    // Challenge Mode: Calculate score and update statistics
+                    const timeSpent = Math.floor((Date.now() - gameState.questionStartTime) / 1000);
+                    const newStreak = isCorrect ? gameState.streak + 1 : 0;
+                    const newBestStreak = Math.max(gameState.bestStreak, newStreak);
+
+                    let pointsEarned = 0;
+                    if (isCorrect) {
+                        pointsEarned = calculatePoints(currentEquilibrium.difficulty, timeSpent, gameState.streak);
+                    } else {
+                        pointsEarned = -5; // Penalty for wrong answer
+                    }
+
+                    setGameState(prev => ({
+                        ...prev,
+                        userPrediction: prediction,
+                        correctShift: result,
+                        showExplanation: true,
+                        animationState: result.shift === 'left' ? 'shifting-left' :
+                                       result.shift === 'right' ? 'shifting-right' : 'no-shift',
+                        feedbackClass: isCorrect ? 'correct' : 'incorrect',
+                        score: prev.score + pointsEarned,
+                        streak: newStreak,
+                        bestStreak: newBestStreak,
+                        correctCount: prev.correctCount + (isCorrect ? 1 : 0),
+                        incorrectCount: prev.incorrectCount + (isCorrect ? 0 : 1),
+                        questionHistory: [...prev.questionHistory, {
+                            equilibrium: currentEquilibrium.name,
+                            correct: isCorrect,
+                            timeout: false,
+                            timeSpent: timeSpent,
+                            pointsEarned: pointsEarned
+                        }]
+                    }));
+                } else {
+                    // Learning Mode: Just show result
+                    setGameState(prev => ({
+                        ...prev,
+                        userPrediction: prediction,
+                        correctShift: result,
+                        showExplanation: true,
+                        animationState: result.shift === 'left' ? 'shifting-left' :
+                                       result.shift === 'right' ? 'shifting-right' : 'no-shift',
+                        feedbackClass: isCorrect ? 'correct' : 'incorrect',
+                    }));
+                }
             };
 
             const nextEquilibrium = () => {
-                setGameState(prev => ({
-                    ...prev,
-                    currentEquilibriumIndex: (prev.currentEquilibriumIndex + 1) % EQUILIBRIUM_BANK.length,
-                    appliedStress: null,
-                    userPrediction: null,
-                    correctShift: null,
-                    showExplanation: false,
-                    animationState: 'balanced',
-                    feedbackClass: '',
-                }));
+                if (gameState.mode === 'challenge') {
+                    // Check if we've completed all questions
+                    if (gameState.questionNumber >= gameState.totalQuestions) {
+                        // Game over! Show results
+                        setGameState(prev => ({
+                            ...prev,
+                            screen: 'results'
+                        }));
+                        return;
+                    }
+
+                    // Move to next question
+                    const randomIndex = selectRandomEquilibrium();
+                    const randomEq = EQUILIBRIUM_BANK[randomIndex];
+                    const randomStress = selectRandomStress(randomEq);
+
+                    setGameState(prev => ({
+                        ...prev,
+                        currentEquilibriumIndex: randomIndex,
+                        appliedStress: { type: randomStress.type, target: randomStress.target },
+                        userPrediction: null,
+                        correctShift: null,
+                        showExplanation: false,
+                        animationState: 'balanced',
+                        feedbackClass: '',
+                        questionNumber: prev.questionNumber + 1,
+                        timeLeft: 20,
+                        questionStartTime: Date.now(),
+                    }));
+                } else {
+                    // Learning Mode: Just move to next equilibrium
+                    setGameState(prev => ({
+                        ...prev,
+                        currentEquilibriumIndex: (prev.currentEquilibriumIndex + 1) % EQUILIBRIUM_BANK.length,
+                        appliedStress: null,
+                        userPrediction: null,
+                        correctShift: null,
+                        showExplanation: false,
+                        animationState: 'balanced',
+                        feedbackClass: '',
+                    }));
+                }
             };
 
             const tryAgain = () => {
@@ -827,19 +2312,24 @@ When stress is applied to a system at equilibrium, the system shifts to relieve 
                                     Predict how equilibrium shifts when stress is applied!
                                 </p>
 
-                                <div className="max-w-md mx-auto">
+                                <div className="max-w-md mx-auto space-y-4">
                                     <button
                                         onClick={() => startGame('learning')}
-                                        className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-6 px-8 rounded-xl text-xl transition-all transform hover:scale-105 mb-4">
+                                        className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-6 px-8 rounded-xl text-xl transition-all transform hover:scale-105">
                                         📚 {TRANSLATIONS.learningMode}
                                         <div className="text-sm mt-2 opacity-90">
                                             Ótímatakmörkuð • Útskýringar • Æfa
                                         </div>
                                     </button>
 
-                                    <p className="text-sm text-gray-500 italic">
-                                        (Keppnishamur kemur í framhaldinum!)
-                                    </p>
+                                    <button
+                                        onClick={() => startGame('challenge')}
+                                        className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-bold py-6 px-8 rounded-xl text-xl transition-all transform hover:scale-105">
+                                        🏆 {TRANSLATIONS.challengeMode}
+                                        <div className="text-sm mt-2 opacity-90">
+                                            10 spurningar • 20 sek • Stigakerfi
+                                        </div>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -872,11 +2362,45 @@ When stress is applied to a system at equilibrium, the system shifts to relieve 
                         </header>
 
                         <div className="max-w-6xl mx-auto px-4 py-8">
+                            {/* Challenge Mode: Timer and Score Display */}
+                            {gameState.mode === 'challenge' && (
+                                <div className="bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl shadow-xl p-6 mb-6 text-white">
+                                    <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-center">
+                                        <div>
+                                            <div className="text-3xl font-bold">{gameState.questionNumber}/{gameState.totalQuestions}</div>
+                                            <div className="text-sm opacity-90">Spurning / Question</div>
+                                        </div>
+                                        <div>
+                                            <div className={`text-3xl font-bold ${gameState.timeLeft <= 5 ? 'animate-pulse' : ''}`}>
+                                                {gameState.timeLeft}s
+                                            </div>
+                                            <div className="text-sm opacity-90">Tími / Time</div>
+                                        </div>
+                                        <div>
+                                            <div className="text-3xl font-bold">{gameState.score}</div>
+                                            <div className="text-sm opacity-90">Stig / Points</div>
+                                        </div>
+                                        <div>
+                                            <div className="text-3xl font-bold">🔥 {gameState.streak}</div>
+                                            <div className="text-sm opacity-90">Rás / Streak</div>
+                                        </div>
+                                        <div>
+                                            <div className="text-3xl font-bold">{gameState.correctCount}/{gameState.questionNumber - 1}</div>
+                                            <div className="text-sm opacity-90">Rétt / Correct</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
                             {/* Chemical Equation */}
                             <div className="bg-white rounded-2xl shadow-xl p-8 mb-6">
                                 <div className="text-center mb-4">
                                     <div className="text-sm text-gray-500 mb-2">
-                                        Jafnvægi {gameState.currentEquilibriumIndex + 1} af {EQUILIBRIUM_BANK.length}
+                                        {gameState.mode === 'challenge' ? (
+                                            `${TRANSLATIONS.question} ${gameState.questionNumber}`
+                                        ) : (
+                                            `Jafnvægi ${gameState.currentEquilibriumIndex + 1} af ${EQUILIBRIUM_BANK.length}`
+                                        )}
                                     </div>
                                     <h2 className="text-xl font-bold text-gray-800 mb-2">
                                         {eq.nameIs} / {eq.name}
@@ -884,10 +2408,10 @@ When stress is applied to a system at equilibrium, the system shifts to relieve 
                                     <div className="text-3xl font-bold text-gray-900 mb-4">
                                         {eq.equation}
                                     </div>
-                                    <div className={`thermo-indicator ${eq.deltaH < 0 ? 'exothermic' : 'endothermic'}`}>
-                                        {eq.deltaH < 0 ? '🔥' : '❄️'}
-                                        ΔH = {eq.deltaH > 0 ? '+' : ''}{eq.deltaH} kJ
-                                        <span className="ml-2">
+                                    <div className={`thermo-indicator thermo-indicator-enhanced ${eq.deltaH < 0 ? 'exothermic' : 'endothermic'}`}>
+                                        <span className="text-2xl">{eq.deltaH < 0 ? '🔥' : '❄️'}</span>
+                                        <span className="font-bold">ΔH = {eq.deltaH > 0 ? '+' : ''}{eq.deltaH} kJ</span>
+                                        <span className="opacity-90">
                                             ({eq.deltaH < 0 ? TRANSLATIONS.exothermic : TRANSLATIONS.endothermic})
                                         </span>
                                     </div>
@@ -925,10 +2449,11 @@ When stress is applied to a system at equilibrium, the system shifts to relieve 
                             </div>
 
                             {/* Stress Selection & Prediction */}
-                            <div className="grid md:grid-cols-2 gap-6">
-                                {/* Stress Buttons */}
-                                <div className="bg-white rounded-2xl shadow-xl p-6">
-                                    <h3 className="text-lg font-bold mb-4">{TRANSLATIONS.stress}:</h3>
+                            <div className={`grid ${gameState.mode === 'challenge' ? 'md:grid-cols-1' : 'md:grid-cols-2'} gap-6`}>
+                                {/* Stress Buttons - Hidden in Challenge Mode */}
+                                {gameState.mode !== 'challenge' && (
+                                    <div className="bg-white rounded-2xl shadow-xl p-6">
+                                        <h3 className="text-lg font-bold mb-4">{TRANSLATIONS.stress}:</h3>
                                     <div className="grid grid-cols-1 gap-3">
                                         {eq.possibleStresses.map((stress, idx) => {
                                             const isSelected = gameState.appliedStress &&
@@ -957,10 +2482,27 @@ When stress is applied to a system at equilibrium, the system shifts to relieve 
                                             );
                                         })}
                                     </div>
-                                </div>
+                                    </div>
+                                )}
 
                                 {/* Prediction Buttons */}
                                 <div className="bg-white rounded-2xl shadow-xl p-6">
+                                    {gameState.mode === 'challenge' && gameState.appliedStress && (
+                                        <div className="mb-4 p-4 bg-orange-100 rounded-lg border-2 border-orange-300">
+                                            <h4 className="font-bold text-orange-900 mb-2">{TRANSLATIONS.appliedStress}:</h4>
+                                            <p className="text-lg text-orange-800">
+                                                {gameState.appliedStress.type === 'add-reactant' ? `➕ Bæta við ${gameState.appliedStress.target}` :
+                                                 gameState.appliedStress.type === 'add-product' ? `➕ Bæta við ${gameState.appliedStress.target}` :
+                                                 gameState.appliedStress.type === 'remove-reactant' ? `➖ Fjarlægja ${gameState.appliedStress.target}` :
+                                                 gameState.appliedStress.type === 'remove-product' ? `➖ Fjarlægja ${gameState.appliedStress.target}` :
+                                                 gameState.appliedStress.type === 'increase-temp' ? `🔥 ${TRANSLATIONS.heat}` :
+                                                 gameState.appliedStress.type === 'decrease-temp' ? `❄️ ${TRANSLATIONS.cool}` :
+                                                 gameState.appliedStress.type === 'increase-pressure' ? `⬆️ ${TRANSLATIONS.increasePressure}` :
+                                                 gameState.appliedStress.type === 'decrease-pressure' ? `⬇️ ${TRANSLATIONS.decreasePressure}` :
+                                                 gameState.appliedStress.type === 'add-catalyst' ? `⚗️ ${TRANSLATIONS.addCatalyst}` : ''}
+                                            </p>
+                                        </div>
+                                    )}
                                     <h3 className="text-lg font-bold mb-4">{TRANSLATIONS.predict}:</h3>
                                     {!gameState.appliedStress ? (
                                         <div className="text-center py-12 text-gray-500">
@@ -1018,8 +2560,30 @@ When stress is applied to a system at equilibrium, the system shifts to relieve 
                                         </p>
                                     </div>
 
+                                    {gameState.mode === 'challenge' && gameState.userPrediction && gameState.userPrediction !== 'timeout' && (
+                                        <div className="p-4 bg-blue-100 rounded-lg mb-4">
+                                            <p className="font-bold text-blue-900">
+                                                {isCorrect ? '🎉 +' : '❌ '}
+                                                {gameState.questionHistory[gameState.questionHistory.length - 1]?.pointsEarned || 0} stig
+                                            </p>
+                                            {isCorrect && gameState.streak > 1 && (
+                                                <p className="text-sm text-blue-800">
+                                                    🔥 Rás: {gameState.streak} rétt í röð!
+                                                </p>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    {gameState.mode === 'challenge' && gameState.userPrediction === 'timeout' && (
+                                        <div className="p-4 bg-red-100 rounded-lg mb-4">
+                                            <p className="font-bold text-red-900">
+                                                ⏱️ Tíminn rann út! Rás endurstillt.
+                                            </p>
+                                        </div>
+                                    )}
+
                                     <div className="flex gap-4 mt-6">
-                                        {!isCorrect && (
+                                        {!isCorrect && gameState.mode !== 'challenge' && (
                                             <button
                                                 onClick={tryAgain}
                                                 className="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg transition-all"
@@ -1031,11 +2595,163 @@ When stress is applied to a system at equilibrium, the system shifts to relieve 
                                             onClick={nextEquilibrium}
                                             className="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg transition-all"
                                         >
-                                            {TRANSLATIONS.nextEquilibrium} →
+                                            {gameState.mode === 'challenge' ?
+                                                (gameState.questionNumber >= gameState.totalQuestions ?
+                                                    TRANSLATIONS.showResults :
+                                                    TRANSLATIONS.nextQuestion + ' →')
+                                                :
+                                                TRANSLATIONS.nextEquilibrium + ' →'
+                                            }
                                         </button>
                                     </div>
                                 </div>
                             )}
+                        </div>
+
+                        {/* Sound Toggle Button */}
+                        <button
+                            className={`sound-toggle ${!gameState.soundEnabled ? 'muted' : ''}`}
+                            onClick={toggleSound}
+                            title={gameState.soundEnabled ? 'Slökkva á hljóði / Mute sound' : 'Kveikja á hljóði / Enable sound'}
+                        >
+                            {gameState.soundEnabled ? '🔊' : '🔇'}
+                        </button>
+                    </div>
+                );
+            }
+
+            // ============================================
+            // RENDER: Results Screen
+            // ============================================
+
+            if (gameState.screen === 'results') {
+                const totalTime = gameState.questionHistory.reduce((sum, q) => sum + q.timeSpent, 0);
+                const avgTime = totalTime / gameState.totalQuestions;
+                const accuracy = Math.round((gameState.correctCount / gameState.totalQuestions) * 100);
+
+                return (
+                    <div>
+                        <header className="site-header">
+                            <div className="header-content">
+                                <a href="https://kvenno.app" className="site-logo">Kvenno.app</a>
+                                <div>
+                                    <button className="header-btn" onClick={backToMenu}>
+                                        {TRANSLATIONS.back}
+                                    </button>
+                                </div>
+                            </div>
+                        </header>
+
+                        <div className="max-w-4xl mx-auto px-4 py-8">
+                            <div className="bg-white rounded-2xl shadow-xl p-8">
+                                <div className="text-center mb-8">
+                                    <h1 className="text-4xl font-bold mb-2" style={{color: 'var(--kvenno-orange)'}}>
+                                        🏆 Lokaúrslit / Final Results
+                                    </h1>
+                                    <p className="text-gray-600">Challenge Mode lokið!</p>
+                                </div>
+
+                                {/* Main Score Display */}
+                                <div className="bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-2xl p-8 mb-8 text-center">
+                                    <div className="text-6xl font-bold mb-2">{gameState.score}</div>
+                                    <div className="text-2xl opacity-90">Heildarst ig / Total Points</div>
+                                </div>
+
+                                {/* Statistics Grid */}
+                                <div className="grid md:grid-cols-3 gap-6 mb-8">
+                                    <div className="bg-green-100 rounded-xl p-6 text-center">
+                                        <div className="text-4xl font-bold text-green-800 mb-2">
+                                            {gameState.correctCount}/{gameState.totalQuestions}
+                                        </div>
+                                        <div className="text-green-700 font-semibold">Réttar / Correct</div>
+                                        <div className="text-green-600 text-sm mt-2">{accuracy}% nákvæmni</div>
+                                    </div>
+
+                                    <div className="bg-orange-100 rounded-xl p-6 text-center">
+                                        <div className="text-4xl font-bold text-orange-800 mb-2">
+                                            🔥 {gameState.bestStreak}
+                                        </div>
+                                        <div className="text-orange-700 font-semibold">Besta rás / Best Streak</div>
+                                        <div className="text-orange-600 text-sm mt-2">Í röð</div>
+                                    </div>
+
+                                    <div className="bg-blue-100 rounded-xl p-6 text-center">
+                                        <div className="text-4xl font-bold text-blue-800 mb-2">
+                                            {avgTime.toFixed(1)}s
+                                        </div>
+                                        <div className="text-blue-700 font-semibold">Meðaltími / Avg Time</div>
+                                        <div className="text-blue-600 text-sm mt-2">Per question</div>
+                                    </div>
+                                </div>
+
+                                {/* Performance Message */}
+                                <div className="bg-gray-50 rounded-xl p-6 mb-8 text-center">
+                                    <div className="text-2xl font-bold mb-2">
+                                        {accuracy >= 90 ? '🌟 Frábært! / Excellent!' :
+                                         accuracy >= 70 ? '👍 Vel gert! / Well Done!' :
+                                         accuracy >= 50 ? '💪 Góð tilraun! / Good Effort!' :
+                                         '📚 Haltu áfram að æfa! / Keep Practicing!'}
+                                    </div>
+                                    <p className="text-gray-700">
+                                        {accuracy >= 90 ? 'Þú hefur náð tökum á Le Chatelier\'s Principle!' :
+                                         accuracy >= 70 ? 'Mjög góð frammistaða! Haltu áfram!' :
+                                         accuracy >= 50 ? 'Þú ert á réttri leið! Prófaðu aftur!' :
+                                         'Lestu leiðbeiningarnar og reyndu aftur!'}
+                                    </p>
+                                </div>
+
+                                {/* Question History */}
+                                <div className="mb-8">
+                                    <h3 className="text-xl font-bold mb-4 text-center">
+                                        Spurningayfirlit / Question History
+                                    </h3>
+                                    <div className="space-y-2">
+                                        {gameState.questionHistory.map((question, idx) => (
+                                            <div key={idx} className={`p-4 rounded-lg flex items-center justify-between ${
+                                                question.correct ? 'bg-green-50 border-2 border-green-200' :
+                                                question.timeout ? 'bg-gray-100 border-2 border-gray-300' :
+                                                'bg-red-50 border-2 border-red-200'
+                                            }`}>
+                                                <div className="flex items-center gap-3">
+                                                    <div className="text-2xl">
+                                                        {question.correct ? '✓' : question.timeout ? '⏱️' : '✗'}
+                                                    </div>
+                                                    <div>
+                                                        <div className="font-semibold">{idx + 1}. {question.equilibrium}</div>
+                                                        <div className="text-sm text-gray-600">
+                                                            {question.timeSpent}s
+                                                            {question.timeout && ' (Timeout)'}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div className={`font-bold text-lg ${
+                                                    question.pointsEarned > 0 ? 'text-green-700' :
+                                                    question.pointsEarned < 0 ? 'text-red-700' :
+                                                    'text-gray-600'
+                                                }`}>
+                                                    {question.pointsEarned > 0 ? '+' : ''}{question.pointsEarned}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* Action Buttons */}
+                                <div className="flex gap-4">
+                                    <button
+                                        onClick={() => startGame('challenge')}
+                                        className="flex-1 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-bold py-4 px-8 rounded-xl text-lg transition-all transform hover:scale-105"
+                                    >
+                                        🔄 Spila aftur / Play Again
+                                    </button>
+                                    <button
+                                        onClick={backToMenu}
+                                        className="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-bold py-4 px-8 rounded-xl text-lg transition-all"
+                                    >
+                                        🏠 Aðalvalmynd / Main Menu
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 );

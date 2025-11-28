@@ -66,10 +66,26 @@ This document tracks the migration of all chemistry games to the new monorepo ar
 - CSS perspective-based card flip mechanics
 - Accessibility features with keyboard navigation
 
-### ⏳ lausnir.html (1745 lines)
-**Status**: PENDING  
-**Complexity**: Medium  
-**Topic**: Solutions and concentrations
+### ✅ lausnir.html (1745 lines)
+**Status**: COMPLETED
+**Location**: `/games/1-ar/lausnir/`
+**Output**: `lausnir.html` (201KB)
+
+**Features Migrated**:
+- Interactive beaker visualizations with SVG and CSS animations (pour, mix, dissolve)
+- 5 problem types: dilution, molarity, molarity from mass, mass from molarity, mixing
+- Two game modes: Competition (scoring) and Practice (unlimited hints)
+- Three difficulty levels (easy: 8, medium: 10, hard: 12 questions)
+- 9 real chemicals across difficulty levels with accurate molar masses
+- Step-by-step solution breakdowns for all problem types
+- 3-level hint system with point penalties
+- Streak system with bonuses (+5 at 3, +10 at 5 correct)
+- Optional timer mode with speed bonuses
+- Formula reference card (toggle with 'F')
+- 7 chemistry facts shown randomly
+- Input validation with contextual error feedback
+- Keyboard shortcuts (H=hint, F=formulas, R=replay animation, S=solution, ?=help)
+- Achievement notifications for streaks
 
 ### ⏳ takmarkandi.html (1835 lines)
 **Status**: PENDING  

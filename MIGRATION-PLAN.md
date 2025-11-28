@@ -87,10 +87,28 @@ This document tracks the migration of all chemistry games to the new monorepo ar
 - Keyboard shortcuts (H=hint, F=formulas, R=replay animation, S=solution, ?=help)
 - Achievement notifications for streaks
 
-### ⏳ takmarkandi.html (1835 lines)
-**Status**: PENDING  
-**Complexity**: Medium  
-**Topic**: Limiting reactants
+### ✅ takmarkandi.html (1835 lines)
+**Status**: COMPLETED
+**Location**: `/games/1-ar/takmarkandi/`
+**Output**: `takmarkandi.html` (188KB)
+
+**Features Migrated**:
+- Visual molecule displays with colored circular badges
+- 20 chemical reactions across three difficulty levels (easy: 8, medium: 5, hard: 7)
+- Multi-product reaction support (up to 2 products per reaction)
+- Limiting reactant identification with click/keyboard selection (1/2 keys)
+- Product formation calculations with individual inputs
+- Excess reactant calculation
+- Detailed step-by-step solution breakdowns
+- Hint system explaining stoichiometry calculations
+- Streak system with celebration sound effects (every 5 correct)
+- Optional timer mode (120 seconds per question)
+- Points system with difficulty and streak bonuses
+- Web Audio API sound effects (correct, incorrect, streak, pop)
+- Progress tracking with mistake categorization
+- Keyboard shortcuts (1/2=select reactant, H=hint, S=solution, Enter=submit/next)
+- CSS animations (moleculePop, celebration, pulse, bounce, shake)
+- localStorage persistence for game statistics
 
 ## Year 3 Games (3-ar)
 

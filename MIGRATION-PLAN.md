@@ -20,10 +20,18 @@ This document tracks the migration of all chemistry games to the new monorepo ar
 - Accessibility features
 - i18n support
 
-### ⏳ dimensional-analysis.html (1269 lines)
-**Status**: PENDING  
-**Complexity**: Medium  
-**Notes**: Appears to be an earlier/simpler version of dimensional-analysis-game.html
+### ✅ dimensional-analysis.html (1269 lines)
+**Status**: COMPLETED
+**Location**: `/games/1-ar/dimensional-analysis-simple/`
+**Output**: `dimensional-analysis-simple.html` (190KB)
+
+**Features Migrated**:
+- Tutorial module with worked examples
+- Interactive sandbox playground
+- Concept check quiz
+- Reference library with conversion factors
+- Progress tracking with badges and checklist
+- Complete localStorage persistence
 
 ### ⏳ molmassi.html (1833 lines)  
 **Status**: PENDING

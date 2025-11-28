@@ -46,4 +46,4 @@ temp/
 # Package manager
 package-lock.json
 yarn.lock
-pnpm-lock.yaml
+# Note: pnpm-lock.yaml should be committed for reproducible builds

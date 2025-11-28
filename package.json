@@ -1,0 +1,42 @@
+{
+  "name": "@kvenno/chemistry-games",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Kvennaskólinn Chemistry Educational Games - Multi-year interactive learning platform",
+  "author": "Kvennaskólinn",
+  "license": "MIT",
+  "workspaces": [
+    "shared",
+    "games/*"
+  ],
+  "scripts": {
+    "dev": "pnpm --filter './games/**' dev",
+    "build": "pnpm --filter './games/**' build",
+    "build:all": "node tools/build-all.mjs",
+    "type-check": "pnpm --recursive run type-check",
+    "clean": "pnpm --recursive run clean && rm -rf node_modules",
+    "shared:build": "pnpm --filter @kvenno/shared build"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/react": "^18.2.45",
+    "@types/react-dom": "^18.2.18",
+    "@typescript-eslint/eslint-plugin": "^6.15.0",
+    "@typescript-eslint/parser": "^6.15.0",
+    "@vitejs/plugin-react": "^4.2.1",
+    "eslint": "^8.56.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.8",
+    "vite-plugin-singlefile": "^2.0.1"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@8.15.0"
+}

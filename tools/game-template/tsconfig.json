@@ -1,0 +1,8 @@
+{
+  "extends": "TSCONFIG_BASE_PATH",
+  "compilerOptions": {
+    "outDir": "./dist"
+  },
+  "include": ["src", "SHARED_INCLUDE_PATH"],
+  "references": [{ "path": "./tsconfig.node.json" }]
+}

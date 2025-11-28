@@ -87,10 +87,11 @@ This document tracks the migration of all chemistry games to the new monorepo ar
 - Keyboard shortcuts (H=hint, F=formulas, R=replay animation, S=solution, ?=help)
 - Achievement notifications for streaks
 
-### ⏳ takmarkandi.html (1835 lines)
-**Status**: PENDING  
-**Complexity**: Medium  
+### 🔄 takmarkandi.html (1835 lines)
+**Status**: IN PROGRESS
+**Complexity**: Medium
 **Topic**: Limiting reactants
+**Notes**: Migrating to `/games/1-ar/takmarkandi/`
 
 ## Year 3 Games (3-ar)
 

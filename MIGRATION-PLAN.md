@@ -33,10 +33,22 @@ This document tracks the migration of all chemistry games to the new monorepo ar
 - Progress tracking with badges and checklist
 - Complete localStorage persistence
 
-### ⏳ molmassi.html (1833 lines)  
-**Status**: PENDING
-**Complexity**: Medium
-**Topic**: Molar mass calculations
+### ✅ molmassi.html (1833 lines)
+**Status**: COMPLETED
+**Location**: `/games/1-ar/molmassi/`
+**Output**: `molmassi.html` (184KB)
+
+**Features Migrated**:
+- Two game modes: Practice (untimed) and Competition (90s timer)
+- Four difficulty levels: Easy, Medium, Hard, Mixed
+- 29 chemical compounds across difficulties
+- Periodic table reference with 20 elements
+- Step-by-step calculation breakdown
+- Hint system with point penalty
+- Scoring system with streak tracking
+- Progress tracking with localStorage
+- Input validation with contextual feedback
+- Real-time statistics display
 
 ### ⏳ nafnakerfid.html (1734 lines)
 **Status**: PENDING  

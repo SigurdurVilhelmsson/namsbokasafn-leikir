@@ -1270,6 +1270,67 @@
                 }
             }, [currentProblemIndex]);
 
+            const scoreExplanation = (explanationText, problemType) => {
+                // Improved explanation scoring with keyword matching
+                const text = explanationText.toLowerCase().trim();
+
+                if (text.length < 10) return 0; // Too short
+
+                let score = 0;
+                let maxScore = 0;
+
+                // Common quality indicators (apply to all types)
+                const qualityKeywords = ['umbreyti', 'stuðul', 'eining', 'margfalda', 'deila', 'strika'];
+                const qualityCount = qualityKeywords.filter(kw => text.includes(kw)).length;
+                score += Math.min(qualityCount * 0.15, 0.3); // Up to 30% for vocabulary
+                maxScore += 0.3;
+
+                // Type-specific keywords
+                if (problemType === 'reverse') {
+                    const keywords = ['afturábak', 'byrja', 'enda', 'leið'];
+                    const found = keywords.filter(kw => text.includes(kw)).length;
+                    score += (found / keywords.length) * 0.4;
+                    maxScore += 0.4;
+                } else if (problemType === 'error_analysis') {
+                    const keywords = ['rang', 'öfug', 'villa', 'snúinn', 'nefnara'];
+                    const found = keywords.filter(kw => text.includes(kw)).length;
+                    score += (found / keywords.length) * 0.4;
+                    maxScore += 0.4;
+                } else if (problemType === 'efficiency') {
+                    const keywords = ['fæst', 'skref', 'skilvirkn', 'bein'];
+                    const found = keywords.filter(kw => text.includes(kw)).length;
+                    score += (found / keywords.length) * 0.4;
+                    maxScore += 0.4;
+                } else if (problemType === 'synthesis') {
+                    const keywords = ['eðlismassi', 'rúmmál', 'massi', 'margfalda'];
+                    const found = keywords.filter(kw => text.includes(kw)).length;
+                    score += (found / keywords.length) * 0.4;
+                    maxScore += 0.4;
+                } else if (problemType === 'real_world') {
+                    const keywords = ['skammta', 'deila', 'fjöldi', 'heiltala'];
+                    const found = keywords.filter(kw => text.includes(kw)).length;
+                    score += (found / keywords.length) * 0.4;
+                    maxScore += 0.4;
+                } else if (problemType === 'derivation') {
+                    const keywords = ['vísindatölustaf', 'umbreyti', 'hraði'];
+                    const found = keywords.filter(kw => text.includes(kw)).length;
+                    score += (found / keywords.length) * 0.4;
+                    maxScore += 0.4;
+                }
+
+                // Length bonus (up to 30%)
+                if (text.length >= 50) {
+                    score += 0.3;
+                } else if (text.length >= 30) {
+                    score += 0.2;
+                } else if (text.length >= 20) {
+                    score += 0.1;
+                }
+                maxScore += 0.3;
+
+                return Math.min(score / maxScore, 1); // Normalize to 0-1
+            };
+
             const getLevel3Hint = () => {
                 // Provide contextual hints based on problem type
                 if (problem.type === 'reverse') {
@@ -1291,7 +1352,7 @@
             const handleSubmit = () => {
                 let answerScore = 0;
                 let methodScore = 0;
-                let explanationScore = explanation.trim().length > 10 ? 1 : 0;
+                let explanationScore = scoreExplanation(explanation, problem.type);
                 let efficiencyScore = 0;
                 let sigFigScore = null;
                 let userSigFigs = null;
@@ -1449,6 +1510,52 @@
 
                             <h2 className="text-2xl font-bold mb-6">{problem.prompt}</h2>
 
+                            {(problem.type === 'synthesis' || problem.type === 'derivation') && problem.density && (
+                                <div className="mb-6 p-4 bg-purple-50 border-l-4 border-purple-400 rounded">
+                                    <p className="text-sm font-semibold text-purple-800 mb-2">📊 Gefnar upplýsingar:</p>
+                                    <div className="space-y-1">
+                                        {problem.startValue && problem.startUnit && (
+                                            <p className="text-sm text-purple-700">
+                                                <span className="font-semibold">Rúmmál:</span> {problem.startValue} {problem.startUnit}
+                                            </p>
+                                        )}
+                                        {problem.density && problem.densityUnit && (
+                                            <p className="text-sm text-purple-700">
+                                                <span className="font-semibold">Eðlismassi:</span> {problem.density} {problem.densityUnit}
+                                            </p>
+                                        )}
+                                        {problem.targetUnit && (
+                                            <p className="text-sm text-purple-700">
+                                                <span className="font-semibold">Markeining:</span> {problem.targetUnit}
+                                            </p>
+                                        )}
+                                        {problem.significantFigures && (
+                                            <p className="text-sm text-purple-700">
+                                                <span className="font-semibold">Markverðir tölustafir:</span> {problem.significantFigures}
+                                            </p>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+
+                            {problem.type === 'real_world' && (problem.startValue || problem.portionSize) && (
+                                <div className="mb-6 p-4 bg-green-50 border-l-4 border-green-400 rounded">
+                                    <p className="text-sm font-semibold text-green-800 mb-2">📊 Gefnar upplýsingar:</p>
+                                    <div className="space-y-1">
+                                        {problem.startValue && problem.startUnit && (
+                                            <p className="text-sm text-green-700">
+                                                <span className="font-semibold">Heildarmagn:</span> {problem.startValue} {problem.startUnit}
+                                            </p>
+                                        )}
+                                        {problem.portionSize && problem.portionUnit && (
+                                            <p className="text-sm text-green-700">
+                                                <span className="font-semibold">Skammtastærð:</span> {problem.portionSize} {problem.portionUnit}
+                                            </p>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+
                             {problem.type === 'error_analysis' && problem.incorrectWork && (
                                 <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-400">
                                     <p className="text-sm text-gray-600 mb-1">Röng vinna:</p>
@@ -1529,9 +1636,12 @@
                                         <textarea
                                             value={explanation}
                                             onChange={(e) => setExplanation(e.target.value)}
-                                            placeholder="Útskýrðu aðferðina þína..."
+                                            placeholder="T.d. 'Fyrst breytti ég X í Y með stuðlinum Z. Síðan margfaldaði ég með eðlismassa til að fá massa...'"
                                             className="w-full p-3 border-2 border-gray-300 rounded-lg h-24"
                                         />
+                                        <p className="text-xs text-gray-500 mt-1">
+                                            💡 Tip: Notaðu orð eins og "umbreyti", "stuðull", "eining", "margfalda" fyrir betri einkunn
+                                        </p>
                                     </div>
 
                                     {showHint && (
@@ -1688,6 +1798,44 @@
                 }
             }, [currentProblemIndex]);
 
+            // Keyboard shortcuts for Level 2
+            useEffect(() => {
+                const handleKeyPress = (e) => {
+                    // Don't trigger if user is typing in an input
+                    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+                    if (showFeedback) return; // Don't handle keys during feedback
+
+                    const availableFactors = getAvailableFactors();
+
+                    // Number keys (1-9) to select factors
+                    if (e.key >= '1' && e.key <= '9') {
+                        const index = parseInt(e.key) - 1;
+                        if (index < availableFactors.length) {
+                            handleFactorClick(availableFactors[index]);
+                        }
+                    }
+
+                    // 'H' for hint
+                    if (e.key.toLowerCase() === 'h' && wrongPredictions >= 1) {
+                        setShowHint(!showHint);
+                    }
+
+                    // 'Enter' to submit
+                    if (e.key === 'Enter' && selectedFactors.length > 0) {
+                        handleSubmit();
+                    }
+
+                    // 'Esc' to clear last factor
+                    if (e.key === 'Escape' && selectedFactors.length > 0) {
+                        setSelectedFactors(selectedFactors.slice(0, -1));
+                    }
+                };
+
+                window.addEventListener('keydown', handleKeyPress);
+                return () => window.removeEventListener('keydown', handleKeyPress);
+            }, [showFeedback, selectedFactors, wrongPredictions, showHint, currentUnit]);
+
             const getAvailableFactors = () => {
                 // Filter factors based on scaffolding level
                 if (problem.scaffoldingLevel === 3) {
@@ -1752,6 +1900,11 @@
                     predictionsCorrect: progress.predictionsCorrect + (correct ? 1 : 0)
                 };
                 setProgress(newProgress);
+
+                // Save prediction progress immediately to localStorage
+                const saved = loadProgress() || { levelProgress: {} };
+                saved.levelProgress.level2 = newProgress;
+                saveProgress(saved);
 
                 // Track wrong predictions for hint system (Level 2 rule: require one wrong prediction)
                 if (!correct) {
@@ -1920,13 +2073,18 @@
                                                         <button
                                                             onClick={() => handleFactorClick(factor)}
                                                             disabled={isGrayed}
-                                                            className={`w-full p-3 border-2 rounded-lg transition-all font-mono text-sm ${
+                                                            className={`w-full p-3 border-2 rounded-lg transition-all font-mono text-sm relative ${
                                                                 isGrayed
                                                                     ? 'border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed'
                                                                     : 'border-gray-300 hover:border-primary-orange hover:bg-orange-50'
                                                             }`}
                                                             title={isGrayed ? 'Þessi stuðull passar ekki við núverandi einingu' : ''}
                                                         >
+                                                            {idx < 9 && (
+                                                                <span className="absolute top-1 left-1 text-xs bg-gray-200 text-gray-600 rounded px-1">
+                                                                    {idx + 1}
+                                                                </span>
+                                                            )}
                                                             {factor.num} / {factor.den}
                                                         </button>
                                                         {showWarning && !relevant && (
@@ -1947,6 +2105,16 @@
                                     >
                                         Athuga svar
                                     </button>
+
+                                    <div className="mt-4 p-3 bg-gray-50 rounded border border-gray-200">
+                                        <p className="text-xs font-semibold text-gray-600 mb-2">⌨️ Flýtilyklar:</p>
+                                        <div className="grid grid-cols-2 gap-2 text-xs text-gray-600">
+                                            <div><kbd className="px-1 bg-white border rounded">1-9</kbd> Velja stuðul</div>
+                                            <div><kbd className="px-1 bg-white border rounded">Enter</kbd> Athuga svar</div>
+                                            <div><kbd className="px-1 bg-white border rounded">H</kbd> Vísbending</div>
+                                            <div><kbd className="px-1 bg-white border rounded">Esc</kbd> Eyða síðasta</div>
+                                        </div>
+                                    </div>
                                 </>
                             )}
 

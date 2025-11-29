@@ -189,11 +189,19 @@ See [tools/game-template/README.md](tools/game-template/README.md) for detailed 
 
 ## 📖 Documentation
 
-- **[MIGRATION-PLAN.md](MIGRATION-PLAN.md)** - Game migration status and plan
+### Quick Links
+- **[Documentation Hub](docs/README.md)** - Complete documentation index
+- **[CHANGELOG.md](CHANGELOG.md)** - Version history and changes
+- **[DEVELOPMENT.md](DEVELOPMENT.md)** - Development workflow and tools
+- **[DEBUGGING.md](DEBUGGING.md)** - Debugging guide
 - **[DEPLOYMENT.md](DEPLOYMENT.md)** - Deployment to kvenno.app
 - **[KVENNO-STRUCTURE.md](KVENNO-STRUCTURE.md)** - Site structure and design
+
+### Additional Resources
 - **[tools/game-template/README.md](tools/game-template/README.md)** - Template guide
-- **[shared/README.md](shared/README.md)** - Shared library API (coming soon)
+- **[shared/README.md](shared/README.md)** - Shared library API
+- **[GAME-REVIEW-PROMPT.md](GAME-REVIEW-PROMPT.md)** - Game review guidelines
+- **[Archived Docs](docs/archive/)** - Historical documentation (completed migrations)
 
 ---
 

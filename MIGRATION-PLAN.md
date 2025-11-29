@@ -176,10 +176,27 @@ This document tracks the migration of all chemistry games to the new monorepo ar
 - Difficulty-based visual indicators (easy/medium/hard color coding)
 - Complete TypeScript type safety
 
-### ⏳ equilibrium-shifter.html (2770 lines)
-**Status**: PENDING  
-**Complexity**: High  
+### ✅ equilibrium-shifter.html (2770 lines)
+**Status**: COMPLETED
+**Location**: `/games/3-ar/equilibrium-shifter/`
+**Output**: `equilibrium-shifter.html` (212KB, 62.6KB gzipped)
+**Complexity**: High
 **Topic**: Chemical equilibrium
+
+**Features Migrated**:
+- 30 equilibrium systems (10 beginner, 12 intermediate, 8 advanced)
+- Le Chatelier's Principle logic engine (100% accurate)
+- Two game modes: Learning (untimed, hints) and Challenge (20s timer, scoring)
+- Visual molecule displays with emoji representations
+- Animated equilibrium shifts (left/right/none)
+- Stress selection interface (9 stress types)
+- Prediction buttons with feedback system
+- Scoring system with streak bonuses
+- Detailed explanations in Icelandic and English
+- Thermodynamics indicators (exothermic/endothermic)
+- Mobile responsive design
+- Sound effects toggle
+- Complete TypeScript type safety
 
 ### ✅ thermodynamics-predictor.html (1221 lines)
 **Status**: COMPLETED
@@ -250,9 +267,9 @@ This document tracks the migration of all chemistry games to the new monorepo ar
 - [x] Migrate one complex game (dimensional-analysis)
 - [x] Create game template
 
-### Phase 2: Remaining Games (IN PROGRESS)
-- [ ] Migrate Year 1 games (5 remaining)
-- [ ] Migrate Year 3 games (6 remaining)
+### Phase 2: Remaining Games (COMPLETED ✅)
+- [x] Migrate Year 1 games (6/6 completed)
+- [x] Migrate Year 3 games (6/6 completed)
 
 ### Phase 3: Documentation & Quality
 - [ ] Update all repository documentation

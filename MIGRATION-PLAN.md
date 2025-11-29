@@ -134,9 +134,9 @@ This document tracks the migration of all chemistry games to the new monorepo ar
 - pKa/pKb visualization on titration curve
 - Complete TypeScript type safety
 
-### ⏳ ph-titration-master/ (2375 lines)
-**Status**: PENDING  
-**Complexity**: High  
+### 🔄 ph-titration-master/ (2375 lines)
+**Status**: IN PROGRESS
+**Complexity**: High
 **Topic**: Advanced pH and titrations
 
 ### ⏳ gas-law-challenge.html (1852 lines)

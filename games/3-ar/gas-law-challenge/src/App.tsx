@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { GasLawQuestion, GameMode, GameStats, QuestionFeedback } from './types';
 import { questions, getRandomQuestion } from './data';
-import { solveGasLaw, checkAnswer, calculateError, getFormula, getUnit, getVariableName } from './utils/gas-calculations';
+import { checkAnswer, calculateError, getUnit, getVariableName } from './utils/gas-calculations';
 
 /**
  * Particle class for gas visualization
@@ -352,8 +352,321 @@ function App() {
     );
   }
 
-  // Game Screen (truncated for token limit - see full file)
-  // [Additional screens omitted - code continues in actual file]
+  // Game Screen
+  if (screen === 'game' && currentQuestion) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <main className="max-w-5xl mx-auto px-4 py-8">
+          <div className="bg-white rounded-xl shadow-lg p-8">
+            {/* Header */}
+            <div className="flex justify-between items-center mb-6">
+              <div>
+                <h1 className="text-2xl font-bold" style={{ color: '#f36b22' }}>
+                  Gas Law Challenge
+                </h1>
+                <p className="text-sm text-gray-600">
+                  {gameMode === 'practice' ? 'Æfingahamur' : 'Keppnishamur'} • Spurning {currentQuestion.id}
+                </p>
+              </div>
+              <div className="flex gap-2">
+                {gameMode === 'challenge' && timeRemaining !== null && (
+                  <div className={`px-4 py-2 rounded-lg font-bold ${timeRemaining < 30 ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'}`}>
+                    ⏱️ {timeRemaining}s
+                  </div>
+                )}
+                <button
+                  onClick={() => setScreen('menu')}
+                  className="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition"
+                >
+                  ← Valmynd
+                </button>
+              </div>
+            </div>
+
+            {/* Stats bar */}
+            <div className="flex gap-4 mb-6 text-sm">
+              <div className="bg-yellow-50 px-3 py-2 rounded-lg border border-yellow-200">
+                <span className="font-bold text-yellow-800">🏆 {stats.score}</span>
+              </div>
+              <div className="bg-green-50 px-3 py-2 rounded-lg border border-green-200">
+                <span className="font-bold text-green-800">✓ {stats.correctAnswers}/{stats.questionsAnswered}</span>
+              </div>
+              <div className="bg-blue-50 px-3 py-2 rounded-lg border border-blue-200">
+                <span className="font-bold text-blue-800">🔥 {stats.streak}</span>
+              </div>
+              <div className={`px-3 py-2 rounded-lg border ${
+                currentQuestion.difficulty === 'Auðvelt' ? 'bg-green-50 border-green-200 text-green-800' :
+                currentQuestion.difficulty === 'Miðlungs' ? 'bg-yellow-50 border-yellow-200 text-yellow-800' :
+                'bg-red-50 border-red-200 text-red-800'
+              }`}>
+                <span className="font-bold">{currentQuestion.difficulty}</span>
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* Left: Visualization */}
+              <div>
+                <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 mb-4">
+                  <h3 className="font-bold text-gray-800 mb-2">{currentQuestion.emoji} {currentQuestion.scenario_is}</h3>
+                  <p className="text-sm text-gray-600">{currentQuestion.scenario_en}</p>
+                </div>
+
+                {/* Particle Canvas */}
+                <div className="bg-gray-900 rounded-lg p-4">
+                  <canvas
+                    ref={canvasRef}
+                    width={400}
+                    height={300}
+                    className="w-full rounded"
+                  />
+                  <p className="text-xs text-gray-400 mt-2 text-center">
+                    Lítlar agnir tákna lofttegundir • Litur: þrýstingur
+                  </p>
+                </div>
+
+                {/* Given Values */}
+                <div className="mt-4 bg-blue-50 p-4 rounded-lg border border-blue-200">
+                  <h3 className="font-bold text-blue-900 mb-2">Gefnar upplýsingar:</h3>
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    {currentQuestion.given.P && (
+                      <div className="bg-white px-3 py-2 rounded">
+                        <span className="font-semibold">P:</span> {currentQuestion.given.P.value} {currentQuestion.given.P.unit}
+                      </div>
+                    )}
+                    {currentQuestion.given.V && (
+                      <div className="bg-white px-3 py-2 rounded">
+                        <span className="font-semibold">V:</span> {currentQuestion.given.V.value} {currentQuestion.given.V.unit}
+                      </div>
+                    )}
+                    {currentQuestion.given.T && (
+                      <div className="bg-white px-3 py-2 rounded">
+                        <span className="font-semibold">T:</span> {currentQuestion.given.T.value} {currentQuestion.given.T.unit}
+                      </div>
+                    )}
+                    {currentQuestion.given.n && (
+                      <div className="bg-white px-3 py-2 rounded">
+                        <span className="font-semibold">n:</span> {currentQuestion.given.n.value} {currentQuestion.given.n.unit}
+                      </div>
+                    )}
+                  </div>
+                  <div className="mt-2 text-xs text-blue-800 font-mono bg-white px-2 py-1 rounded">
+                    PV = nRT þar sem R = 0.08206 L·atm/(mol·K)
+                  </div>
+                </div>
+              </div>
+
+              {/* Right: Input and Hints */}
+              <div>
+                {/* Question */}
+                <div className="bg-orange-50 p-4 rounded-lg border-2 border-orange-200 mb-4">
+                  <h3 className="font-bold text-orange-900 mb-2">
+                    Finndu {getVariableName(currentQuestion.find)} ({currentQuestion.find}):
+                  </h3>
+                  <div className="flex gap-2">
+                    <input
+                      type="number"
+                      value={userAnswer}
+                      onChange={(e) => setUserAnswer(e.target.value)}
+                      placeholder="Sláðu inn svar..."
+                      className="flex-1 px-4 py-3 rounded-lg border-2 border-gray-300 focus:border-orange-500 focus:outline-none text-lg"
+                      onKeyPress={(e) => e.key === 'Enter' && checkUserAnswer()}
+                    />
+                    <div className="bg-white px-4 py-3 rounded-lg border-2 border-gray-300 font-bold text-gray-700">
+                      {getUnit(currentQuestion.find)}
+                    </div>
+                  </div>
+                  <button
+                    onClick={checkUserAnswer}
+                    className="w-full mt-3 py-3 px-6 rounded-lg font-bold text-white transition hover:opacity-90"
+                    style={{ backgroundColor: '#f36b22' }}
+                  >
+                    Athuga Svar (Enter)
+                  </button>
+                </div>
+
+                {/* Hints */}
+                <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 mb-4">
+                  <div className="flex justify-between items-center mb-2">
+                    <h3 className="font-bold text-gray-800">Vísbendingar:</h3>
+                    <button
+                      onClick={getHint}
+                      disabled={showHint >= currentQuestion.hints.length}
+                      className={`px-3 py-1 rounded-lg text-sm font-bold transition ${
+                        showHint >= currentQuestion.hints.length
+                          ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                          : 'bg-blue-500 text-white hover:bg-blue-600'
+                      }`}
+                    >
+                      Vísbending (H) {gameMode === 'challenge' && '(-10 stig)'}
+                    </button>
+                  </div>
+                  {showHint > 0 ? (
+                    <div className="space-y-2">
+                      {currentQuestion.hints.slice(0, showHint).map((hint, idx) => (
+                        <div key={idx} className="bg-blue-50 px-3 py-2 rounded border border-blue-200 text-sm">
+                          <span className="font-bold text-blue-800">💡 {idx + 1}:</span> {hint}
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-600">Smelltu á "Vísbending" til að fá hjálp</p>
+                  )}
+                </div>
+
+                {/* Solution Toggle */}
+                {gameMode === 'practice' && (
+                  <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <button
+                      onClick={() => setShowSolution(!showSolution)}
+                      className="w-full px-3 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition font-bold text-sm"
+                    >
+                      {showSolution ? '🔒 Fela lausn' : '🔓 Sýna lausn (S)'}
+                    </button>
+                    {showSolution && (
+                      <div className="mt-3 space-y-2 text-sm">
+                        <div className="bg-white px-3 py-2 rounded border border-gray-300">
+                          <span className="font-bold">Formúla:</span> {currentQuestion.solution.formula}
+                        </div>
+                        <div className="bg-white px-3 py-2 rounded border border-gray-300">
+                          <span className="font-bold">Innsetning:</span> {currentQuestion.solution.substitution}
+                        </div>
+                        <div className="bg-white px-3 py-2 rounded border border-gray-300">
+                          <span className="font-bold">Útreikningur:</span> {currentQuestion.solution.calculation}
+                        </div>
+                        <div className="bg-green-50 px-3 py-2 rounded border border-green-300 font-bold text-green-800">
+                          Svar: {currentQuestion.answer.toFixed(2)} {getUnit(currentQuestion.find)}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Formula Reference */}
+                <div className="mt-4 bg-gray-50 p-3 rounded-lg border border-gray-200 text-xs">
+                  <p className="font-bold text-gray-700 mb-1">Upprifjun:</p>
+                  <p className="text-gray-600">P = nRT/V • V = nRT/P • T = PV/nR • n = PV/RT</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  // Feedback Screen
+  if (screen === 'feedback' && feedback && currentQuestion) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <main className="max-w-4xl mx-auto px-4 py-8">
+          <div className="bg-white rounded-xl shadow-lg p-8">
+            {/* Result Header */}
+            <div className={`text-center mb-6 p-6 rounded-xl ${
+              feedback.isCorrect
+                ? 'bg-green-50 border-2 border-green-300'
+                : 'bg-red-50 border-2 border-red-300'
+            }`}>
+              <div className="text-6xl mb-2">{feedback.isCorrect ? '✅' : '❌'}</div>
+              <h2 className={`text-3xl font-bold mb-2 ${
+                feedback.isCorrect ? 'text-green-800' : 'text-red-800'
+              }`}>
+                {feedback.message}
+              </h2>
+              {feedback.isCorrect && (
+                <div className="text-2xl font-bold text-yellow-600">
+                  +{feedback.points} stig
+                </div>
+              )}
+            </div>
+
+            {/* Answer Comparison */}
+            <div className="grid md:grid-cols-2 gap-4 mb-6">
+              <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                <h3 className="font-bold text-blue-900 mb-2">Þitt svar:</h3>
+                <p className="text-2xl font-bold text-blue-800">
+                  {feedback.userAnswer.toFixed(2)} {getUnit(currentQuestion.find)}
+                </p>
+              </div>
+              <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+                <h3 className="font-bold text-green-900 mb-2">Rétt svar:</h3>
+                <p className="text-2xl font-bold text-green-800">
+                  {feedback.correctAnswer.toFixed(2)} {getUnit(currentQuestion.find)}
+                </p>
+              </div>
+            </div>
+
+            {/* Difference */}
+            {!feedback.isCorrect && (
+              <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200 mb-6">
+                <h3 className="font-bold text-yellow-900 mb-1">Mismunur:</h3>
+                <p className="text-lg text-yellow-800">
+                  {feedback.difference.toFixed(2)} {getUnit(currentQuestion.find)} frá réttum svari
+                </p>
+              </div>
+            )}
+
+            {/* Explanation */}
+            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 mb-6">
+              <h3 className="font-bold text-gray-800 mb-3">Skref fyrir skref lausn:</h3>
+              <div className="space-y-2 text-sm">
+                {currentQuestion.solution.steps.map((step, idx) => (
+                  <div key={idx} className="flex gap-2">
+                    <span className="font-bold text-gray-600">{idx + 1}.</span>
+                    <span className="text-gray-700">{step}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-4 bg-white p-3 rounded border border-gray-300">
+                <p className="text-sm"><span className="font-bold">Formúla:</span> {currentQuestion.solution.formula}</p>
+                <p className="text-sm"><span className="font-bold">Innsetning:</span> {currentQuestion.solution.substitution}</p>
+                <p className="text-sm"><span className="font-bold">Útreikningur:</span> {currentQuestion.solution.calculation}</p>
+              </div>
+            </div>
+
+            {/* Stats Update */}
+            <div className="bg-blue-50 p-4 rounded-lg border border-blue-200 mb-6">
+              <h3 className="font-bold text-blue-900 mb-2">Árangur:</h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-center text-sm">
+                <div>
+                  <div className="text-2xl font-bold text-yellow-600">{stats.score}</div>
+                  <div className="text-gray-600">Stig</div>
+                </div>
+                <div>
+                  <div className="text-2xl font-bold text-green-600">{stats.correctAnswers}/{stats.questionsAnswered}</div>
+                  <div className="text-gray-600">Rétt</div>
+                </div>
+                <div>
+                  <div className="text-2xl font-bold text-blue-600">{stats.streak}</div>
+                  <div className="text-gray-600">Núverandi röð</div>
+                </div>
+                <div>
+                  <div className="text-2xl font-bold text-purple-600">{stats.bestStreak}</div>
+                  <div className="text-gray-600">Besta röð</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Navigation */}
+            <div className="flex gap-3">
+              <button
+                onClick={() => startNewQuestion(gameMode)}
+                className="flex-1 py-3 px-6 rounded-lg font-bold text-white transition hover:opacity-90"
+                style={{ backgroundColor: '#f36b22' }}
+              >
+                ➡️ Næsta spurning
+              </button>
+              <button
+                onClick={() => setScreen('menu')}
+                className="px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition font-bold"
+              >
+                📊 Valmynd
+              </button>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return null;
 }

@@ -154,10 +154,27 @@ This document tracks the migration of all chemistry games to the new monorepo ar
 - Keyboard shortcuts for precision control
 - Complete TypeScript type safety
 
-### ⏳ gas-law-challenge.html (1852 lines)
-**Status**: PENDING  
-**Complexity**: Medium-High  
+### ✅ gas-law-challenge.html (1852 lines)
+**Status**: COMPLETED
+**Location**: `/games/3-ar/gas-law-challenge/`
+**Output**: `gas-law-challenge.html` (178KB, 55.8KB gzipped)
+**Complexity**: Medium-High
 **Topic**: Gas laws
+
+**Features Migrated**:
+- 8 gas law problems (4 easy, 2 medium, 2 hard) with real-world scenarios
+- Ideal Gas Law calculator (PV = nRT) solving for all four variables (P, V, T, n)
+- Real-time particle visualization with Canvas API (count ∝ moles, speed ∝ √temperature)
+- Dynamic container visualization with pressure-based border color/thickness
+- Two game modes: Practice (untimed, unlimited hints) and Challenge (90s timer, -10 points/hint)
+- Progressive 4-level hint system with step-by-step guidance
+- Complete solution display with formula, substitution, and calculation steps
+- Scoring system: base points (100), accuracy bonus (+50), time bonus (+50), hint penalty (-10)
+- Streak tracking and best streak recording
+- Answer validation with tolerance checking (±2% default)
+- Keyboard shortcuts (Enter=submit, H=hint, S=solution)
+- Difficulty-based visual indicators (easy/medium/hard color coding)
+- Complete TypeScript type safety
 
 ### ⏳ equilibrium-shifter.html (2770 lines)
 **Status**: PENDING  

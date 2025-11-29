@@ -4,3 +4,4 @@
 
 export * from './mastery';
 export * from './unitConversion';
+export * from './scoring';

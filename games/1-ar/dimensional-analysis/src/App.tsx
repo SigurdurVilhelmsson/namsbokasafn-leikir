@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useProgress, useAccessibility, useI18n } from '@shared/hooks';
 
-// Import game-specific data
-import { lessons } from './data/lessons';
-import { level1Questions } from './data/questions';
-import { conversionFactors } from './data/conversionFactors';
+// Import Level components
+import { Level1 } from './components/Level1';
+import { Level2 } from './components/Level2';
+import { Level3 } from './components/Level3';
 
 /**
  * Main application component for Dimensional Analysis Game
@@ -195,29 +195,35 @@ function App() {
           </div>
         )}
 
-        {/* Placeholder for Level Screens */}
-        {screen !== 'menu' && screen !== 'stats' && (
-          <div className="max-w-4xl mx-auto">
-            <div className="bg-white rounded-lg shadow-md p-8">
-              <h2 className="text-2xl font-bold text-gray-800 mb-4">
-                {screen === 'level1' && 'Stig 1 - Framhaldsstig'}
-                {screen === 'level2' && 'Stig 2 - Millistig'}
-                {screen === 'level3' && 'Stig 3 - Byrjendur'}
-              </h2>
-              <p className="text-gray-600 mb-6">
-                Þetta stig er í þróun. Fullkomin útgáfa er í {lessons.length} kennsluköflum og {level1Questions.length} spurningum.
-              </p>
-              <p className="text-sm text-gray-500 mb-6">
-                Stuðlar í boði: {conversionFactors.length}
-              </p>
-              <button
-                onClick={() => setScreen('menu')}
-                className="bg-gray-500 hover:bg-gray-600 text-white rounded-lg px-6 py-2 transition-colors"
-              >
-                {t('common.back', 'Til baka')}
-              </button>
-            </div>
-          </div>
+        {/* Level Screens */}
+        {screen === 'level1' && (
+          <Level1
+            onComplete={(levelProgress) => {
+              setScreen('menu');
+            }}
+            onBack={() => setScreen('menu')}
+            initialProgress={progress.levelProgress?.level1}
+          />
+        )}
+
+        {screen === 'level2' && (
+          <Level2
+            onComplete={(levelProgress) => {
+              setScreen('menu');
+            }}
+            onBack={() => setScreen('menu')}
+            initialProgress={progress.levelProgress?.level2}
+          />
+        )}
+
+        {screen === 'level3' && (
+          <Level3
+            onComplete={(levelProgress) => {
+              setScreen('menu');
+            }}
+            onBack={() => setScreen('menu')}
+            initialProgress={progress.levelProgress?.level3}
+          />
         )}
 
         {/* Stats Screen */}

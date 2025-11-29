@@ -4,16 +4,22 @@ import { UnitTile } from './UnitTile';
 interface UnitCancellationVisualizerProps {
   numeratorUnits: string[];
   denominatorUnits: string[];
-  onCancel: (unit: string) => void;
+  onCancel?: (unit: string) => void;
+  showCancelButton?: boolean;
 }
 
-export function UnitCancellationVisualizer({ numeratorUnits, denominatorUnits, onCancel }: UnitCancellationVisualizerProps) {
+export function UnitCancellationVisualizer({
+  numeratorUnits,
+  denominatorUnits,
+  onCancel,
+  showCancelButton = false
+}: UnitCancellationVisualizerProps) {
   const [cancelling, setCancelling] = useState<string | null>(null);
 
   const handleCancel = (unit: string) => {
     setCancelling(unit);
     setTimeout(() => {
-      onCancel(unit);
+      if (onCancel) onCancel(unit);
       setCancelling(null);
     }, 600);
   };
@@ -23,14 +29,18 @@ export function UnitCancellationVisualizer({ numeratorUnits, denominatorUnits, o
       <div className="mb-4">
         <h3 className="text-sm font-semibold text-gray-600 mb-2">Teljari:</h3>
         <div className="min-h-[50px] border-2 border-dashed border-blue-300 rounded-lg p-2 bg-blue-50">
-          {numeratorUnits.map((unit, idx) => (
-            <UnitTile
-              key={`num-${idx}`}
-              unit={unit}
-              position="numerator"
-              cancelling={cancelling === unit}
-            />
-          ))}
+          {numeratorUnits.length === 0 ? (
+            <span className="text-gray-400 text-sm">Engar einingar í teljara</span>
+          ) : (
+            numeratorUnits.map((unit, idx) => (
+              <UnitTile
+                key={`num-${idx}`}
+                unit={unit}
+                position="numerator"
+                cancelling={cancelling === unit}
+              />
+            ))
+          )}
         </div>
       </div>
 
@@ -39,18 +49,22 @@ export function UnitCancellationVisualizer({ numeratorUnits, denominatorUnits, o
       <div>
         <h3 className="text-sm font-semibold text-gray-600 mb-2">Nefnari:</h3>
         <div className="min-h-[50px] border-2 border-dashed border-green-300 rounded-lg p-2 bg-green-50">
-          {denominatorUnits.map((unit, idx) => (
-            <UnitTile
-              key={`denom-${idx}`}
-              unit={unit}
-              position="denominator"
-              cancelling={cancelling === unit}
-            />
-          ))}
+          {denominatorUnits.length === 0 ? (
+            <span className="text-gray-400 text-sm">Engar einingar í nefnara</span>
+          ) : (
+            denominatorUnits.map((unit, idx) => (
+              <UnitTile
+                key={`denom-${idx}`}
+                unit={unit}
+                position="denominator"
+                cancelling={cancelling === unit}
+              />
+            ))
+          )}
         </div>
       </div>
 
-      {numeratorUnits.length > 0 && denominatorUnits.length > 0 && (
+      {showCancelButton && numeratorUnits.length > 0 && denominatorUnits.length > 0 && (
         <div className="mt-4">
           <button
             onClick={() => {
@@ -60,7 +74,7 @@ export function UnitCancellationVisualizer({ numeratorUnits, denominatorUnits, o
             className="w-full bg-primary hover:bg-primary-dark text-white font-semibold py-2 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={!numeratorUnits.some(u => denominatorUnits.includes(u))}
           >
-            Stytta út sameiginlegar einingar
+            Strika út sameiginlegar einingar
           </button>
         </div>
       )}

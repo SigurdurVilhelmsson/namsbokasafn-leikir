@@ -58,9 +58,8 @@ export function getIndicatorColor(indicatorId: string, pH: number): string {
   if (pH < lowPH) return indicator.colorAcidic;
   if (pH > highPH) return indicator.colorBasic;
 
-  // Transition zone - mix colors
-  const ratio = (pH - lowPH) / (highPH - lowPH);
-  return indicator.colorBasic; // Simplified - use basic color in transition
+  // Transition zone - mix colors (simplified - use basic color in transition)
+  return indicator.colorBasic;
 }
 
 /**

@@ -299,10 +299,13 @@ export function generateTitrationCurve(
   titration: Titration,
   maxVolume?: number
 ): Array<{ volume: number; pH: number }> {
-  const eqVol =
-    titration.type.startsWith('polyprotic')
-      ? Math.max(...titration.equivalenceVolumes)
-      : titration.equivalenceVolume;
+  // Determine equivalence volume based on titration type
+  let eqVol: number;
+  if (titration.type === 'polyprotic-diprotic' || titration.type === 'polyprotic-triprotic') {
+    eqVol = Math.max(...(titration as any).equivalenceVolumes);
+  } else {
+    eqVol = (titration as any).equivalenceVolume;
+  }
 
   const max = maxVolume || eqVol * 2;
   const points: Array<{ volume: number; pH: number }> = [];

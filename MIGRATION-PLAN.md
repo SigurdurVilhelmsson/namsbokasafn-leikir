@@ -134,10 +134,25 @@ This document tracks the migration of all chemistry games to the new monorepo ar
 - pKa/pKb visualization on titration curve
 - Complete TypeScript type safety
 
-### 🔄 ph-titration-master/ (2375 lines)
-**Status**: IN PROGRESS
+### ✅ ph-titration-master/ (2375 lines)
+**Status**: COMPLETED
+**Location**: `/games/3-ar/ph-titration-master/`
+**Output**: `ph-titration-master.html` (191KB, 59KB gzipped)
 **Complexity**: High
 **Topic**: Advanced pH and titrations
+
+**Features Migrated**:
+- 13 titration problems (4 beginner: strong-strong, 6 intermediate: weak acid/base, 3 advanced: polyprotic)
+- Virtual lab equipment: animated burette, color-changing flask, digital pH meter
+- Real-time titration curve with buffer region visualization
+- pH calculation engine for all titration types (Henderson-Hasselbalch, polyprotic)
+- 5 acid-base indicators with accurate pH ranges
+- Two game modes: Practice (untimed) and Challenge (timed with bonuses)
+- Scoring system: volume accuracy (±0.05/0.2/0.5 mL), indicator bonus (+20), time bonus (+30)
+- Equivalence point detection and markers on curve
+- pKa visualization on titration curves
+- Keyboard shortcuts for precision control
+- Complete TypeScript type safety
 
 ### ⏳ gas-law-challenge.html (1852 lines)
 **Status**: PENDING  

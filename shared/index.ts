@@ -18,5 +18,5 @@ export * from './utils';
 export { default as theme } from './styles/theme';
 export * from './styles/theme';
 
-// Components (will be added as we create them)
-// export * from './components';
+// Components
+export * from './components';

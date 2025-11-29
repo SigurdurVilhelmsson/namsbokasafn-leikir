@@ -1,0 +1,16 @@
+{
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "bradlc.vscode-tailwindcss",
+    "ms-vscode.vscode-typescript-next",
+    "msjsdiag.debugger-for-chrome",
+    "firefox-devtools.vscode-firefox-debug",
+    "christian-kohler.path-intellisense",
+    "zignd.html-css-class-completion",
+    "formulahendry.auto-rename-tag",
+    "naumovs.color-highlight",
+    "usernamehw.errorlens",
+    "streetsidesoftware.code-spell-checker"
+  ]
+}

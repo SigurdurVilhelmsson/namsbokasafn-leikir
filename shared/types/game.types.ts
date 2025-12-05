@@ -68,7 +68,13 @@ export interface GameSettings {
   accessibility: AccessibilitySettings;
 }
 
-export type QuestionType = 'equivalence' | 'cancellation_prediction' | 'multi_step' | 'reverse' | 'synthesis' | 'derivation';
+export type QuestionType =
+  | 'equivalence'
+  | 'cancellation_prediction'
+  | 'multi_step'
+  | 'reverse'
+  | 'synthesis'
+  | 'derivation';
 
 export interface BaseQuestion {
   id: string;

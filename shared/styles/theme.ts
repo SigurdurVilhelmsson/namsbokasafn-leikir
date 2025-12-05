@@ -38,48 +38,48 @@ export const colors = {
 };
 
 export const spacing = {
-  xs: '0.25rem',   // 4px
-  sm: '0.5rem',    // 8px
-  md: '1rem',      // 16px
-  lg: '1.5rem',    // 24px
-  xl: '2rem',      // 32px
-  '2xl': '3rem',   // 48px
-  '3xl': '4rem',   // 64px
+  xs: '0.25rem', // 4px
+  sm: '0.5rem', // 8px
+  md: '1rem', // 16px
+  lg: '1.5rem', // 24px
+  xl: '2rem', // 32px
+  '2xl': '3rem', // 48px
+  '3xl': '4rem', // 64px
 };
 
 export const borderRadius = {
   none: '0',
-  sm: '0.125rem',   // 2px
-  md: '0.375rem',   // 6px
-  lg: '0.5rem',     // 8px
-  xl: '0.75rem',    // 12px
+  sm: '0.125rem', // 2px
+  md: '0.375rem', // 6px
+  lg: '0.5rem', // 8px
+  xl: '0.75rem', // 12px
   full: '9999px',
 };
 
 export const fontSize = {
   small: {
-    xs: '0.625rem',   // 10px
-    sm: '0.75rem',    // 12px
+    xs: '0.625rem', // 10px
+    sm: '0.75rem', // 12px
     base: '0.875rem', // 14px
-    lg: '1rem',       // 16px
-    xl: '1.125rem',   // 18px
+    lg: '1rem', // 16px
+    xl: '1.125rem', // 18px
     '2xl': '1.25rem', // 20px
   },
   medium: {
-    xs: '0.75rem',    // 12px
-    sm: '0.875rem',   // 14px
-    base: '1rem',     // 16px
-    lg: '1.125rem',   // 18px
-    xl: '1.25rem',    // 20px
-    '2xl': '1.5rem',  // 24px
+    xs: '0.75rem', // 12px
+    sm: '0.875rem', // 14px
+    base: '1rem', // 16px
+    lg: '1.125rem', // 18px
+    xl: '1.25rem', // 20px
+    '2xl': '1.5rem', // 24px
   },
   large: {
-    xs: '0.875rem',   // 14px
-    sm: '1rem',       // 16px
+    xs: '0.875rem', // 14px
+    sm: '1rem', // 16px
     base: '1.125rem', // 18px
-    lg: '1.25rem',    // 20px
-    xl: '1.5rem',     // 24px
-    '2xl': '1.875rem',// 30px
+    lg: '1.25rem', // 20px
+    xl: '1.5rem', // 24px
+    '2xl': '1.875rem', // 30px
   },
 };
 

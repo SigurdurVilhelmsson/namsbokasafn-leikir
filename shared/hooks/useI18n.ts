@@ -58,20 +58,23 @@ export const useI18n = () => {
    * @param key - Translation key (e.g., 'mainMenu.title')
    * @param fallback - Fallback text if translation not found
    */
-  const t = useCallback((key: string, fallback?: string): string => {
-    const keys = key.split('.');
-    let value: any = currentTranslations;
+  const t = useCallback(
+    (key: string, fallback?: string): string => {
+      const keys = key.split('.');
+      let value: any = currentTranslations;
 
-    for (const k of keys) {
-      if (value && typeof value === 'object' && k in value) {
-        value = value[k];
-      } else {
-        return fallback || key;
+      for (const k of keys) {
+        if (value && typeof value === 'object' && k in value) {
+          value = value[k];
+        } else {
+          return fallback || key;
+        }
       }
-    }
 
-    return typeof value === 'string' ? value : fallback || key;
-  }, [currentTranslations]);
+      return typeof value === 'string' ? value : fallback || key;
+    },
+    [currentTranslations]
+  );
 
   return {
     t,

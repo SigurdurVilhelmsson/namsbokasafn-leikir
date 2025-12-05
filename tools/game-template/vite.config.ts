@@ -4,10 +4,7 @@ import { viteSingleFile } from 'vite-plugin-singlefile';
 import path from 'path';
 
 export default defineConfig({
-  plugins: [
-    react(),
-    viteSingleFile(),
-  ],
+  plugins: [react(), viteSingleFile()],
   resolve: {
     alias: {
       '@shared': path.resolve(__dirname, 'SHARED_PATH'),

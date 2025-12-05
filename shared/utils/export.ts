@@ -46,7 +46,7 @@ export const exportProgressAsCSV = (
   const headers = Object.keys(rows[0]);
   const csvContent = [
     headers.join(','),
-    ...rows.map(row => headers.map(h => row[h]).join(','))
+    ...rows.map((row) => headers.map((h) => row[h]).join(',')),
   ].join('\n');
 
   const dataBlob = new Blob([csvContent], { type: 'text/csv' });

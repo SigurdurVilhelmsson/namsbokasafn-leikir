@@ -95,10 +95,7 @@ export const validateSignificantFigures = (
 /**
  * Calculate efficiency score based on steps taken vs optimal
  */
-export const calculateEfficiencyScore = (
-  stepsTaken: number,
-  optimalSteps: number
-): number => {
+export const calculateEfficiencyScore = (stepsTaken: number, optimalSteps: number): number => {
   if (stepsTaken <= optimalSteps) {
     return 1.0;
   }
@@ -126,11 +123,11 @@ export const scoreExplanation = (
   let score = 0;
 
   // Quality keywords (30%)
-  const qualityCount = qualityKeywords.filter(kw => text.includes(kw.toLowerCase())).length;
+  const qualityCount = qualityKeywords.filter((kw) => text.includes(kw.toLowerCase())).length;
   score += Math.min(qualityCount * 0.15, 0.3);
 
   // Type-specific keywords (40%)
-  const typeCount = typeSpecificKeywords.filter(kw => text.includes(kw.toLowerCase())).length;
+  const typeCount = typeSpecificKeywords.filter((kw) => text.includes(kw.toLowerCase())).length;
   score += (typeCount / Math.max(typeSpecificKeywords.length, 1)) * 0.4;
 
   // Length bonus (30%)

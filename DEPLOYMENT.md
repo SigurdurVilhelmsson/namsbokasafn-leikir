@@ -1,52 +1,169 @@
 # Deployment Guide
 
+> **Last Updated**: 2025-12-05
+>
+> **Repository Architecture**: Monorepo with Vite build system
+
 This guide covers deploying ChemistryGames to **kvenno.app** and general server deployment.
+
+## 📦 Current Repository Status
+
+**Architecture**: pnpm monorepo with 11 games (5 Year 1, 6 Year 3)
+**Build System**: Vite + TypeScript + React + Tailwind CSS
+**Build Output**: Single-file HTML bundles (production-ready)
+
+**Games Overview**:
+- **Year 1 (1-ar)**: 5 games - nafnakerfid, dimensional-analysis, molmassi, takmarkandi, lausnir
+- **Year 3 (3-ar)**: 6 games - gas-law-challenge, thermodynamics-predictor, buffer-recipe-creator, equilibrium-shifter, ph-titration-practice, ph-titration-master
 
 ## 🎓 Deployment to kvenno.app (Production)
 
 ### Overview
-- **Production URL**: `https://kvenno.app/1-ar/games/`
-- **Deployment Path**: `/var/www/kvenno.app/1-ar/games/`
-- **Repository**: `chemistry-games-1ar`
-- **Year-Specific**: 1st year only (separate repos for 2nd/3rd year)
+- **Production URL**: `https://kvenno.app/1-ar/games/` (Year 1), `https://kvenno.app/3-ar/games/` (Year 3)
+- **Deployment Path**: `/var/www/kvenno.app/{1-ar|3-ar}/games/`
+- **Repository**: Unified monorepo with all games
+- **Architecture**: Monorepo containing both Year 1 and Year 3 games
+
+### Prerequisites
+
+⚠️ **CRITICAL**: Ensure pnpm and dependencies are installed before building!
+
+**Step 1: Install pnpm (if not already installed)**
+
+```bash
+# Check if pnpm is installed
+pnpm --version
+
+# If not installed, install pnpm globally via npm
+sudo npm install -g pnpm
+
+# Verify installation
+pnpm --version
+```
+
+**Step 2: Install project dependencies**
+
+```bash
+# Navigate to repository directory
+cd ~/repos/ChemistryGames
+
+# Install all dependencies (302 packages)
+pnpm install
+
+# Verify installation
+pnpm check:quality
+```
+
+### Building Games for Production
+
+Each game must be built before deployment to create production-ready HTML bundles:
+
+```bash
+# Build all games at once
+pnpm build
+
+# Or build individual games
+pnpm --filter @kvenno/nafnakerfid build
+pnpm --filter @kvenno/dimensional-analysis build
+# ... etc for each game
+```
+
+**Build Output Location**:
+- Year 1 games: `dist/1-ar/*.html`
+- Year 3 games: `dist/3-ar/*.html`
 
 ### Quick Deployment Steps
+
+**From your local machine (or CI/CD):**
+
+```bash
+# 0. Ensure dependencies are installed
+pnpm install
+
+# 1. Build all games for production
+pnpm build
+
+# 2. Verify builds succeeded
+ls -la dist/1-ar/*.html
+ls -la dist/3-ar/*.html
+
+# 3. Copy built files to server
+rsync -avz --progress dist/1-ar/ user@kvenno.app:/var/www/kvenno.app/1-ar/games/
+rsync -avz --progress dist/3-ar/ user@kvenno.app:/var/www/kvenno.app/3-ar/games/
+```
+
+**On the server:**
 
 ```bash
 # 1. SSH into kvenno.app server
 ssh user@kvenno.app
 
-# 2. Navigate to deployment directory
-cd /var/www/kvenno.app/1-ar/games/
+# 2. Set correct permissions
+sudo chown -R www-data:www-data /var/www/kvenno.app/1-ar/games/
+sudo chown -R www-data:www-data /var/www/kvenno.app/3-ar/games/
+sudo chmod -R 755 /var/www/kvenno.app/1-ar/games/
+sudo chmod -R 755 /var/www/kvenno.app/3-ar/games/
 
-# 3. Pull latest changes (if using git)
+# 3. Reload nginx
+sudo systemctl reload nginx
+
+# 4. Test deployment
+curl -I https://kvenno.app/1-ar/games/
+curl -I https://kvenno.app/3-ar/games/
+```
+
+**Alternative: Deploy via git on server**
+
+```bash
+# 1. SSH into server
+ssh user@kvenno.app
+
+# 2. Navigate to repo directory
+cd /var/www/repos/ChemistryGames
+
+# 3. Pull latest changes
 git pull origin main
 
-# 4. Or copy files directly
-# Copy index.html and game files
-cp /path/to/repo/index.html ./
-cp -r "/path/to/repo/1. ár/" ./
+# 4. Install dependencies (if needed)
+pnpm install
 
-# 5. Ensure correct permissions
-sudo chown -R www-data:www-data /var/www/kvenno.app/1-ar/games/
-sudo chmod -R 755 /var/www/kvenno.app/1-ar/games/
+# 5. Build all games
+pnpm build
 
-# 6. Reload nginx
+# 6. Copy to deployment location
+cp -r dist/1-ar/* /var/www/kvenno.app/1-ar/games/
+cp -r dist/3-ar/* /var/www/kvenno.app/3-ar/games/
+
+# 7. Fix permissions and reload
+sudo chown -R www-data:www-data /var/www/kvenno.app/
 sudo systemctl reload nginx
 ```
 
 ### Nginx Configuration for kvenno.app
 
-The site should be configured to serve from `/1-ar/games/` path:
+The site should be configured to serve from `/1-ar/games/` and `/3-ar/games/` paths:
 
 ```nginx
 server {
     server_name kvenno.app;
     root /var/www/kvenno.app;
 
-    # Main site location
+    # Year 1 games
     location /1-ar/games/ {
         alias /var/www/kvenno.app/1-ar/games/;
+        index index.html;
+        try_files $uri $uri/ =404;
+
+        # Cache HTML files briefly
+        location ~* \.html$ {
+            expires 1h;
+            add_header Cache-Control "public, must-revalidate";
+        }
+    }
+
+    # Year 3 games
+    location /3-ar/games/ {
+        alias /var/www/kvenno.app/3-ar/games/;
         index index.html;
         try_files $uri $uri/ =404;
 
@@ -71,20 +188,26 @@ server {
 
 ```
 /var/www/kvenno.app/
-└── 1-ar/
+├── 1-ar/
+│   └── games/
+│       ├── index.html                     (landing page - Year 1 games)
+│       ├── nafnakerfid.html               ✅ Built game
+│       ├── dimensional-analysis.html      ✅ Built game
+│       ├── molmassi.html                  ✅ Built game
+│       ├── takmarkandi.html               ✅ Built game
+│       └── lausnir.html                   ✅ Built game
+└── 3-ar/
     └── games/
-        ├── index.html                  (landing page with game list)
-        ├── 404.html                    (error page)
-        ├── kvenno_structure.md         (reference doc)
-        └── 1. ár/                      (game files directory)
-            ├── nafnakerfið.html        ✅ Ready
-            ├── einingagreining.html    ✅ Ready
-            ├── takmarkandi.html        ✅ Ready
-            ├── molmassi.html           ✅ Ready
-            └── lausnir.html            ✅ Ready
+        ├── index.html                     (landing page - Year 3 games)
+        ├── gas-law-challenge.html         ✅ Built game
+        ├── thermodynamics-predictor.html  ✅ Built game
+        ├── buffer-recipe-creator.html     ✅ Built game
+        ├── equilibrium-shifter.html       ✅ Built game
+        ├── ph-titration-practice.html     ✅ Built game
+        └── ph-titration-master.html       ✅ Built game
 ```
 
-**All games are production-ready!** No build process required.
+**Build Process**: All games require `pnpm build` to generate production-ready single-file HTML bundles.
 
 ### Integration with Kvenno Site Structure
 
@@ -96,19 +219,35 @@ All pages include:
 
 ### Updating Existing Deployment
 
+**Option 1: Build locally and deploy**
 ```bash
-# Pull latest changes
-cd /var/www/kvenno.app/1-ar/games/
+# On your local machine
+pnpm install           # Ensure dependencies are installed
+pnpm build             # Build all games
+
+# Deploy built files to server
+rsync -avz --progress dist/1-ar/ user@kvenno.app:/var/www/kvenno.app/1-ar/games/
+rsync -avz --progress dist/3-ar/ user@kvenno.app:/var/www/kvenno.app/3-ar/games/
+
+# Fix permissions on server
+ssh user@kvenno.app "sudo chown -R www-data:www-data /var/www/kvenno.app/ && sudo systemctl reload nginx"
+```
+
+**Option 2: Build on server**
+```bash
+# SSH to server
+ssh user@kvenno.app
+
+# Navigate to repo and build
+cd /var/www/repos/ChemistryGames
 git pull origin main
+pnpm install
+pnpm build
 
-# Or use rsync from local machine
-rsync -avz --progress \
-    --exclude '.git' \
-    --exclude 'node_modules' \
-    ./ChemistryGames/ \
-    user@kvenno.app:/var/www/kvenno.app/1-ar/games/
-
-# Reload nginx
+# Copy to deployment location
+sudo cp -r dist/1-ar/* /var/www/kvenno.app/1-ar/games/
+sudo cp -r dist/3-ar/* /var/www/kvenno.app/3-ar/games/
+sudo chown -R www-data:www-data /var/www/kvenno.app/
 sudo systemctl reload nginx
 ```
 
@@ -118,67 +257,97 @@ sudo systemctl reload nginx
 
 This section covers deploying to a general Linode/Ubuntu server with nginx.
 
-## 📋 Pre-Deployment Status
+## 📋 Pre-Deployment Status (Updated 2025-12-05)
 
 ### ✅ Completed:
 
-1. **All Games Converted to HTML** ✅
-   - All 5 games are now standalone HTML files
-   - No build process required
-   - Ready for immediate deployment
+1. **Monorepo Architecture Established** ✅
+   - 11 games organized in unified repository (5 Year 1, 6 Year 3)
+   - Shared component library across all games
+   - TypeScript + React + Vite build system
 
-2. **Landing Page Created** ✅
-   - `index.html` with game selection and Kvenno branding
+2. **Modern Build System** ✅
+   - Vite-based build process
+   - Single-file HTML bundle output
+   - Optimized for production deployment
 
-3. **Error Page Created** ✅
-   - `404.html` custom error page (needs minor branding update)
-
-4. **Kvenno Branding Applied** ✅
+3. **Kvenno Branding Applied** ✅
    - All games use `#f36b22` orange color scheme
    - Consistent headers and navigation
    - Breadcrumbs on all pages
 
-5. **Documentation Complete** ✅
-   - README.md, DEPLOYMENT.md, kvenno_structure.md
+4. **Documentation Complete** ✅
+   - README.md, DEPLOYMENT.md, REPOSITORY-STATUS.md
+   - Comprehensive development guides
+   - Maintenance checklists
+
+5. **Code Quality Standards** ✅
+   - TypeScript type checking
+   - ESLint + Prettier configured
+   - Automated quality checks via pnpm scripts
+
+### 🔴 Critical Pre-Deployment Requirements:
+
+1. **Dependencies Must Be Installed** 🔴
+   - **Status**: node_modules currently missing
+   - **Action**: Run `pnpm install` before building
+   - **Impact**: Cannot build without dependencies
+
+2. **Build Process Required** 🔴
+   - **Status**: Games must be built before deployment
+   - **Action**: Run `pnpm build` to generate dist/ files
+   - **Impact**: Source files cannot be deployed directly
 
 ### 🟡 Optional Improvements:
 
-1. **CDN Dependencies**
-   - HTML files load React, Babel, and Tailwind from CDN
-   - **Current:** External CDN (requires internet connection)
-   - **Optional:** Self-host libraries for better reliability and offline support
-
-2. **File Names with Special Characters**
-   - Files use Icelandic characters (ð, í)
-   - **Status:** Works fine with modern browsers/servers
-   - **Optional:** Create URL-friendly symlinks if issues arise
-
-3. **Security Headers**
+1. **Security Headers**
    - Add Content-Security-Policy headers
    - Already has X-Frame-Options and basic security headers in nginx config
 
-4. **Performance Optimization**
+2. **Performance Optimization**
    - Gzip compression (configured in nginx)
    - Cache headers (configured in nginx)
    - Optional: Consider CDN like Cloudflare for high traffic
+
+3. **CI/CD Pipeline**
+   - Automate build and deployment process
+   - Consider GitHub Actions or similar
 
 ---
 
 ## 🚀 Deployment Steps
 
-### Step 1: Files Are Ready! ✅
+### Step 0: Prerequisites (CRITICAL)
 
-All files are already prepared and ready for deployment:
-- ✅ All 5 games are standalone HTML files
-- ✅ Landing page (`index.html`) created
-- ✅ Error page (`404.html`) created
-- ✅ No build process required
+⚠️ **Before deployment, you MUST:**
 
-Simply copy the repository files to the server!
+```bash
+# 0. Install pnpm if not already installed
+pnpm --version || sudo npm install -g pnpm
+
+# 1. Install dependencies (if not already installed)
+pnpm install
+
+# 2. Build all games
+pnpm build
+
+# 3. Verify builds
+ls -la dist/1-ar/*.html
+ls -la dist/3-ar/*.html
+```
+
+**What gets deployed:**
+- ✅ Built HTML files from `dist/` directory
+- ✅ NOT the source files from `games/` directory
+- ✅ Each game is a self-contained single HTML file
+
+### Step 1: Build Games for Production
+
+All games must be built before deployment:
 
 ### Step 2: Server Setup
 
-#### 2.1 Update System and Install Nginx
+#### 2.1 Update System and Install Prerequisites
 
 ```bash
 # SSH into your Linode server
@@ -186,6 +355,21 @@ ssh user@your-linode-ip
 
 # Update system
 sudo apt update && sudo apt upgrade -y
+
+# Install Node.js and npm (if not already installed)
+# For Ubuntu 22.04+
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt install -y nodejs
+
+# Verify Node.js and npm installation
+node --version
+npm --version
+
+# Install pnpm globally
+sudo npm install -g pnpm
+
+# Verify pnpm installation
+pnpm --version
 
 # Install nginx
 sudo apt install nginx -y
@@ -505,15 +689,22 @@ sudo tail -50 /var/log/nginx/chemistrygames_error.log
 
 ---
 
-## 🎯 Production Checklist
+## 🎯 Production Checklist (Updated 2025-12-05)
 
 Before going live, ensure:
 
+**Pre-Build Requirements:**
+- [ ] Dependencies installed (`pnpm install`)
+- [ ] All 11 games build successfully (`pnpm build`)
+- [ ] Build output verified in `dist/1-ar/` and `dist/3-ar/`
+- [ ] Code quality checks pass (`pnpm check:quality`)
+
 **Already Complete:**
-- ✅ All files converted to HTML (no build required)
-- ✅ Landing page (index.html) created with Kvenno branding
-- ✅ Custom 404 page created
-- ✅ All 5 games tested and working
+- ✅ Monorepo architecture with 11 games (5 Year 1, 6 Year 3)
+- ✅ Modern build system (Vite + TypeScript + React)
+- ✅ Landing pages created with Kvenno branding
+- ✅ Shared component library
+- ✅ Documentation complete
 
 **Server Configuration:**
 - [ ] SSL certificate installed (Let's Encrypt)

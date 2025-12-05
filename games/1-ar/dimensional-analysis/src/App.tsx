@@ -198,7 +198,7 @@ function App() {
         {/* Level Screens */}
         {screen === 'level1' && (
           <Level1
-            onComplete={(levelProgress) => {
+            onComplete={() => {
               setScreen('menu');
             }}
             onBack={() => setScreen('menu')}
@@ -208,7 +208,7 @@ function App() {
 
         {screen === 'level2' && (
           <Level2
-            onComplete={(levelProgress) => {
+            onComplete={() => {
               setScreen('menu');
             }}
             onBack={() => setScreen('menu')}
@@ -218,7 +218,7 @@ function App() {
 
         {screen === 'level3' && (
           <Level3
-            onComplete={(levelProgress) => {
+            onComplete={() => {
               setScreen('menu');
             }}
             onBack={() => setScreen('menu')}

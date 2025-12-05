@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useI18n } from '@shared/hooks';
-import { level2Problems, Level2Problem } from '../data/problems';
+import { level2Problems } from '../data/problems';
 import { UnitCancellationVisualizer } from './UnitCancellationVisualizer';
 
 interface Level2Progress {
@@ -18,7 +17,6 @@ interface Level2Props {
 }
 
 export function Level2({ onComplete, onBack, initialProgress }: Level2Props) {
-  const { t } = useI18n();
   const [currentProblemIndex, setCurrentProblemIndex] = useState(
     initialProgress?.problemsCompleted || 0
   );

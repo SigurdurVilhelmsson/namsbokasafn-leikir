@@ -38,14 +38,14 @@ export const useProgress = ({ gameId, initialProgress = {} }: UseProgressOptions
 
   // Update last played date on mount
   useEffect(() => {
-    setProgress(prev => ({
+    setProgress((prev) => ({
       ...prev,
       lastPlayedDate: new Date().toISOString(),
     }));
   }, []);
 
   const updateProgress = useCallback((updates: Partial<GameProgress>) => {
-    setProgress(prev => ({
+    setProgress((prev) => ({
       ...prev,
       ...updates,
       lastPlayedDate: new Date().toISOString(),
@@ -67,7 +67,7 @@ export const useProgress = ({ gameId, initialProgress = {} }: UseProgressOptions
   }, [gameId, initialProgress]);
 
   const incrementProblems = useCallback(() => {
-    setProgress(prev => ({
+    setProgress((prev) => ({
       ...prev,
       problemsCompleted: prev.problemsCompleted + 1,
       lastPlayedDate: new Date().toISOString(),
@@ -75,7 +75,7 @@ export const useProgress = ({ gameId, initialProgress = {} }: UseProgressOptions
   }, []);
 
   const setLevel = useCallback((level: GameProgress['currentLevel']) => {
-    setProgress(prev => ({
+    setProgress((prev) => ({
       ...prev,
       currentLevel: level,
       lastPlayedDate: new Date().toISOString(),

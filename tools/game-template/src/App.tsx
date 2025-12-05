@@ -18,8 +18,8 @@ function App() {
       problemsCompleted: 0,
       lastPlayedDate: new Date().toISOString(),
       totalTimeSpent: 0,
-      levelProgress: {}
-    }
+      levelProgress: {},
+    },
   });
 
   const { settings, toggleHighContrast, setTextSize } = useAccessibility();
@@ -38,12 +38,8 @@ function App() {
       <main id="main-content" className="container mx-auto px-4 py-8">
         {/* Header */}
         <header className="mb-8 text-center">
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">
-            GAME_TITLE
-          </h1>
-          <p className="text-lg text-gray-600">
-            Kvennaskólinn - GAME_SUBTITLE
-          </p>
+          <h1 className="text-4xl font-bold text-gray-800 mb-2">GAME_TITLE</h1>
+          <p className="text-lg text-gray-600">Kvennaskólinn - GAME_SUBTITLE</p>
         </header>
 
         {/* Accessibility Menu */}
@@ -111,12 +107,8 @@ function App() {
                 className="w-full bg-orange-500 hover:bg-orange-600 text-white rounded-lg p-6 text-left transition-colors mb-4"
                 style={{ backgroundColor: '#f36b22' }}
               >
-                <h3 className="text-xl font-semibold mb-2">
-                  {t('common.start', 'Byrja')}
-                </h3>
-                <p className="text-orange-100">
-                  GAME_DESCRIPTION
-                </p>
+                <h3 className="text-xl font-semibold mb-2">{t('common.start', 'Byrja')}</h3>
+                <p className="text-orange-100">GAME_DESCRIPTION</p>
               </button>
 
               {/* Stats Button */}
@@ -134,12 +126,8 @@ function App() {
         {screen === 'game' && (
           <div className="max-w-4xl mx-auto">
             <div className="bg-white rounded-lg shadow-md p-8">
-              <h2 className="text-2xl font-bold text-gray-800 mb-4">
-                GAME_TITLE
-              </h2>
-              <p className="text-gray-600 mb-6">
-                TODO: Implement game logic here
-              </p>
+              <h2 className="text-2xl font-bold text-gray-800 mb-4">GAME_TITLE</h2>
+              <p className="text-gray-600 mb-6">TODO: Implement game logic here</p>
               <button
                 onClick={() => setScreen('menu')}
                 className="bg-gray-500 hover:bg-gray-600 text-white rounded-lg px-6 py-2 transition-colors"

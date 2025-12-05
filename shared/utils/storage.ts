@@ -75,7 +75,7 @@ export const exportAllProgress = (): Record<string, GameProgress> => {
   const allProgress: Record<string, GameProgress> = {};
   const keys = getAllProgressKeys();
 
-  keys.forEach(gameId => {
+  keys.forEach((gameId) => {
     const progress = loadProgress(gameId);
     if (progress) {
       allProgress[gameId] = progress;

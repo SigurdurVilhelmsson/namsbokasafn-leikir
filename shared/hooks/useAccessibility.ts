@@ -54,23 +54,23 @@ export const useAccessibility = () => {
   }, [settings]);
 
   const updateSettings = useCallback((updates: Partial<AccessibilitySettings>) => {
-    setSettings(prev => ({ ...prev, ...updates }));
+    setSettings((prev) => ({ ...prev, ...updates }));
   }, []);
 
   const toggleHighContrast = useCallback(() => {
-    setSettings(prev => ({ ...prev, highContrast: !prev.highContrast }));
+    setSettings((prev) => ({ ...prev, highContrast: !prev.highContrast }));
   }, []);
 
   const setTextSize = useCallback((size: AccessibilitySettings['textSize']) => {
-    setSettings(prev => ({ ...prev, textSize: size }));
+    setSettings((prev) => ({ ...prev, textSize: size }));
   }, []);
 
   const toggleReducedMotion = useCallback(() => {
-    setSettings(prev => ({ ...prev, reducedMotion: !prev.reducedMotion }));
+    setSettings((prev) => ({ ...prev, reducedMotion: !prev.reducedMotion }));
   }, []);
 
   const toggleKeyboardShortcuts = useCallback(() => {
-    setSettings(prev => ({ ...prev, keyboardShortcutsEnabled: !prev.keyboardShortcutsEnabled }));
+    setSettings((prev) => ({ ...prev, keyboardShortcutsEnabled: !prev.keyboardShortcutsEnabled }));
   }, []);
 
   const resetSettings = useCallback(() => {

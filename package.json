@@ -11,8 +11,9 @@
   ],
   "scripts": {
     "dev": "pnpm --filter './games/**' dev",
-    "build": "pnpm --filter './games/**' build",
-    "build:all": "node tools/build-all.mjs",
+    "build": "pnpm --workspace-concurrency=1 --filter './games/**' build",
+    "build:parallel": "pnpm --filter './games/**' build",
+    "build:all": "pnpm build",
     "type-check": "pnpm --recursive run type-check",
     "clean": "pnpm --recursive run clean && rm -rf node_modules",
     "shared:build": "pnpm --filter @kvenno/shared build",

@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useI18n } from '@shared/hooks';
-import { level1Questions, Level1Question } from '../data/questions';
+import { level1Questions } from '../data/questions';
 import { scoreExplanation } from '../utils/scoring';
 
 interface Level1Progress {
@@ -18,7 +17,6 @@ interface Level1Props {
 }
 
 export function Level1({ onComplete, onBack, initialProgress }: Level1Props) {
-  const { t } = useI18n();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(
     initialProgress?.questionsAnswered || 0
   );
@@ -46,7 +44,7 @@ export function Level1({ onComplete, onBack, initialProgress }: Level1Props) {
       setSelectedOptions([]);
       setSelectedExplanation(null);
       setExplanation('');
-      showFeedback(false);
+      setShowFeedback(false);
     }
   }, [currentQuestionIndex, question]);
 
@@ -69,7 +67,6 @@ export function Level1({ onComplete, onBack, initialProgress }: Level1Props) {
     if (question.type === 'equivalence' || question.type === 'cancellation_prediction') {
       if (question.multiSelect && Array.isArray(question.correct)) {
         // Multi-select: all correct must be selected, no incorrect selected
-        const correctSet = new Set(question.correct);
         const selectedSet = new Set(selectedOptions);
         answerCorrect = question.correct.length === selectedOptions.length &&
                        question.correct.every(c => selectedSet.has(c));

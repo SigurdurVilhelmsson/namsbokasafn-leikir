@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react';
-import { useI18n } from '@shared/hooks';
-import { level3Challenges, Level3Challenge } from '../data/challenges';
+import { level3Challenges } from '../data/challenges';
 import { scoreExplanation, calculateCompositeScore, countSignificantFigures } from '../utils/scoring';
 
 interface Level3Progress {
   problemsCompleted: number;
   compositeScores: number[];
-  totalSteps: number;
+  totalSteps?: number;
   achievements: string[];
   mastered: boolean;
 }
@@ -18,12 +17,14 @@ interface Level3Props {
 }
 
 export function Level3({ onComplete, onBack, initialProgress }: Level3Props) {
-  const { t } = useI18n();
   const [currentProblemIndex, setCurrentProblemIndex] = useState(
     initialProgress?.problemsCompleted || 0
   );
   const [progress, setProgress] = useState<Level3Progress>(
-    initialProgress || {
+    initialProgress ? {
+      ...initialProgress,
+      totalSteps: initialProgress.totalSteps || 0
+    } : {
       problemsCompleted: 0,
       compositeScores: [],
       totalSteps: 0,
@@ -115,8 +116,8 @@ export function Level3({ onComplete, onBack, initialProgress }: Level3Props) {
         answerScore = 1;
       }
 
-      // Check significant figures if required
-      if (problem.significantFigures) {
+      // Check significant figures if required (only for synthesis type)
+      if (problem.type === 'synthesis' && problem.significantFigures) {
         userSigFigs = countSignificantFigures(userAnswer);
         sigFigScore = userSigFigs === problem.significantFigures ? 1 : 0;
         // Weighted: 70% value, 30% sig figs
@@ -158,7 +159,7 @@ export function Level3({ onComplete, onBack, initialProgress }: Level3Props) {
     const newProgress = {
       ...progress,
       compositeScores: [...progress.compositeScores, composite],
-      totalSteps: progress.totalSteps + (selectedPath !== null && problem.possiblePaths ? problem.possiblePaths[selectedPath].stepCount : 2)
+      totalSteps: (progress.totalSteps || 0) + (selectedPath !== null && problem.type === 'efficiency' && problem.possiblePaths ? problem.possiblePaths[selectedPath].stepCount : 2)
     };
     setProgress(newProgress);
   };
@@ -225,7 +226,7 @@ export function Level3({ onComplete, onBack, initialProgress }: Level3Props) {
           <h2 className="text-2xl font-bold mb-6">{problem.prompt}</h2>
 
           {/* Display problem-specific context */}
-          {(problem.type === 'synthesis' || problem.type === 'derivation') && problem.density && (
+          {problem.type === 'synthesis' && problem.density && (
             <div className="mb-6 p-4 bg-purple-50 border-l-4 border-purple-400 rounded">
               <p className="text-sm font-semibold text-purple-800 mb-2">📊 Gefnar upplýsingar:</p>
               <div className="space-y-1">
@@ -337,10 +338,10 @@ export function Level3({ onComplete, onBack, initialProgress }: Level3Props) {
                   type="text"
                   value={userAnswer}
                   onChange={(e) => setUserAnswer(e.target.value)}
-                  placeholder={problem.scientificNotation ? 't.d. 1.08e12' : 'Sláðu inn svar'}
+                  placeholder={(problem.type === 'derivation' && problem.scientificNotation) ? 't.d. 1.08e12' : 'Sláðu inn svar'}
                   className="w-full p-3 border-2 border-gray-300 rounded-lg font-mono"
                 />
-                {problem.targetUnit && (
+                {problem.type !== 'reverse' && problem.type !== 'error_analysis' && 'targetUnit' in problem && problem.targetUnit && (
                   <p className="text-sm text-gray-600 mt-1">Eining: {problem.targetUnit}</p>
                 )}
               </div>
@@ -444,7 +445,7 @@ export function Level3({ onComplete, onBack, initialProgress }: Level3Props) {
                   </div>
                 )}
 
-                {problem.significantFigures && scores.sigFig !== null && (
+                {problem.type === 'synthesis' && problem.significantFigures && scores.sigFig !== null && (
                   <div className={`mt-4 p-3 rounded ${scores.sigFig === 1 ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'}`}>
                     <p className="text-sm font-semibold mb-1">
                       {scores.sigFig === 1 ? '✓ Markverðir tölustafir réttir' : '✗ Markverðir tölustafir rangir'}

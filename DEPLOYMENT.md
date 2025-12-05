@@ -69,8 +69,9 @@ pnpm --filter @kvenno/dimensional-analysis build
 ```
 
 **Build Output Location**:
-- Year 1 games: `dist/1-ar/*.html`
-- Year 3 games: `dist/3-ar/*.html`
+- Year 1 games: `1-ar/*.html` (at repository root)
+- Year 3 games: `3-ar/*.html` (at repository root)
+- Note: Builds output directly to these directories, not to a `dist/` folder
 
 ### Quick Deployment Steps
 
@@ -84,12 +85,12 @@ pnpm install
 pnpm build
 
 # 2. Verify builds succeeded
-ls -la dist/1-ar/*.html
-ls -la dist/3-ar/*.html
+ls -la 1-ar/*.html
+ls -la 3-ar/*.html
 
 # 3. Copy built files to server
-rsync -avz --progress dist/1-ar/ user@kvenno.app:/var/www/kvenno.app/1-ar/games/
-rsync -avz --progress dist/3-ar/ user@kvenno.app:/var/www/kvenno.app/3-ar/games/
+rsync -avz --progress 1-ar/ user@kvenno.app:/var/www/kvenno.app/1-ar/games/
+rsync -avz --progress 3-ar/ user@kvenno.app:/var/www/kvenno.app/3-ar/games/
 ```
 
 **On the server:**
@@ -131,8 +132,8 @@ pnpm install
 pnpm build
 
 # 6. Copy to deployment location
-cp -r dist/1-ar/* /var/www/kvenno.app/1-ar/games/
-cp -r dist/3-ar/* /var/www/kvenno.app/3-ar/games/
+cp -r 1-ar/* /var/www/kvenno.app/1-ar/games/
+cp -r 3-ar/* /var/www/kvenno.app/3-ar/games/
 
 # 7. Fix permissions and reload
 sudo chown -R www-data:www-data /var/www/kvenno.app/
@@ -226,8 +227,8 @@ pnpm install           # Ensure dependencies are installed
 pnpm build             # Build all games
 
 # Deploy built files to server
-rsync -avz --progress dist/1-ar/ user@kvenno.app:/var/www/kvenno.app/1-ar/games/
-rsync -avz --progress dist/3-ar/ user@kvenno.app:/var/www/kvenno.app/3-ar/games/
+rsync -avz --progress 1-ar/ user@kvenno.app:/var/www/kvenno.app/1-ar/games/
+rsync -avz --progress 3-ar/ user@kvenno.app:/var/www/kvenno.app/3-ar/games/
 
 # Fix permissions on server
 ssh user@kvenno.app "sudo chown -R www-data:www-data /var/www/kvenno.app/ && sudo systemctl reload nginx"
@@ -245,8 +246,8 @@ pnpm install
 pnpm build
 
 # Copy to deployment location
-sudo cp -r dist/1-ar/* /var/www/kvenno.app/1-ar/games/
-sudo cp -r dist/3-ar/* /var/www/kvenno.app/3-ar/games/
+sudo cp -r 1-ar/* /var/www/kvenno.app/1-ar/games/
+sudo cp -r 3-ar/* /var/www/kvenno.app/3-ar/games/
 sudo chown -R www-data:www-data /var/www/kvenno.app/
 sudo systemctl reload nginx
 ```
@@ -295,8 +296,9 @@ This section covers deploying to a general Linode/Ubuntu server with nginx.
 
 2. **Build Process Required** 🔴
    - **Status**: Games must be built before deployment
-   - **Action**: Run `pnpm build` to generate dist/ files
+   - **Action**: Run `pnpm build` to generate HTML files in `1-ar/` and `3-ar/`
    - **Impact**: Source files cannot be deployed directly
+   - **Note**: Build outputs to repository root directories, not a `dist/` folder
 
 ### 🟡 Optional Improvements:
 
@@ -332,12 +334,12 @@ pnpm install
 pnpm build
 
 # 3. Verify builds
-ls -la dist/1-ar/*.html
-ls -la dist/3-ar/*.html
+ls -la 1-ar/*.html
+ls -la 3-ar/*.html
 ```
 
 **What gets deployed:**
-- ✅ Built HTML files from `dist/` directory
+- ✅ Built HTML files from `1-ar/` and `3-ar/` directories (at repository root)
 - ✅ NOT the source files from `games/` directory
 - ✅ Each game is a self-contained single HTML file
 
@@ -696,8 +698,9 @@ Before going live, ensure:
 **Pre-Build Requirements:**
 - [ ] Dependencies installed (`pnpm install`)
 - [ ] All 11 games build successfully (`pnpm build`)
-- [ ] Build output verified in `dist/1-ar/` and `dist/3-ar/`
-- [ ] Code quality checks pass (`pnpm check:quality`)
+- [ ] Build output verified in `1-ar/` and `3-ar/` directories
+- [ ] Landing pages (`index.html`) present in both directories
+- [ ] Code quality checks pass (`pnpm check:quality`) - optional, may have type errors
 
 **Already Complete:**
 - ✅ Monorepo architecture with 11 games (5 Year 1, 6 Year 3)

@@ -10,7 +10,7 @@ import { Level3 } from './components/Level3';
  * Main application component for Dimensional Analysis Game
  */
 function App() {
-  const { progress } = useProgress({
+  const { progress, updateProgress } = useProgress({
     gameId: 'dimensional-analysis',
     initialProgress: {
       currentLevel: 1,
@@ -207,7 +207,15 @@ function App() {
         {/* Level Screens */}
         {screen === 'level1' && (
           <Level1Conceptual
-            onComplete={() => {
+            onComplete={(levelProgress) => {
+              updateProgress({
+                problemsCompleted: progress.problemsCompleted + levelProgress.questionsAnswered,
+                currentLevel: levelProgress.mastered ? 2 : 1,
+                levelProgress: {
+                  ...progress.levelProgress,
+                  level1: levelProgress
+                }
+              });
               setScreen('menu');
             }}
             onBack={() => setScreen('menu')}
@@ -217,7 +225,15 @@ function App() {
 
         {screen === 'level2' && (
           <Level2
-            onComplete={() => {
+            onComplete={(levelProgress) => {
+              updateProgress({
+                problemsCompleted: progress.problemsCompleted + levelProgress.problemsCompleted,
+                currentLevel: levelProgress.mastered ? 3 : 2,
+                levelProgress: {
+                  ...progress.levelProgress,
+                  level2: levelProgress
+                }
+              });
               setScreen('menu');
             }}
             onBack={() => setScreen('menu')}
@@ -227,7 +243,15 @@ function App() {
 
         {screen === 'level3' && (
           <Level3
-            onComplete={() => {
+            onComplete={(levelProgress) => {
+              updateProgress({
+                problemsCompleted: progress.problemsCompleted + levelProgress.problemsCompleted,
+                currentLevel: 3,
+                levelProgress: {
+                  ...progress.levelProgress,
+                  level3: levelProgress
+                }
+              });
               setScreen('menu');
             }}
             onBack={() => setScreen('menu')}

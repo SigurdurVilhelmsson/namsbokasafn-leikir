@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useProgress, useAccessibility, useI18n } from '@shared/hooks';
 
 // Import Level components
-import { Level1 } from './components/Level1';
+import { Level1Conceptual } from './components/Level1Conceptual';
 import { Level2 } from './components/Level2';
 import { Level3 } from './components/Level3';
 
@@ -13,7 +13,7 @@ function App() {
   const { progress } = useProgress({
     gameId: 'dimensional-analysis',
     initialProgress: {
-      currentLevel: 3,
+      currentLevel: 1,
       problemsCompleted: 0,
       lastPlayedDate: new Date().toISOString(),
       totalTimeSpent: 0,
@@ -126,59 +126,68 @@ function App() {
                 </p>
               </div>
 
-              {/* Level Cards */}
+              {/* Level Cards - Conceptual First Progression */}
               <div className="grid gap-4">
-                {/* Level 3 - Beginner */}
+                {/* Level 1 - Conceptual (Visual Learning) */}
                 <button
-                  onClick={() => setScreen('level3')}
-                  className="bg-orange-500 hover:bg-orange-600 text-white rounded-lg p-6 text-left transition-colors"
-                  style={{ backgroundColor: '#f36b22' }}
+                  onClick={() => setScreen('level1')}
+                  className="bg-green-500 hover:bg-green-600 text-white rounded-lg p-6 text-left transition-colors"
                 >
-                  <h3 className="text-xl font-semibold mb-2">
-                    {t('levels.level3.name', 'Byrjendur')}
-                  </h3>
-                  <p className="text-orange-100">
-                    {t('levels.level3.description', 'Með leiðsögn og stuðningi')}
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-2xl">1</span>
+                    <h3 className="text-xl font-semibold">
+                      {t('levels.level1.name', 'Hugtök')}
+                    </h3>
+                  </div>
+                  <p className="text-green-100">
+                    {t('levels.level1.description', 'Sjónræn lærdómur - engar útreikninga')}
                   </p>
-                  <p className="text-sm text-orange-200 mt-2">
-                    Verkefni: {progress.levelProgress?.level3?.problemsCompleted || 0}/10
+                  <p className="text-sm text-green-200 mt-2">
+                    Áskoranir: {progress.levelProgress?.level1?.questionsAnswered || 0}/6
                   </p>
                 </button>
 
-                {/* Level 2 - Intermediate */}
+                {/* Level 2 - Application (Predict & Reason) */}
                 <button
                   onClick={() => setScreen('level2')}
                   className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg p-6 text-left transition-colors"
-                  disabled={!progress.levelProgress?.level3?.mastered}
+                  disabled={!progress.levelProgress?.level1?.mastered}
                 >
-                  <h3 className="text-xl font-semibold mb-2">
-                    {t('levels.level2.name', 'Millistig')}
-                  </h3>
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-2xl">2</span>
+                    <h3 className="text-xl font-semibold">
+                      {t('levels.level2.name', 'Beiting')}
+                    </h3>
+                  </div>
                   <p className="text-blue-100">
-                    {t('levels.level2.description', 'Spá fyrir um næsta skref')}
+                    {t('levels.level2.description', 'Spá fyrir og rökstyðja')}
                   </p>
-                  {progress.levelProgress?.level3?.mastered && (
+                  {progress.levelProgress?.level1?.mastered && (
                     <p className="text-sm text-blue-200 mt-2">
                       Verkefni: {progress.levelProgress?.level2?.problemsCompleted || 0}/15
                     </p>
                   )}
                 </button>
 
-                {/* Level 1 - Advanced */}
+                {/* Level 3 - Calculation (Full Problems) */}
                 <button
-                  onClick={() => setScreen('level1')}
-                  className="bg-green-500 hover:bg-green-600 text-white rounded-lg p-6 text-left transition-colors"
+                  onClick={() => setScreen('level3')}
+                  className="bg-orange-500 hover:bg-orange-600 text-white rounded-lg p-6 text-left transition-colors"
                   disabled={!progress.levelProgress?.level2?.mastered}
+                  style={{ backgroundColor: !progress.levelProgress?.level2?.mastered ? undefined : '#f36b22' }}
                 >
-                  <h3 className="text-xl font-semibold mb-2">
-                    {t('levels.level1.name', 'Framhaldsstig')}
-                  </h3>
-                  <p className="text-green-100">
-                    {t('levels.level1.description', 'Fullkomin sjálfstæði í úrlausnum')}
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-2xl">3</span>
+                    <h3 className="text-xl font-semibold">
+                      {t('levels.level3.name', 'Útreikningar')}
+                    </h3>
+                  </div>
+                  <p className="text-orange-100">
+                    {t('levels.level3.description', 'Fullir útreikningar með formúlum')}
                   </p>
                   {progress.levelProgress?.level2?.mastered && (
-                    <p className="text-sm text-green-200 mt-2">
-                      Spurningar: {progress.levelProgress?.level1?.questionsAnswered || 0}/10
+                    <p className="text-sm text-orange-200 mt-2">
+                      Verkefni: {progress.levelProgress?.level3?.problemsCompleted || 0}/10
                     </p>
                   )}
                 </button>
@@ -197,7 +206,7 @@ function App() {
 
         {/* Level Screens */}
         {screen === 'level1' && (
-          <Level1
+          <Level1Conceptual
             onComplete={() => {
               setScreen('menu');
             }}
@@ -246,19 +255,19 @@ function App() {
                 </div>
 
                 <div className="border-b pb-4">
-                  <h3 className="font-semibold text-gray-700 mb-2">Stig 3 - Byrjendur</h3>
+                  <h3 className="font-semibold text-gray-700 mb-2">Stig 1 - Hugtök</h3>
                   <p className="text-sm text-gray-600">
-                    Verkefni: {progress.levelProgress?.level3?.problemsCompleted || 0}/10
+                    Áskoranir: {progress.levelProgress?.level1?.questionsAnswered || 0}/6
                   </p>
                   <p className="text-sm text-gray-600">
-                    Meðaleinkunn: {progress.levelProgress?.level3?.compositeScores?.length
-                      ? Math.round((progress.levelProgress.level3.compositeScores.reduce((a, b) => a + b, 0) / progress.levelProgress.level3.compositeScores.length) * 100)
+                    Nákvæmni: {progress.levelProgress?.level1?.questionsAnswered
+                      ? Math.round((progress.levelProgress.level1.questionsCorrect / progress.levelProgress.level1.questionsAnswered) * 100)
                       : 0}%
                   </p>
                 </div>
 
                 <div className="border-b pb-4">
-                  <h3 className="font-semibold text-gray-700 mb-2">Stig 2 - Millistig</h3>
+                  <h3 className="font-semibold text-gray-700 mb-2">Stig 2 - Beiting</h3>
                   <p className="text-sm text-gray-600">
                     Verkefni: {progress.levelProgress?.level2?.problemsCompleted || 0}/15
                   </p>
@@ -270,13 +279,13 @@ function App() {
                 </div>
 
                 <div className="pb-4">
-                  <h3 className="font-semibold text-gray-700 mb-2">Stig 1 - Framhaldsstig</h3>
+                  <h3 className="font-semibold text-gray-700 mb-2">Stig 3 - Útreikningar</h3>
                   <p className="text-sm text-gray-600">
-                    Spurningar: {progress.levelProgress?.level1?.questionsAnswered || 0}/10
+                    Verkefni: {progress.levelProgress?.level3?.problemsCompleted || 0}/10
                   </p>
                   <p className="text-sm text-gray-600">
-                    Nákvæmni: {progress.levelProgress?.level1?.questionsAnswered
-                      ? Math.round((progress.levelProgress.level1.questionsCorrect / progress.levelProgress.level1.questionsAnswered) * 100)
+                    Meðaleinkunn: {progress.levelProgress?.level3?.compositeScores?.length
+                      ? Math.round((progress.levelProgress.level3.compositeScores.reduce((a, b) => a + b, 0) / progress.levelProgress.level3.compositeScores.length) * 100)
                       : 0}%
                   </p>
                 </div>

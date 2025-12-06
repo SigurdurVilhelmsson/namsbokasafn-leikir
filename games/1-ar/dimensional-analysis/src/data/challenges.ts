@@ -239,7 +239,7 @@ export const level3Challenges: Level3Challenge[] = [
   {
     id: 'L3-4',
     type: 'synthesis',
-    prompt: 'Þú mælir 50.0 mL af lausn með eðlismassa 2.50 g/mL. Hversu mörg kg er þetta? Gefðu svar í 3 markverðum tölustöfum.',
+    prompt: 'Þú mælir 50.0 mL af lausn með eðlismassa 2.50 g/mL. Hversu mörg kg er þetta? Gefðu svar í 3 markverðum stöfum.',
     startValue: 50.0,
     startUnit: 'mL',
     density: 2.50,

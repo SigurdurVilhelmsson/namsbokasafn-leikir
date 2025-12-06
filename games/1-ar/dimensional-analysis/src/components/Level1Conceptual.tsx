@@ -62,10 +62,10 @@ const challenges: Challenge[] = [
   },
   {
     id: 'C6',
-    type: 'equivalence',
-    title: 'Áskorun - Tímaeiningar',
-    instruction: 'Hversu margar sekúndur eru í 1 klukkustund?',
-    hint: '1 klst = 60 mín, og 1 mín = 60 s'
+    type: 'cancellation',
+    title: 'Keðjubreyting - Tími',
+    instruction: 'Byggðu keðjuna til að breyta 1 klukkustund í sekúndur. Veldu rétta stuðla!',
+    hint: 'Byrjaðu með klst → mín, síðan mín → s. Einingin sem á að hverfa fer í nefnara.'
   }
 ];
 
@@ -970,74 +970,160 @@ function ChainConversionChallenge({ onSuccess, onAttempt }: ChallengeComponentPr
 }
 
 /**
- * Challenge 6: Time Equivalence
+ * Challenge 6: Time Chain Conversion - Visual, No Calculation
+ * Students build the conversion chain klst → mín → s by selecting correct factors
+ * This replaces the old multiple-choice that required calculating 60 × 60
  */
 function TimeEquivalenceChallenge({ onSuccess, onAttempt }: ChallengeComponentProps) {
-  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
-  const [showResult, setShowResult] = useState(false);
+  const [step1Done, setStep1Done] = useState(false);
+  const [step2Done, setStep2Done] = useState(false);
+  const [selectedStep1, setSelectedStep1] = useState<number | null>(null);
+  const [selectedStep2, setSelectedStep2] = useState<number | null>(null);
+  const [showStep1Animation, setShowStep1Animation] = useState(false);
+  const [showStep2Animation, setShowStep2Animation] = useState(false);
 
-  const options = [
-    { value: 60, correct: false },
-    { value: 360, correct: false },
-    { value: 3600, correct: true },
-    { value: 6000, correct: false }
+  const step1Factors = [
+    { num: 60, numUnit: 'mín', den: 1, denUnit: 'klst', correct: true },
+    { num: 1, numUnit: 'klst', den: 60, denUnit: 'mín', correct: false }
   ];
 
-  const handleSelect = (idx: number) => {
-    onAttempt();
-    setSelectedAnswer(idx);
-    setShowResult(true);
+  const step2Factors = [
+    { num: 60, numUnit: 's', den: 1, denUnit: 'mín', correct: true },
+    { num: 1, numUnit: 'mín', den: 60, denUnit: 's', correct: false }
+  ];
 
-    if (options[idx].correct) {
-      setTimeout(() => onSuccess(), 500);
+  const handleStep1 = (idx: number) => {
+    onAttempt();
+    setSelectedStep1(idx);
+    setShowStep1Animation(true);
+
+    if (step1Factors[idx].correct) {
+      setTimeout(() => {
+        setStep1Done(true);
+        setShowStep1Animation(false);
+      }, 1000);
+    } else {
+      setTimeout(() => setShowStep1Animation(false), 1000);
+    }
+  };
+
+  const handleStep2 = (idx: number) => {
+    onAttempt();
+    setSelectedStep2(idx);
+    setShowStep2Animation(true);
+
+    if (step2Factors[idx].correct) {
+      setTimeout(() => {
+        setStep2Done(true);
+        setShowStep2Animation(false);
+        onSuccess();
+      }, 1000);
+    } else {
+      setTimeout(() => setShowStep2Animation(false), 1000);
     }
   };
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-center gap-4 p-6 bg-gray-50 rounded-xl">
-        <UnitBlock value={1} unit="klst" color="blue" size="large" />
-        <span className="text-3xl text-gray-400">=</span>
-        <span className="text-3xl font-bold text-gray-600">?</span>
-        <span className="text-2xl text-gray-600">s</span>
+      {/* Visual chain display */}
+      <div className="flex items-center justify-center gap-2 sm:gap-3 p-4 sm:p-6 bg-gray-50 rounded-xl flex-wrap">
+        <UnitBlock value={1} unit="klst" color="blue" size="medium" />
+        <span className="text-xl sm:text-2xl text-gray-400">→</span>
+
+        <div className={`px-3 sm:px-4 py-2 rounded-lg border-2 min-w-[60px] text-center transition-all duration-300 ${
+          step1Done ? 'bg-green-100 border-green-400' : 'bg-white border-gray-300'
+        } ${showStep1Animation && selectedStep1 !== null && step1Factors[selectedStep1].correct ? 'animate-pulse ring-2 ring-green-400' : ''}`}>
+          <span className="font-bold text-sm sm:text-base">{step1Done ? '60 mín' : '?'}</span>
+        </div>
+
+        <span className="text-xl sm:text-2xl text-gray-400">→</span>
+
+        <div className={`px-3 sm:px-4 py-2 rounded-lg border-2 min-w-[70px] text-center transition-all duration-300 ${
+          step2Done ? 'bg-green-100 border-green-400' : 'bg-white border-gray-300'
+        } ${showStep2Animation && selectedStep2 !== null && step2Factors[selectedStep2].correct ? 'animate-pulse ring-2 ring-green-400' : ''}`}>
+          <span className="font-bold text-sm sm:text-base">{step2Done ? '3600 s' : '?'}</span>
+        </div>
       </div>
 
-      <div className="p-4 bg-yellow-50 rounded-lg text-center">
-        <p className="text-yellow-800">Muna: 1 klst = 60 mín, og 1 mín = 60 s</p>
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
-        {options.map((option, idx) => (
-          <button
-            key={idx}
-            onClick={() => handleSelect(idx)}
-            disabled={showResult}
-            className={`p-6 rounded-xl border-2 font-bold text-2xl transition-all ${
-              showResult && selectedAnswer === idx
-                ? (option.correct ? 'bg-green-100 border-green-500 text-green-800' : 'bg-red-100 border-red-500 text-red-800')
-                : 'bg-white border-gray-300 hover:border-orange-400 hover:bg-orange-50'
-            }`}
-          >
-            {option.value} s
-          </button>
-        ))}
-      </div>
-
-      {showResult && selectedAnswer !== null && !options[selectedAnswer].correct && (
-        <div className="p-4 bg-red-50 rounded-lg text-center">
-          <p className="text-red-800">Ekki rétt. Reiknaðu: 60 mín × 60 s/mín = ?</p>
-          <button
-            onClick={() => { setSelectedAnswer(null); setShowResult(false); }}
-            className="mt-2 text-red-600 underline"
-          >
-            Reyna aftur
-          </button>
+      {/* Step 1: klst → mín */}
+      {!step1Done && (
+        <div className="p-4 bg-blue-50 rounded-lg">
+          <p className="font-semibold text-blue-800 mb-3 text-sm sm:text-base">
+            Skref 1: Breyta klukkustund í mínútur
+          </p>
+          <p className="text-blue-700 text-xs sm:text-sm mb-4">
+            Veldu stuðulinn sem strikað út klst og gefur mín
+          </p>
+          <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
+            {step1Factors.map((factor, idx) => (
+              <ConversionFactorBlock
+                key={idx}
+                numeratorValue={factor.num}
+                numeratorUnit={factor.numUnit}
+                denominatorValue={factor.den}
+                denominatorUnit={factor.denUnit}
+                onClick={() => handleStep1(idx)}
+                isCorrect={selectedStep1 === idx ? factor.correct : null}
+              />
+            ))}
+          </div>
+          {selectedStep1 !== null && !step1Factors[selectedStep1].correct && !showStep1Animation && (
+            <p className="text-red-600 text-sm mt-3 text-center">
+              klst þarf að vera í nefnara til að strikast út!
+            </p>
+          )}
         </div>
       )}
 
-      {showResult && selectedAnswer !== null && options[selectedAnswer].correct && (
-        <div className="p-4 bg-green-50 rounded-lg text-center">
-          <p className="text-green-800 font-semibold">Rétt! 60 × 60 = 3600 s</p>
+      {/* Step 1 success feedback */}
+      {step1Done && !step2Done && (
+        <div className="p-3 bg-green-100 rounded-lg text-center">
+          <p className="text-green-800 text-sm">
+            ✓ klst strikast út! Nú eru eftir 60 mínútur.
+          </p>
+        </div>
+      )}
+
+      {/* Step 2: mín → s */}
+      {step1Done && !step2Done && (
+        <div className="p-4 bg-yellow-50 rounded-lg">
+          <p className="font-semibold text-yellow-800 mb-3 text-sm sm:text-base">
+            Skref 2: Breyta mínútum í sekúndur
+          </p>
+          <p className="text-yellow-700 text-xs sm:text-sm mb-4">
+            Veldu stuðulinn sem strikað út mín og gefur s
+          </p>
+          <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
+            {step2Factors.map((factor, idx) => (
+              <ConversionFactorBlock
+                key={idx}
+                numeratorValue={factor.num}
+                numeratorUnit={factor.numUnit}
+                denominatorValue={factor.den}
+                denominatorUnit={factor.denUnit}
+                onClick={() => handleStep2(idx)}
+                isCorrect={selectedStep2 === idx ? factor.correct : null}
+              />
+            ))}
+          </div>
+          {selectedStep2 !== null && !step2Factors[selectedStep2].correct && !showStep2Animation && (
+            <p className="text-red-600 text-sm mt-3 text-center">
+              mín þarf að vera í nefnara til að strikast út!
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* Final success */}
+      {step2Done && (
+        <div className="p-4 bg-green-100 rounded-lg text-center">
+          <p className="text-green-800 font-semibold mb-2">Keðjan virkaði!</p>
+          <p className="text-green-700 text-sm">
+            1 klst × (60 mín / 1 klst) × (60 s / 1 mín) = 3600 s
+          </p>
+          <p className="text-green-600 text-xs mt-2">
+            Þú þurftir ekki að reikna 60 × 60 - stuðlarnir gera verkið!
+          </p>
         </div>
       )}
     </div>

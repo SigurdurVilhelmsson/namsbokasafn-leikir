@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 interface UnitBlockProps {
   value: number;
   unit: string;
-  position?: 'numerator' | 'denominator' | 'standalone';
   isSelected?: boolean;
   isCancelling?: boolean;
   isCancelled?: boolean;
@@ -11,7 +10,6 @@ interface UnitBlockProps {
   color?: 'blue' | 'green' | 'orange' | 'red' | 'gray';
   size?: 'small' | 'medium' | 'large';
   showValue?: boolean;
-  animate?: boolean;
 }
 
 const colorClasses = {
@@ -35,15 +33,13 @@ const sizeClasses = {
 export function UnitBlock({
   value,
   unit,
-  position = 'standalone',
   isSelected = false,
   isCancelling = false,
   isCancelled = false,
   onClick,
   color = 'blue',
   size = 'medium',
-  showValue = true,
-  animate = true
+  showValue = true
 }: UnitBlockProps) {
   const [animationClass, setAnimationClass] = useState('');
 
@@ -164,7 +160,6 @@ interface EquivalenceDisplayProps {
   rightValue: number;
   rightUnit: string;
   isEqual: boolean;
-  showAnimation?: boolean;
 }
 
 /**
@@ -176,8 +171,7 @@ export function EquivalenceDisplay({
   leftUnit,
   rightValue,
   rightUnit,
-  isEqual,
-  showAnimation = true
+  isEqual
 }: EquivalenceDisplayProps) {
   return (
     <div className="flex flex-col items-center p-6 bg-gradient-to-b from-gray-50 to-gray-100 rounded-xl">

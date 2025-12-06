@@ -14,7 +14,7 @@ function App() {
       <Level1 />
 
       <footer className="text-center text-sm text-gray-500 py-4 border-t border-gray-200 mt-8">
-        <p>Kvennaskólinn í Reykjavík - Púfferbyggjari</p>
+        <p>Kvennaskólinn í Reykjavík - Stuðpúðasmíði</p>
         <p className="text-xs mt-1">Stig 1: Hugmyndafræðilegur grunnur</p>
       </footer>
     </div>

@@ -25,14 +25,14 @@ export const LEVEL1_CHALLENGES: Level1Challenge[] = [
     acidFormula: 'CH₃COOH',
     baseFormula: 'CH₃COO⁻',
     acidName: 'Ediksýra',
-    baseName: 'Asetat jón',
+    baseName: 'Asetatjón',
     pKa: 4.74,
     targetPH: 4.74,
     targetRatioMin: 0.9,
     targetRatioMax: 1.1,
-    context: 'Þú þarft að búa til púffer við pH 4.74 fyrir rannsóknarstofu.',
+    context: 'Þú þarft að búa til stuðpúða við pH 4.74 fyrir rannsóknarstofu.',
     hint: 'Þegar pH = pKa, þarftu JAFNT af sýru og basa!',
-    explanation: 'Þegar sýra og basi eru í jafnvægi (1:1), þá er pH nákvæmlega jafnt pKa. Þetta er miðpunktur púffersins!'
+    explanation: 'Þegar sýra og basi eru í jafnvægi (1:1), þá er pH nákvæmlega jafnt pKa. Þetta er miðpunktur stuðpúðans!'
   },
   {
     id: 2,
@@ -40,14 +40,14 @@ export const LEVEL1_CHALLENGES: Level1Challenge[] = [
     acidFormula: 'CH₃COOH',
     baseFormula: 'CH₃COO⁻',
     acidName: 'Ediksýra',
-    baseName: 'Asetat jón',
+    baseName: 'Asetatjón',
     pKa: 4.74,
     targetPH: 5.00,
     targetRatioMin: 1.6,
     targetRatioMax: 2.0,
-    context: 'Þú þarft basískara púffer, pH 5.0',
-    hint: 'Hærra pH þarf MEIRA basa en sýru!',
-    explanation: 'Til að hækka pH yfir pKa þarf meira af basa. Hlutfallið [Base]/[Acid] > 1 gefur hærra pH.'
+    context: 'Þú þarft basískari stuðpúða, pH 5.0',
+    hint: 'Hærra pH þarf MEIRA af basa en sýru!',
+    explanation: 'Til að hækka pH yfir pKa þarf meira af basa. Hlutfallið [Basi]/[Sýra] > 1 gefur hærra pH.'
   },
   {
     id: 3,
@@ -55,14 +55,14 @@ export const LEVEL1_CHALLENGES: Level1Challenge[] = [
     acidFormula: 'CH₃COOH',
     baseFormula: 'CH₃COO⁻',
     acidName: 'Ediksýra',
-    baseName: 'Asetat jón',
+    baseName: 'Asetatjón',
     pKa: 4.74,
     targetPH: 4.50,
     targetRatioMin: 0.5,
     targetRatioMax: 0.65,
-    context: 'Þú þarft sýrlegra púffer, pH 4.5',
-    hint: 'Lægra pH þarf MEIRA sýru en basa!',
-    explanation: 'Til að lækka pH undir pKa þarf meira af sýru. Hlutfallið [Base]/[Acid] < 1 gefur lægra pH.'
+    context: 'Þú þarft súrari stuðpúða, pH 4.5',
+    hint: 'Lægra pH þarf MEIRA af sýru en basa!',
+    explanation: 'Til að lækka pH undir pKa þarf meira af sýru. Hlutfallið [Basi]/[Sýra] < 1 gefur lægra pH.'
   },
   {
     id: 4,
@@ -75,9 +75,9 @@ export const LEVEL1_CHALLENGES: Level1Challenge[] = [
     targetPH: 7.20,
     targetRatioMin: 0.9,
     targetRatioMax: 1.1,
-    context: 'Búa til blóðpúffer (pH 7.2) fyrir lækningafrumur',
+    context: 'Búa til stuðpúða fyrir lækningalausnir (pH 7.2)',
     hint: 'pH = pKa → jafnt hlutfall!',
-    explanation: 'Fosfatpúffer er mikilvægur í líkamanum. Sama reglan gildir: jafnt hlutfall = pH við pKa.'
+    explanation: 'Fosfatstuðpúði er mikilvægur í líkamanum. Sama reglan gildir: jafnt hlutfall = pH við pKa.'
   },
   {
     id: 5,
@@ -90,23 +90,23 @@ export const LEVEL1_CHALLENGES: Level1Challenge[] = [
     targetPH: 7.40,
     targetRatioMin: 1.4,
     targetRatioMax: 1.7,
-    context: 'Líffræðilegt púffer við pH 7.4 (blóð pH)',
-    hint: 'Þarftu meira basa til að hækka pH yfir pKa',
-    explanation: 'Blóð hefur pH um 7.4, sem er aðeins yfir pKa fosfats. Þess vegna er hlítið meira af basa í blóði.'
+    context: 'Líffræðilegur stuðpúði við pH 7.4 (blóð pH)',
+    hint: 'Þarftu meira af basa til að hækka pH yfir pKa',
+    explanation: 'Blóð hefur pH um 7.4, sem er aðeins yfir pKa fosfats. Þess vegna er lítið meira af basa í blóði.'
   },
   {
     id: 6,
     system: 'NH₄⁺ / NH₃',
     acidFormula: 'NH₄⁺',
     baseFormula: 'NH₃',
-    acidName: 'Ammóníum jón',
+    acidName: 'Ammóníumjón',
     baseName: 'Ammóníak',
     pKa: 9.25,
     targetPH: 9.25,
     targetRatioMin: 0.9,
     targetRatioMax: 1.1,
-    context: 'Basískt púffer fyrir efnahvörf',
+    context: 'Basískur stuðpúði fyrir efnahvörf',
     hint: 'Sama reglan gildir: pH = pKa = jöfn hlutföll',
-    explanation: 'Ammóníupúffer virkar við hátt pH. Sama hugmynd: jafnt hlutfall gefur pH = pKa, óháð hvaða púfferkerfi er notað.'
+    explanation: 'Ammóníustuðpúði virkar við hátt pH. Sama hugmynd: jafnt hlutfall gefur pH = pKa, óháð hvaða stuðpúðakerfi er notað.'
   }
 ];

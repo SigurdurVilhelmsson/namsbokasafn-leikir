@@ -247,7 +247,7 @@ export function Level3({ onComplete, onBack, initialProgress }: Level3Props) {
                 )}
                 {problem.significantFigures && (
                   <p className="text-sm text-purple-700">
-                    <span className="font-semibold">Markverðir tölustafir:</span> {problem.significantFigures}
+                    <span className="font-semibold">Markverðir stafir:</span> {problem.significantFigures}
                   </p>
                 )}
               </div>
@@ -448,10 +448,10 @@ export function Level3({ onComplete, onBack, initialProgress }: Level3Props) {
                 {problem.type === 'synthesis' && problem.significantFigures && scores.sigFig !== null && (
                   <div className={`mt-4 p-3 rounded ${scores.sigFig === 1 ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'}`}>
                     <p className="text-sm font-semibold mb-1">
-                      {scores.sigFig === 1 ? '✓ Markverðir tölustafir réttir' : '✗ Markverðir tölustafir rangir'}
+                      {scores.sigFig === 1 ? '✓ Markverðir stafir réttir' : '✗ Markverðir stafir rangir'}
                     </p>
                     <p className="text-sm">
-                      Þitt svar hefur {scores.userSigFigs} markverða tölustafi.
+                      Þitt svar hefur {scores.userSigFigs} markverða stafi.
                       Ætti að hafa {problem.significantFigures}.
                     </p>
                   </div>

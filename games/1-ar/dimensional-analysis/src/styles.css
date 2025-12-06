@@ -260,6 +260,22 @@
   animation: number-morph 0.6s ease-in-out;
 }
 
+/* Confetti animation */
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+.animate-confetti {
+  animation: confetti-fall 1.5s ease-out forwards;
+}
+
 /* Touch-friendly styles */
 @media (pointer: coarse) {
   button {
@@ -271,5 +287,19 @@
     min-height: 48px;
     min-width: 48px;
     padding: 12px;
+  }
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 640px) {
+  .value-adjuster {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .value-adjuster button {
+    min-width: 50px;
+    padding: 8px 12px;
+    font-size: 14px;
   }
 }

@@ -69,6 +69,22 @@ const challenges: Challenge[] = [
   }
 ];
 
+// Random starting values to prevent memorization
+function getRandomStartValue(): number {
+  const options = [250, 500, 750, 1500, 2000];
+  return options[Math.floor(Math.random() * options.length)];
+}
+
+// Shuffle factor order to prevent memorization
+function shuffleFactors<T>(array: T[]): T[] {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
 /**
  * Level 1 Conceptual - Visual learning with NO calculations
  * Students manipulate visual elements to understand dimensional analysis concepts
@@ -90,6 +106,9 @@ export function Level1Conceptual({ onComplete, onBack, initialProgress }: Level1
   const [showSuccess, setShowSuccess] = useState(false);
   const [showHint, setShowHint] = useState(false);
   const [attempts, setAttempts] = useState(0);
+  const [showIntro, setShowIntro] = useState(!initialProgress?.questionsAnswered);
+  const [showSummary, setShowSummary] = useState(false);
+  const [showCelebration, setShowCelebration] = useState(false);
 
   const challenge = challenges[currentChallengeIndex];
 
@@ -101,7 +120,12 @@ export function Level1Conceptual({ onComplete, onBack, initialProgress }: Level1
   }, [currentChallengeIndex]);
 
   const handleSuccess = () => {
-    setShowSuccess(true);
+    setShowCelebration(true);
+    setTimeout(() => {
+      setShowCelebration(false);
+      setShowSuccess(true);
+    }, 1200);
+
     const newProgress = {
       ...progress,
       questionsAnswered: progress.questionsAnswered + 1,
@@ -123,8 +147,13 @@ export function Level1Conceptual({ onComplete, onBack, initialProgress }: Level1
     if (currentChallengeIndex < challenges.length - 1) {
       setCurrentChallengeIndex(currentChallengeIndex + 1);
     } else {
-      onComplete(newProgress);
+      // Show summary before completing
+      setShowSummary(true);
     }
+  };
+
+  const handleCompleteSummary = () => {
+    onComplete(progress);
   };
 
   const handleAttempt = () => {
@@ -134,20 +163,184 @@ export function Level1Conceptual({ onComplete, onBack, initialProgress }: Level1
     }
   };
 
-  if (!challenge) return null;
+  if (!challenge && !showSummary) return null;
+
+  // Intro Tutorial Screen
+  if (showIntro) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-green-50 to-white p-4">
+        <div className="max-w-2xl mx-auto">
+          <div className="bg-white rounded-2xl shadow-lg p-8 mt-8">
+            <div className="text-center mb-8">
+              <div className="text-6xl mb-4">🔬</div>
+              <h1 className="text-3xl font-bold text-gray-800 mb-2">Velkomin í Einingagreiningu!</h1>
+              <p className="text-lg text-gray-600">Stig 1: Hugtök</p>
+            </div>
+
+            <div className="space-y-4 mb-8">
+              <div className="flex items-start gap-4 p-4 bg-green-50 rounded-lg">
+                <span className="text-2xl">👆</span>
+                <div>
+                  <p className="font-semibold text-green-800">Engar útreikninga!</p>
+                  <p className="text-green-700 text-sm">Þú lærir með því að prófa og sjá hvað gerist.</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4 p-4 bg-blue-50 rounded-lg">
+                <span className="text-2xl">🎯</span>
+                <div>
+                  <p className="font-semibold text-blue-800">6 áskoranir</p>
+                  <p className="text-blue-700 text-sm">Hver áskorun kennir þér nýtt hugtak um umbreytingar.</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4 p-4 bg-yellow-50 rounded-lg">
+                <span className="text-2xl">💡</span>
+                <div>
+                  <p className="font-semibold text-yellow-800">Vísbendingar birtast</p>
+                  <p className="text-yellow-700 text-sm">Ef þú reynir nokkrum sinnum birtist hjálp.</p>
+                </div>
+              </div>
+            </div>
+
+            <button
+              onClick={() => setShowIntro(false)}
+              className="w-full bg-green-600 hover:bg-green-700 text-white py-4 rounded-xl font-bold text-lg transition-colors"
+            >
+              Byrja! →
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Summary Screen
+  if (showSummary) {
+    const mastered = progress.questionsCorrect >= 5;
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-green-50 to-white p-4">
+        <div className="max-w-2xl mx-auto">
+          <div className="bg-white rounded-2xl shadow-lg p-8 mt-8">
+            <div className="text-center mb-8">
+              <div className="text-6xl mb-4">{mastered ? '🎉' : '📚'}</div>
+              <h1 className="text-3xl font-bold text-gray-800 mb-2">
+                {mastered ? 'Frábært!' : 'Vel gert!'}
+              </h1>
+              <p className="text-lg text-gray-600">
+                Þú svaraðir {progress.questionsCorrect} af {challenges.length} rétt
+              </p>
+            </div>
+
+            <div className="mb-8">
+              <h2 className="text-xl font-bold text-gray-800 mb-4">Hvað þú lærðir:</h2>
+              <div className="space-y-3">
+                <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
+                  <span className="text-green-600 text-xl">✓</span>
+                  <p className="text-green-800">Mismunandi tölur með mismunandi einingum geta táknað <strong>sama magn</strong></p>
+                </div>
+                <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
+                  <span className="text-green-600 text-xl">✓</span>
+                  <p className="text-green-800">Umbreytingarstuðlar <strong>jafngilda 1</strong> - þeir breyta ekki magninu</p>
+                </div>
+                <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
+                  <span className="text-green-600 text-xl">✓</span>
+                  <p className="text-green-800">Eins einingar <strong>strikast út</strong> (teljari og nefnari)</p>
+                </div>
+                <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
+                  <span className="text-green-600 text-xl">✓</span>
+                  <p className="text-green-800">Einingin sem á að hverfa þarf að vera í <strong>nefnara</strong></p>
+                </div>
+              </div>
+            </div>
+
+            {mastered ? (
+              <div className="space-y-4">
+                <div className="p-4 bg-blue-50 rounded-lg text-center">
+                  <p className="text-blue-800 font-semibold">Stig 2 er nú opið!</p>
+                  <p className="text-blue-600 text-sm">Þar munt þú nota þessi hugtök til að spá fyrir um niðurstöður.</p>
+                </div>
+                <button
+                  onClick={handleCompleteSummary}
+                  className="w-full bg-green-600 hover:bg-green-700 text-white py-4 rounded-xl font-bold text-lg transition-colors"
+                >
+                  Halda áfram →
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="p-4 bg-yellow-50 rounded-lg text-center">
+                  <p className="text-yellow-800 font-semibold">Þú þarft 5 af 6 til að opna Stig 2</p>
+                  <p className="text-yellow-600 text-sm">Reyndu aftur til að styrkja skilninginn!</p>
+                </div>
+                <button
+                  onClick={() => {
+                    setCurrentChallengeIndex(0);
+                    setShowSummary(false);
+                    setProgress({
+                      questionsAnswered: 0,
+                      questionsCorrect: 0,
+                      explanationsProvided: 0,
+                      explanationScores: [],
+                      mastered: false
+                    });
+                  }}
+                  className="w-full bg-orange-500 hover:bg-orange-600 text-white py-4 rounded-xl font-bold text-lg transition-colors"
+                >
+                  Reyna aftur
+                </button>
+                <button
+                  onClick={handleCompleteSummary}
+                  className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 py-3 rounded-xl font-semibold transition-colors"
+                >
+                  Til baka í valmynd
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-50 to-white p-4">
+      {/* Celebration Overlay */}
+      {showCelebration && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
+          <div className="text-center animate-bounce">
+            <div className="text-8xl mb-4">🎉</div>
+            <div className="text-4xl font-bold text-green-600 animate-pulse">Rétt!</div>
+          </div>
+          {/* Confetti particles */}
+          <div className="absolute inset-0 overflow-hidden">
+            {[...Array(20)].map((_, i) => (
+              <div
+                key={i}
+                className="absolute w-3 h-3 rounded-full animate-confetti"
+                style={{
+                  left: `${Math.random() * 100}%`,
+                  top: '-10px',
+                  backgroundColor: ['#22c55e', '#3b82f6', '#f97316', '#eab308', '#ec4899'][i % 5],
+                  animationDelay: `${Math.random() * 0.5}s`,
+                  animationDuration: `${1 + Math.random()}s`
+                }}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className="mb-4 flex items-center justify-between">
+        <div className="mb-4 flex items-center justify-between flex-wrap gap-2">
           <button
             onClick={onBack}
             className="text-gray-600 hover:text-gray-800 flex items-center gap-2 text-lg"
           >
             ← Til baka
           </button>
-          <div className="text-sm text-gray-600 flex items-center gap-4">
+          <div className="text-sm text-gray-600 flex items-center gap-2 sm:gap-4 flex-wrap">
             <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full font-semibold">
               Stig 1: Hugtök
             </span>
@@ -296,49 +489,50 @@ function EquivalenceChallenge1({ onSuccess, onAttempt }: ChallengeComponentProps
             </button>
           </div>
 
-          {/* Value adjuster */}
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => adjustValue(-100)}
-              className="px-4 py-2 bg-red-100 text-red-700 rounded-lg font-bold hover:bg-red-200 transition-colors"
-            >
-              -100
-            </button>
-            <button
-              onClick={() => adjustValue(-10)}
-              className="px-4 py-2 bg-red-100 text-red-700 rounded-lg font-bold hover:bg-red-200 transition-colors"
-            >
-              -10
-            </button>
-            <button
-              onClick={() => adjustValue(-1)}
-              className="px-4 py-2 bg-red-100 text-red-700 rounded-lg font-bold hover:bg-red-200 transition-colors"
-            >
-              -1
-            </button>
-
-            <span className="text-2xl font-bold text-gray-800 min-w-[80px] text-center">
+          {/* Value adjuster - mobile responsive */}
+          <div className="flex flex-col items-center gap-4">
+            <span className="text-3xl font-bold text-gray-800">
               {rightValue}
             </span>
 
-            <button
-              onClick={() => adjustValue(1)}
-              className="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg font-bold hover:bg-blue-200 transition-colors"
-            >
-              +1
-            </button>
-            <button
-              onClick={() => adjustValue(10)}
-              className="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg font-bold hover:bg-blue-200 transition-colors"
-            >
-              +10
-            </button>
-            <button
-              onClick={() => adjustValue(100)}
-              className="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg font-bold hover:bg-blue-200 transition-colors"
-            >
-              +100
-            </button>
+            <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
+              <button
+                onClick={() => adjustValue(-100)}
+                className="px-3 sm:px-4 py-2 bg-red-100 text-red-700 rounded-lg font-bold hover:bg-red-200 transition-colors text-sm sm:text-base"
+              >
+                -100
+              </button>
+              <button
+                onClick={() => adjustValue(-10)}
+                className="px-3 sm:px-4 py-2 bg-red-100 text-red-700 rounded-lg font-bold hover:bg-red-200 transition-colors text-sm sm:text-base"
+              >
+                -10
+              </button>
+              <button
+                onClick={() => adjustValue(-1)}
+                className="px-3 sm:px-4 py-2 bg-red-100 text-red-700 rounded-lg font-bold hover:bg-red-200 transition-colors text-sm sm:text-base"
+              >
+                -1
+              </button>
+              <button
+                onClick={() => adjustValue(1)}
+                className="px-3 sm:px-4 py-2 bg-blue-100 text-blue-700 rounded-lg font-bold hover:bg-blue-200 transition-colors text-sm sm:text-base"
+              >
+                +1
+              </button>
+              <button
+                onClick={() => adjustValue(10)}
+                className="px-3 sm:px-4 py-2 bg-blue-100 text-blue-700 rounded-lg font-bold hover:bg-blue-200 transition-colors text-sm sm:text-base"
+              >
+                +10
+              </button>
+              <button
+                onClick={() => adjustValue(100)}
+                className="px-3 sm:px-4 py-2 bg-blue-100 text-blue-700 rounded-lg font-bold hover:bg-blue-200 transition-colors text-sm sm:text-base"
+              >
+                +100
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -458,11 +652,11 @@ function CancellationChallenge1({ onSuccess, onAttempt }: ChallengeComponentProp
   const [selectedFactor, setSelectedFactor] = useState<number | null>(null);
   const [showAnimation, setShowAnimation] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
-
-  const factors = [
+  const [startValue] = useState(() => getRandomStartValue());
+  const [factors] = useState(() => shuffleFactors([
     { num: 1000, numUnit: 'mL', den: 1, denUnit: 'L', correct: false },
     { num: 1, numUnit: 'L', den: 1000, denUnit: 'mL', correct: true }
-  ];
+  ]));
 
   const handleFactorSelect = (idx: number) => {
     onAttempt();
@@ -481,10 +675,10 @@ function CancellationChallenge1({ onSuccess, onAttempt }: ChallengeComponentProp
   return (
     <div className="space-y-6">
       {/* Starting value */}
-      <div className="flex items-center justify-center gap-4 p-6 bg-gray-50 rounded-xl">
+      <div className="flex items-center justify-center gap-4 p-6 bg-gray-50 rounded-xl flex-wrap">
         <div className="text-center">
           <p className="text-sm text-gray-600 mb-2">Byrjunargildi:</p>
-          <UnitBlock value={500} unit="mL" color="blue" size="large" />
+          <UnitBlock value={startValue} unit="mL" color="blue" size="large" />
         </div>
 
         <div className="text-3xl text-gray-400">×</div>
@@ -520,7 +714,7 @@ function CancellationChallenge1({ onSuccess, onAttempt }: ChallengeComponentProp
           <p className="text-sm text-gray-600 mb-2">Útkoma:</p>
           {showAnimation && (
             <UnitBlock
-              value={isCorrect ? 0.5 : 500000}
+              value={isCorrect ? startValue / 1000 : startValue * 1000}
               unit={isCorrect ? 'L' : 'mL²/L'}
               color={isCorrect ? 'green' : 'red'}
               size="large"
@@ -536,7 +730,7 @@ function CancellationChallenge1({ onSuccess, onAttempt }: ChallengeComponentProp
             mL í teljaranum og mL í nefnaranum <strong>strikast út</strong>!
           </p>
           <p className="text-green-700 mt-2">
-            500 mL × (1 L / 1000 mL) = 0.5 L
+            {startValue} mL × (1 L / 1000 mL) = {startValue / 1000} L
           </p>
         </div>
       )}

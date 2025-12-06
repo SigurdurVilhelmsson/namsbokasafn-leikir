@@ -8,6 +8,7 @@ interface Level3Progress {
   totalSteps?: number;
   achievements: string[];
   mastered: boolean;
+  hintsUsed: number;
 }
 
 interface Level3Props {
@@ -23,13 +24,15 @@ export function Level3({ onComplete, onBack, initialProgress }: Level3Props) {
   const [progress, setProgress] = useState<Level3Progress>(
     initialProgress ? {
       ...initialProgress,
-      totalSteps: initialProgress.totalSteps || 0
+      totalSteps: initialProgress.totalSteps || 0,
+      hintsUsed: initialProgress.hintsUsed || 0
     } : {
       problemsCompleted: 0,
       compositeScores: [],
       totalSteps: 0,
       achievements: [],
-      mastered: false
+      mastered: false,
+      hintsUsed: 0
     }
   );
 
@@ -380,6 +383,10 @@ export function Level3({ onComplete, onBack, initialProgress }: Level3Props) {
                     onClick={() => {
                       setShowHint(true);
                       setHintUsed(true);
+                      setProgress(prev => ({
+                        ...prev,
+                        hintsUsed: prev.hintsUsed + 1
+                      }));
                     }}
                     className="w-full border-2 border-blue-400 text-blue-600 py-2 rounded-lg font-semibold hover:bg-blue-50"
                   >

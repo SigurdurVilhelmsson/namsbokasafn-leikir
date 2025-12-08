@@ -321,7 +321,7 @@ function App() {
                   <strong>Blöndun:</strong> Tvær lausnir blandaðar
                 </li>
                 <li>
-                  <strong>Massi ↔ Mólstyrkur:</strong> Umreikning með mólþyngd
+                  <strong>Massi ↔ Mólstyrkur:</strong> Umreikning með mólmassa
                 </li>
               </ol>
             </div>
@@ -331,7 +331,7 @@ function App() {
               <div className="font-mono text-sm space-y-1 bg-white p-3 rounded">
                 <p>M₁V₁ = M₂V₂ (útþynning)</p>
                 <p>M = mól / L (mólstyrkur)</p>
-                <p>mól = massi(g) / mólþyngd(g/mol)</p>
+                <p>mól = massi(g) / mólmassi(g/mol)</p>
                 <p>M = (M₁V₁ + M₂V₂) / (V₁ + V₂) (blöndun)</p>
                 <p>1 L = 1000 mL</p>
               </div>
@@ -473,7 +473,7 @@ function App() {
                 <div className="text-2xl mb-2">🤔</div>
                 <div className="text-xl">Miðlungs</div>
                 <div className="text-sm opacity-90 mt-2">
-                  10 spurningar - Með massi og mólþyngd
+                  10 spurningar - Með massa og mólmassa
                 </div>
               </button>
 

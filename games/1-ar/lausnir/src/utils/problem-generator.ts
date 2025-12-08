@@ -125,7 +125,7 @@ function generateMolarityFromMassProblem(difficulty: Difficulty, chemical: any):
     chemical,
     description: 'Reikna mólstyrk út frá massa',
     given: { massInGrams, molarMass: chemical.molarMass, volumeInML },
-    question: `Þú leysir ${massInGrams} g af ${chemical.displayName} (mólþyngd ${chemical.molarMass} g/mol) í ${volumeInML} mL af lausn. Hver er mólstyrkurinn?`,
+    question: `Þú leysir ${massInGrams} g af ${chemical.displayName} (mólmassi ${chemical.molarMass} g/mol) í ${volumeInML} mL af lausn. Hver er mólstyrkurinn?`,
     answer: molarity,
     unit: 'M',
     difficulty: difficulty,
@@ -150,12 +150,12 @@ function generateMassFromMolarityProblem(difficulty: Difficulty, chemical: any):
     chemical,
     description: 'Reikna massa út frá mólstyrk',
     given: { molarity, volumeInML, molarMass: chemical.molarMass },
-    question: `Þú ert með ${volumeInML} mL af ${molarity} M ${chemical.name} lausn. Hversu mörg grömm af ${chemical.name} eru í lausninni? (mólþyngd ${chemical.molarMass} g/mol)`,
+    question: `Þú ert með ${volumeInML} mL af ${molarity} M ${chemical.name} lausn. Hversu mörg grömm af ${chemical.name} eru í lausninni? (mólmassi ${chemical.molarMass} g/mol)`,
     answer: mass,
     unit: 'g',
     difficulty: difficulty,
     hints: [
-      'Fyrst reiknaðu mól = M × L, síðan massi = mól × mólþyngd',
+      'Fyrst reiknaðu mól = M × L, síðan massi = mól × mólmassi',
       `mól = ${molarity} × ${volumeInL.toFixed(3)} = ${moles.toFixed(3)}`,
       `massi = ${moles.toFixed(3)} × ${chemical.molarMass} = ${mass.toFixed(1)} g`
     ]

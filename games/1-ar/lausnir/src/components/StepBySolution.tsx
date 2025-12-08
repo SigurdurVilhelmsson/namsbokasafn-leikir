@@ -76,7 +76,7 @@ export function StepBySolution({ problem }: StepBySolutionProps) {
           <p>
             massi = {problem.given.massInGrams} g {problem.chemical?.name || ''}
           </p>
-          <p>mólþyngd = {problem.given.molarMass} g/mol</p>
+          <p>mólmassi = {problem.given.molarMass} g/mol</p>
           <p>rúmmál = {problem.given.volumeInML} mL</p>
         </div>
         <div className="solution-step">
@@ -88,7 +88,7 @@ export function StepBySolution({ problem }: StepBySolutionProps) {
         </div>
         <div className="solution-step">
           <h4>Skref 2: Reikna mól</h4>
-          <p>mól = massi ÷ mólþyngd</p>
+          <p>mól = massi ÷ mólmassi</p>
           <p>
             mól = {problem.given.massInGrams} g ÷ {problem.given.molarMass} g/mol
           </p>
@@ -174,7 +174,7 @@ export function StepBySolution({ problem }: StepBySolutionProps) {
           <h4>Gefið:</h4>
           <p>M = {problem.given.molarity} M</p>
           <p>V = {problem.given.volumeInML} mL</p>
-          <p>mólþyngd = {problem.given.molarMass} g/mol</p>
+          <p>mólmassi = {problem.given.molarMass} g/mol</p>
         </div>
         <div className="solution-step">
           <h4>Skref 1: Breyta mL í L</h4>
@@ -194,7 +194,7 @@ export function StepBySolution({ problem }: StepBySolutionProps) {
         </div>
         <div className="solution-step">
           <h4>Skref 3: Reikna massa</h4>
-          <p>massi = mól × mólþyngd</p>
+          <p>massi = mól × mólmassi</p>
           <p>
             massi = {moles} mol × {problem.given.molarMass} g/mol
           </p>

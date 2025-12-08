@@ -16,7 +16,7 @@ export function FormulaCard({ themeColor }: FormulaCardProps) {
           <strong>Mólstyrkur:</strong> M = mol / L
         </p>
         <p>
-          <strong>Mól:</strong> mol = massi(g) / mólþyngd(g/mol)
+          <strong>Mól:</strong> mol = massi(g) / mólmassi(g/mol)
         </p>
         <p>
           <strong>Blöndun:</strong> M = (M₁V₁ + M₂V₂) / (V₁ + V₂)

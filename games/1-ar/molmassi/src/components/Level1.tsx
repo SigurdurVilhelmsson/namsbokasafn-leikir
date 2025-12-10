@@ -213,8 +213,13 @@ function MoleculeVisual({ elements, showMassBar = false, animateAtoms = true }: 
   );
 }
 
+interface Level1Props {
+  onBack: () => void;
+  onComplete: () => void;
+}
+
 // Main Level 1 Component
-export function Level1() {
+export function Level1({ onBack, onComplete }: Level1Props) {
   const [challengeNumber, setChallengeNumber] = useState(0);
   const [challenge, setChallenge] = useState<Challenge>(() => generateChallenge(0));
   const [score, setScore] = useState(0);
@@ -349,21 +354,30 @@ export function Level1() {
             </ul>
           </div>
 
-          <button
-            onClick={() => {
-              setChallengeNumber(0);
-              setScore(0);
-              setChallenge(generateChallenge(0));
-            }}
-            className="w-full bg-primary hover:bg-primary-dark text-white font-bold py-3 px-6 rounded-xl transition-colors btn-press animate-fade-in-up"
-            style={{ animationDelay: '600ms' }}
-          >
-            Spila Aftur
-          </button>
-
-          <p className="text-xs text-gray-500 mt-4 animate-fade-in-up" style={{ animationDelay: '700ms' }}>
-            Tilbúinn fyrir Stig 2? Þar muntu áætla og reikna mólmassa!
-          </p>
+          <div className="space-y-3 animate-fade-in-up" style={{ animationDelay: '600ms' }}>
+            <button
+              onClick={onComplete}
+              className="w-full bg-primary hover:bg-primary-dark text-white font-bold py-3 px-6 rounded-xl transition-colors btn-press"
+            >
+              Halda áfram í Stig 2 →
+            </button>
+            <button
+              onClick={() => {
+                setChallengeNumber(0);
+                setScore(0);
+                setChallenge(generateChallenge(0));
+              }}
+              className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3 px-6 rounded-xl transition-colors"
+            >
+              Spila Aftur
+            </button>
+            <button
+              onClick={onBack}
+              className="w-full text-gray-500 hover:text-gray-700 font-semibold py-2"
+            >
+              Til baka í valmynd
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -713,6 +727,14 @@ export function Level1() {
             {challenge.type === 'estimate_range' && 'Mólmassi er summa allra frumeindasmassa í sameind. H≈1, C≈12, N≈14, O≈16 g/mol.'}
           </p>
         </div>
+
+        {/* Back button */}
+        <button
+          onClick={onBack}
+          className="mt-4 w-full text-gray-500 hover:text-gray-700 font-semibold py-2"
+        >
+          ← Til baka í valmynd
+        </button>
       </div>
     </div>
   );

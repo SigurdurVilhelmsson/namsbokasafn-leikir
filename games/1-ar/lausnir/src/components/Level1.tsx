@@ -165,23 +165,55 @@ function MoleculeDisplay({
   const concentration = count / (volumeML / 1000);
   const fillPercent = Math.min(100, (volumeML / maxVolume) * 100);
 
-  // Create molecule positions
+  // Beaker boundaries in SVG coordinates (viewBox 0 0 100 140)
+  // Beaker inner walls: x=16 to x=84, liquid from y=120 downward
+  const beakerLeft = 18;
+  const beakerRight = 82;
+  const beakerBottom = 118;
+  const liquidHeight = fillPercent * 1.1;
+  const liquidTop = 120 - liquidHeight + 2; // +2 for padding from meniscus
+
+  // Create molecule positions - use seeded positions for consistency
   const moleculeElements = [];
-  const displayCount = Math.min(count, 60); // Cap visual molecules at 60 for performance
+  const displayCount = Math.min(count, 80); // Cap visual molecules at 80 for performance
+
+  // Calculate grid dimensions based on liquid area
+  const liquidWidth = beakerRight - beakerLeft;
+  const availableLiquidHeight = Math.max(5, beakerBottom - liquidTop);
+
+  // Determine grid layout - molecules should spread evenly throughout liquid
+  const moleculeRadius = 2; // Smaller balls
+  const spacing = Math.max(moleculeRadius * 2.5, Math.min(8, Math.sqrt((liquidWidth * availableLiquidHeight) / displayCount)));
+
+  const cols = Math.max(1, Math.floor(liquidWidth / spacing));
+  const rows = Math.max(1, Math.ceil(displayCount / cols));
+
+  // Calculate actual spacing to fill the area evenly
+  const xSpacing = liquidWidth / (cols + 1);
+  const ySpacing = availableLiquidHeight / (rows + 1);
 
   for (let i = 0; i < displayCount; i++) {
-    // Distribute molecules within the filled area
-    const row = Math.floor(i / 10);
-    const col = i % 10;
-    const xOffset = 10 + (col * 8) + (Math.random() * 4 - 2);
-    const yOffset = 100 - fillPercent + 5 + (row * 8) + (Math.random() * 4 - 2);
+    const row = Math.floor(i / cols);
+    const col = i % cols;
+
+    // Distribute evenly with small random jitter for natural look
+    // Use deterministic jitter based on index for consistency
+    const jitterX = ((i * 7) % 5 - 2) * 0.5;
+    const jitterY = ((i * 11) % 5 - 2) * 0.5;
+
+    const x = beakerLeft + xSpacing * (col + 1) + jitterX;
+    const y = liquidTop + ySpacing * (row + 1) + jitterY;
+
+    // Ensure molecule stays within liquid boundaries
+    const clampedX = Math.max(beakerLeft + moleculeRadius, Math.min(beakerRight - moleculeRadius, x));
+    const clampedY = Math.max(liquidTop + moleculeRadius, Math.min(beakerBottom - moleculeRadius, y));
 
     moleculeElements.push(
       <circle
         key={i}
-        cx={`${xOffset}%`}
-        cy={`${Math.min(95, Math.max(5, yOffset))}%`}
-        r="4"
+        cx={clampedX}
+        cy={clampedY}
+        r={moleculeRadius}
         fill={color}
         opacity={0.9}
         className="transition-all duration-300"

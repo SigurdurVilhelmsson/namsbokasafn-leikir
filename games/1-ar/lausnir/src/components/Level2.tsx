@@ -138,7 +138,24 @@ function BeforeAfterVisual({
     opacity: number = 1
   ) => {
     const fillPercent = (data.volumeML / maxVolume) * 80;
-    const displayMolecules = Math.min(data.molecules, 40);
+    const displayMolecules = Math.min(data.molecules, 50);
+
+    // Beaker boundaries in SVG coordinates (viewBox 0 0 80 120)
+    // Beaker inner walls: x=11 to x=69, liquid bottom at y=98
+    const beakerLeft = 13;
+    const beakerRight = 67;
+    const beakerBottom = 98;
+    const liquidTop = 100 - fillPercent + 2;
+    const availableLiquidHeight = Math.max(5, beakerBottom - liquidTop);
+    const liquidWidth = beakerRight - beakerLeft;
+
+    // Calculate grid layout for even distribution
+    const moleculeRadius = 1.5;
+    const cols = Math.max(1, Math.floor(liquidWidth / Math.max(moleculeRadius * 3, Math.min(7, Math.sqrt((liquidWidth * availableLiquidHeight) / displayMolecules)))));
+    const rows = Math.max(1, Math.ceil(displayMolecules / cols));
+
+    const xSpacing = liquidWidth / (cols + 1);
+    const ySpacing = availableLiquidHeight / (rows + 1);
 
     return (
       <div className="text-center" style={{ opacity }}>
@@ -161,18 +178,28 @@ function BeforeAfterVisual({
             opacity={Math.min(0.3 + data.concentration * 0.1, 0.8)}
             className="transition-all duration-500"
           />
-          {/* Molecules */}
+          {/* Molecules - distributed evenly throughout liquid */}
           {Array.from({ length: displayMolecules }).map((_, i) => {
-            const row = Math.floor(i / 8);
-            const col = i % 8;
-            const x = 15 + col * 7;
-            const y = 105 - fillPercent + 5 + row * 7;
+            const row = Math.floor(i / cols);
+            const col = i % cols;
+
+            // Deterministic jitter for natural look
+            const jitterX = ((i * 7) % 5 - 2) * 0.4;
+            const jitterY = ((i * 11) % 5 - 2) * 0.4;
+
+            const x = beakerLeft + xSpacing * (col + 1) + jitterX;
+            const y = liquidTop + ySpacing * (row + 1) + jitterY;
+
+            // Clamp to stay within liquid boundaries
+            const clampedX = Math.max(beakerLeft + moleculeRadius, Math.min(beakerRight - moleculeRadius, x));
+            const clampedY = Math.max(liquidTop + moleculeRadius, Math.min(beakerBottom - moleculeRadius, y));
+
             return (
               <circle
                 key={i}
-                cx={x}
-                cy={Math.min(y, 105)}
-                r="2.5"
+                cx={clampedX}
+                cy={clampedY}
+                r={moleculeRadius}
                 fill="#1d4ed8"
                 className="transition-all duration-500"
               />

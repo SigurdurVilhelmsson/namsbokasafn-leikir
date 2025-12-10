@@ -329,8 +329,13 @@ function ConcentrationIndicator({
   );
 }
 
+interface Level1Props {
+  onComplete: (score: number) => void;
+  onBack: () => void;
+}
+
 // Main Level1 component
-export function Level1() {
+export function Level1({ onComplete, onBack }: Level1Props) {
   const [currentChallenge, setCurrentChallenge] = useState(0);
   const [molecules, setMolecules] = useState(50);
   const [volumeML, setVolumeML] = useState(100);
@@ -426,10 +431,7 @@ export function Level1() {
             </ul>
           </div>
 
-          <div className="text-center">
-            <p className="text-gray-600 mb-4">
-              Næst: Stigur 2 - Notaðu þessa hugtök til að spá fyrir um breytingar!
-            </p>
+          <div className="flex flex-col md:flex-row gap-4">
             <button
               onClick={() => {
                 setGameComplete(false);
@@ -437,9 +439,15 @@ export function Level1() {
                 setScore(0);
                 setCompleted([]);
               }}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl transition-colors"
+              className="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-8 rounded-xl transition-colors"
             >
               Spila aftur
+            </button>
+            <button
+              onClick={() => onComplete(score)}
+              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl transition-colors"
+            >
+              Áfram í Stig 2 →
             </button>
           </div>
         </div>
@@ -461,6 +469,12 @@ export function Level1() {
             </div>
 
             <div className="flex gap-4 items-center">
+              <button
+                onClick={onBack}
+                className="text-gray-600 hover:text-gray-800 text-sm"
+              >
+                ← Til baka
+              </button>
               <div className="text-center">
                 <div className="text-xl font-bold text-blue-600">{score}</div>
                 <div className="text-xs text-gray-600">Stig</div>

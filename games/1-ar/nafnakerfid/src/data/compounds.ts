@@ -80,6 +80,16 @@ export const COMPOUNDS: Compound[] = [
   { formula: 'Fe₃O₄', name: 'Járnoxíð (blandað)', type: 'ionic', category: 'málmar-breytilega-hleðsla', difficulty: 'hard', elements: ['Fe', 'O'], info: 'Segulsteinn, blanda Fe²⁺ og Fe³⁺' },
 ];
 
+// Fisher-Yates shuffle for reliable randomization
+function shuffle<T>(array: T[]): T[] {
+  const result = [...array];
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+}
+
 // Helper functions
 export function getCompoundsByDifficulty(difficulty: Difficulty): Compound[] {
   return COMPOUNDS.filter(c => c.difficulty === difficulty);
@@ -87,6 +97,6 @@ export function getCompoundsByDifficulty(difficulty: Difficulty): Compound[] {
 
 export function getRandomCompounds(count: number, difficulty?: Difficulty): Compound[] {
   const pool = difficulty ? getCompoundsByDifficulty(difficulty) : COMPOUNDS;
-  const shuffled = [...pool].sort(() => Math.random() - 0.5);
+  const shuffled = shuffle(pool);
   return shuffled.slice(0, Math.min(count, shuffled.length));
 }

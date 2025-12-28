@@ -1,5 +1,15 @@
 import { useState, useEffect } from 'react';
 
+// Fisher-Yates shuffle for reliable randomization
+function shuffle<T>(array: T[]): T[] {
+  const result = [...array];
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+}
+
 // Atom visual properties for consistency with Level 1
 const ATOM_DATA: Record<string, { color: string; size: number; name: string; mass: number; approxMass: number }> = {
   H: { color: '#FFFFFF', size: 20, name: 'Vetni', mass: 1.008, approxMass: 1 },
@@ -79,7 +89,7 @@ function generateChallenge(challengeNumber: number): Challenge {
 
     case 'order_molecules': {
       // Pick 3 different compounds
-      const shuffled = [...LEVEL2_COMPOUNDS].sort(() => Math.random() - 0.5);
+      const shuffled = shuffle(LEVEL2_COMPOUNDS);
       const selected = shuffled.slice(0, 3);
       return {
         type: 'order_molecules',
@@ -285,8 +295,8 @@ export function Level2({ onBack, onComplete }: Level2Props) {
       }
       if (options.length >= 4) break;
     }
-    // Shuffle
-    return options.sort(() => Math.random() - 0.5);
+    // Shuffle using Fisher-Yates
+    return shuffle(options);
   }
 
   // Game complete screen

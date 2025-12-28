@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { UnitBlock, ConversionFactorBlock, EquivalenceDisplay } from './UnitBlock';
 
 interface Level1Progress {
@@ -83,6 +83,37 @@ function shuffleFactors<T>(array: T[]): T[] {
     [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
   }
   return shuffled;
+}
+
+// Pre-generated confetti colors
+const CONFETTI_COLORS = ['#22c55e', '#3b82f6', '#f97316', '#eab308', '#ec4899'];
+
+/**
+ * Memoized confetti particles component to prevent style recalculation on re-render
+ */
+function ConfettiParticles() {
+  const styles = useMemo(() =>
+    Array.from({ length: 20 }, (_, i) => ({
+      left: `${Math.random() * 100}%`,
+      top: '-10px',
+      backgroundColor: CONFETTI_COLORS[i % 5],
+      animationDelay: `${Math.random() * 0.5}s`,
+      animationDuration: `${1 + Math.random()}s`
+    })),
+    [] // Only compute once on mount
+  );
+
+  return (
+    <div className="absolute inset-0 overflow-hidden">
+      {styles.map((style, i) => (
+        <div
+          key={i}
+          className="absolute w-3 h-3 rounded-full animate-confetti"
+          style={style}
+        />
+      ))}
+    </div>
+  );
 }
 
 /**
@@ -312,22 +343,8 @@ export function Level1Conceptual({ onComplete, onBack, initialProgress }: Level1
             <div className="text-8xl mb-4">🎉</div>
             <div className="text-4xl font-bold text-green-600 animate-pulse">Rétt!</div>
           </div>
-          {/* Confetti particles */}
-          <div className="absolute inset-0 overflow-hidden">
-            {[...Array(20)].map((_, i) => (
-              <div
-                key={i}
-                className="absolute w-3 h-3 rounded-full animate-confetti"
-                style={{
-                  left: `${Math.random() * 100}%`,
-                  top: '-10px',
-                  backgroundColor: ['#22c55e', '#3b82f6', '#f97316', '#eab308', '#ec4899'][i % 5],
-                  animationDelay: `${Math.random() * 0.5}s`,
-                  animationDuration: `${1 + Math.random()}s`
-                }}
-              />
-            ))}
-          </div>
+          {/* Confetti particles - styles memoized to prevent recalculation on re-render */}
+          <ConfettiParticles />
         </div>
       )}
 

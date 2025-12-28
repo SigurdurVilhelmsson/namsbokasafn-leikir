@@ -3,6 +3,34 @@ import { GameProgress } from '@shared/types';
 const STORAGE_PREFIX = 'kvenno-chemistry-';
 
 /**
+ * Validate that an object has the basic shape of GameProgress
+ * This prevents corrupted or tampered localStorage data from crashing the app
+ */
+const isValidGameProgress = (data: unknown): data is GameProgress => {
+  if (typeof data !== 'object' || data === null) {
+    return false;
+  }
+
+  const obj = data as Record<string, unknown>;
+
+  // Check required fields exist and have correct types
+  if (typeof obj.currentLevel !== 'number' || obj.currentLevel < 0) {
+    return false;
+  }
+  if (typeof obj.problemsCompleted !== 'number' || obj.problemsCompleted < 0) {
+    return false;
+  }
+  if (typeof obj.lastPlayedDate !== 'string') {
+    return false;
+  }
+  if (typeof obj.totalTimeSpent !== 'number' || obj.totalTimeSpent < 0) {
+    return false;
+  }
+
+  return true;
+};
+
+/**
  * Save game progress to localStorage
  */
 export const saveProgress = (gameId: string, progress: GameProgress): void => {
@@ -15,14 +43,18 @@ export const saveProgress = (gameId: string, progress: GameProgress): void => {
 };
 
 /**
- * Load game progress from localStorage
+ * Load game progress from localStorage with validation
  */
 export const loadProgress = (gameId: string): GameProgress | null => {
   try {
     const key = `${STORAGE_PREFIX}${gameId}`;
     const saved = localStorage.getItem(key);
     if (saved) {
-      return JSON.parse(saved);
+      const parsed = JSON.parse(saved);
+      if (isValidGameProgress(parsed)) {
+        return parsed;
+      }
+      console.warn(`Invalid progress data for ${gameId}, ignoring`);
     }
   } catch (error) {
     console.error(`Failed to load progress for ${gameId}:`, error);

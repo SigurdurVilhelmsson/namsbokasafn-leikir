@@ -13,6 +13,16 @@ interface Progress {
 
 const STORAGE_KEY = 'nafnakerfidProgress';
 
+// Fisher-Yates shuffle for reliable randomization
+function shuffle<T>(array: T[]): T[] {
+  const result = [...array];
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+}
+
 function loadProgress(): Progress {
   const saved = localStorage.getItem(STORAGE_KEY);
   if (saved) {
@@ -57,8 +67,8 @@ function App() {
       });
     });
 
-    // Shuffle cards
-    const shuffled = cards.sort(() => Math.random() - 0.5);
+    // Shuffle cards using Fisher-Yates
+    const shuffled = shuffle(cards);
 
     setGameState({
       cards: shuffled,

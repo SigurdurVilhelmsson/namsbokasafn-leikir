@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "Bash(npx license-checker:*)",
+      "Bash(npm view:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nfix\\(security\\): Update Vite to ^6.4.1 to fix CVE-2025-62522\n\nUpdate Vite from ^5.0.8 to ^6.4.1 across all 13 workspace packages\nto address the server.fs.deny bypass vulnerability on Windows\n\\(CVE-2025-62522\\). This also includes fixes for CVE-2025-31125,\nCVE-2025-31486, and CVE-2025-46565.\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(cat:*)",
+      "Bash(npm install)",
+      "Bash(pnpm install)",
+      "Bash(npx tsc:*)",
+      "Bash(npm install:*)",
+      "Bash(npx vite build:*)"
+    ]
+  }
+}

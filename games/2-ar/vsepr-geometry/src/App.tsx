@@ -1,0 +1,281 @@
+import { useState } from 'react';
+import { Level1 } from './components/Level1';
+import { Level2 } from './components/Level2';
+import { Level3 } from './components/Level3';
+
+type ActiveLevel = 'menu' | 'level1' | 'level2' | 'level3' | 'complete';
+
+interface LevelScore {
+  level1: number | null;
+  level2: number | null;
+  level3: number | null;
+}
+
+function App() {
+  const [activeLevel, setActiveLevel] = useState<ActiveLevel>('menu');
+  const [scores, setScores] = useState<LevelScore>({
+    level1: null,
+    level2: null,
+    level3: null
+  });
+
+  const handleLevel1Complete = (score: number) => {
+    setScores(prev => ({ ...prev, level1: score }));
+    setActiveLevel('level2');
+  };
+
+  const handleLevel2Complete = (score: number) => {
+    setScores(prev => ({ ...prev, level2: score }));
+    setActiveLevel('level3');
+  };
+
+  const handleLevel3Complete = (score: number) => {
+    setScores(prev => ({ ...prev, level3: score }));
+    setActiveLevel('complete');
+  };
+
+  const resetGame = () => {
+    setScores({ level1: null, level2: null, level3: null });
+    setActiveLevel('menu');
+  };
+
+  // Render active level
+  if (activeLevel === 'level1') {
+    return <Level1 onComplete={handleLevel1Complete} onBack={() => setActiveLevel('menu')} />;
+  }
+
+  if (activeLevel === 'level2') {
+    return <Level2 onComplete={handleLevel2Complete} onBack={() => setActiveLevel('menu')} />;
+  }
+
+  if (activeLevel === 'level3') {
+    return <Level3 onComplete={handleLevel3Complete} onBack={() => setActiveLevel('menu')} />;
+  }
+
+  // Complete screen
+  if (activeLevel === 'complete') {
+    const totalScore = (scores.level1 || 0) + (scores.level2 || 0) + (scores.level3 || 0);
+
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-teal-50 to-cyan-100 p-4 md:p-8">
+        <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-2xl p-6 md:p-8">
+          <h1 className="text-3xl md:text-4xl font-bold text-center mb-6 text-teal-600">
+            Til hamingju!
+          </h1>
+
+          <div className="text-center mb-8">
+            <div className="text-6xl mb-4">🏆</div>
+            <div className="text-2xl font-bold text-gray-800 mb-2">
+              Þú hefur lokið öllum stigum!
+            </div>
+          </div>
+
+          <div className="space-y-4 mb-8">
+            <div className="bg-blue-50 p-4 rounded-xl flex justify-between items-center">
+              <div>
+                <div className="font-bold text-blue-800">Stig 1: VSEPR Kenning</div>
+                <div className="text-sm text-blue-600">Lögun og rafeinasvið</div>
+              </div>
+              <div className="text-2xl font-bold text-blue-600">{scores.level1 || 0}</div>
+            </div>
+
+            <div className="bg-green-50 p-4 rounded-xl flex justify-between items-center">
+              <div>
+                <div className="font-bold text-green-800">Stig 2: Spá fyrir um lögun</div>
+                <div className="text-sm text-green-600">Frá Lewis til rúmfræði</div>
+              </div>
+              <div className="text-2xl font-bold text-green-600">{scores.level2 || 0}</div>
+            </div>
+
+            <div className="bg-purple-50 p-4 rounded-xl flex justify-between items-center">
+              <div>
+                <div className="font-bold text-purple-800">Stig 3: Blendni og skautun</div>
+                <div className="text-sm text-purple-600">Flókin sameindir</div>
+              </div>
+              <div className="text-2xl font-bold text-purple-600">{scores.level3 || 0}</div>
+            </div>
+
+            <div className="bg-teal-100 p-4 rounded-xl flex justify-between items-center border-2 border-teal-400">
+              <div className="font-bold text-teal-800 text-lg">Heildarstig</div>
+              <div className="text-3xl font-bold text-teal-600">{totalScore}</div>
+            </div>
+          </div>
+
+          <div className="bg-teal-50 p-6 rounded-xl mb-6">
+            <h2 className="font-bold text-teal-800 mb-3">Hvað lærðir þú?</h2>
+            <ul className="space-y-2 text-teal-900 text-sm">
+              <li>✓ <strong>VSEPR:</strong> Rafeindasvið hrinda hvert öðru frá — ákvarðar lögun</li>
+              <li>✓ <strong>Rafeinasvið:</strong> Bindandi pör + einstæð pör = rafeinasvið</li>
+              <li>✓ <strong>Sameindarlögun:</strong> Einstæð pör „fela sig" en hafa áhrif á horn</li>
+              <li>✓ <strong>Blendni:</strong> sp (línuleg), sp² (þríhyrnd), sp³ (fjórflötungur)...</li>
+              <li>✓ <strong>Skautun:</strong> Ósamhverf lögun = sameind skautuð</li>
+            </ul>
+          </div>
+
+          <button
+            onClick={resetGame}
+            className="w-full bg-teal-500 hover:bg-teal-600 text-white font-bold py-4 px-6 rounded-xl transition-colors"
+          >
+            Spila aftur
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Main menu
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 to-cyan-100 p-4 md:p-8">
+      <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-2xl p-6 md:p-8">
+        <h1 className="text-3xl md:text-4xl font-bold text-center mb-2 text-teal-600">
+          🎯 VSEPR Rúmfræði
+        </h1>
+        <p className="text-center text-gray-600 mb-8">
+          Lærðu að spá fyrir um lögun sameinda
+        </p>
+
+        {/* Pedagogical explanation */}
+        <div className="bg-teal-50 p-6 rounded-xl mb-8">
+          <h2 className="font-bold text-teal-800 mb-3">Hvað er VSEPR?</h2>
+          <p className="text-teal-900 text-sm mb-4">
+            <strong>VSEPR</strong> (Valence Shell Electron Pair Repulsion) segir að
+            rafeindasvið í ystu skel miðatóms <em>hrindi hvert öðru frá</em> og
+            staðsetji sig eins langt í sundur og hægt er. Þetta ákvarðar lögun sameindarinnar.
+          </p>
+          <div className="bg-white p-3 rounded-lg border border-teal-200">
+            <p className="text-sm text-teal-800 font-mono text-center">
+              Rafeinasvið = Bindandi pör + Einstæð pör
+            </p>
+          </div>
+        </div>
+
+        {/* Level selection */}
+        <div className="space-y-4">
+          {/* Level 1 */}
+          <button
+            onClick={() => setActiveLevel('level1')}
+            className="w-full p-6 rounded-xl border-4 border-blue-400 bg-blue-50 hover:bg-blue-100 transition-all text-left"
+          >
+            <div className="flex items-center gap-4">
+              <div className="text-4xl">🔮</div>
+              <div className="flex-1">
+                <div className="flex items-center gap-2">
+                  <span className="text-xl font-bold text-blue-800">Stig 1: VSEPR Kenning</span>
+                  {scores.level1 !== null && (
+                    <span className="bg-green-500 text-white text-xs px-2 py-1 rounded-full">
+                      ✓ {scores.level1} stig
+                    </span>
+                  )}
+                </div>
+                <div className="text-sm text-blue-600 mt-1">
+                  Kynntu þér mismunandi sameindarlögun
+                </div>
+                <div className="text-xs text-gray-600 mt-2">
+                  Sjáðu hvernig rafeinasvið hrinda hvert öðru og mynda mismunandi rúmfræði.
+                </div>
+              </div>
+            </div>
+          </button>
+
+          {/* Level 2 */}
+          <button
+            onClick={() => setActiveLevel('level2')}
+            className={`w-full p-6 rounded-xl border-4 transition-all text-left ${
+              scores.level1 !== null
+                ? 'border-green-400 bg-green-50 hover:bg-green-100'
+                : 'border-gray-200 bg-gray-50 opacity-75'
+            }`}
+          >
+            <div className="flex items-center gap-4">
+              <div className="text-4xl">🧩</div>
+              <div className="flex-1">
+                <div className="flex items-center gap-2">
+                  <span className={`text-xl font-bold ${scores.level1 !== null ? 'text-green-800' : 'text-gray-600'}`}>
+                    Stig 2: Spá fyrir um lögun
+                  </span>
+                  {scores.level2 !== null && (
+                    <span className="bg-green-500 text-white text-xs px-2 py-1 rounded-full">
+                      ✓ {scores.level2} stig
+                    </span>
+                  )}
+                </div>
+                <div className={`text-sm mt-1 ${scores.level1 !== null ? 'text-green-600' : 'text-gray-500'}`}>
+                  Ákvarðaðu lögun út frá Lewis-formúlu
+                </div>
+                <div className="text-xs text-gray-600 mt-2">
+                  Teldu rafeinasvið og spáðu fyrir um sameindarlögun og tengihorn.
+                </div>
+              </div>
+            </div>
+          </button>
+
+          {/* Level 3 */}
+          <button
+            onClick={() => setActiveLevel('level3')}
+            className={`w-full p-6 rounded-xl border-4 transition-all text-left ${
+              scores.level2 !== null
+                ? 'border-purple-400 bg-purple-50 hover:bg-purple-100'
+                : 'border-gray-200 bg-gray-50 opacity-75'
+            }`}
+          >
+            <div className="flex items-center gap-4">
+              <div className="text-4xl">⚗️</div>
+              <div className="flex-1">
+                <div className="flex items-center gap-2">
+                  <span className={`text-xl font-bold ${scores.level2 !== null ? 'text-purple-800' : 'text-gray-600'}`}>
+                    Stig 3: Blendni og skautun
+                  </span>
+                  {scores.level3 !== null && (
+                    <span className="bg-green-500 text-white text-xs px-2 py-1 rounded-full">
+                      ✓ {scores.level3} stig
+                    </span>
+                  )}
+                </div>
+                <div className={`text-sm mt-1 ${scores.level2 !== null ? 'text-purple-600' : 'text-gray-500'}`}>
+                  Ákvarðaðu blendni og hvort sameind sé skautuð
+                </div>
+                <div className="text-xs text-gray-600 mt-2">
+                  Flóknari sameindir með mörgum miðatómum og tvískautsvægi.
+                </div>
+              </div>
+            </div>
+          </button>
+        </div>
+
+        {/* Geometry reference */}
+        <div className="mt-8 bg-gray-50 p-4 rounded-xl">
+          <h3 className="font-semibold text-gray-700 mb-3">📐 Algengar sameindarlögun</h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
+            <div className="bg-white p-2 rounded border text-center">
+              <div className="text-lg mb-1">—</div>
+              <div className="font-bold text-gray-800">Línuleg</div>
+              <div className="text-xs text-gray-500">180°</div>
+            </div>
+            <div className="bg-white p-2 rounded border text-center">
+              <div className="text-lg mb-1">△</div>
+              <div className="font-bold text-gray-800">Þríhyrnd</div>
+              <div className="text-xs text-gray-500">120°</div>
+            </div>
+            <div className="bg-white p-2 rounded border text-center">
+              <div className="text-lg mb-1">◇</div>
+              <div className="font-bold text-gray-800">Fjórflötungur</div>
+              <div className="text-xs text-gray-500">109.5°</div>
+            </div>
+            <div className="bg-white p-2 rounded border text-center">
+              <div className="text-lg mb-1">∠</div>
+              <div className="font-bold text-gray-800">Beygð</div>
+              <div className="text-xs text-gray-500">&lt;109.5°</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Credits */}
+        <div className="mt-6 text-center text-xs text-gray-500">
+          Kafli 9 — Chemistry: The Central Science (Brown et al.)
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default App;

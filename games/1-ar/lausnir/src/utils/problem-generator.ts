@@ -1,4 +1,4 @@
-import { Problem, Difficulty, ProblemType } from '../types';
+import { Problem, Difficulty, ProblemType, Chemical } from '../types';
 import { CHEMICALS } from '../data';
 
 export function generateProblem(difficulty: Difficulty): Problem {
@@ -41,7 +41,7 @@ export function generateProblem(difficulty: Difficulty): Problem {
   }
 }
 
-function generateDilutionProblem(difficulty: Difficulty, chemical: any): Problem {
+function generateDilutionProblem(difficulty: Difficulty, chemical: Chemical): Problem {
   if (difficulty === 'easy') {
     const M1 = Math.round(Math.random() * 4 + 1);
     const V1 = Math.round(Math.random() * 90 + 10);
@@ -89,7 +89,7 @@ function generateDilutionProblem(difficulty: Difficulty, chemical: any): Problem
   }
 }
 
-function generateMolarityProblem(difficulty: Difficulty, chemical: any): Problem {
+function generateMolarityProblem(difficulty: Difficulty, chemical: Chemical): Problem {
   const moles = parseFloat((Math.random() * 1.9 + 0.1).toFixed(2));
   const volume = parseFloat((Math.random() * 0.9 + 0.1).toFixed(2));
   const molarity = parseFloat((moles / volume).toFixed(3));
@@ -112,7 +112,7 @@ function generateMolarityProblem(difficulty: Difficulty, chemical: any): Problem
   };
 }
 
-function generateMolarityFromMassProblem(difficulty: Difficulty, chemical: any): Problem {
+function generateMolarityFromMassProblem(difficulty: Difficulty, chemical: Chemical): Problem {
   const massInGrams = Math.round(Math.random() * 90 + 10);
   const volumeInML = Math.round(Math.random() * 450 + 50);
   const moles = massInGrams / chemical.molarMass;
@@ -137,7 +137,7 @@ function generateMolarityFromMassProblem(difficulty: Difficulty, chemical: any):
   };
 }
 
-function generateMassFromMolarityProblem(difficulty: Difficulty, chemical: any): Problem {
+function generateMassFromMolarityProblem(difficulty: Difficulty, chemical: Chemical): Problem {
   const molarity = parseFloat((Math.random() * 2 + 0.5).toFixed(2));
   const volumeInML = Math.round(Math.random() * 400 + 100);
   const volumeInL = volumeInML / 1000;
@@ -162,7 +162,7 @@ function generateMassFromMolarityProblem(difficulty: Difficulty, chemical: any):
   };
 }
 
-function generateMixingProblem(difficulty: Difficulty, chemical: any): Problem {
+function generateMixingProblem(difficulty: Difficulty, chemical: Chemical): Problem {
   const M1 = parseFloat((Math.random() * 4 + 1).toFixed(2));
   const V1 = Math.round(Math.random() * 90 + 10);
   const M2 = parseFloat((Math.random() * 4 + 1).toFixed(2));

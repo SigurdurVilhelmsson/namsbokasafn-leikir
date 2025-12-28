@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useProgress, useAccessibility, useI18n } from '@shared/hooks';
 import {
   Equilibrium,
@@ -60,16 +60,30 @@ function App() {
   const [totalQuestions] = useState(10);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
 
+  // Ref to track if timeout has been handled for current question
+  const timeoutHandledRef = useRef(false);
+
   // Timer for challenge mode
   useEffect(() => {
     if (screen === 'game' && gameMode === 'challenge' && timeRemaining !== null && timeRemaining > 0) {
       const timer = setTimeout(() => {
-        setTimeRemaining(timeRemaining - 1);
+        setTimeRemaining(prev => prev !== null ? prev - 1 : null);
       }, 1000);
       return () => clearTimeout(timer);
-    } else if (timeRemaining === 0 && gameMode === 'challenge') {
+    } else if (timeRemaining === 0 && gameMode === 'challenge' && !timeoutHandledRef.current) {
       // Time's up - mark as incorrect and move on
-      handleTimeout();
+      timeoutHandledRef.current = true;
+      setIsCorrect(false);
+      setShowExplanation(true);
+      setStats(prev => ({
+        ...prev,
+        questionsAnswered: prev.questionsAnswered + 1,
+        streak: 0
+      }));
+
+      setTimeout(() => {
+        handleNextQuestion();
+      }, 3000);
     }
   }, [screen, gameMode, timeRemaining]);
 
@@ -98,6 +112,9 @@ function App() {
   const loadNewQuestion = (mode: GameMode) => {
     const eq = getRandomEquilibrium();
     setCurrentEquilibrium(eq);
+
+    // Reset timeout handler ref for new question
+    timeoutHandledRef.current = false;
 
     // In challenge mode, randomly select a stress
     if (mode === 'challenge') {
@@ -173,20 +190,6 @@ function App() {
     const timeBonus = (gameMode === 'challenge' && timeRemaining && timeRemaining > 15) ? 5 : 0;
 
     return basePoints + streakBonus + timeBonus;
-  };
-
-  const handleTimeout = () => {
-    setIsCorrect(false);
-    setShowExplanation(true);
-    setStats(prev => ({
-      ...prev,
-      questionsAnswered: prev.questionsAnswered + 1,
-      streak: 0
-    }));
-
-    setTimeout(() => {
-      handleNextQuestion();
-    }, 3000);
   };
 
   const handleNextQuestion = () => {

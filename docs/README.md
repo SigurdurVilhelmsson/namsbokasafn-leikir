@@ -10,6 +10,11 @@ Welcome to the ChemistryGames documentation hub. This directory organizes all pr
 - **[Main README](../README.md)** - Repository overview, architecture, and quick start guide
 - **[LICENSE](../LICENSE)** - MIT License (Copyright 2025 Sigurður E. Vilhelmsson)
 
+### Technical Reference (NEW)
+- **[API Reference](API-REFERENCE.md)** - Complete API documentation for the shared library (hooks, utilities, types)
+- **[Architecture](ARCHITECTURE.md)** - System architecture, diagrams, data flow, and design decisions
+- **[Developer Guide](DEVELOPER-GUIDE.md)** - Comprehensive guide for developers (setup, patterns, best practices)
+
 ### Development Guides
 - **[DEVELOPMENT.md](../DEVELOPMENT.md)** - Development workflow, available scripts, and code quality tools
 - **[DEBUGGING.md](../DEBUGGING.md)** - Comprehensive debugging guide (VSCode, React DevTools, browser tools)
@@ -65,13 +70,19 @@ Historical documentation from completed project phases:
 
 ### For New Contributors
 1. Start with [Main README](../README.md) for project overview
-2. Read [DEVELOPMENT.md](../DEVELOPMENT.md) for setup and workflow
-3. Review [KVENNO-STRUCTURE.md](../KVENNO-STRUCTURE.md) for design system
+2. Read [Developer Guide](DEVELOPER-GUIDE.md) for comprehensive setup and patterns
+3. Review [API Reference](API-REFERENCE.md) for shared library usage
 
 ### For Game Development
 1. Use `tools/create-game.sh` to create a new game from template
-2. Follow patterns in existing games (see game-specific READMEs)
-3. Review [GAME-REVIEW-PROMPT.md](../GAME-REVIEW-PROMPT.md) for quality guidelines
+2. Follow patterns in [Developer Guide](DEVELOPER-GUIDE.md)
+3. Use the [API Reference](API-REFERENCE.md) for hooks and utilities
+4. Review [GAME-REVIEW-PROMPT.md](../GAME-REVIEW-PROMPT.md) for quality guidelines
+
+### For Understanding the Codebase
+1. Read [Architecture](ARCHITECTURE.md) for system design and data flow
+2. Review diagrams for component relationships
+3. Check game-specific READMEs for implementation details
 
 ### For Deployment
 1. Follow [DEPLOYMENT.md](../DEPLOYMENT.md) for production deployment
@@ -111,4 +122,4 @@ When adding new documentation:
 
 ---
 
-**Last Updated:** 2025-11-29
+**Last Updated:** 2025-12-28

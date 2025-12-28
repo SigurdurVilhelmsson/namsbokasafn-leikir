@@ -223,6 +223,7 @@ export function Level1({ onBack, onComplete }: Level1Props) {
   const [challengeNumber, setChallengeNumber] = useState(0);
   const [challenge, setChallenge] = useState<Challenge>(() => generateChallenge(0));
   const [score, setScore] = useState(0);
+  const [correctCount, setCorrectCount] = useState(0);
   const [showFeedback, setShowFeedback] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState<number | string | null>(null);
@@ -232,7 +233,9 @@ export function Level1({ onBack, onComplete }: Level1Props) {
   const [builtAtoms, setBuiltAtoms] = useState<{ symbol: string; count: number }[]>([]);
 
   const totalChallenges = 8;
-  const isComplete = challengeNumber >= totalChallenges;
+  const masteryThreshold = 6; // 6/8 = 75% required to pass
+  const hasMastery = correctCount >= masteryThreshold;
+  const isComplete = challengeNumber >= totalChallenges || hasMastery;
 
   // Reset built atoms when challenge changes
   useEffect(() => {
@@ -273,6 +276,7 @@ export function Level1({ onBack, onComplete }: Level1Props) {
 
     if (correct) {
       setScore(prev => prev + 10);
+      setCorrectCount(prev => prev + 1);
     }
   };
 
@@ -310,23 +314,49 @@ export function Level1({ onBack, onComplete }: Level1Props) {
 
   // Game complete screen with celebration
   if (isComplete) {
-    const accuracy = Math.round((score / (totalChallenges * 10)) * 100);
+    const questionsAnswered = challengeNumber + (showFeedback ? 1 : 0);
+    const accuracy = questionsAnswered > 0 ? Math.round((correctCount / questionsAnswered) * 100) : 0;
+    const passedLevel = hasMastery;
 
     return (
-      <div className="min-h-screen bg-gradient-to-b from-green-50 to-white flex items-center justify-center p-4">
+      <div className={`min-h-screen bg-gradient-to-b ${passedLevel ? 'from-green-50' : 'from-yellow-50'} to-white flex items-center justify-center p-4`}>
         <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center animate-fade-in-up">
-          <div className="text-6xl mb-4 animate-bounce-in">🎉</div>
-          <h2 className="text-3xl font-bold text-gray-800 mb-2 animate-fade-in-up" style={{ animationDelay: '100ms' }}>Frábært!</h2>
-          <p className="text-gray-600 mb-6 animate-fade-in-up" style={{ animationDelay: '200ms' }}>Þú hefur lokið Stigi 1!</p>
+          <div className="text-6xl mb-4 animate-bounce-in">{passedLevel ? '🎉' : '💪'}</div>
+          <h2 className="text-3xl font-bold text-gray-800 mb-2 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
+            {passedLevel ? 'Frábært!' : 'Góð tilraun!'}
+          </h2>
+          <p className="text-gray-600 mb-6 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
+            {passedLevel
+              ? `Þú náðir ${masteryThreshold}+ réttum svörum og hefur lokið Stigi 1!`
+              : `Þú þarft ${masteryThreshold} rétt svör til að opna Stig 2. Reyndu aftur!`}
+          </p>
 
-          <div className="grid grid-cols-2 gap-4 mb-6">
+          <div className="grid grid-cols-3 gap-3 mb-6">
             <div className="bg-green-50 rounded-xl p-4 animate-fade-in-up" style={{ animationDelay: '300ms' }}>
-              <div className="text-3xl font-bold text-green-600">{score}</div>
-              <div className="text-sm text-gray-600">Stig</div>
+              <div className="text-2xl font-bold text-green-600">{correctCount}/{questionsAnswered}</div>
+              <div className="text-xs text-gray-600">Rétt svör</div>
             </div>
             <div className="bg-blue-50 rounded-xl p-4 animate-fade-in-up" style={{ animationDelay: '400ms' }}>
-              <div className="text-3xl font-bold text-blue-600">{accuracy}%</div>
-              <div className="text-sm text-gray-600">Nákvæmni</div>
+              <div className="text-2xl font-bold text-blue-600">{accuracy}%</div>
+              <div className="text-xs text-gray-600">Nákvæmni</div>
+            </div>
+            <div className="bg-purple-50 rounded-xl p-4 animate-fade-in-up" style={{ animationDelay: '500ms' }}>
+              <div className="text-2xl font-bold text-purple-600">{score}</div>
+              <div className="text-xs text-gray-600">Stig</div>
+            </div>
+          </div>
+
+          {/* Mastery progress */}
+          <div className="bg-gray-50 rounded-xl p-4 mb-6 animate-fade-in-up" style={{ animationDelay: '450ms' }}>
+            <div className="flex justify-between text-sm text-gray-600 mb-2">
+              <span>Framvinda í lærdómi</span>
+              <span>{correctCount}/{masteryThreshold} rétt svör</span>
+            </div>
+            <div className="h-3 bg-gray-200 rounded-full overflow-hidden">
+              <div
+                className={`h-full transition-all duration-500 ${passedLevel ? 'bg-green-500' : 'bg-yellow-500'}`}
+                style={{ width: `${Math.min((correctCount / masteryThreshold) * 100, 100)}%` }}
+              />
             </div>
           </div>
 
@@ -355,22 +385,39 @@ export function Level1({ onBack, onComplete }: Level1Props) {
           </div>
 
           <div className="space-y-3 animate-fade-in-up" style={{ animationDelay: '600ms' }}>
-            <button
-              onClick={onComplete}
-              className="w-full bg-primary hover:bg-primary-dark text-white font-bold py-3 px-6 rounded-xl transition-colors btn-press"
-            >
-              Halda áfram í Stig 2 →
-            </button>
-            <button
-              onClick={() => {
-                setChallengeNumber(0);
-                setScore(0);
-                setChallenge(generateChallenge(0));
-              }}
-              className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3 px-6 rounded-xl transition-colors"
-            >
-              Spila Aftur
-            </button>
+            {passedLevel ? (
+              <button
+                onClick={onComplete}
+                className="w-full bg-primary hover:bg-primary-dark text-white font-bold py-3 px-6 rounded-xl transition-colors btn-press"
+              >
+                Halda áfram í Stig 2 →
+              </button>
+            ) : (
+              <button
+                onClick={() => {
+                  setChallengeNumber(0);
+                  setScore(0);
+                  setCorrectCount(0);
+                  setChallenge(generateChallenge(0));
+                }}
+                className="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-6 rounded-xl transition-colors btn-press"
+              >
+                Reyna aftur
+              </button>
+            )}
+            {passedLevel && (
+              <button
+                onClick={() => {
+                  setChallengeNumber(0);
+                  setScore(0);
+                  setCorrectCount(0);
+                  setChallenge(generateChallenge(0));
+                }}
+                className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3 px-6 rounded-xl transition-colors"
+              >
+                Spila Aftur
+              </button>
+            )}
             <button
               onClick={onBack}
               className="w-full text-gray-500 hover:text-gray-700 font-semibold py-2"

@@ -3,6 +3,40 @@ import { PROBLEMS } from './data';
 import { EntropyVisualization } from './components/EntropyVisualization';
 import type { Difficulty, GameMode, Spontaneity, Problem } from './types';
 
+interface ThermoProgress {
+  score: number;
+  highScore: number;
+  bestStreak: number;
+  problemsCompleted: number;
+}
+
+const STORAGE_KEY = 'thermodynamics-predictor-progress';
+
+function loadProgress(): ThermoProgress {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    try {
+      return JSON.parse(saved);
+    } catch {
+      return getDefaultProgress();
+    }
+  }
+  return getDefaultProgress();
+}
+
+function getDefaultProgress(): ThermoProgress {
+  return {
+    score: 0,
+    highScore: 0,
+    bestStreak: 0,
+    problemsCompleted: 0
+  };
+}
+
+function saveProgress(progress: ThermoProgress): void {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+}
+
 function App() {
   const [mode, setMode] = useState<GameMode>('menu');
   const [difficulty, setDifficulty] = useState<Difficulty>('beginner');
@@ -12,11 +46,22 @@ function App() {
   const [userSpontaneity, setUserSpontaneity] = useState<Spontaneity | ''>('');
   const [showSolution, setShowSolution] = useState(false);
   const [feedback, setFeedback] = useState('');
-  const [score, setScore] = useState(0);
+  const [progress, setProgress] = useState<ThermoProgress>(loadProgress);
   const [streak, setStreak] = useState(0);
-  const [problemsCompleted, setProblemsCompleted] = useState(0);
   const [timeLeft, setTimeLeft] = useState(90);
   const graphRef = useRef<HTMLCanvasElement>(null);
+
+  // Save progress whenever it changes
+  useEffect(() => {
+    saveProgress(progress);
+  }, [progress]);
+
+  const resetProgress = () => {
+    const newProgress = getDefaultProgress();
+    setProgress(newProgress);
+    saveProgress(newProgress);
+    setStreak(0);
+  };
 
   // Start new problem
   const startNewProblem = () => {
@@ -69,10 +114,16 @@ function App() {
 
     if (deltaGCorrect && spontaneityCorrect) {
       const points = 100 + (streak * 10);
-      setScore(score + points);
-      setStreak(streak + 1);
+      const newStreak = streak + 1;
+      setStreak(newStreak);
+      setProgress(prev => ({
+        ...prev,
+        score: prev.score + points,
+        problemsCompleted: prev.problemsCompleted + 1,
+        highScore: Math.max(prev.highScore, prev.score + points),
+        bestStreak: Math.max(prev.bestStreak, newStreak)
+      }));
       setFeedback(`Rétt! +${points} stig`);
-      setProblemsCompleted(problemsCompleted + 1);
     } else {
       setStreak(0);
       if (!deltaGCorrect && !spontaneityCorrect) {
@@ -192,6 +243,35 @@ function App() {
               Lærðu um Gibbs frjálsa orku og sjálfviljugheit efnahvarfa
             </p>
 
+            {/* Progress Stats */}
+            {(progress.highScore > 0 || progress.problemsCompleted > 0) && (
+              <div className="mb-8 bg-gray-50 p-4 rounded-lg">
+                <div className="flex justify-between items-center mb-3">
+                  <h3 className="font-semibold text-gray-700">Framvinda</h3>
+                  <button
+                    onClick={resetProgress}
+                    className="text-sm text-gray-500 hover:text-red-500 transition-colors"
+                  >
+                    Endurstilla
+                  </button>
+                </div>
+                <div className="grid grid-cols-3 gap-4 text-center">
+                  <div className="bg-yellow-50 rounded-lg p-3">
+                    <div className="text-2xl font-bold text-yellow-600">{progress.highScore}</div>
+                    <div className="text-xs text-gray-600">Hæsta stig</div>
+                  </div>
+                  <div className="bg-green-50 rounded-lg p-3">
+                    <div className="text-2xl font-bold text-green-600">{progress.problemsCompleted}</div>
+                    <div className="text-xs text-gray-600">Spurningar</div>
+                  </div>
+                  <div className="bg-orange-50 rounded-lg p-3">
+                    <div className="text-2xl font-bold text-orange-600">{progress.bestStreak}</div>
+                    <div className="text-xs text-gray-600">Besta röð</div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div className="mb-8 p-6 bg-blue-50 rounded-lg">
               <h2 className="text-xl font-bold mb-4">📚 Um leikinn</h2>
               <p className="mb-4">Þessi leikur kennir þér að:</p>
@@ -258,9 +338,7 @@ function App() {
               <button
                 onClick={() => {
                   setMode('challenge');
-                  setScore(0);
                   setStreak(0);
-                  setProblemsCompleted(0);
                   startNewProblem();
                 }}
                 className="p-6 rounded-lg text-white font-bold text-lg transition"
@@ -304,7 +382,7 @@ function App() {
                 <>
                   <div className="text-center">
                     <div className="text-sm text-gray-600">Stig</div>
-                    <div className="text-xl font-bold">{score}</div>
+                    <div className="text-xl font-bold">{progress.score}</div>
                   </div>
                   <div className="text-center">
                     <div className="text-sm text-gray-600">Runa</div>
@@ -322,7 +400,7 @@ function App() {
 
             <div className="text-center">
               <div className="text-sm text-gray-600">Spurning</div>
-              <div className="text-xl font-bold">{problemsCompleted + 1}</div>
+              <div className="text-xl font-bold">{progress.problemsCompleted + 1}</div>
             </div>
           </div>
         </div>

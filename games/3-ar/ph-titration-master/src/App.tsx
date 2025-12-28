@@ -5,6 +5,38 @@ import { calculatePH } from './utils/ph-calculations';
 import { isIndicatorAppropriate } from './data/indicators';
 import { Burette, Flask, PHMeter, TitrationCurve, IndicatorSelector } from './components';
 
+interface TitrationProgress {
+  score: number;
+  highScore: number;
+  titrationsCompleted: number;
+}
+
+const STORAGE_KEY = 'ph-titration-master-progress';
+
+function loadProgress(): TitrationProgress {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    try {
+      return JSON.parse(saved);
+    } catch {
+      return getDefaultProgress();
+    }
+  }
+  return getDefaultProgress();
+}
+
+function getDefaultProgress(): TitrationProgress {
+  return {
+    score: 0,
+    highScore: 0,
+    titrationsCompleted: 0
+  };
+}
+
+function saveProgress(progress: TitrationProgress): void {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+}
+
 /**
  * pH Titration Master - Main Application
  */
@@ -19,11 +51,20 @@ function App() {
   const [curveData, setCurveData] = useState<Array<{ volume: number; pH: number }>>([]);
   const [isAnimating, setIsAnimating] = useState(false);
 
-  // Stats
-  const [score, setScore] = useState(0);
-  const [highScore, setHighScore] = useState(0);
-  const [titrationsCompleted, setTitrationsCompleted] = useState(0);
+  // Stats with localStorage persistence
+  const [progress, setProgress] = useState<TitrationProgress>(loadProgress);
   const [startTime, setStartTime] = useState(Date.now());
+
+  // Save progress whenever it changes
+  useEffect(() => {
+    saveProgress(progress);
+  }, [progress]);
+
+  const resetProgress = () => {
+    const newProgress = getDefaultProgress();
+    setProgress(newProgress);
+    saveProgress(newProgress);
+  };
 
   // Feedback
   const [feedback, setFeedback] = useState<{
@@ -136,11 +177,12 @@ function App() {
       message += ' (+30 tíma bónus)';
     }
 
-    setScore(score + points);
-    setTitrationsCompleted(titrationsCompleted + 1);
-    if (score + points > highScore) {
-      setHighScore(score + points);
-    }
+    setProgress(prev => ({
+      ...prev,
+      score: prev.score + points,
+      titrationsCompleted: prev.titrationsCompleted + 1,
+      highScore: Math.max(prev.highScore, prev.score + points)
+    }));
 
     setFeedback({
       isCorrect,
@@ -205,14 +247,22 @@ function App() {
               </p>
 
               {/* Progress Stats */}
-              {(highScore > 0 || titrationsCompleted > 0) && (
-                <div className="flex justify-center gap-6 text-sm mt-4">
-                  <div className="bg-yellow-50 px-4 py-2 rounded-lg border border-yellow-200">
-                    <span className="font-bold text-yellow-800">🏆 Hæsta stig: {highScore}</span>
+              {(progress.highScore > 0 || progress.titrationsCompleted > 0) && (
+                <div className="mt-4">
+                  <div className="flex justify-center gap-6 text-sm flex-wrap">
+                    <div className="bg-yellow-50 px-4 py-2 rounded-lg border border-yellow-200">
+                      <span className="font-bold text-yellow-800">🏆 Hæsta stig: {progress.highScore}</span>
+                    </div>
+                    <div className="bg-blue-50 px-4 py-2 rounded-lg border border-blue-200">
+                      <span className="font-bold text-blue-800">🧪 Þéttigreiningar: {progress.titrationsCompleted}</span>
+                    </div>
                   </div>
-                  <div className="bg-blue-50 px-4 py-2 rounded-lg border border-blue-200">
-                    <span className="font-bold text-blue-800">🧪 Þéttigreiningar: {titrationsCompleted}</span>
-                  </div>
+                  <button
+                    onClick={resetProgress}
+                    className="mt-3 text-sm text-gray-500 hover:text-red-500 transition-colors"
+                  >
+                    Endurstilla framvindu
+                  </button>
                 </div>
               )}
             </div>
@@ -315,7 +365,7 @@ function App() {
               <div className="flex gap-4 items-center">
                 <div className="text-right">
                   <p className="text-sm text-gray-600">Stig</p>
-                  <p className="text-2xl font-bold" style={{ color: '#f36b22' }}>{score}</p>
+                  <p className="text-2xl font-bold" style={{ color: '#f36b22' }}>{progress.score}</p>
                 </div>
                 <div className="text-right">
                   <p className="text-sm text-gray-600">Erfiðleiki</p>

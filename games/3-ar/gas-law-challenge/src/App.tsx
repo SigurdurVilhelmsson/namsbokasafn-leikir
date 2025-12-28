@@ -3,6 +3,36 @@ import { GasLawQuestion, GameMode, GameStats, QuestionFeedback } from './types';
 import { questions, getRandomQuestion } from './data';
 import { checkAnswer, calculateError, getUnit, getVariableName } from './utils/gas-calculations';
 
+const STORAGE_KEY = 'gas-law-challenge-progress';
+
+function loadStats(): GameStats {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    try {
+      return JSON.parse(saved);
+    } catch {
+      return getDefaultStats();
+    }
+  }
+  return getDefaultStats();
+}
+
+function getDefaultStats(): GameStats {
+  return {
+    score: 0,
+    questionsAnswered: 0,
+    correctAnswers: 0,
+    streak: 0,
+    bestStreak: 0,
+    hintsUsed: 0,
+    totalTime: 0
+  };
+}
+
+function saveStats(stats: GameStats): void {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(stats));
+}
+
 /**
  * Particle class for gas visualization
  */
@@ -61,16 +91,19 @@ function App() {
   const [feedback, setFeedback] = useState<QuestionFeedback | null>(null);
   const [timeRemaining, setTimeRemaining] = useState<number | null>(null);
 
-  // Stats
-  const [stats, setStats] = useState<GameStats>({
-    score: 0,
-    questionsAnswered: 0,
-    correctAnswers: 0,
-    streak: 0,
-    bestStreak: 0,
-    hintsUsed: 0,
-    totalTime: 0
-  });
+  // Stats with localStorage persistence
+  const [stats, setStats] = useState<GameStats>(loadStats);
+
+  // Save stats whenever they change
+  useEffect(() => {
+    saveStats(stats);
+  }, [stats]);
+
+  const resetStats = () => {
+    const newStats = getDefaultStats();
+    setStats(newStats);
+    saveStats(newStats);
+  };
 
   // Particle visualization
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -273,16 +306,24 @@ function App() {
 
               {/* Stats */}
               {stats.questionsAnswered > 0 && (
-                <div className="flex justify-center gap-4 mt-4 text-sm">
-                  <div className="bg-yellow-50 px-3 py-2 rounded-lg border border-yellow-200">
-                    <span className="font-bold text-yellow-800">🏆 Stig: {stats.score}</span>
+                <div className="mt-4">
+                  <div className="flex justify-center gap-4 text-sm flex-wrap">
+                    <div className="bg-yellow-50 px-3 py-2 rounded-lg border border-yellow-200">
+                      <span className="font-bold text-yellow-800">🏆 Stig: {stats.score}</span>
+                    </div>
+                    <div className="bg-green-50 px-3 py-2 rounded-lg border border-green-200">
+                      <span className="font-bold text-green-800">✓ Rétt: {stats.correctAnswers}/{stats.questionsAnswered}</span>
+                    </div>
+                    <div className="bg-blue-50 px-3 py-2 rounded-lg border border-blue-200">
+                      <span className="font-bold text-blue-800">🔥 Besta röð: {stats.bestStreak}</span>
+                    </div>
                   </div>
-                  <div className="bg-green-50 px-3 py-2 rounded-lg border border-green-200">
-                    <span className="font-bold text-green-800">✓ Rétt: {stats.correctAnswers}/{stats.questionsAnswered}</span>
-                  </div>
-                  <div className="bg-blue-50 px-3 py-2 rounded-lg border border-blue-200">
-                    <span className="font-bold text-blue-800">🔥 Röð: {stats.streak}</span>
-                  </div>
+                  <button
+                    onClick={resetStats}
+                    className="mt-3 text-sm text-gray-500 hover:text-red-500 transition-colors"
+                  >
+                    Endurstilla framvindu
+                  </button>
                 </div>
               )}
             </div>

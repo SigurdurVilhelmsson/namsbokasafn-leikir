@@ -1,40 +1,36 @@
 # Deployment Guide
 
-> **Last Updated**: 2025-12-05
+> **Last Updated**: 2025-12-29
 >
 > **Repository Architecture**: Monorepo with Vite build system
 >
-> **Deployment Status**: ✅ **All 11 games built and ready for deployment!**
+> **Deployment Status**: ✅ **All 18 games built and ready for deployment!**
 
 This guide covers deploying ChemistryGames to **kvenno.app** and general server deployment.
 
-## 📦 Current Repository Status (2025-12-05)
+## 📦 Current Repository Status (2025-12-29)
 
-**✅ DEPLOYMENT READY** - All games built and production-ready!
+**✅ DEPLOYMENT READY** - All games built and production-ready with achievement system!
 
-**Architecture**: pnpm monorepo with 11 games (5 Year 1, 6 Year 3)
-**Build System**: Vite 5.0 + TypeScript 5.3 + React 18.2
-**Build Output**: Single-file HTML bundles (169-212KB each)
-**Build Date**: 2025-12-05 15:04 UTC (current)
+**Architecture**: pnpm monorepo with 18 games (5 Year 1, 7 Year 2, 6 Year 3)
+**Build System**: Vite 6.4 + TypeScript 5.3 + React 18.2
+**Build Output**: Single-file HTML bundles (194-282KB each)
+**Build Date**: 2025-12-29 (with cross-game achievement system)
 
 **Games Overview**:
 - **Year 1 (1-ar)**: 5 games + landing page
-  - nafnakerfid.html (169KB)
-  - dimensional-analysis.html (205KB)
-  - molmassi.html (181KB)
-  - takmarkandi.html (185KB)
-  - lausnir.html (197KB)
+  - nafnakerfid.html, dimensional-analysis.html, molmassi.html, takmarkandi.html, lausnir.html
+  - index.html (landing page)
+- **Year 2 (2-ar)**: 7 games + landing page
+  - hess-law.html, kinetics.html, lewis-structures.html, vsepr-geometry.html
+  - intermolecular-forces.html, organic-nomenclature.html, redox-reactions.html
   - index.html (landing page)
 - **Year 3 (3-ar)**: 6 games + landing page
-  - gas-law-challenge.html (178KB)
-  - thermodynamics-predictor.html (177KB)
-  - buffer-recipe-creator.html (182KB)
-  - equilibrium-shifter.html (212KB)
-  - ph-titration-practice.html (175KB)
-  - ph-titration-master.html (191KB)
+  - gas-law-challenge.html, thermodynamics-predictor.html, buffer-recipe-creator.html
+  - equilibrium-shifter.html, ph-titration-practice.html, ph-titration-master.html
   - index.html (landing page)
 
-**Total**: 11 games + 2 landing pages = 13 HTML files ready for deployment
+**Total**: 18 games + 3 landing pages = 21 HTML files ready for deployment
 
 ## 🎓 Deployment to kvenno.app (Production)
 
@@ -247,7 +243,7 @@ server {
 ```
 
 **Build Status**: ✅ All games already built (2025-12-05 15:04) - ready for deployment!
-**Total Files**: 13 HTML files (11 games + 2 landing pages)
+**Total Files**: 21 HTML files (18 games + 3 landing pages)
 **Total Size**: ~2.2MB (all games combined)
 
 ### Integration with Kvenno Site Structure
@@ -307,13 +303,13 @@ This section covers deploying to a general Linode/Ubuntu server with nginx.
 ### ✅ Completed and Ready:
 
 1. **All Games Built** ✅
-   - 11 games built and production-ready (169-212KB each)
+   - 18 games built and production-ready (169-212KB each)
    - Last build: 2025-12-05 15:04 UTC
    - All self-contained single-file HTML bundles
    - 2 landing pages (Year 1 and Year 3)
 
 2. **Monorepo Architecture Established** ✅
-   - 11 games organized in unified repository (5 Year 1, 6 Year 3)
+   - 18 games organized in unified repository (5 Year 1, 7 Year 2, 6 Year 3)
    - Shared component library across all games
    - TypeScript + React + Vite build system
 
@@ -385,7 +381,7 @@ du -h 1-ar/*.html 3-ar/*.html
 - ✅ Built HTML files from `1-ar/` and `3-ar/` directories ✅ (already exist!)
 - ✅ NOT the source files from `games/` directory
 - ✅ Each game is a self-contained single HTML file
-- ✅ Total: 13 files (11 games + 2 landing pages)
+- ✅ Total: 21 files (18 games + 3 landing pages)
 
 **Optional - Only if you need to rebuild:**
 
@@ -759,13 +755,13 @@ sudo tail -50 /var/log/nginx/chemistrygames_error.log
 ### ✅ Pre-Deployment Requirements (ALL COMPLETE!)
 
 **Build Requirements:**
-- ✅ All 11 games built successfully (169-212KB each)
+- ✅ All 18 games built successfully (169-212KB each)
 - ✅ Build output verified in `1-ar/` and `3-ar/` directories
 - ✅ Landing pages (`index.html`) present in both directories
 - ✅ Last build: 2025-12-05 15:04 UTC (current)
 
 **Already Complete:**
-- ✅ Monorepo architecture with 11 games (5 Year 1, 6 Year 3)
+- ✅ Monorepo architecture with 18 games (5 Year 1, 7 Year 2, 6 Year 3)
 - ✅ Modern build system (Vite 5.0 + TypeScript 5.3 + React 18.2)
 - ✅ Landing pages created with Kvenno branding
 - ✅ Shared component library

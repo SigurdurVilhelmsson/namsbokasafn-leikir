@@ -1,6 +1,6 @@
 # Repository Health Dashboard
 
-> **Last Updated**: 2025-12-05 (Master Checklist Review + Development Environment Setup)
+> **Last Updated**: 2025-12-29 (Achievement System Rollout + Hess-Law Fixes)
 >
 > **Next Update**: Weekly (or as needed)
 
@@ -56,7 +56,7 @@
 - **Fix**: Update to esbuild >=0.25.0 (requires Vite update)
 - **Advisory**: https://github.com/advisories/GHSA-67mh-4wv8-2f99
 - **Action**: Consider updating Vite to latest version (5.x or 7.x)
-- **Estimated Time**: 1-2 hours (includes testing all 11 games)
+- **Estimated Time**: 1-2 hours (includes testing all 18 games)
 - **Priority**: Low-Medium (dev-only, low practical risk)
 
 ### 2. Dependencies Have Major Updates Available
@@ -70,7 +70,7 @@
   - TypeScript 5.9.3 (minor update available)
 - **Action**: Plan and test major version updates
 - **Estimated Time**: 2-3 hours for full upgrade and testing
-- **Why**: Major version bumps require careful testing of all 11 games
+- **Why**: Major version bumps require careful testing of all 18 games
 - **Priority**: Low (current versions work fine)
 
 ### 3. ESLint Configuration Migration Needed
@@ -105,7 +105,7 @@
 **Status**: 🟢 **Development Environment Ready!** All games built, dependencies installed, code formatted.
 
 **📊 Current State Summary:**
-- ✅ All 11 games built and ready (169-212KB each)
+- ✅ All 18 games built and ready (169-212KB each)
 - ✅ Landing pages present for Year 1 and Year 3
 - ✅ Dependencies installed (245 packages)
 - ✅ Code formatting fixed (10 files auto-formatted)
@@ -118,7 +118,7 @@
 **🚀 If Deploying to Production (NOW):**
 1. [ ] Review deployment checklist in DEPLOYMENT.md
 2. [ ] Copy built files from `1-ar/` and `3-ar/` to server
-3. [ ] Verify all 11 games load correctly
+3. [ ] Verify all 18 games load correctly
 4. [ ] Test on mobile devices
 5. [ ] Celebrate! 🎉
 
@@ -136,7 +136,7 @@
 
 **🔧 If You Have 1-2 Hours:**
 - [ ] Update Vite to fix esbuild vulnerability
-- [ ] Test all 11 games after Vite update
+- [ ] Test all 18 games after Vite update
 - [ ] Run accessibility audit on 2-3 games
 - [ ] Establish performance baselines
 
@@ -147,7 +147,7 @@
 - [ ] Review dependency upgrade impact (React 19, Vite 7)
 
 **🎯 Low Priority / Future:**
-- Accessibility audits for all 11 games
+- Accessibility audits for all 18 games
 - Performance baseline for all games
 - Consider GitHub Actions for automated checks
 - Major dependency updates (React 19, Vite 7, ESLint 9)
@@ -174,13 +174,15 @@
 - **Status**: 🟢 Excellent - TypeScript clean, formatting perfect
 
 ### Build Status
-- **Year 1 Games**: ✅ 5 games built (169-205KB each)
+- **Year 1 Games**: ✅ 5 games built (241-282KB each)
   - nafnakerfid.html, dimensional-analysis.html, molmassi.html, takmarkandi.html, lausnir.html
-- **Year 3 Games**: ✅ 6 games built (175-212KB each)
+- **Year 2 Games**: ✅ 7 games built (229-245KB each)
+  - hess-law.html, kinetics.html, intermolecular-forces.html, lewis-structures.html, vsepr-geometry.html, organic-nomenclature.html, redox-reactions.html
+- **Year 3 Games**: ✅ 6 games built (194-236KB each)
   - gas-law-challenge.html, thermodynamics-predictor.html, buffer-recipe-creator.html, equilibrium-shifter.html, ph-titration-practice.html, ph-titration-master.html
-- **Landing Pages**: ✅ Present (1-ar/index.html, 3-ar/index.html)
-- **Last Build**: 2025-12-05 15:04 UTC (recent commits)
-- **Status**: 🟢 **All games built and ready for deployment**
+- **Landing Pages**: ✅ Present (1-ar/index.html, 2-ar/index.html, 3-ar/index.html)
+- **Last Build**: 2025-12-29 (with achievement system)
+- **Status**: 🟢 **All 18 games built and ready for deployment**
 
 ### Dependencies
 - **Installation Status**: ✅ Installed (245 packages)
@@ -217,15 +219,15 @@
 - **Status**: 🟢 Excellent
 
 ### Games Status
-- **Total Games**: 11 (5 Year 1, 6 Year 3)
+- **Total Games**: 18 (5 Year 1, 7 Year 2, 6 Year 3)
   - **Year 1 (5 games)**: nafnakerfid, dimensional-analysis, molmassi, takmarkandi, lausnir
+  - **Year 2 (7 games)**: hess-law, kinetics, intermolecular-forces, lewis-structures, vsepr-geometry, organic-nomenclature, redox-reactions
   - **Year 3 (6 games)**: gas-law-challenge, thermodynamics-predictor, buffer-recipe-creator, equilibrium-shifter, ph-titration-practice, ph-titration-master
 - **Migration Status**: ✅ All migrated to monorepo architecture
-- **Build System**: ✅ Vite 5.0 + TypeScript 5.3 + React 18.2
-- **Bundle Sizes**: ✅ All games 169-212KB (at or near 250KB target)
-  - Smallest: nafnakerfid (169KB)
-  - Largest: equilibrium-shifter (212KB)
-- **Build Status**: ✅ All current (built 2025-12-05 15:04)
+- **Build System**: ✅ Vite 6.4 + TypeScript 5.3 + React 18.2
+- **Bundle Sizes**: ✅ All games 194-282KB (optimized single-file builds)
+- **Build Status**: ✅ All current (built 2025-12-29)
+- **Achievement System**: ✅ Cross-game achievements with 23 badges, streaks, and progress tracking
 - **Landing Pages**: ✅ Present and styled with Kvenno branding
 - **Languages**: Icelandic (primary), English, Polish (in progress)
 - **Accessibility**: Built-in features (high contrast, text size, reduced motion)
@@ -269,25 +271,30 @@
 
 ## 🎮 Recent Wins
 
-**Today (2025-12-05) - Master Checklist Review Completed!** 🎉
-- ✅ **Dependencies installed** in 6.3 seconds (245 packages)
-- ✅ **10 files auto-formatted** with Prettier (100% compliance)
-- ✅ **TypeScript type checking passes** across all 12 workspaces
-- ✅ **Security audit completed** - 1 low-risk dev-only vulnerability identified
-- ✅ **Master checklist system** successfully implemented and tested
-- ✅ **Development environment fully functional** - ready to code!
+**Today (2025-12-29) - Achievement System & Hess-Law Improvements!** 🎉
+- ✅ **Cross-game achievement system** rolled out to all 18 games
+  - 23 achievements across 6 categories (performance, streak, speed, mastery, dedication, special)
+  - 5 rarity levels with visual styling (common, uncommon, rare, epic, legendary)
+  - Persistent progress tracking via localStorage
+  - Real-time achievement notifications
+- ✅ **Hess-Law game improvements**
+  - Fixed energy diagram showing incorrect exothermic/endothermic visualization
+  - Multiplied coefficients now display directly in equations (not "2 ×" prefix)
+  - Energy diagram gap scales with ΔH magnitude
+  - Fixed challenge sync bug (diagram now matches current question)
+- ✅ **All 18 games rebuilt** with achievement integration
 
 **Earlier Achievements:**
-- ✅ **All 11 games built and ready** for production deployment! 🚀
-  - 5 Year 1 games, 6 Year 3 games
-  - All bundles optimized (169-212KB each)
+- ✅ **All 18 games built and ready** for production deployment! 🚀
+  - 5 Year 1 games, 7 Year 2 games, 6 Year 3 games
+  - All bundles optimized (194-282KB each)
 - ✅ **Recent development activity** (Dec 5, 2025)
   - Dimensional analysis game updated and rebuilt
   - Latest commits show active maintenance
 - ✅ **Landing pages complete** with Kvenno branding
   - Year 1 and Year 3 landing pages ready
   - Professional design with breadcrumbs and navigation
-- ✅ **All 11 games migrated** to monorepo architecture
+- ✅ **All 18 games migrated** to monorepo architecture
 - ✅ **Comprehensive documentation** created and updated
 - ✅ **Code quality tools** configured (ESLint, Prettier, TypeScript)
 - ✅ **Shared component library** reducing code duplication
@@ -303,7 +310,7 @@
 **Current Focus**: 🟢 **DEVELOPMENT READY + PRODUCTION READY** - Full environment functional
 
 **Status**:
-- ✅ **All 11 games built** and ready for deployment
+- ✅ **All 18 games built** and ready for deployment
 - ✅ **Build outputs current** (2025-12-05 15:04 UTC)
 - ✅ **Dependencies installed** (245 packages, 6.3s install time)
 - ✅ **Code formatted** (10 files auto-fixed, 100% compliance)

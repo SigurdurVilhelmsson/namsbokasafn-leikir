@@ -2,7 +2,7 @@
 
 This document tracks suggested improvements for the ChemistryGames repository. Items are marked as completed (✅), in-progress (🚧), or planned (📋).
 
-**Last Updated:** 2025-11-29
+**Last Updated:** 2025-12-29
 
 ---
 
@@ -86,6 +86,41 @@ This document tracks suggested improvements for the ChemistryGames repository. I
 - Added `CHANGELOG.md` for version tracking
 - Archived completed migration documentation
 - All active docs up-to-date
+
+### Gameplay & UX Features
+
+#### 9. ✅ Cross-Game Achievement System (COMPLETED)
+**Status:** Fully implemented and rolled out to all 18 games
+- Locations:
+  - `shared/types/achievement.types.ts` - Type definitions
+  - `shared/utils/achievements.ts` - Achievement logic and storage
+  - `shared/hooks/useAchievements.ts` - React hook for games
+  - `shared/components/AchievementBadge.tsx` - Badge display
+  - `shared/components/AchievementNotificationPopup.tsx` - Toast notifications
+  - `shared/components/AchievementsPanel.tsx` - Full achievement panel
+- Features:
+  - 23 achievements across 6 categories (performance, streak, speed, mastery, dedication, special)
+  - 5 rarity levels with visual styling (common, uncommon, rare, epic, legendary)
+  - Cross-game progress tracking via localStorage (`kvenno-chemistry-achievements`)
+  - Real-time achievement notifications with animations
+  - Full achievement panel with category filtering
+  - Streak tracking for consecutive correct answers
+  - Points system with leaderboard potential
+- Integration:
+  - All 18 games updated with `useAchievements` hook
+  - Achievement button in game headers
+  - Automatic tracking of correct/incorrect answers, level completions
+
+#### 10. ✅ Hess-Law Visualization Improvements (COMPLETED)
+**Status:** Multiple UX fixes implemented
+- Energy diagram fixes:
+  - Corrected exothermic/endothermic bar positions (products now correctly lower/higher)
+  - Energy gap now scales with ΔH magnitude when multiplying equations
+- Equation display improvements:
+  - Coefficients now multiplied directly in formulas (e.g., "2CH₄ + 4O₂" instead of "2 × CH₄ + 2O₂")
+  - Handles fractional coefficients (½ → 1 when ×2)
+- Bug fixes:
+  - Challenge sync fixed - energy diagram now updates when moving to new questions
 
 ---
 
@@ -417,10 +452,11 @@ export const usePerformance = (componentName: string) => {
 |----------|-----------|---------|-------|
 | **Code Quality** | 4/4 | - | 100% |
 | **Development Tools** | 2/2 | - | 100% |
+| **Gameplay & UX** | 2/2 | - | 100% |
 | **Testing** | 0/3 | 3 | 0% |
 | **Automation** | 1/2 | 1 | 50% |
 | **Monitoring** | 0/3 | 3 | 0% |
-| **Total** | **8/14** | **6** | **57%** |
+| **Total** | **10/16** | **6** | **63%** |
 
 ---
 

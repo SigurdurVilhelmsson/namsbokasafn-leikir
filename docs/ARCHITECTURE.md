@@ -720,7 +720,7 @@ export default defineConfig({
 ### Scalability Path
 
 ```
-Current:  14 games × 200KB = 2.8MB total
+Current:  18 games × 230KB = 4.1MB total
 Future:   50 games × 200KB = 10MB total (still manageable)
 
 If needed, implement:

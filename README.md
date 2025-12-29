@@ -6,6 +6,17 @@ Interactive chemistry educational games for Kvennaskólinn í Reykjavík. Built 
 
 ---
 
+## ✨ Key Features
+
+- **18 Educational Games** across 3 years of chemistry curriculum
+- **Cross-Game Achievement System** - 23 achievements with 5 rarity levels, streak tracking, persistent progress
+- **Multi-Language Support** - Icelandic (primary), English, Polish
+- **Accessibility Features** - High contrast, text scaling, reduced motion
+- **Single-File Deployment** - Each game builds to a self-contained HTML file
+- **Offline Capable** - All progress saved locally via localStorage
+
+---
+
 ## 🏗️ Architecture
 
 This repository uses a **monorepo architecture** with shared components for maintainability and consistency:
@@ -135,7 +146,35 @@ See [tools/game-template/README.md](tools/game-template/README.md) for detailed 
 - **Format**: Interactive structure drawing
 - **Features**: Step-by-step structure building, electron counting, resonance structures
 - **Source**: `games/2-ar/lewis-structures/`
-- **Build**: `lewis-structures.html` (212KB)
+- **Build**: `lewis-structures.html` (238KB)
+
+#### ✅ VSEPR Geometry - **NEW**
+- **Topics**: Molecular geometry, VSEPR theory, bond angles
+- **Format**: 3D visualization with interactive molecules
+- **Features**: Electron domain geometry, molecular shapes, hybridization
+- **Source**: `games/2-ar/vsepr-geometry/`
+- **Build**: `vsepr-geometry.html` (245KB)
+
+#### ✅ Intermolecular Forces - **NEW**
+- **Topics**: London dispersion, dipole-dipole, hydrogen bonding
+- **Format**: Comparative analysis and identification
+- **Features**: Force strength ranking, boiling point predictions, molecular polarity
+- **Source**: `games/2-ar/intermolecular-forces/`
+- **Build**: `intermolecular-forces.html` (235KB)
+
+#### ✅ Organic Nomenclature - **NEW**
+- **Topics**: IUPAC naming, functional groups, organic structures
+- **Format**: Name-structure matching game
+- **Features**: Alkanes, alkenes, alcohols, carboxylic acids, naming rules
+- **Source**: `games/2-ar/organic-nomenclature/`
+- **Build**: `organic-nomenclature.html` (229KB)
+
+#### ✅ Redox Reactions - **NEW**
+- **Topics**: Oxidation-reduction, electron transfer, oxidation states
+- **Format**: Reaction balancing and identification
+- **Features**: Half-reactions, oxidation state changes, electrochemistry basics
+- **Source**: `games/2-ar/redox-reactions/`
+- **Build**: `redox-reactions.html` (229KB)
 
 ### Year 3 (3-ár) - Advanced Chemistry
 
@@ -197,9 +236,10 @@ See [tools/game-template/README.md](tools/game-template/README.md) for detailed 
 - **PostCSS + Autoprefixer** - CSS processing
 
 ### Shared Library
-- **Custom Hooks**: `useI18n`, `useProgress`, `useAccessibility`
-- **Utilities**: Storage, export, scoring algorithms
+- **Custom Hooks**: `useI18n`, `useProgress`, `useAccessibility`, `useAchievements`
+- **Utilities**: Storage, export, scoring algorithms, achievement tracking
 - **i18n**: Translation system with 3 languages
+- **Achievement System**: Cross-game badges, streaks, and progress tracking
 
 ---
 
@@ -347,11 +387,11 @@ pnpm type-check
 | Year | Count | Games |
 |------|-------|-------|
 | Year 1 (1-ár) | 5 | Dimensional Analysis, Molar Mass, Nomenclature, Solutions, Limiting Reactants |
-| Year 2 (2-ár) | 3 | Hess's Law, Reaction Kinetics, Lewis Structures |
+| Year 2 (2-ár) | 7 | Hess's Law, Kinetics, Lewis Structures, VSEPR, Intermolecular Forces, Organic Nomenclature, Redox |
 | Year 3 (3-ár) | 6 | pH Titration Practice/Master, Gas Laws, Equilibrium, Thermodynamics, Buffers |
-| **Total** | **14** | **All games implemented** |
+| **Total** | **18** | **All games implemented with cross-game achievement system** |
 
-All games have been migrated to the monorepo architecture and are production-ready.
+All games have been migrated to the monorepo architecture and include the cross-game achievement system with 23 badges, streak tracking, and persistent progress.
 
 ---
 

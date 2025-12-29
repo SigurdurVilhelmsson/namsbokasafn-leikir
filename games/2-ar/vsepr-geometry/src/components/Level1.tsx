@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { AnimatedMolecule } from '@shared/components';
+import { geometryToMolecule } from '../utils/vseprConverter';
 
 interface Level1Props {
   onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
@@ -351,8 +353,21 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
                   {/* Visual representation */}
                   <div className="flex-1 bg-gray-900 rounded-xl p-6 flex items-center justify-center min-h-48">
                     <div className="text-center">
-                      <div className="text-4xl font-mono text-white whitespace-pre mb-4">{selectedGeometry.visual}</div>
-                      <div className="text-2xl font-bold text-teal-400">{selectedGeometry.example}</div>
+                      <AnimatedMolecule
+                        molecule={geometryToMolecule({
+                          id: selectedGeometry.id,
+                          example: selectedGeometry.example,
+                          exampleName: selectedGeometry.exampleName,
+                          bondingPairs: selectedGeometry.bondingPairs,
+                          lonePairs: selectedGeometry.lonePairs,
+                        })}
+                        mode="vsepr"
+                        size="lg"
+                        animation="scale-in"
+                        showLonePairs={true}
+                        ariaLabel={`${selectedGeometry.name} lögun: ${selectedGeometry.example}`}
+                      />
+                      <div className="text-2xl font-bold text-teal-400 mt-4">{selectedGeometry.example}</div>
                       <div className="text-gray-400">{selectedGeometry.exampleName}</div>
                     </div>
                   </div>
@@ -434,13 +449,28 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
           <p className="text-gray-700 text-lg mb-6">{challenge.question}</p>
 
           {/* Show relevant geometry visual if available */}
-          {challenge.geometryId && (
-            <div className="bg-gray-100 p-4 rounded-xl mb-6">
-              <div className="text-center font-mono text-2xl text-gray-700 whitespace-pre">
-                {GEOMETRIES.find(g => g.id === challenge.geometryId)?.visual}
+          {challenge.geometryId && (() => {
+            const geo = GEOMETRIES.find(g => g.id === challenge.geometryId);
+            if (!geo) return null;
+            return (
+              <div className="bg-gray-100 p-4 rounded-xl mb-6 flex justify-center">
+                <AnimatedMolecule
+                  molecule={geometryToMolecule({
+                    id: geo.id,
+                    example: geo.example,
+                    exampleName: geo.exampleName,
+                    bondingPairs: geo.bondingPairs,
+                    lonePairs: geo.lonePairs,
+                  })}
+                  mode="vsepr"
+                  size="md"
+                  animation="fade-in"
+                  showLonePairs={true}
+                  ariaLabel={`${geo.name} lögun`}
+                />
               </div>
-            </div>
-          )}
+            );
+          })()}
 
           <div className="space-y-3 mb-6">
             {challenge.options.map(option => (

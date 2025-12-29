@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { AnimatedMolecule } from '@shared/components';
+import { vseprToMolecule } from '../utils/vseprConverter';
 
 interface Level2Props {
   onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
@@ -363,7 +365,25 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
               <div className="text-center">
                 <div className="text-3xl font-bold text-white mb-2">{molecule.formula}</div>
                 <div className="text-gray-400 mb-4">{molecule.name}</div>
-                <div className="font-mono text-lg text-teal-400 whitespace-pre">{molecule.lewisStructure}</div>
+                <div className="flex justify-center py-4">
+                  <AnimatedMolecule
+                    molecule={vseprToMolecule({
+                      formula: molecule.formula,
+                      name: molecule.name,
+                      centralAtom: molecule.centralAtom,
+                      bondingPairs: molecule.bondingPairs,
+                      lonePairs: molecule.lonePairs,
+                      electronDomains: molecule.electronDomains,
+                      correctGeometryId: molecule.correctGeometryId,
+                      isPolar: molecule.isPolar,
+                    })}
+                    mode="vsepr"
+                    size="lg"
+                    animation="scale-in"
+                    showLonePairs={true}
+                    ariaLabel={`${molecule.name} VSEPR lögun`}
+                  />
+                </div>
               </div>
             </div>
 

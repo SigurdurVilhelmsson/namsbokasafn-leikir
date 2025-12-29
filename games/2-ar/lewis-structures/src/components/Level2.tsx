@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import { AnimatedMolecule } from '@shared/components';
+import { lewisToMolecule } from '../utils/lewisConverter';
 
 interface Level2Props {
   onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
@@ -335,6 +337,18 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
   const isLastStep = currentStep === challenge.steps.length - 1;
   const isLastChallenge = currentChallenge === challenges.length - 1;
 
+  // Convert Lewis structure to Molecule format for AnimatedMolecule
+  const molecule = useMemo(() => {
+    return lewisToMolecule(
+      challenge.correctStructure,
+      challenge.molecule,
+      challenge.title
+    );
+  }, [challenge]);
+
+  // Determine if we should show lone pairs (only on last step when completed)
+  const showLonePairs = isLastStep && showStepResult;
+
   const checkStep = () => {
     const correct = step.options.find(opt => opt.id === selectedAnswer)?.correct ?? false;
     setStepCorrect(prev => [...prev, correct]);
@@ -373,342 +387,6 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
     } else {
       onComplete(score, MAX_SCORE, totalHintsUsed);
     }
-  };
-
-  // Render bond lines based on bond type
-  const renderBond = (bondType: 'single' | 'double' | 'triple') => {
-    const bondWidth = 'w-8';
-
-    if (bondType === 'single') {
-      return (
-        <div className={`${bondWidth} flex items-center justify-center`}>
-          <div className="w-full h-0.5 bg-gray-800" />
-        </div>
-      );
-    } else if (bondType === 'double') {
-      return (
-        <div className={`${bondWidth} flex flex-col items-center justify-center gap-1`}>
-          <div className="w-full h-0.5 bg-gray-800" />
-          <div className="w-full h-0.5 bg-gray-800" />
-        </div>
-      );
-    } else {
-      // Triple bond
-      return (
-        <div className={`${bondWidth} flex flex-col items-center justify-center gap-0.5`}>
-          <div className="w-full h-0.5 bg-gray-800" />
-          <div className="w-full h-0.5 bg-gray-800" />
-          <div className="w-full h-0.5 bg-gray-800" />
-        </div>
-      );
-    }
-  };
-
-  // Render lone pairs around an atom (positioned based on available space)
-  const renderLonePairs = (
-    lonePairs: number,
-    position: 'top' | 'bottom' | 'left' | 'right' | 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right',
-    color: string = 'bg-gray-600'
-  ) => {
-    if (lonePairs === 0) return null;
-
-    const dotPair = (key: number) => (
-      <div key={key} className="flex gap-0.5">
-        <div className={`w-1.5 h-1.5 rounded-full ${color}`} />
-        <div className={`w-1.5 h-1.5 rounded-full ${color}`} />
-      </div>
-    );
-
-    const positionClasses: Record<string, string> = {
-      'top': 'absolute -top-5 left-1/2 -translate-x-1/2',
-      'bottom': 'absolute -bottom-5 left-1/2 -translate-x-1/2',
-      'left': 'absolute top-1/2 -left-5 -translate-y-1/2 flex-col',
-      'right': 'absolute top-1/2 -right-5 -translate-y-1/2 flex-col',
-      'top-left': 'absolute -top-4 -left-4',
-      'top-right': 'absolute -top-4 -right-4',
-      'bottom-left': 'absolute -bottom-4 -left-4',
-      'bottom-right': 'absolute -bottom-4 -right-4',
-    };
-
-    return (
-      <div className={`${positionClasses[position]} flex gap-1`}>
-        {Array(Math.min(lonePairs, 2)).fill(0).map((_, i) => dotPair(i))}
-      </div>
-    );
-  };
-
-  // Render unpaired electron (radical)
-  const renderUnpairedElectron = (position: 'top' | 'bottom' | 'left' | 'right') => {
-    const positionClasses: Record<string, string> = {
-      'top': 'absolute -top-4 left-1/2 -translate-x-1/2',
-      'bottom': 'absolute -bottom-4 left-1/2 -translate-x-1/2',
-      'left': 'absolute top-1/2 -left-4 -translate-y-1/2',
-      'right': 'absolute top-1/2 -right-4 -translate-y-1/2',
-    };
-
-    return (
-      <div className={`${positionClasses[position]}`}>
-        <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" title="Óparuð rafeind (radical)" />
-      </div>
-    );
-  };
-
-  // Render formal charge badge
-  const renderFormalCharge = (charge: number | undefined) => {
-    if (charge === undefined || charge === 0) return null;
-
-    const chargeText = charge > 0 ? `+${charge}` : `${charge}`;
-    const bgColor = charge > 0 ? 'bg-red-500' : 'bg-blue-500';
-
-    return (
-      <div className={`absolute -top-2 -right-2 ${bgColor} text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center`}>
-        {chargeText}
-      </div>
-    );
-  };
-
-  // Visual Lewis structure renderer
-  const renderLewisStructure = () => {
-    const structure = challenge.correctStructure;
-    const showFull = isLastStep && showStepResult;
-    const atomCount = structure.surroundingAtoms.length;
-
-    // For molecules with 2 atoms (diatomic like HCl, NO) - linear layout
-    if (atomCount === 1) {
-      const atom = structure.surroundingAtoms[0];
-      return (
-        <div className="relative flex items-center justify-center py-12 gap-0">
-          {/* Central atom */}
-          <div className="relative">
-            <div className="w-14 h-14 rounded-full border-4 border-blue-500 bg-blue-100 flex items-center justify-center font-bold text-lg text-blue-800">
-              {structure.centralAtom}
-            </div>
-            {showFull && renderFormalCharge(structure.centralFormalCharge)}
-            {/* Central atom lone pairs - show on top, bottom, left */}
-            {showFull && structure.centralLonePairs >= 1 && renderLonePairs(1, 'top', 'bg-blue-600')}
-            {showFull && structure.centralLonePairs >= 2 && renderLonePairs(1, 'bottom', 'bg-blue-600')}
-            {showFull && structure.centralLonePairs >= 3 && renderLonePairs(1, 'left', 'bg-blue-600')}
-            {/* Unpaired electron for radicals */}
-            {showFull && structure.centralUnpairedElectron && renderUnpairedElectron('left')}
-          </div>
-
-          {/* Bond */}
-          {renderBond(atom.bondType)}
-
-          {/* Surrounding atom */}
-          <div className="relative">
-            <div className="w-14 h-14 rounded-full border-4 border-green-500 bg-green-100 flex items-center justify-center font-bold text-lg text-green-800">
-              {atom.symbol}
-            </div>
-            {showFull && renderFormalCharge(atom.formalCharge)}
-            {/* Surrounding atom lone pairs - show on top, right, bottom for 3 pairs */}
-            {showFull && atom.lonePairs >= 1 && renderLonePairs(1, 'top', 'bg-green-600')}
-            {showFull && atom.lonePairs >= 2 && renderLonePairs(1, 'right', 'bg-green-600')}
-            {showFull && atom.lonePairs >= 3 && renderLonePairs(1, 'bottom', 'bg-green-600')}
-          </div>
-        </div>
-      );
-    }
-
-    // For molecules with 2 surrounding atoms (like H2O, CO2) - linear with central
-    if (atomCount === 2) {
-      return (
-        <div className="relative flex items-center justify-center py-12 gap-0">
-          {/* Left atom */}
-          <div className="relative">
-            <div className={`w-12 h-12 rounded-full border-3 flex items-center justify-center font-bold ${
-              structure.surroundingAtoms[0].symbol === 'H'
-                ? 'bg-gray-100 border-gray-400 text-gray-700 text-sm'
-                : 'bg-green-100 border-green-500 text-green-800'
-            }`}>
-              {structure.surroundingAtoms[0].symbol}
-            </div>
-            {showFull && renderFormalCharge(structure.surroundingAtoms[0].formalCharge)}
-            {/* Left atom lone pairs */}
-            {showFull && structure.surroundingAtoms[0].lonePairs >= 1 && renderLonePairs(1, 'top', 'bg-green-600')}
-            {showFull && structure.surroundingAtoms[0].lonePairs >= 2 && renderLonePairs(1, 'left', 'bg-green-600')}
-          </div>
-
-          {/* Left bond */}
-          {renderBond(structure.surroundingAtoms[0].bondType)}
-
-          {/* Central atom */}
-          <div className="relative">
-            <div className="w-16 h-16 rounded-full border-4 border-blue-500 bg-blue-100 flex items-center justify-center font-bold text-xl text-blue-800">
-              {structure.centralAtom}
-            </div>
-            {showFull && renderFormalCharge(structure.centralFormalCharge)}
-            {/* Central lone pairs - show on top and bottom */}
-            {showFull && structure.centralLonePairs >= 1 && renderLonePairs(1, 'top', 'bg-blue-600')}
-            {showFull && structure.centralLonePairs >= 2 && renderLonePairs(1, 'bottom', 'bg-blue-600')}
-          </div>
-
-          {/* Right bond */}
-          {renderBond(structure.surroundingAtoms[1].bondType)}
-
-          {/* Right atom */}
-          <div className="relative">
-            <div className={`w-12 h-12 rounded-full border-3 flex items-center justify-center font-bold ${
-              structure.surroundingAtoms[1].symbol === 'H'
-                ? 'bg-gray-100 border-gray-400 text-gray-700 text-sm'
-                : 'bg-green-100 border-green-500 text-green-800'
-            }`}>
-              {structure.surroundingAtoms[1].symbol}
-            </div>
-            {showFull && renderFormalCharge(structure.surroundingAtoms[1].formalCharge)}
-            {/* Right atom lone pairs */}
-            {showFull && structure.surroundingAtoms[1].lonePairs >= 1 && renderLonePairs(1, 'top', 'bg-green-600')}
-            {showFull && structure.surroundingAtoms[1].lonePairs >= 2 && renderLonePairs(1, 'right', 'bg-green-600')}
-          </div>
-        </div>
-      );
-    }
-
-    // For molecules with 3 surrounding atoms (like NH3) - trigonal layout
-    if (atomCount === 3) {
-      return (
-        <div className="relative flex flex-col items-center justify-center py-8">
-          {/* Top atom */}
-          <div className="relative mb-2">
-            <div className={`w-10 h-10 rounded-full border-2 flex items-center justify-center font-bold text-sm ${
-              structure.surroundingAtoms[0].symbol === 'H'
-                ? 'bg-gray-100 border-gray-400 text-gray-700'
-                : 'bg-green-100 border-green-500 text-green-800'
-            }`}>
-              {structure.surroundingAtoms[0].symbol}
-            </div>
-            {showFull && structure.surroundingAtoms[0].lonePairs > 0 && renderLonePairs(structure.surroundingAtoms[0].lonePairs, 'top', 'bg-green-600')}
-          </div>
-
-          {/* Top bond (vertical) */}
-          <div className="h-4 flex flex-col items-center justify-center gap-0.5">
-            {structure.surroundingAtoms[0].bondType === 'single' && <div className="w-0.5 h-full bg-gray-800" />}
-            {structure.surroundingAtoms[0].bondType === 'double' && (
-              <>
-                <div className="w-0.5 h-full bg-gray-800 -mr-1" />
-                <div className="w-0.5 h-full bg-gray-800 ml-1" />
-              </>
-            )}
-          </div>
-
-          {/* Central row with central atom and side atoms */}
-          <div className="flex items-center gap-0">
-            {/* Left atom */}
-            <div className="relative">
-              <div className={`w-10 h-10 rounded-full border-2 flex items-center justify-center font-bold text-sm ${
-                structure.surroundingAtoms[1].symbol === 'H'
-                  ? 'bg-gray-100 border-gray-400 text-gray-700'
-                  : 'bg-green-100 border-green-500 text-green-800'
-              }`}>
-                {structure.surroundingAtoms[1].symbol}
-              </div>
-              {showFull && structure.surroundingAtoms[1].lonePairs > 0 && renderLonePairs(structure.surroundingAtoms[1].lonePairs, 'left', 'bg-green-600')}
-            </div>
-
-            {/* Left bond */}
-            {renderBond(structure.surroundingAtoms[1].bondType)}
-
-            {/* Central atom */}
-            <div className="relative">
-              <div className="w-14 h-14 rounded-full border-4 border-blue-500 bg-blue-100 flex items-center justify-center font-bold text-lg text-blue-800">
-                {structure.centralAtom}
-              </div>
-              {showFull && renderFormalCharge(structure.centralFormalCharge)}
-              {/* Central lone pairs for tetrahedral geometry (like NH3) */}
-              {showFull && structure.centralLonePairs > 0 && renderLonePairs(structure.centralLonePairs, 'bottom', 'bg-blue-600')}
-            </div>
-
-            {/* Right bond */}
-            {renderBond(structure.surroundingAtoms[2].bondType)}
-
-            {/* Right atom */}
-            <div className="relative">
-              <div className={`w-10 h-10 rounded-full border-2 flex items-center justify-center font-bold text-sm ${
-                structure.surroundingAtoms[2].symbol === 'H'
-                  ? 'bg-gray-100 border-gray-400 text-gray-700'
-                  : 'bg-green-100 border-green-500 text-green-800'
-              }`}>
-                {structure.surroundingAtoms[2].symbol}
-              </div>
-              {showFull && structure.surroundingAtoms[2].lonePairs > 0 && renderLonePairs(structure.surroundingAtoms[2].lonePairs, 'right', 'bg-green-600')}
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    // For molecules with 4 surrounding atoms (like CH4) - tetrahedral layout
-    if (atomCount === 4) {
-      return (
-        <div className="relative flex flex-col items-center justify-center py-6">
-          {/* Top atom */}
-          <div className="relative mb-1">
-            <div className={`w-10 h-10 rounded-full border-2 flex items-center justify-center font-bold text-sm ${
-              structure.surroundingAtoms[0].symbol === 'H'
-                ? 'bg-gray-100 border-gray-400 text-gray-700'
-                : 'bg-green-100 border-green-500 text-green-800'
-            }`}>
-              {structure.surroundingAtoms[0].symbol}
-            </div>
-          </div>
-
-          {/* Top bond */}
-          <div className="h-3 w-0.5 bg-gray-800" />
-
-          {/* Middle row */}
-          <div className="flex items-center gap-0">
-            {/* Left atom */}
-            <div className={`w-10 h-10 rounded-full border-2 flex items-center justify-center font-bold text-sm ${
-              structure.surroundingAtoms[1].symbol === 'H'
-                ? 'bg-gray-100 border-gray-400 text-gray-700'
-                : 'bg-green-100 border-green-500 text-green-800'
-            }`}>
-              {structure.surroundingAtoms[1].symbol}
-            </div>
-
-            {/* Left bond */}
-            <div className="w-4 h-0.5 bg-gray-800" />
-
-            {/* Central atom */}
-            <div className="relative">
-              <div className="w-14 h-14 rounded-full border-4 border-blue-500 bg-blue-100 flex items-center justify-center font-bold text-lg text-blue-800">
-                {structure.centralAtom}
-              </div>
-              {showFull && renderFormalCharge(structure.centralFormalCharge)}
-            </div>
-
-            {/* Right bond */}
-            <div className="w-4 h-0.5 bg-gray-800" />
-
-            {/* Right atom */}
-            <div className={`w-10 h-10 rounded-full border-2 flex items-center justify-center font-bold text-sm ${
-              structure.surroundingAtoms[2].symbol === 'H'
-                ? 'bg-gray-100 border-gray-400 text-gray-700'
-                : 'bg-green-100 border-green-500 text-green-800'
-            }`}>
-              {structure.surroundingAtoms[2].symbol}
-            </div>
-          </div>
-
-          {/* Bottom bond */}
-          <div className="h-3 w-0.5 bg-gray-800" />
-
-          {/* Bottom atom */}
-          <div className="relative mt-1">
-            <div className={`w-10 h-10 rounded-full border-2 flex items-center justify-center font-bold text-sm ${
-              structure.surroundingAtoms[3].symbol === 'H'
-                ? 'bg-gray-100 border-gray-400 text-gray-700'
-                : 'bg-green-100 border-green-500 text-green-800'
-            }`}>
-              {structure.surroundingAtoms[3].symbol}
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    // Fallback for other cases
-    return <div className="text-center text-gray-500 py-8">Lewis-formúla</div>;
   };
 
   return (
@@ -750,7 +428,17 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
 
           {/* Lewis structure visualization */}
           <div className="bg-gray-50 rounded-xl p-4 mb-6">
-            {renderLewisStructure()}
+            <div className="flex justify-center py-4">
+              <AnimatedMolecule
+                molecule={molecule}
+                mode="lewis"
+                size="lg"
+                animation={showStepResult ? 'fade-in' : 'none'}
+                showLonePairs={showLonePairs}
+                showFormalCharges={showLonePairs}
+                ariaLabel={`Lewis-formúla fyrir ${challenge.molecule}`}
+              />
+            </div>
 
             {/* Legend - shown when structure is complete */}
             {isLastStep && showStepResult && (

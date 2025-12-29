@@ -171,14 +171,14 @@ export function MoleculeDipole({
  */
 export function calculateDipoleDirection(
   atoms: Array<{ position: Position2D; partialCharge?: 'positive' | 'negative' | 'none' }>,
-  center: Position2D
-): DipoleMoment['direction'] | null {
+  _center: Position2D
+): DipoleMoment['direction'] | undefined {
   // Find atoms with partial charges
   const positiveAtoms = atoms.filter(a => a.partialCharge === 'positive');
   const negativeAtoms = atoms.filter(a => a.partialCharge === 'negative');
 
   if (positiveAtoms.length === 0 || negativeAtoms.length === 0) {
-    return null; // No clear dipole
+    return undefined; // No clear dipole
   }
 
   // Calculate average positions

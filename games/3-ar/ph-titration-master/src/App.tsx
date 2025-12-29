@@ -4,6 +4,9 @@ import { titrations, getRandomTitration } from './data/titrations';
 import { calculatePH } from './utils/ph-calculations';
 import { isIndicatorAppropriate } from './data/indicators';
 import { Burette, Flask, PHMeter, TitrationCurve, IndicatorSelector } from './components';
+import { useAchievements } from '@shared/hooks/useAchievements';
+import { AchievementsButton, AchievementsPanel } from '@shared/components/AchievementsPanel';
+import { AchievementNotificationsContainer } from '@shared/components/AchievementNotificationPopup';
 
 interface TitrationProgress {
   score: number;
@@ -54,6 +57,20 @@ function App() {
   // Stats with localStorage persistence
   const [progress, setProgress] = useState<TitrationProgress>(loadProgress);
   const [startTime, setStartTime] = useState(Date.now());
+
+  // Achievements
+  const [showAchievements, setShowAchievements] = useState(false);
+  const {
+    achievements,
+    allAchievements,
+    notifications,
+    trackCorrectAnswer,
+    trackIncorrectAnswer,
+    trackLevelComplete,
+    trackGameComplete,
+    dismissNotification,
+    resetAll: resetAchievements,
+  } = useAchievements({ gameId: 'ph-titration-master' });
 
   // Save progress whenever it changes
   useEffect(() => {
@@ -177,6 +194,24 @@ function App() {
       message += ' (+30 tíma bónus)';
     }
 
+    // Track achievements
+    const maxScore = 200; // Maximum possible score per titration
+    if (isCorrect) {
+      trackCorrectAnswer({ firstAttempt: true });
+      // Map difficulty to level: Byrjandi=1, Miðlungs=2, Háþróað/Sérfræðingur=3
+      const difficultyLevel = currentTitration.difficulty === 'Byrjandi' ? 1 :
+                             currentTitration.difficulty === 'Miðlungs' ? 2 : 3;
+      trackLevelComplete(difficultyLevel as 1 | 2 | 3, points, maxScore, { timeTaken: timeElapsed, hintsUsed: 0 });
+
+      // Track game completion after 3 successful titrations
+      const newTitrationsCompleted = progress.titrationsCompleted + 1;
+      if (newTitrationsCompleted >= 3 && newTitrationsCompleted % 3 === 0) {
+        trackGameComplete();
+      }
+    } else {
+      trackIncorrectAnswer();
+    }
+
     setProgress(prev => ({
       ...prev,
       score: prev.score + points,
@@ -238,6 +273,14 @@ function App() {
       <div className="min-h-screen bg-gray-50">
         <main className="max-w-6xl mx-auto px-4 py-8">
           <div className="bg-white rounded-xl shadow-lg p-8">
+            {/* Header with Achievements Button */}
+            <div className="flex justify-end mb-4">
+              <AchievementsButton
+                achievements={achievements}
+                onClick={() => setShowAchievements(true)}
+              />
+            </div>
+
             <div className="text-center mb-8">
               <h1 className="text-4xl font-bold mb-4" style={{ color: '#f36b22' }}>
                 pH Þéttigreining Meistari
@@ -343,6 +386,22 @@ function App() {
         <footer className="text-center text-sm text-gray-500 py-4">
           <p>© 2024 Kvennaskólinn - Efnafræðileikir</p>
         </footer>
+
+        {/* Achievements Panel Modal */}
+        {showAchievements && (
+          <AchievementsPanel
+            achievements={achievements}
+            allAchievements={allAchievements}
+            onClose={() => setShowAchievements(false)}
+            onReset={resetAchievements}
+          />
+        )}
+
+        {/* Achievement Notifications */}
+        <AchievementNotificationsContainer
+          notifications={notifications}
+          onDismiss={dismissNotification}
+        />
       </div>
     );
   }
@@ -475,6 +534,12 @@ function App() {
             </div>
           </div>
         </main>
+
+        {/* Achievement Notifications */}
+        <AchievementNotificationsContainer
+          notifications={notifications}
+          onDismiss={dismissNotification}
+        />
       </div>
     );
   }
@@ -555,6 +620,12 @@ function App() {
             </div>
           </div>
         </main>
+
+        {/* Achievement Notifications */}
+        <AchievementNotificationsContainer
+          notifications={notifications}
+          onDismiss={dismissNotification}
+        />
       </div>
     );
   }

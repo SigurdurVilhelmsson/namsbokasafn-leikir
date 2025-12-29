@@ -2,6 +2,9 @@ import { useState, useEffect, useRef } from 'react';
 import { GasLawQuestion, GameMode, GameStats, QuestionFeedback } from './types';
 import { questions, getRandomQuestion } from './data';
 import { checkAnswer, calculateError, getUnit, getVariableName } from './utils/gas-calculations';
+import { useAchievements } from '@shared/hooks/useAchievements';
+import { AchievementsButton, AchievementsPanel } from '@shared/components/AchievementsPanel';
+import { AchievementNotificationsContainer } from '@shared/components/AchievementNotificationPopup';
 
 const STORAGE_KEY = 'gas-law-challenge-progress';
 
@@ -90,9 +93,25 @@ function App() {
   const [showSolution, setShowSolution] = useState(false);
   const [feedback, setFeedback] = useState<QuestionFeedback | null>(null);
   const [timeRemaining, setTimeRemaining] = useState<number | null>(null);
+  const [showAchievements, setShowAchievements] = useState(false);
+  const [sessionHintsUsed, setSessionHintsUsed] = useState(0);
+  const [sessionQuestionsAnswered, setSessionQuestionsAnswered] = useState(0);
 
   // Stats with localStorage persistence
   const [stats, setStats] = useState<GameStats>(loadStats);
+
+  // Achievement system
+  const {
+    achievements,
+    allAchievements,
+    notifications,
+    trackCorrectAnswer,
+    trackIncorrectAnswer,
+    trackLevelComplete,
+    trackGameComplete,
+    dismissNotification,
+    resetAll: resetAchievements,
+  } = useAchievements({ gameId: 'gas-law-challenge' });
 
   // Save stats whenever they change
   useEffect(() => {
@@ -229,10 +248,33 @@ function App() {
       message = error < 1
         ? 'Fullkomið! Mjög nákvæmt svar! ⭐'
         : 'Rétt! Innan vikmarka ✓';
+
+      // Track correct answer for achievements
+      trackCorrectAnswer({ firstAttempt: showHint === 0 });
     } else {
       message = error < 5
         ? 'Næstum rétt! Reyndu aftur.'
         : 'Ekki rétt. Athugaðu útreikninga þína.';
+
+      // Track incorrect answer for achievements
+      trackIncorrectAnswer();
+    }
+
+    const newQuestionsAnswered = sessionQuestionsAnswered + 1;
+    setSessionQuestionsAnswered(newQuestionsAnswered);
+
+    // Track level milestones (every 5 questions = a "level" for achievement purposes)
+    // Level 1: 5 questions, Level 2: 10 questions, Level 3: 15 questions
+    if (newQuestionsAnswered === 5) {
+      const levelScore = stats.correctAnswers + (isCorrect ? 1 : 0);
+      trackLevelComplete(1, levelScore, 5, { hintsUsed: sessionHintsUsed });
+    } else if (newQuestionsAnswered === 10) {
+      const levelScore = stats.correctAnswers + (isCorrect ? 1 : 0);
+      trackLevelComplete(2, levelScore, 10, { hintsUsed: sessionHintsUsed });
+    } else if (newQuestionsAnswered === 15) {
+      const levelScore = stats.correctAnswers + (isCorrect ? 1 : 0);
+      trackLevelComplete(3, levelScore, 15, { hintsUsed: sessionHintsUsed });
+      trackGameComplete();
     }
 
     const newStats = {
@@ -262,6 +304,7 @@ function App() {
   const getHint = () => {
     if (!currentQuestion || showHint >= currentQuestion.hints.length) return;
     setShowHint(showHint + 1);
+    setSessionHintsUsed(sessionHintsUsed + 1);
   };
 
   // Keyboard shortcuts
@@ -293,6 +336,14 @@ function App() {
       <div className="min-h-screen bg-gray-50">
         <main className="max-w-5xl mx-auto px-4 py-8">
           <div className="bg-white rounded-xl shadow-lg p-8">
+            {/* Header with achievements button */}
+            <div className="flex justify-end mb-4">
+              <AchievementsButton
+                achievements={achievements}
+                onClick={() => setShowAchievements(true)}
+              />
+            </div>
+
             <div className="text-center mb-8">
               <h1 className="text-4xl font-bold mb-4" style={{ color: '#f36b22' }}>
                 Gas Law Challenge
@@ -389,6 +440,22 @@ function App() {
         <footer className="text-center text-sm text-gray-500 py-4">
           <p>© 2024 Kvennaskólinn - Efnafræðileikir</p>
         </footer>
+
+        {/* Achievements Panel Modal */}
+        {showAchievements && (
+          <AchievementsPanel
+            achievements={achievements}
+            allAchievements={allAchievements}
+            onClose={() => setShowAchievements(false)}
+            onReset={resetAchievements}
+          />
+        )}
+
+        {/* Achievement Notifications */}
+        <AchievementNotificationsContainer
+          notifications={notifications}
+          onDismiss={dismissNotification}
+        />
       </div>
     );
   }
@@ -415,6 +482,10 @@ function App() {
                     ⏱️ {timeRemaining}s
                   </div>
                 )}
+                <AchievementsButton
+                  achievements={achievements}
+                  onClick={() => setShowAchievements(true)}
+                />
                 <button
                   onClick={() => setScreen('menu')}
                   className="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition"
@@ -591,6 +662,22 @@ function App() {
             </div>
           </div>
         </main>
+
+        {/* Achievements Panel Modal */}
+        {showAchievements && (
+          <AchievementsPanel
+            achievements={achievements}
+            allAchievements={allAchievements}
+            onClose={() => setShowAchievements(false)}
+            onReset={resetAchievements}
+          />
+        )}
+
+        {/* Achievement Notifications */}
+        <AchievementNotificationsContainer
+          notifications={notifications}
+          onDismiss={dismissNotification}
+        />
       </div>
     );
   }
@@ -696,6 +783,10 @@ function App() {
               >
                 ➡️ Næsta spurning
               </button>
+              <AchievementsButton
+                achievements={achievements}
+                onClick={() => setShowAchievements(true)}
+              />
               <button
                 onClick={() => setScreen('menu')}
                 className="px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition font-bold"
@@ -705,6 +796,22 @@ function App() {
             </div>
           </div>
         </main>
+
+        {/* Achievements Panel Modal */}
+        {showAchievements && (
+          <AchievementsPanel
+            achievements={achievements}
+            allAchievements={allAchievements}
+            onClose={() => setShowAchievements(false)}
+            onReset={resetAchievements}
+          />
+        )}
+
+        {/* Achievement Notifications */}
+        <AchievementNotificationsContainer
+          notifications={notifications}
+          onDismiss={dismissNotification}
+        />
       </div>
     );
   }

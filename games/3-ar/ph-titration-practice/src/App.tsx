@@ -9,6 +9,10 @@ import {
   calculateWeakBaseStrongAcidPH
 } from './utils/ph-calculations';
 import type { TitrationType, TitrationConfig, DataPoint } from './types';
+import { useAchievements } from '@shared/hooks/useAchievements';
+import { AchievementsButton, AchievementsPanel } from '@shared/components/AchievementsPanel';
+import { AchievementNotificationsContainer } from '@shared/components/AchievementNotificationPopup';
+import type { PlayerAchievements } from '@shared/types/achievement.types';
 
 type Screen = 'menu' | 'setup' | 'titration';
 
@@ -16,6 +20,18 @@ function App() {
   const [screen, setScreen] = useState<Screen>('menu');
   const [selectedType, setSelectedType] = useState<TitrationType | null>(null);
   const [titrationConfig, setTitrationConfig] = useState<TitrationConfig | null>(null);
+  const [showAchievements, setShowAchievements] = useState(false);
+
+  // Achievement system
+  const {
+    achievements,
+    allAchievements,
+    notifications,
+    trackCorrectAnswer,
+    trackIncorrectAnswer,
+    dismissNotification,
+    resetAll: resetAchievements,
+  } = useAchievements({ gameId: 'ph-titration-practice' });
 
   const handleTypeSelect = (typeId: TitrationType) => {
     setSelectedType(typeId);
@@ -40,7 +56,13 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {screen === 'menu' && <MainMenu onSelectType={handleTypeSelect} />}
+      {screen === 'menu' && (
+        <MainMenu
+          onSelectType={handleTypeSelect}
+          achievements={achievements}
+          onShowAchievements={() => setShowAchievements(true)}
+        />
+      )}
       {screen === 'setup' && selectedType && (
         <SetupScreen
           type={TITRATION_TYPES[selectedType]}
@@ -53,23 +75,55 @@ function App() {
           config={titrationConfig}
           onBack={handleBackToSetup}
           onMenu={handleBackToMenu}
+          onCorrectAnswer={trackCorrectAnswer}
+          onIncorrectAnswer={trackIncorrectAnswer}
         />
       )}
+
+      {/* Achievements Panel Modal */}
+      {showAchievements && (
+        <AchievementsPanel
+          achievements={achievements}
+          allAchievements={allAchievements}
+          onClose={() => setShowAchievements(false)}
+          onReset={resetAchievements}
+        />
+      )}
+
+      {/* Achievement Notifications */}
+      <AchievementNotificationsContainer
+        notifications={notifications}
+        onDismiss={dismissNotification}
+      />
     </div>
   );
 }
 
 // Main Menu Component
-function MainMenu({ onSelectType }: { onSelectType: (typeId: TitrationType) => void }) {
+function MainMenu({
+  onSelectType,
+  achievements,
+  onShowAchievements
+}: {
+  onSelectType: (typeId: TitrationType) => void;
+  achievements: PlayerAchievements;
+  onShowAchievements: () => void;
+}) {
   return (
     <div className="max-w-6xl mx-auto px-4 py-12">
-      <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold text-gray-800 mb-4">
-          Títrun - Æfingabúðir
-        </h1>
-        <p className="text-xl text-gray-600">
-          Veldu tegund títrunar til að æfa
-        </p>
+      <div className="flex justify-between items-start mb-8">
+        <div className="text-center flex-1">
+          <h1 className="text-4xl font-bold text-gray-800 mb-4">
+            Títrun - Æfingabúðir
+          </h1>
+          <p className="text-xl text-gray-600">
+            Veldu tegund títrunar til að æfa
+          </p>
+        </div>
+        <AchievementsButton
+          achievements={achievements}
+          onClick={onShowAchievements}
+        />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
@@ -270,11 +324,15 @@ function SetupScreen({
 function TitrationScreen({
   config,
   onBack,
-  onMenu
+  onMenu,
+  onCorrectAnswer,
+  onIncorrectAnswer
 }: {
   config: TitrationConfig;
   onBack: () => void;
   onMenu: () => void;
+  onCorrectAnswer: () => void;
+  onIncorrectAnswer: () => void;
 }) {
   const [volumeAdded, setVolumeAdded] = useState(0);
   const [additionCount, setAdditionCount] = useState(0);
@@ -282,6 +340,7 @@ function TitrationScreen({
   const [dataPoints, setDataPoints] = useState<DataPoint[]>([]);
   const [showHelperLines, setShowHelperLines] = useState(true);
   const [showEquivNotification, setShowEquivNotification] = useState(false);
+  const [equivalenceAchievementTracked, setEquivalenceAchievementTracked] = useState(false);
   const [dripping, setDripping] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -338,8 +397,22 @@ function TitrationScreen({
   useEffect(() => {
     if (volumeAdded > equivalenceVolume && !showEquivNotification) {
       setShowEquivNotification(true);
+
+      // Track achievement when student reaches equivalence point
+      if (!equivalenceAchievementTracked) {
+        // Calculate how close the student got to the exact equivalence volume
+        // If they stopped within 0.5 mL of equivalence, consider it "correct"
+        const volumeError = Math.abs(volumeAdded - equivalenceVolume);
+        if (volumeError <= 0.5) {
+          onCorrectAnswer();
+        } else if (volumeError > 2.0) {
+          // If they overshot by more than 2 mL, consider it a learning moment
+          onIncorrectAnswer();
+        }
+        setEquivalenceAchievementTracked(true);
+      }
     }
-  }, [volumeAdded, equivalenceVolume]);
+  }, [volumeAdded, equivalenceVolume, showEquivNotification, equivalenceAchievementTracked, onCorrectAnswer, onIncorrectAnswer]);
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
@@ -376,6 +449,7 @@ function TitrationScreen({
     setCurrentPH(0);
     setDataPoints([]);
     setShowEquivNotification(false);
+    setEquivalenceAchievementTracked(false);
   };
 
   const exportData = () => {

@@ -1,8 +1,10 @@
 import { useState } from 'react';
 
 interface Level2Props {
-  onComplete: (score: number) => void;
+  onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
   onBack: () => void;
+  onCorrectAnswer?: () => void;
+  onIncorrectAnswer?: () => void;
 }
 
 interface RedoxReaction {
@@ -147,7 +149,7 @@ const questionTypes: Question[] = [
   { type: 'reducing-agent', label: 'Hvað er afoxunarefnið?', hint: 'Efnið sem veldur afoxun (gefur rafeindir)' }
 ];
 
-export function Level2({ onComplete, onBack }: Level2Props) {
+export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer }: Level2Props) {
   const [currentReaction, setCurrentReaction] = useState(0);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [showFeedback, setShowFeedback] = useState(false);
@@ -155,6 +157,10 @@ export function Level2({ onComplete, onBack }: Level2Props) {
   const [score, setScore] = useState(0);
   const [showHint, setShowHint] = useState(false);
   const [showExplanation, setShowExplanation] = useState(false);
+  const [totalHintsUsed, setTotalHintsUsed] = useState(0);
+
+  // Maximum possible score: 8 reactions * 4 questions * 10 points = 320
+  const maxScore = reactions.length * questionTypes.length * 10;
 
   const reaction = reactions[currentReaction];
   const question = questionTypes[currentQuestion];
@@ -183,6 +189,9 @@ export function Level2({ onComplete, onBack }: Level2Props) {
 
     if (correct) {
       setScore(prev => prev + 10);
+      onCorrectAnswer?.();
+    } else {
+      onIncorrectAnswer?.();
     }
   };
 
@@ -194,7 +203,7 @@ export function Level2({ onComplete, onBack }: Level2Props) {
       setCurrentQuestion(0);
       setShowExplanation(false);
     } else {
-      onComplete(score);
+      onComplete(score, maxScore, totalHintsUsed);
       return;
     }
     setShowFeedback(false);
@@ -293,7 +302,10 @@ export function Level2({ onComplete, onBack }: Level2Props) {
             </div>
             {!showHint && (
               <button
-                onClick={() => setShowHint(true)}
+                onClick={() => {
+                  setShowHint(true);
+                  setTotalHintsUsed(prev => prev + 1);
+                }}
                 className="w-full bg-yellow-100 hover:bg-yellow-200 text-yellow-800 font-bold py-2 px-4 rounded-xl text-sm"
               >
                 💡 Sýna vísbendingu

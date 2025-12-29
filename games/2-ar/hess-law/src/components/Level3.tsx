@@ -1,8 +1,10 @@
 import { useState } from 'react';
 
 interface Level3Props {
-  onComplete: (score: number) => void;
+  onComplete: (score: number, maxScore?: number, hintsUsed?: number) => void;
   onBack: () => void;
+  onCorrectAnswer?: () => void;
+  onIncorrectAnswer?: () => void;
 }
 
 interface Challenge {
@@ -172,7 +174,7 @@ const challenges: Challenge[] = [
   }
 ];
 
-export function Level3({ onComplete, onBack }: Level3Props) {
+export function Level3({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer }: Level3Props) {
   const [currentChallenge, setCurrentChallenge] = useState(0);
   const [userAnswer, setUserAnswer] = useState('');
   const [showHint, setShowHint] = useState(false);
@@ -180,6 +182,7 @@ export function Level3({ onComplete, onBack }: Level3Props) {
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [score, setScore] = useState(0);
   const [showTable, setShowTable] = useState(false);
+  const [totalHintsUsed, setTotalHintsUsed] = useState(0);
 
   const challenge = challenges[currentChallenge];
 
@@ -189,12 +192,22 @@ export function Level3({ onComplete, onBack }: Level3Props) {
     const correct = Math.abs(userNum - challenge.correctAnswer) <= tolerance;
 
     setIsCorrect(correct);
-    if (correct && !showHint) {
-      setScore(prev => prev + 20);
-    } else if (correct && showHint) {
-      setScore(prev => prev + 10);
+    if (correct) {
+      onCorrectAnswer?.();
+      if (!showHint) {
+        setScore(prev => prev + 20);
+      } else {
+        setScore(prev => prev + 10);
+      }
+    } else {
+      onIncorrectAnswer?.();
     }
     setShowExplanation(true);
+  };
+
+  const handleShowHint = () => {
+    setShowHint(true);
+    setTotalHintsUsed(prev => prev + 1);
   };
 
   const nextChallenge = () => {
@@ -205,7 +218,8 @@ export function Level3({ onComplete, onBack }: Level3Props) {
       setShowExplanation(false);
       setIsCorrect(null);
     } else {
-      onComplete(score);
+      // Max score is 20 per challenge × 6 challenges = 120
+      onComplete(score, 120, totalHintsUsed);
     }
   };
 
@@ -373,7 +387,7 @@ export function Level3({ onComplete, onBack }: Level3Props) {
           {/* Hint button */}
           {isCorrect === null && !showHint && (
             <button
-              onClick={() => setShowHint(true)}
+              onClick={handleShowHint}
               className="text-purple-600 hover:text-purple-800 text-sm underline mb-4"
             >
               Sýna vísbendingu (-10 stig)

@@ -298,13 +298,16 @@ function EquationDisplay({
 }
 
 interface Level1Props {
-  onComplete: (score: number) => void;
+  onComplete: (score: number, maxScore?: number, hintsUsed?: number) => void;
   onBack: () => void;
+  onCorrectAnswer?: () => void;
+  onIncorrectAnswer?: () => void;
 }
 
-export function Level1({ onComplete, onBack }: Level1Props) {
+export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer }: Level1Props) {
   const [currentChallenge, setCurrentChallenge] = useState(0);
   const [equation, setEquation] = useState<Equation>(CHALLENGES[0].equation);
+  const [totalHintsUsed, setTotalHintsUsed] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showResult, setShowResult] = useState(false);
   const [showHint, setShowHint] = useState(false);
@@ -337,10 +340,15 @@ export function Level1({ onComplete, onBack }: Level1Props) {
     const isCorrect = challenge.options[selectedAnswer].correct;
     setShowResult(true);
 
-    if (isCorrect && !completed.includes(challenge.id)) {
-      const points = showHint ? 50 : 100;
-      setScore(prev => prev + points);
-      setCompleted(prev => [...prev, challenge.id]);
+    if (isCorrect) {
+      onCorrectAnswer?.();
+      if (!completed.includes(challenge.id)) {
+        const points = showHint ? 50 : 100;
+        setScore(prev => prev + points);
+        setCompleted(prev => [...prev, challenge.id]);
+      }
+    } else {
+      onIncorrectAnswer?.();
     }
   };
 
@@ -350,8 +358,15 @@ export function Level1({ onComplete, onBack }: Level1Props) {
       setCurrentChallenge(prev => prev + 1);
       resetChallenge();
     } else {
-      onComplete(score);
+      // Max score is 100 per challenge × 6 challenges = 600
+      onComplete(score, 600, totalHintsUsed);
     }
+  };
+
+  // Handle hint usage
+  const handleShowHint = () => {
+    setShowHint(true);
+    setTotalHintsUsed(prev => prev + 1);
   };
 
   // Show interactive controls for challenges 2-4
@@ -472,7 +487,7 @@ export function Level1({ onComplete, onBack }: Level1Props) {
                 </div>
               ) : (
                 <button
-                  onClick={() => setShowHint(true)}
+                  onClick={handleShowHint}
                   className="text-yellow-600 hover:text-yellow-700 text-sm"
                 >
                   💡 Sýna vísbendingu (-50 stig)

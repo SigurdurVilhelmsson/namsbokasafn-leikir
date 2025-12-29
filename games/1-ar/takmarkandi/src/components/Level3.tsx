@@ -5,8 +5,10 @@ import { calculateCorrectAnswer, generateReactantCounts, calculatePoints } from 
 import { Molecule } from './Molecule';
 
 interface Level3Props {
-  onComplete: (score: number, correctAnswers: number, totalQuestions: number) => void;
+  onComplete: (score: number, correctAnswers: number, totalQuestions: number, maxScore: number, hintsUsed: number) => void;
   onBack: () => void;
+  onCorrectAnswer?: () => void;
+  onIncorrectAnswer?: () => void;
 }
 
 interface GameState {
@@ -21,7 +23,7 @@ interface GameState {
   showingSolution: boolean;
 }
 
-export function Level3({ onComplete, onBack }: Level3Props) {
+export function Level3({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer }: Level3Props) {
   const [screen, setScreen] = useState<'setup' | 'game' | 'results'>('setup');
   const [difficulty, setDifficulty] = useState<Difficulty>('medium');
   const [timerMode, setTimerMode] = useState(false);
@@ -30,6 +32,8 @@ export function Level3({ onComplete, onBack }: Level3Props) {
   const [streak, setStreak] = useState(0);
   const [questionsAnswered, setQuestionsAnswered] = useState(0);
   const [correctAnswers, setCorrectAnswers] = useState(0);
+  const [totalHintsUsed, setTotalHintsUsed] = useState(0);
+  const [bestScore, setBestScore] = useState(0);
 
   const [gameState, setGameState] = useState<GameState>({
     currentReaction: null,
@@ -116,10 +120,18 @@ export function Level3({ onComplete, onBack }: Level3Props) {
       const newStreak = streak + 1;
       setStreak(newStreak);
       const points = calculatePoints(difficulty, newStreak, timeRemaining, timerMode);
-      setScore(prev => prev + points);
+      setScore(prev => {
+        const newScore = prev + points;
+        if (newScore > bestScore) {
+          setBestScore(newScore);
+        }
+        return newScore;
+      });
       setCorrectAnswers(prev => prev + 1);
+      onCorrectAnswer?.();
     } else {
       setStreak(0);
+      onIncorrectAnswer?.();
     }
 
     setGameState(prev => ({
@@ -259,13 +271,14 @@ export function Level3({ onComplete, onBack }: Level3Props) {
               <button
                 onClick={() => {
                   setScreen('setup');
+                  setTotalHintsUsed(0);
                 }}
                 className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-xl transition-colors"
               >
                 Spila aftur
               </button>
               <button
-                onClick={() => onComplete(score, correctAnswers, questionsAnswered)}
+                onClick={() => onComplete(score, correctAnswers, questionsAnswered, bestScore, totalHintsUsed)}
                 className="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-6 rounded-xl transition-colors"
               >
                 Til baka í valmynd
@@ -510,7 +523,12 @@ export function Level3({ onComplete, onBack }: Level3Props) {
                     Næsta spurning
                   </button>
                   <button
-                    onClick={() => setGameState(prev => ({ ...prev, showingSolution: !prev.showingSolution }))}
+                    onClick={() => {
+                      if (!gameState.showingSolution) {
+                        setTotalHintsUsed(prev => prev + 1);
+                      }
+                      setGameState(prev => ({ ...prev, showingSolution: !prev.showingSolution }));
+                    }}
                     className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 px-6 rounded-xl transition-colors"
                   >
                     {gameState.showingSolution ? 'Fela lausn' : 'Sýna lausn'}

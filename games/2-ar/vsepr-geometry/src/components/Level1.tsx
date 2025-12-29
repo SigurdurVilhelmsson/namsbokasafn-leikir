@@ -1,8 +1,10 @@
 import { useState } from 'react';
 
 interface Level1Props {
-  onComplete: (score: number) => void;
+  onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
   onBack: () => void;
+  onCorrectAnswer?: () => void;
+  onIncorrectAnswer?: () => void;
 }
 
 interface Geometry {
@@ -259,7 +261,7 @@ const challenges: Challenge[] = [
   }
 ];
 
-export function Level1({ onComplete, onBack }: Level1Props) {
+export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer }: Level1Props) {
   const [phase, setPhase] = useState<'explore' | 'quiz'>('explore');
   const [selectedGeometry, setSelectedGeometry] = useState<Geometry | null>(null);
   const [currentChallenge, setCurrentChallenge] = useState(0);
@@ -268,17 +270,24 @@ export function Level1({ onComplete, onBack }: Level1Props) {
   const [showHint, setShowHint] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
   const [score, setScore] = useState(0);
+  const [totalHintsUsed, setTotalHintsUsed] = useState(0);
 
   const challenge = challenges[currentChallenge];
+  const maxScore = challenges.length * 15; // 15 points per question without hints
 
   const checkAnswer = () => {
     const selected = challenge.options.find(opt => opt.id === selectedOption);
     const correct = selected?.correct ?? false;
     setIsCorrect(correct);
-    if (correct && !showHint) {
-      setScore(prev => prev + 15);
-    } else if (correct && showHint) {
-      setScore(prev => prev + 8);
+    if (correct) {
+      onCorrectAnswer?.();
+      if (!showHint) {
+        setScore(prev => prev + 15);
+      } else {
+        setScore(prev => prev + 8);
+      }
+    } else {
+      onIncorrectAnswer?.();
     }
     setShowResult(true);
   };
@@ -291,7 +300,7 @@ export function Level1({ onComplete, onBack }: Level1Props) {
       setShowHint(false);
       setIsCorrect(false);
     } else {
-      onComplete(score);
+      onComplete(score, maxScore, totalHintsUsed);
     }
   };
 
@@ -466,10 +475,13 @@ export function Level1({ onComplete, onBack }: Level1Props) {
 
           {!showResult && !showHint && (
             <button
-              onClick={() => setShowHint(true)}
+              onClick={() => {
+                setShowHint(true);
+                setTotalHintsUsed(prev => prev + 1);
+              }}
               className="text-teal-600 hover:text-teal-800 text-sm underline mb-4"
             >
-              Sýna vísbendingu (-7 stig)
+              Syna visbendingu (-7 stig)
             </button>
           )}
 

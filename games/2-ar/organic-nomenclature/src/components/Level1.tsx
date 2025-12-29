@@ -1,8 +1,10 @@
 import { useState } from 'react';
 
 interface Level1Props {
-  onComplete: (score: number) => void;
+  onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
   onBack: () => void;
+  onCorrectAnswer?: () => void;
+  onIncorrectAnswer?: () => void;
 }
 
 interface PrefixRule {
@@ -59,13 +61,15 @@ const quizQuestions: QuizQuestion[] = [
   { id: 10, type: 'name', question: "Hvað heitir C₂H₄ með tvítengi?", correctAnswer: "eten", options: ["etan", "eten", "etyn", "etanal"] }
 ];
 
-export function Level1({ onComplete, onBack }: Level1Props) {
+export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer }: Level1Props) {
   const [phase, setPhase] = useState<'prefixes' | 'suffixes' | 'quiz'>('prefixes');
   const [currentItem, setCurrentItem] = useState(0);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
   const [showFeedback, setShowFeedback] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
+  const [totalHintsUsed] = useState(0); // Level1 doesn't have hints in quiz
+  const maxScore = quizQuestions.length * 10;
 
   const handleNext = () => {
     if (phase === 'prefixes') {
@@ -100,6 +104,9 @@ export function Level1({ onComplete, onBack }: Level1Props) {
 
     if (correct) {
       setScore(prev => prev + 10);
+      onCorrectAnswer?.();
+    } else {
+      onIncorrectAnswer?.();
     }
   };
 
@@ -108,7 +115,7 @@ export function Level1({ onComplete, onBack }: Level1Props) {
       setCurrentQuestion(prev => prev + 1);
       setShowFeedback(false);
     } else {
-      onComplete(score);
+      onComplete(score, maxScore, totalHintsUsed);
     }
   };
 

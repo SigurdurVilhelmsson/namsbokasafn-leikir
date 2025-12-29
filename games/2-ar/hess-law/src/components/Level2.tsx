@@ -228,11 +228,13 @@ function EquationBlock({
 }
 
 interface Level2Props {
-  onComplete: (score: number) => void;
+  onComplete: (score: number, maxScore?: number, hintsUsed?: number) => void;
   onBack: () => void;
+  onCorrectAnswer?: () => void;
+  onIncorrectAnswer?: () => void;
 }
 
-export function Level2({ onComplete, onBack }: Level2Props) {
+export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer }: Level2Props) {
   const [currentPuzzle, setCurrentPuzzle] = useState(0);
   const [equations, setEquations] = useState<Equation[]>(
     PUZZLES[0].availableEquations.map(eq => ({ ...eq }))
@@ -243,6 +245,7 @@ export function Level2({ onComplete, onBack }: Level2Props) {
   const [score, setScore] = useState(0);
   const [completed, setCompleted] = useState<number[]>([]);
   const [explanation, setExplanation] = useState('');
+  const [totalHintsUsed, setTotalHintsUsed] = useState(0);
 
   const puzzle = PUZZLES[currentPuzzle];
 
@@ -286,16 +289,27 @@ export function Level2({ onComplete, onBack }: Level2Props) {
   // Check solution
   const checkSolution = () => {
     const sum = calculateSum();
-    const isCorrect = Math.abs(sum - puzzle.targetDeltaH) < 0.5;
+    const correct = Math.abs(sum - puzzle.targetDeltaH) < 0.5;
 
     setShowResult(true);
-    setExplanation(isCorrect ? puzzle.explanation : 'Ekki rétt. Athugaðu hvort þú hefur snúið við réttum jöfnum og valið rétta margfeldisstuðla.');
+    setExplanation(correct ? puzzle.explanation : 'Ekki rétt. Athugaðu hvort þú hefur snúið við réttum jöfnum og valið rétta margfeldisstuðla.');
 
-    if (isCorrect && !completed.includes(puzzle.id)) {
-      const points = showHint ? 50 : 100;
-      setScore(prev => prev + points);
-      setCompleted(prev => [...prev, puzzle.id]);
+    if (correct) {
+      onCorrectAnswer?.();
+      if (!completed.includes(puzzle.id)) {
+        const points = showHint ? 50 : 100;
+        setScore(prev => prev + points);
+        setCompleted(prev => [...prev, puzzle.id]);
+      }
+    } else {
+      onIncorrectAnswer?.();
     }
+  };
+
+  // Handle hint usage
+  const handleShowHint = () => {
+    setShowHint(true);
+    setTotalHintsUsed(prev => prev + 1);
   };
 
   // Next puzzle
@@ -305,7 +319,8 @@ export function Level2({ onComplete, onBack }: Level2Props) {
       setCurrentPuzzle(next);
       resetPuzzle(next);
     } else {
-      onComplete(score);
+      // Max score is 100 per puzzle × 5 puzzles = 500
+      onComplete(score, 500, totalHintsUsed);
     }
   };
 
@@ -427,7 +442,7 @@ export function Level2({ onComplete, onBack }: Level2Props) {
                 </div>
               ) : (
                 <button
-                  onClick={() => setShowHint(true)}
+                  onClick={handleShowHint}
                   className="text-yellow-600 hover:text-yellow-700 text-sm"
                 >
                   💡 Sýna vísbendingu (-50 stig)

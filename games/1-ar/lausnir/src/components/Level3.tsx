@@ -21,8 +21,10 @@ import { StepBySolution } from './StepBySolution';
 import { FormulaCard } from './FormulaCard';
 
 interface Level3Props {
-  onComplete: (score: number) => void;
+  onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
   onBack: () => void;
+  onCorrectAnswer?: () => void;
+  onIncorrectAnswer?: () => void;
 }
 
 interface Level3State {
@@ -53,7 +55,8 @@ interface Level3State {
   achievementShown: string | null;
 }
 
-export function Level3({ onComplete, onBack }: Level3Props) {
+export function Level3({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer }: Level3Props) {
+  const [totalHintsUsed, setTotalHintsUsed] = useState(0);
   const [gameState, setGameState] = useState<Level3State>({
     currentProblem: null,
     userAnswer: '',
@@ -165,6 +168,13 @@ export function Level3({ onComplete, onBack }: Level3Props) {
       ? getAchievement(newStreak, gameState.currentProblem.type)
       : null;
 
+    // Track achievement callbacks
+    if (isCorrect) {
+      onCorrectAnswer?.();
+    } else {
+      onIncorrectAnswer?.();
+    }
+
     setGameState((prev) => {
       const newProblemsCompleted = prev.problemsCompleted + 1;
       const isGameOver = newProblemsCompleted >= prev.totalProblems;
@@ -223,7 +233,7 @@ export function Level3({ onComplete, onBack }: Level3Props) {
         setCurrentFact(null);
       }
     }, 3000);
-  }, [gameState, startTimer]);
+  }, [gameState, startTimer, onCorrectAnswer, onIncorrectAnswer]);
 
   const showNextHint = () => {
     setGameState((prev) => ({
@@ -231,6 +241,7 @@ export function Level3({ onComplete, onBack }: Level3Props) {
       hintLevel: Math.min(prev.hintLevel + 1, 3),
       showHint: true
     }));
+    setTotalHintsUsed(prev => prev + 1);
   };
 
   const revealSolution = () => {
@@ -493,11 +504,11 @@ export function Level3({ onComplete, onBack }: Level3Props) {
                 ← Til baka í aðalvalmynd
               </button>
               <button
-                onClick={() => onComplete(gameState.score)}
+                onClick={() => onComplete(gameState.score, getMaxScore(gameState.difficulty), totalHintsUsed)}
                 className="flex-1 text-white font-bold py-4 px-6 rounded-xl transition-colors"
                 style={{ backgroundColor: themeColor }}
               >
-                Ljúka Stigi 3 →
+                Ljuka Stigi 3
               </button>
             </div>
           </div>

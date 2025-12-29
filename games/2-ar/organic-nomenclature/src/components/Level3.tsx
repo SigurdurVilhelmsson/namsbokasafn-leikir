@@ -1,8 +1,10 @@
 import { useState } from 'react';
 
 interface Level3Props {
-  onComplete: (score: number) => void;
+  onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
   onBack: () => void;
+  onCorrectAnswer?: () => void;
+  onIncorrectAnswer?: () => void;
 }
 
 interface FunctionalGroup {
@@ -165,13 +167,15 @@ const challenges: Challenge[] = [
   }
 ];
 
-export function Level3({ onComplete, onBack }: Level3Props) {
+export function Level3({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer }: Level3Props) {
   const [phase, setPhase] = useState<'learn' | 'challenge'>('learn');
   const [currentGroup, setCurrentGroup] = useState(0);
   const [currentChallenge, setCurrentChallenge] = useState(0);
   const [score, setScore] = useState(0);
   const [showFeedback, setShowFeedback] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
+  const [totalHintsUsed] = useState(0); // Level3 doesn't have hints in challenge
+  const maxScore = challenges.length * 10;
 
   const handleNextGroup = () => {
     if (currentGroup < functionalGroups.length - 1) {
@@ -194,6 +198,9 @@ export function Level3({ onComplete, onBack }: Level3Props) {
 
     if (correct) {
       setScore(prev => prev + 10);
+      onCorrectAnswer?.();
+    } else {
+      onIncorrectAnswer?.();
     }
   };
 
@@ -202,7 +209,7 @@ export function Level3({ onComplete, onBack }: Level3Props) {
       setCurrentChallenge(prev => prev + 1);
       setShowFeedback(false);
     } else {
-      onComplete(score);
+      onComplete(score, maxScore, totalHintsUsed);
     }
   };
 

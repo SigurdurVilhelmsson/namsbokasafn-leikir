@@ -12,12 +12,14 @@ interface Level3Progress {
 }
 
 interface Level3Props {
-  onComplete: (progress: Level3Progress) => void;
+  onComplete: (progress: Level3Progress, maxScore?: number, hintsUsed?: number) => void;
   onBack: () => void;
   initialProgress?: Level3Progress;
+  onCorrectAnswer?: () => void;
+  onIncorrectAnswer?: () => void;
 }
 
-export function Level3({ onComplete, onBack, initialProgress }: Level3Props) {
+export function Level3({ onComplete, onBack, initialProgress, onCorrectAnswer, onIncorrectAnswer }: Level3Props) {
   const [currentProblemIndex, setCurrentProblemIndex] = useState(
     initialProgress?.problemsCompleted || 0
   );
@@ -35,6 +37,7 @@ export function Level3({ onComplete, onBack, initialProgress }: Level3Props) {
       hintsUsed: 0
     }
   );
+  const [totalHintsUsed, setTotalHintsUsed] = useState(initialProgress?.hintsUsed || 0);
 
   const [userAnswer, setUserAnswer] = useState('');
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
@@ -158,6 +161,13 @@ export function Level3({ onComplete, onBack, initialProgress }: Level3Props) {
 
     setShowFeedback(true);
 
+    // Track achievements
+    if (composite >= 0.75) {
+      onCorrectAnswer?.();
+    } else {
+      onIncorrectAnswer?.();
+    }
+
     // Update progress
     const newProgress = {
       ...progress,
@@ -170,7 +180,8 @@ export function Level3({ onComplete, onBack, initialProgress }: Level3Props) {
   const handleContinue = () => {
     const newProgress = {
       ...progress,
-      problemsCompleted: progress.problemsCompleted + 1
+      problemsCompleted: progress.problemsCompleted + 1,
+      hintsUsed: totalHintsUsed
     };
 
     // Check mastery after 10 problems
@@ -184,7 +195,8 @@ export function Level3({ onComplete, onBack, initialProgress }: Level3Props) {
     if (currentProblemIndex < level3Challenges.length - 1) {
       setCurrentProblemIndex(currentProblemIndex + 1);
     } else {
-      onComplete(newProgress);
+      // Max score is 100 per problem x 10 problems = 1000
+      onComplete(newProgress, 1000, totalHintsUsed);
     }
   };
 
@@ -443,6 +455,7 @@ export function Level3({ onComplete, onBack, initialProgress }: Level3Props) {
                     onClick={() => {
                       setShowHint(true);
                       setHintUsed(true);
+                      setTotalHintsUsed(prev => prev + 1);
                       setProgress(prev => ({
                         ...prev,
                         hintsUsed: prev.hintsUsed + 1

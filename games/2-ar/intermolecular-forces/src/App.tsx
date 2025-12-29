@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import { Level1 } from './components/Level1';
 import { Level2 } from './components/Level2';
 import { Level3 } from './components/Level3';
+import { useAchievements } from '@shared/hooks/useAchievements';
+import { AchievementsButton, AchievementsPanel } from '@shared/components/AchievementsPanel';
+import { AchievementNotificationsContainer } from '@shared/components/AchievementNotificationPopup';
 
 type ActiveLevel = 'menu' | 'level1' | 'level2' | 'level3' | 'complete';
 
@@ -48,38 +51,55 @@ function saveProgress(progress: Progress): void {
 function App() {
   const [activeLevel, setActiveLevel] = useState<ActiveLevel>('menu');
   const [progress, setProgress] = useState<Progress>(loadProgress);
+  const [showAchievements, setShowAchievements] = useState(false);
+
+  const {
+    achievements,
+    allAchievements,
+    notifications,
+    dismissNotification,
+    trackCorrectAnswer,
+    trackIncorrectAnswer,
+    trackLevelComplete,
+    trackGameComplete,
+    resetAll: resetAchievements,
+  } = useAchievements({ gameId: 'intermolecular-forces' });
 
   useEffect(() => {
     saveProgress(progress);
   }, [progress]);
 
-  const handleLevel1Complete = (score: number) => {
+  const handleLevel1Complete = (score: number, maxScore: number, hintsUsed: number) => {
     setProgress(prev => ({
       ...prev,
       level1Completed: true,
       level1Score: Math.max(prev.level1Score, score),
       totalGamesPlayed: prev.totalGamesPlayed + 1
     }));
+    trackLevelComplete(1, score, maxScore, { hintsUsed });
     setActiveLevel('menu');
   };
 
-  const handleLevel2Complete = (score: number) => {
+  const handleLevel2Complete = (score: number, maxScore: number, hintsUsed: number) => {
     setProgress(prev => ({
       ...prev,
       level2Completed: true,
       level2Score: Math.max(prev.level2Score, score),
       totalGamesPlayed: prev.totalGamesPlayed + 1
     }));
+    trackLevelComplete(2, score, maxScore, { hintsUsed });
     setActiveLevel('menu');
   };
 
-  const handleLevel3Complete = (score: number) => {
+  const handleLevel3Complete = (score: number, maxScore: number, hintsUsed: number) => {
     setProgress(prev => ({
       ...prev,
       level3Completed: true,
       level3Score: Math.max(prev.level3Score, score),
       totalGamesPlayed: prev.totalGamesPlayed + 1
     }));
+    trackLevelComplete(3, score, maxScore, { hintsUsed });
+    trackGameComplete();
     setActiveLevel('complete');
   };
 
@@ -90,83 +110,128 @@ function App() {
   };
 
   if (activeLevel === 'level1') {
-    return <Level1 onComplete={handleLevel1Complete} onBack={() => setActiveLevel('menu')} />;
+    return (
+      <>
+        <Level1
+          onComplete={handleLevel1Complete}
+          onBack={() => setActiveLevel('menu')}
+          onCorrectAnswer={trackCorrectAnswer}
+          onIncorrectAnswer={trackIncorrectAnswer}
+        />
+        <AchievementNotificationsContainer
+          notifications={notifications}
+          onDismiss={dismissNotification}
+        />
+      </>
+    );
   }
 
   if (activeLevel === 'level2') {
-    return <Level2 onComplete={handleLevel2Complete} onBack={() => setActiveLevel('menu')} />;
+    return (
+      <>
+        <Level2
+          onComplete={handleLevel2Complete}
+          onBack={() => setActiveLevel('menu')}
+          onCorrectAnswer={trackCorrectAnswer}
+          onIncorrectAnswer={trackIncorrectAnswer}
+        />
+        <AchievementNotificationsContainer
+          notifications={notifications}
+          onDismiss={dismissNotification}
+        />
+      </>
+    );
   }
 
   if (activeLevel === 'level3') {
-    return <Level3 onComplete={handleLevel3Complete} onBack={() => setActiveLevel('menu')} />;
+    return (
+      <>
+        <Level3
+          onComplete={handleLevel3Complete}
+          onBack={() => setActiveLevel('menu')}
+          onCorrectAnswer={trackCorrectAnswer}
+          onIncorrectAnswer={trackIncorrectAnswer}
+        />
+        <AchievementNotificationsContainer
+          notifications={notifications}
+          onDismiss={dismissNotification}
+        />
+      </>
+    );
   }
 
   if (activeLevel === 'complete') {
     const totalScore = progress.level1Score + progress.level2Score + progress.level3Score;
 
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100 p-4 md:p-8">
-        <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-2xl p-6 md:p-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-center mb-6 text-indigo-600">
-            Til hamingju!
-          </h1>
+      <>
+        <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100 p-4 md:p-8">
+          <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-2xl p-6 md:p-8">
+            <h1 className="text-3xl md:text-4xl font-bold text-center mb-6 text-indigo-600">
+              Til hamingju!
+            </h1>
 
-          <div className="text-center mb-8">
-            <div className="text-6xl mb-4">🏆</div>
-            <div className="text-2xl font-bold text-gray-800 mb-2">
-              Þú hefur lokið öllum stigum!
-            </div>
-          </div>
-
-          <div className="space-y-4 mb-8">
-            <div className="bg-purple-50 p-4 rounded-xl flex justify-between items-center">
-              <div>
-                <div className="font-bold text-purple-800">Stig 1: Tegundir</div>
-                <div className="text-sm text-purple-600">Greina millisameindakrafta</div>
+            <div className="text-center mb-8">
+              <div className="text-6xl mb-4">🏆</div>
+              <div className="text-2xl font-bold text-gray-800 mb-2">
+                Þú hefur lokið öllum stigum!
               </div>
-              <div className="text-2xl font-bold text-purple-600">{progress.level1Score}</div>
             </div>
 
-            <div className="bg-blue-50 p-4 rounded-xl flex justify-between items-center">
-              <div>
-                <div className="font-bold text-blue-800">Stig 2: Röðun</div>
-                <div className="text-sm text-blue-600">Raða efnum eftir eiginleikum</div>
+            <div className="space-y-4 mb-8">
+              <div className="bg-purple-50 p-4 rounded-xl flex justify-between items-center">
+                <div>
+                  <div className="font-bold text-purple-800">Stig 1: Tegundir</div>
+                  <div className="text-sm text-purple-600">Greina millisameindakrafta</div>
+                </div>
+                <div className="text-2xl font-bold text-purple-600">{progress.level1Score}</div>
               </div>
-              <div className="text-2xl font-bold text-blue-600">{progress.level2Score}</div>
-            </div>
 
-            <div className="bg-green-50 p-4 rounded-xl flex justify-between items-center">
-              <div>
-                <div className="font-bold text-green-800">Stig 3: Greining</div>
-                <div className="text-sm text-green-600">Flókin samanburður</div>
+              <div className="bg-blue-50 p-4 rounded-xl flex justify-between items-center">
+                <div>
+                  <div className="font-bold text-blue-800">Stig 2: Röðun</div>
+                  <div className="text-sm text-blue-600">Raða efnum eftir eiginleikum</div>
+                </div>
+                <div className="text-2xl font-bold text-blue-600">{progress.level2Score}</div>
               </div>
-              <div className="text-2xl font-bold text-green-600">{progress.level3Score}</div>
+
+              <div className="bg-green-50 p-4 rounded-xl flex justify-between items-center">
+                <div>
+                  <div className="font-bold text-green-800">Stig 3: Greining</div>
+                  <div className="text-sm text-green-600">Flókin samanburður</div>
+                </div>
+                <div className="text-2xl font-bold text-green-600">{progress.level3Score}</div>
+              </div>
+
+              <div className="bg-indigo-100 p-4 rounded-xl flex justify-between items-center border-2 border-indigo-400">
+                <div className="font-bold text-indigo-800 text-lg">Heildarstig</div>
+                <div className="text-3xl font-bold text-indigo-600">{totalScore}</div>
+              </div>
             </div>
 
-            <div className="bg-indigo-100 p-4 rounded-xl flex justify-between items-center border-2 border-indigo-400">
-              <div className="font-bold text-indigo-800 text-lg">Heildarstig</div>
-              <div className="text-3xl font-bold text-indigo-600">{totalScore}</div>
+            <div className="bg-indigo-50 p-6 rounded-xl mb-6">
+              <h2 className="font-bold text-indigo-800 mb-3">Hvað lærðir þú?</h2>
+              <ul className="space-y-2 text-indigo-900 text-sm">
+                <li>✓ <strong>London kraftar:</strong> Til staðar í öllum sameindum, eykst með stærð</li>
+                <li>✓ <strong>Tvípól-tvípól:</strong> Milli skauttaðra sameinda</li>
+                <li>✓ <strong>Vetnistengi:</strong> H við F, O, eða N — sterkasta tegund</li>
+                <li>✓ <strong>Áhrif:</strong> Sterkari IMF → hærra suðumark, seigja, yfirborðsspenna</li>
+              </ul>
             </div>
-          </div>
 
-          <div className="bg-indigo-50 p-6 rounded-xl mb-6">
-            <h2 className="font-bold text-indigo-800 mb-3">Hvað lærðir þú?</h2>
-            <ul className="space-y-2 text-indigo-900 text-sm">
-              <li>✓ <strong>London kraftar:</strong> Til staðar í öllum sameindum, eykst með stærð</li>
-              <li>✓ <strong>Tvípól-tvípól:</strong> Milli skauttaðra sameinda</li>
-              <li>✓ <strong>Vetnistengi:</strong> H við F, O, eða N — sterkasta tegund</li>
-              <li>✓ <strong>Áhrif:</strong> Sterkari IMF → hærra suðumark, seigja, yfirborðsspenna</li>
-            </ul>
+            <button
+              onClick={() => setActiveLevel('menu')}
+              className="w-full bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-4 px-6 rounded-xl transition-colors"
+            >
+              Til baka í valmynd
+            </button>
           </div>
-
-          <button
-            onClick={() => setActiveLevel('menu')}
-            className="w-full bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-4 px-6 rounded-xl transition-colors"
-          >
-            Til baka í valmynd
-          </button>
         </div>
-      </div>
+        <AchievementNotificationsContainer
+          notifications={notifications}
+          onDismiss={dismissNotification}
+        />
+      </>
     );
   }
 
@@ -177,9 +242,19 @@ function App() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100 p-4 md:p-8">
       <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-2xl p-6 md:p-8">
-        <h1 className="text-3xl md:text-4xl font-bold text-center mb-2 text-indigo-600">
-          🔍 Millisameindakraftar
-        </h1>
+        {/* Header with achievements button */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="w-24" /> {/* Spacer for centering */}
+          <h1 className="text-3xl md:text-4xl font-bold text-center text-indigo-600">
+            Millisameindakraftar
+          </h1>
+          <div className="w-24 flex justify-end">
+            <AchievementsButton
+              achievements={achievements}
+              onClick={() => setShowAchievements(true)}
+            />
+          </div>
+        </div>
         <p className="text-center text-gray-600 mb-8">
           Lærðu að greina krafta milli sameinda og áhrif þeirra á eðliseiginleika
         </p>
@@ -347,6 +422,22 @@ function App() {
           Kafli 11 — Chemistry: The Central Science (Brown et al.)
         </div>
       </div>
+
+      {/* Achievements Panel Modal */}
+      {showAchievements && (
+        <AchievementsPanel
+          achievements={achievements}
+          allAchievements={allAchievements}
+          onClose={() => setShowAchievements(false)}
+          onReset={resetAchievements}
+        />
+      )}
+
+      {/* Achievement Notifications */}
+      <AchievementNotificationsContainer
+        notifications={notifications}
+        onDismiss={dismissNotification}
+      />
     </div>
   );
 }

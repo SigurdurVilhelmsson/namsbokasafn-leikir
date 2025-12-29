@@ -215,11 +215,13 @@ function MoleculeVisual({ elements, showMassBar = false, animateAtoms = true }: 
 
 interface Level1Props {
   onBack: () => void;
-  onComplete: () => void;
+  onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
+  onCorrectAnswer?: () => void;
+  onIncorrectAnswer?: () => void;
 }
 
 // Main Level 1 Component
-export function Level1({ onBack, onComplete }: Level1Props) {
+export function Level1({ onBack, onComplete, onCorrectAnswer, onIncorrectAnswer }: Level1Props) {
   const [challengeNumber, setChallengeNumber] = useState(0);
   const [challenge, setChallenge] = useState<Challenge>(() => generateChallenge(0));
   const [score, setScore] = useState(0);
@@ -228,6 +230,7 @@ export function Level1({ onBack, onComplete }: Level1Props) {
   const [isCorrect, setIsCorrect] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState<number | string | null>(null);
   const [showHint, setShowHint] = useState(false);
+  const [totalHintsUsed, setTotalHintsUsed] = useState(0);
 
   // For build_molecule challenge
   const [builtAtoms, setBuiltAtoms] = useState<{ symbol: string; count: number }[]>([]);
@@ -277,6 +280,9 @@ export function Level1({ onBack, onComplete }: Level1Props) {
     if (correct) {
       setScore(prev => prev + 10);
       setCorrectCount(prev => prev + 1);
+      onCorrectAnswer?.();
+    } else {
+      onIncorrectAnswer?.();
     }
   };
 
@@ -387,7 +393,7 @@ export function Level1({ onBack, onComplete }: Level1Props) {
           <div className="space-y-3 animate-fade-in-up" style={{ animationDelay: '600ms' }}>
             {passedLevel ? (
               <button
-                onClick={onComplete}
+                onClick={() => onComplete(score, totalChallenges * 10, totalHintsUsed)}
                 className="w-full bg-primary hover:bg-primary-dark text-white font-bold py-3 px-6 rounded-xl transition-colors btn-press"
               >
                 Halda áfram í Stig 2 →
@@ -757,7 +763,10 @@ export function Level1({ onBack, onComplete }: Level1Props) {
         {/* Hint button */}
         {!showFeedback && !showHint && (
           <button
-            onClick={() => setShowHint(true)}
+            onClick={() => {
+              setShowHint(true);
+              setTotalHintsUsed(prev => prev + 1);
+            }}
             className="w-full bg-yellow-100 hover:bg-yellow-200 text-yellow-800 font-semibold py-3 px-4 rounded-xl transition-colors"
           >
             💡 Vísbending

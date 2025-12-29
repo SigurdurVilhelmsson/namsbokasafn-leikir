@@ -4,8 +4,10 @@ import { REACTIONS } from '../data/reactions';
 import { Molecule } from './Molecule';
 
 interface Level2Props {
-  onComplete: (score: number) => void;
+  onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
   onBack: () => void;
+  onCorrectAnswer?: () => void;
+  onIncorrectAnswer?: () => void;
 }
 
 type Step = 'times_r1' | 'times_r2' | 'limiting' | 'products' | 'excess' | 'complete';
@@ -65,7 +67,7 @@ function generateProblem(): Problem {
   };
 }
 
-export function Level2({ onComplete, onBack }: Level2Props) {
+export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer }: Level2Props) {
   const [problemIndex, setProblemIndex] = useState(0);
   const [problem, setProblem] = useState<Problem>(() => generateProblem());
   const [currentStep, setCurrentStep] = useState<Step>('times_r1');
@@ -76,6 +78,7 @@ export function Level2({ onComplete, onBack }: Level2Props) {
   const [showFeedback, setShowFeedback] = useState(false);
   const [isStepCorrect, setIsStepCorrect] = useState(false);
   const [problemCorrectSoFar, setProblemCorrectSoFar] = useState(true);
+  const [totalHintsUsed, setTotalHintsUsed] = useState(0);
 
   const totalProblems = 8;
   const masteryThreshold = 6;
@@ -109,10 +112,12 @@ export function Level2({ onComplete, onBack }: Level2Props) {
 
     if (!correct) {
       setProblemCorrectSoFar(false);
+      onIncorrectAnswer?.();
     }
 
     if (correct) {
       setScore(prev => prev + 5);
+      onCorrectAnswer?.();
     }
   };
 
@@ -205,7 +210,7 @@ export function Level2({ onComplete, onBack }: Level2Props) {
             <div className="space-y-3">
               {passedLevel ? (
                 <button
-                  onClick={() => onComplete(score)}
+                  onClick={() => onComplete(score, totalProblems * 25, totalHintsUsed)}
                   className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-xl transition-colors"
                 >
                   Halda áfram í Stig 3 →
@@ -222,6 +227,7 @@ export function Level2({ onComplete, onBack }: Level2Props) {
                     setSelectedLimiting(null);
                     setShowFeedback(false);
                     setProblemCorrectSoFar(true);
+                    setTotalHintsUsed(0);
                   }}
                   className="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-6 rounded-xl transition-colors"
                 >

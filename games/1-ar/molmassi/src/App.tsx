@@ -2,6 +2,9 @@ import { useState } from 'react';
 import { Level1 } from './components/Level1';
 import { Level2 } from './components/Level2';
 import { Level3 } from './components/Level3';
+import { useAchievements } from '@shared/hooks/useAchievements';
+import { AchievementsButton, AchievementsPanel } from '@shared/components/AchievementsPanel';
+import { AchievementNotificationsContainer } from '@shared/components/AchievementNotificationPopup';
 
 type AppMode = 'menu' | 'level1' | 'level2' | 'level3';
 
@@ -30,39 +33,109 @@ function saveProgress(progress: Progress): void {
 function App() {
   const [mode, setMode] = useState<AppMode>('menu');
   const [progress, setProgress] = useState<Progress>(loadProgress());
+  const [showAchievements, setShowAchievements] = useState(false);
 
-  const completeLevel1 = () => {
+  const {
+    achievements,
+    allAchievements,
+    notifications,
+    trackCorrectAnswer,
+    trackIncorrectAnswer,
+    trackLevelComplete,
+    trackGameComplete,
+    dismissNotification,
+    resetAll,
+  } = useAchievements({ gameId: 'molmassi' });
+
+  const completeLevel1 = (score: number, maxScore: number, hintsUsed: number) => {
     const newProgress = { ...progress, level1Completed: true };
     setProgress(newProgress);
     saveProgress(newProgress);
+    trackLevelComplete(1, score, maxScore, { hintsUsed });
     setMode('level2');
   };
 
-  const completeLevel2 = () => {
+  const completeLevel2 = (score: number, maxScore: number, hintsUsed: number) => {
     const newProgress = { ...progress, level2Completed: true };
     setProgress(newProgress);
     saveProgress(newProgress);
+    trackLevelComplete(2, score, maxScore, { hintsUsed });
     setMode('level3');
+  };
+
+  const completeLevel3 = (score: number, maxScore: number, hintsUsed: number) => {
+    trackLevelComplete(3, score, maxScore, { hintsUsed });
+    // Check if all levels are complete to track game completion
+    if (progress.level1Completed && progress.level2Completed) {
+      trackGameComplete();
+    }
   };
 
   // Render current mode
   if (mode === 'level1') {
-    return <Level1 onBack={() => setMode('menu')} onComplete={completeLevel1} />;
+    return (
+      <>
+        <Level1
+          onBack={() => setMode('menu')}
+          onComplete={completeLevel1}
+          onCorrectAnswer={trackCorrectAnswer}
+          onIncorrectAnswer={trackIncorrectAnswer}
+        />
+        <AchievementNotificationsContainer
+          notifications={notifications}
+          onDismiss={dismissNotification}
+        />
+      </>
+    );
   }
 
   if (mode === 'level2') {
-    return <Level2 onBack={() => setMode('menu')} onComplete={completeLevel2} />;
+    return (
+      <>
+        <Level2
+          onBack={() => setMode('menu')}
+          onComplete={completeLevel2}
+          onCorrectAnswer={trackCorrectAnswer}
+          onIncorrectAnswer={trackIncorrectAnswer}
+        />
+        <AchievementNotificationsContainer
+          notifications={notifications}
+          onDismiss={dismissNotification}
+        />
+      </>
+    );
   }
 
   if (mode === 'level3') {
-    return <Level3 onBack={() => setMode('menu')} />;
+    return (
+      <>
+        <Level3
+          onBack={() => setMode('menu')}
+          onComplete={completeLevel3}
+          onCorrectAnswer={trackCorrectAnswer}
+          onIncorrectAnswer={trackIncorrectAnswer}
+        />
+        <AchievementNotificationsContainer
+          notifications={notifications}
+          onDismiss={dismissNotification}
+        />
+      </>
+    );
   }
 
   // Main Menu with Level Selection
   return (
     <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white flex items-center justify-center p-4">
       <div className="max-w-lg w-full">
-        {/* Header */}
+        {/* Header with Achievements Button */}
+        <div className="flex justify-end mb-4 animate-fade-in-up">
+          <AchievementsButton
+            achievements={achievements}
+            onClick={() => setShowAchievements(true)}
+          />
+        </div>
+
+        {/* Title */}
         <div className="text-center mb-8 animate-fade-in-up">
           <div className="text-6xl mb-4">⚗️</div>
           <h1 className="text-4xl font-bold text-gray-800 mb-2">Mólmassi</h1>
@@ -220,6 +293,22 @@ function App() {
           </div>
         )}
       </div>
+
+      {/* Achievements Panel Modal */}
+      {showAchievements && (
+        <AchievementsPanel
+          achievements={achievements}
+          allAchievements={allAchievements}
+          onClose={() => setShowAchievements(false)}
+          onReset={resetAll}
+        />
+      )}
+
+      {/* Achievement Notifications */}
+      <AchievementNotificationsContainer
+        notifications={notifications}
+        onDismiss={dismissNotification}
+      />
     </div>
   );
 }

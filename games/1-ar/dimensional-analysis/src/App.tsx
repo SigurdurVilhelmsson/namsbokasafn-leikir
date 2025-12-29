@@ -1,5 +1,8 @@
 import { useState } from 'react';
 import { useProgress, useAccessibility, useI18n } from '@shared/hooks';
+import { useAchievements } from '@shared/hooks/useAchievements';
+import { AchievementsButton, AchievementsPanel } from '@shared/components/AchievementsPanel';
+import { AchievementNotificationsContainer } from '@shared/components/AchievementNotificationPopup';
 
 // Import Level components
 import { Level1Conceptual } from './components/Level1Conceptual';
@@ -47,6 +50,20 @@ function App() {
   const { t, language, setLanguage } = useI18n();
 
   const [screen, setScreen] = useState<'menu' | 'level1' | 'level2' | 'level3' | 'stats'>('menu');
+  const [showAchievements, setShowAchievements] = useState(false);
+
+  // Achievement system
+  const {
+    achievements,
+    allAchievements,
+    notifications,
+    trackLevelComplete,
+    trackGameComplete,
+    trackCorrectAnswer,
+    trackIncorrectAnswer,
+    dismissNotification,
+    resetAll: resetAchievements,
+  } = useAchievements({ gameId: 'dimensional-analysis' });
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -58,13 +75,21 @@ function App() {
       {/* Main Content */}
       <main id="main-content" className="container mx-auto px-4 py-8">
         {/* Header */}
-        <header className="mb-8 text-center">
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">
-            Einingagreining
-          </h1>
-          <p className="text-lg text-gray-600">
-            Kvennaskólinn - Efnafræði 1. ár
-          </p>
+        <header className="mb-8">
+          <div className="flex justify-between items-start">
+            <div className="flex-1 text-center">
+              <h1 className="text-4xl font-bold text-gray-800 mb-2">
+                Einingagreining
+              </h1>
+              <p className="text-lg text-gray-600">
+                Kvennaskólinn - Efnafræði 1. ár
+              </p>
+            </div>
+            <AchievementsButton
+              achievements={achievements}
+              onClick={() => setShowAchievements(true)}
+            />
+          </div>
         </header>
 
         {/* Accessibility Menu */}
@@ -206,57 +231,94 @@ function App() {
 
         {/* Level Screens */}
         {screen === 'level1' && (
-          <Level1Conceptual
-            onComplete={(levelProgress) => {
-              updateProgress({
-                problemsCompleted: progress.problemsCompleted + levelProgress.questionsAnswered,
-                currentLevel: levelProgress.mastered ? 2 : 1,
-                levelProgress: {
-                  ...progress.levelProgress,
-                  level1: levelProgress
-                }
-              });
-              setScreen('menu');
-            }}
-            onBack={() => setScreen('menu')}
-            initialProgress={progress.levelProgress?.level1}
-          />
+          <>
+            <Level1Conceptual
+              onComplete={(levelProgress, maxScore = 600, hintsUsed = 0) => {
+                updateProgress({
+                  problemsCompleted: progress.problemsCompleted + levelProgress.questionsAnswered,
+                  currentLevel: levelProgress.mastered ? 2 : 1,
+                  levelProgress: {
+                    ...progress.levelProgress,
+                    level1: levelProgress
+                  }
+                });
+                // Track achievement
+                const score = levelProgress.questionsCorrect * 100;
+                trackLevelComplete(1, score, maxScore, { hintsUsed });
+                setScreen('menu');
+              }}
+              onBack={() => setScreen('menu')}
+              initialProgress={progress.levelProgress?.level1}
+              onCorrectAnswer={() => trackCorrectAnswer()}
+              onIncorrectAnswer={() => trackIncorrectAnswer()}
+            />
+            <AchievementNotificationsContainer
+              notifications={notifications}
+              onDismiss={dismissNotification}
+            />
+          </>
         )}
 
         {screen === 'level2' && (
-          <Level2
-            onComplete={(levelProgress) => {
-              updateProgress({
-                problemsCompleted: progress.problemsCompleted + levelProgress.problemsCompleted,
-                currentLevel: levelProgress.mastered ? 3 : 2,
-                levelProgress: {
-                  ...progress.levelProgress,
-                  level2: levelProgress
-                }
-              });
-              setScreen('menu');
-            }}
-            onBack={() => setScreen('menu')}
-            initialProgress={progress.levelProgress?.level2}
-          />
+          <>
+            <Level2
+              onComplete={(levelProgress, maxScore = 1500, hintsUsed = 0) => {
+                updateProgress({
+                  problemsCompleted: progress.problemsCompleted + levelProgress.problemsCompleted,
+                  currentLevel: levelProgress.mastered ? 3 : 2,
+                  levelProgress: {
+                    ...progress.levelProgress,
+                    level2: levelProgress
+                  }
+                });
+                // Track achievement
+                const score = levelProgress.finalAnswersCorrect * 100;
+                trackLevelComplete(2, score, maxScore, { hintsUsed });
+                setScreen('menu');
+              }}
+              onBack={() => setScreen('menu')}
+              initialProgress={progress.levelProgress?.level2}
+              onCorrectAnswer={() => trackCorrectAnswer()}
+              onIncorrectAnswer={() => trackIncorrectAnswer()}
+            />
+            <AchievementNotificationsContainer
+              notifications={notifications}
+              onDismiss={dismissNotification}
+            />
+          </>
         )}
 
         {screen === 'level3' && (
-          <Level3
-            onComplete={(levelProgress) => {
-              updateProgress({
-                problemsCompleted: progress.problemsCompleted + levelProgress.problemsCompleted,
-                currentLevel: 3,
-                levelProgress: {
-                  ...progress.levelProgress,
-                  level3: levelProgress
-                }
-              });
-              setScreen('menu');
-            }}
-            onBack={() => setScreen('menu')}
-            initialProgress={progress.levelProgress?.level3}
-          />
+          <>
+            <Level3
+              onComplete={(levelProgress, maxScore = 1000, hintsUsed = 0) => {
+                updateProgress({
+                  problemsCompleted: progress.problemsCompleted + levelProgress.problemsCompleted,
+                  currentLevel: 3,
+                  levelProgress: {
+                    ...progress.levelProgress,
+                    level3: levelProgress
+                  }
+                });
+                // Track achievements
+                const avgScore = levelProgress.compositeScores.length > 0
+                  ? levelProgress.compositeScores.reduce((a, b) => a + b, 0) / levelProgress.compositeScores.length
+                  : 0;
+                const score = Math.round(avgScore * 1000);
+                trackLevelComplete(3, score, maxScore, { hintsUsed: hintsUsed || levelProgress.hintsUsed });
+                trackGameComplete();
+                setScreen('menu');
+              }}
+              onBack={() => setScreen('menu')}
+              initialProgress={progress.levelProgress?.level3}
+              onCorrectAnswer={() => trackCorrectAnswer()}
+              onIncorrectAnswer={() => trackIncorrectAnswer()}
+            />
+            <AchievementNotificationsContainer
+              notifications={notifications}
+              onDismiss={dismissNotification}
+            />
+          </>
         )}
 
         {/* Stats Screen */}
@@ -330,6 +392,22 @@ function App() {
       <footer className="text-center text-sm text-gray-500 py-4">
         <p>© 2024 Kvennaskólinn - Efnafræðileikir</p>
       </footer>
+
+      {/* Achievements Panel Modal */}
+      {showAchievements && (
+        <AchievementsPanel
+          achievements={achievements}
+          allAchievements={allAchievements}
+          onClose={() => setShowAchievements(false)}
+          onReset={resetAchievements}
+        />
+      )}
+
+      {/* Achievement Notifications */}
+      <AchievementNotificationsContainer
+        notifications={notifications}
+        onDismiss={dismissNotification}
+      />
     </div>
   );
 }

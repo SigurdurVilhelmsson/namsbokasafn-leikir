@@ -1,8 +1,10 @@
 import { useState } from 'react';
 
 interface Level1Props {
-  onComplete: (score: number) => void;
+  onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
   onBack: () => void;
+  onCorrectAnswer?: () => void;
+  onIncorrectAnswer?: () => void;
 }
 
 interface Challenge {
@@ -110,12 +112,15 @@ const challenges: Challenge[] = [
   },
 ];
 
-export function Level1({ onComplete, onBack }: Level1Props) {
+const MAX_SCORE = 20 * 6; // 20 points per challenge, 6 challenges
+
+export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer }: Level1Props) {
   const [currentChallenge, setCurrentChallenge] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [showResult, setShowResult] = useState(false);
   const [showHint, setShowHint] = useState(false);
   const [score, setScore] = useState(0);
+  const [totalHintsUsed, setTotalHintsUsed] = useState(0);
 
   const challenge = challenges[currentChallenge];
 
@@ -130,6 +135,9 @@ export function Level1({ onComplete, onBack }: Level1Props) {
     const selectedOption = challenge.options?.find(opt => opt.id === selectedAnswer);
     if (selectedOption?.correct) {
       setScore(prev => prev + (showHint ? 10 : 20));
+      onCorrectAnswer?.();
+    } else {
+      onIncorrectAnswer?.();
     }
     setShowResult(true);
   };
@@ -141,7 +149,7 @@ export function Level1({ onComplete, onBack }: Level1Props) {
       setShowResult(false);
       setShowHint(false);
     } else {
-      onComplete(score);
+      onComplete(score, MAX_SCORE, totalHintsUsed);
     }
   };
 
@@ -228,7 +236,10 @@ export function Level1({ onComplete, onBack }: Level1Props) {
           {/* Hint button */}
           {!showResult && !showHint && (
             <button
-              onClick={() => setShowHint(true)}
+              onClick={() => {
+                setShowHint(true);
+                setTotalHintsUsed(prev => prev + 1);
+              }}
               className="text-blue-600 hover:text-blue-800 text-sm underline mb-4"
             >
               Sýna vísbendingu (-10 stig)

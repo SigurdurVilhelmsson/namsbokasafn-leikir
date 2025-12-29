@@ -1,8 +1,10 @@
 import { useState } from 'react';
 
 interface Level3Props {
-  onComplete: (score: number) => void;
+  onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
   onBack: () => void;
+  onCorrectAnswer?: () => void;
+  onIncorrectAnswer?: () => void;
 }
 
 interface AtomCharge {
@@ -200,22 +202,31 @@ const challenges: Challenge[] = [
   },
 ];
 
-export function Level3({ onComplete, onBack }: Level3Props) {
+// Calculate max score: 8 challenges * 15 points each = 120
+const MAX_SCORE = 120;
+
+export function Level3({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer }: Level3Props) {
   const [currentChallenge, setCurrentChallenge] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [showResult, setShowResult] = useState(false);
   const [showHint, setShowHint] = useState(false);
   const [score, setScore] = useState(0);
+  const [totalHintsUsed, setTotalHintsUsed] = useState(0);
 
   const challenge = challenges[currentChallenge];
 
   const checkAnswer = () => {
     const correct = challenge.options?.find(opt => opt.id === selectedAnswer)?.correct ?? false;
 
-    if (correct && !showHint) {
-      setScore(prev => prev + 15);
-    } else if (correct && showHint) {
-      setScore(prev => prev + 8);
+    if (correct) {
+      onCorrectAnswer?.();
+      if (!showHint) {
+        setScore(prev => prev + 15);
+      } else {
+        setScore(prev => prev + 8);
+      }
+    } else {
+      onIncorrectAnswer?.();
     }
 
     setShowResult(true);
@@ -228,7 +239,7 @@ export function Level3({ onComplete, onBack }: Level3Props) {
       setShowResult(false);
       setShowHint(false);
     } else {
-      onComplete(score);
+      onComplete(score, MAX_SCORE, totalHintsUsed);
     }
   };
 
@@ -344,7 +355,10 @@ export function Level3({ onComplete, onBack }: Level3Props) {
           {/* Hint button */}
           {!showResult && !showHint && (
             <button
-              onClick={() => setShowHint(true)}
+              onClick={() => {
+                setShowHint(true);
+                setTotalHintsUsed(prev => prev + 1);
+              }}
               className="text-purple-600 hover:text-purple-800 text-sm underline mb-4"
             >
               Sýna vísbendingu (-7 stig)

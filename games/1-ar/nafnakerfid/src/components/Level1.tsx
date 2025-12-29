@@ -1,8 +1,10 @@
 import { useState } from 'react';
 
 interface Level1Props {
-  onComplete: (score: number) => void;
+  onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
   onBack: () => void;
+  onCorrectAnswer?: () => void;
+  onIncorrectAnswer?: () => void;
 }
 
 interface NamingRule {
@@ -200,13 +202,14 @@ const quizQuestions: QuizQuestion[] = [
   }
 ];
 
-export function Level1({ onComplete, onBack }: Level1Props) {
+export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer }: Level1Props) {
   const [phase, setPhase] = useState<'learn' | 'quiz'>('learn');
   const [currentRule, setCurrentRule] = useState(0);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showFeedback, setShowFeedback] = useState(false);
   const [score, setScore] = useState(0);
+  const [totalHintsUsed] = useState(0); // Level1 has no hints in quiz phase
 
   const rule = namingRules[currentRule];
   const question = quizQuestions[currentQuestion];
@@ -232,6 +235,9 @@ export function Level1({ onComplete, onBack }: Level1Props) {
 
     if (index === question.correctIndex) {
       setScore(prev => prev + 1);
+      onCorrectAnswer?.();
+    } else {
+      onIncorrectAnswer?.();
     }
   };
 
@@ -241,7 +247,7 @@ export function Level1({ onComplete, onBack }: Level1Props) {
       setSelectedAnswer(null);
       setShowFeedback(false);
     } else {
-      onComplete(score);
+      onComplete(score, quizQuestions.length, totalHintsUsed);
     }
   };
 

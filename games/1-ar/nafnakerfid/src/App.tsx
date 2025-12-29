@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import { Level1 } from './components/Level1';
 import { Level2 } from './components/Level2';
 import { Level3 } from './components/Level3';
+import { useAchievements } from '@shared/hooks/useAchievements';
+import { AchievementsButton, AchievementsPanel } from '@shared/components/AchievementsPanel';
+import { AchievementNotificationsContainer } from '@shared/components/AchievementNotificationPopup';
 
 type Screen = 'menu' | 'level1' | 'level2' | 'level3';
 
@@ -46,33 +49,61 @@ function saveProgress(progress: Progress): void {
 function App() {
   const [screen, setScreen] = useState<Screen>('menu');
   const [progress, setProgress] = useState<Progress>(loadProgress());
+  const [showAchievements, setShowAchievements] = useState(false);
+
+  const {
+    achievements,
+    allAchievements,
+    notifications,
+    trackCorrectAnswer,
+    trackIncorrectAnswer,
+    trackLevelComplete,
+    trackGameComplete,
+    dismissNotification,
+    resetAll: resetAchievementsData,
+  } = useAchievements({ gameId: 'nafnakerfid' });
 
   useEffect(() => {
     saveProgress(progress);
   }, [progress]);
 
-  const handleLevel1Complete = (score: number) => {
+  const handleLevel1Complete = (score: number, maxScore: number, hintsUsed: number) => {
+    const wasLevel1Complete = progress.level1Completed;
     setProgress(prev => ({
       ...prev,
       level1Completed: true,
       level1Score: Math.max(prev.level1Score, score),
       totalGamesPlayed: prev.totalGamesPlayed + 1,
     }));
+    trackLevelComplete(1, score, maxScore, { hintsUsed });
+
+    // Check if all levels are now complete
+    if (!wasLevel1Complete && progress.level2Completed && Object.keys(progress.level3BestMoves).length > 0) {
+      trackGameComplete();
+    }
     setScreen('menu');
   };
 
-  const handleLevel2Complete = (score: number) => {
+  const handleLevel2Complete = (score: number, maxScore: number, hintsUsed: number) => {
+    const wasLevel2Complete = progress.level2Completed;
     setProgress(prev => ({
       ...prev,
       level2Completed: true,
       level2Score: Math.max(prev.level2Score, score),
       totalGamesPlayed: prev.totalGamesPlayed + 1,
     }));
+    trackLevelComplete(2, score, maxScore, { hintsUsed });
+
+    // Check if all levels are now complete
+    if (progress.level1Completed && !wasLevel2Complete && Object.keys(progress.level3BestMoves).length > 0) {
+      trackGameComplete();
+    }
     setScreen('menu');
   };
 
-  const handleLevel3Complete = (moves: number, difficulty: string, pairs: number) => {
+  const handleLevel3Complete = (moves: number, difficulty: string, pairs: number, maxScore: number, hintsUsed: number) => {
     const key = `${difficulty}-${pairs}`;
+    const wasLevel3Complete = Object.keys(progress.level3BestMoves).length > 0;
     setProgress(prev => ({
       ...prev,
       level3BestMoves: {
@@ -81,6 +112,13 @@ function App() {
       },
       totalGamesPlayed: prev.totalGamesPlayed + 1,
     }));
+    // For Level3, score is based on pairs matched - we treat pairs as score
+    trackLevelComplete(3, pairs, maxScore, { hintsUsed });
+
+    // Check if all levels are now complete
+    if (progress.level1Completed && progress.level2Completed && !wasLevel3Complete) {
+      trackGameComplete();
+    }
     setScreen('menu');
   };
 
@@ -93,28 +131,52 @@ function App() {
   // Level screens
   if (screen === 'level1') {
     return (
-      <Level1
-        onComplete={handleLevel1Complete}
-        onBack={() => setScreen('menu')}
-      />
+      <>
+        <Level1
+          onComplete={handleLevel1Complete}
+          onBack={() => setScreen('menu')}
+          onCorrectAnswer={trackCorrectAnswer}
+          onIncorrectAnswer={trackIncorrectAnswer}
+        />
+        <AchievementNotificationsContainer
+          notifications={notifications}
+          onDismiss={dismissNotification}
+        />
+      </>
     );
   }
 
   if (screen === 'level2') {
     return (
-      <Level2
-        onComplete={handleLevel2Complete}
-        onBack={() => setScreen('menu')}
-      />
+      <>
+        <Level2
+          onComplete={handleLevel2Complete}
+          onBack={() => setScreen('menu')}
+          onCorrectAnswer={trackCorrectAnswer}
+          onIncorrectAnswer={trackIncorrectAnswer}
+        />
+        <AchievementNotificationsContainer
+          notifications={notifications}
+          onDismiss={dismissNotification}
+        />
+      </>
     );
   }
 
   if (screen === 'level3') {
     return (
-      <Level3
-        onComplete={handleLevel3Complete}
-        onBack={() => setScreen('menu')}
-      />
+      <>
+        <Level3
+          onComplete={handleLevel3Complete}
+          onBack={() => setScreen('menu')}
+          onCorrectAnswer={trackCorrectAnswer}
+          onIncorrectAnswer={trackIncorrectAnswer}
+        />
+        <AchievementNotificationsContainer
+          notifications={notifications}
+          onDismiss={dismissNotification}
+        />
+      </>
     );
   }
 
@@ -123,8 +185,16 @@ function App() {
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex items-center justify-center p-4">
       <div className="max-w-2xl w-full">
         <div className="bg-white rounded-xl shadow-lg p-8 mb-6">
-          <h1 className="text-4xl font-bold text-center mb-2 text-gray-800">Nafnakerfið</h1>
-          <p className="text-center text-gray-600 mb-8">Læra að nefna efnasambönd</p>
+          <div className="flex justify-between items-start mb-4">
+            <div className="flex-1">
+              <h1 className="text-4xl font-bold text-center mb-2 text-gray-800">Nafnakerfið</h1>
+              <p className="text-center text-gray-600">Læra að nefna efnasambönd</p>
+            </div>
+            <AchievementsButton
+              achievements={achievements}
+              onClick={() => setShowAchievements(true)}
+            />
+          </div>
 
           <div className="space-y-4">
             {/* Level 1 */}
@@ -284,6 +354,22 @@ function App() {
           </a>
         </div>
       </div>
+
+      {/* Achievements Panel Modal */}
+      {showAchievements && (
+        <AchievementsPanel
+          achievements={achievements}
+          allAchievements={allAchievements}
+          onClose={() => setShowAchievements(false)}
+          onReset={resetAchievementsData}
+        />
+      )}
+
+      {/* Achievement Notifications */}
+      <AchievementNotificationsContainer
+        notifications={notifications}
+        onDismiss={dismissNotification}
+      />
     </div>
   );
 }

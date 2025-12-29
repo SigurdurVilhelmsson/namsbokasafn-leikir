@@ -1,8 +1,10 @@
 import { useState } from 'react';
 
 interface Level1Props {
-  onComplete: (score: number) => void;
+  onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
   onBack: () => void;
+  onCorrectAnswer?: () => void;
+  onIncorrectAnswer?: () => void;
 }
 
 interface IMFType {
@@ -156,13 +158,17 @@ const molecules: Molecule[] = [
   }
 ];
 
-export function Level1({ onComplete, onBack }: Level1Props) {
+// Max possible score: 10 molecules * 15 points = 150 points
+const MAX_SCORE = 150;
+
+export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer }: Level1Props) {
   const [phase, setPhase] = useState<'learn' | 'quiz'>('learn');
   const [currentMolecule, setCurrentMolecule] = useState(0);
   const [selectedIMFs, setSelectedIMFs] = useState<Set<string>>(new Set());
   const [showResult, setShowResult] = useState(false);
   const [showHint, setShowHint] = useState(false);
   const [score, setScore] = useState(0);
+  const [totalHintsUsed, setTotalHintsUsed] = useState(0);
 
   const molecule = molecules[currentMolecule];
 
@@ -183,10 +189,15 @@ export function Level1({ onComplete, onBack }: Level1Props) {
       selectedIMFs.size === correctSet.size &&
       [...selectedIMFs].every(imf => correctSet.has(imf as any));
 
-    if (isCorrect && !showHint) {
-      setScore(prev => prev + 15);
-    } else if (isCorrect && showHint) {
-      setScore(prev => prev + 8);
+    if (isCorrect) {
+      if (!showHint) {
+        setScore(prev => prev + 15);
+      } else {
+        setScore(prev => prev + 8);
+      }
+      onCorrectAnswer?.();
+    } else {
+      onIncorrectAnswer?.();
     }
     setShowResult(true);
   };
@@ -198,8 +209,13 @@ export function Level1({ onComplete, onBack }: Level1Props) {
       setShowResult(false);
       setShowHint(false);
     } else {
-      onComplete(score);
+      onComplete(score, MAX_SCORE, totalHintsUsed);
     }
+  };
+
+  const handleShowHint = () => {
+    setShowHint(true);
+    setTotalHintsUsed(prev => prev + 1);
   };
 
   // Learning phase
@@ -379,7 +395,7 @@ export function Level1({ onComplete, onBack }: Level1Props) {
           {/* Hint */}
           {!showResult && !showHint && (
             <button
-              onClick={() => setShowHint(true)}
+              onClick={handleShowHint}
               className="text-indigo-600 hover:text-indigo-800 text-sm underline mb-4"
             >
               Sýna vísbendingu (-7 stig)

@@ -1,5 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { useProgress, useAccessibility, useI18n } from '@shared/hooks';
+import { useAchievements } from '@shared/hooks/useAchievements';
+import { AchievementsButton, AchievementsPanel } from '@shared/components/AchievementsPanel';
+import { AchievementNotificationsContainer } from '@shared/components/AchievementNotificationPopup';
 import {
   Equilibrium,
   Stress,
@@ -27,6 +30,20 @@ function App() {
 
   const { settings, toggleHighContrast, setTextSize } = useAccessibility();
   const { t, language, setLanguage } = useI18n();
+
+  // Achievements
+  const [showAchievements, setShowAchievements] = useState(false);
+  const {
+    achievements,
+    allAchievements,
+    notifications,
+    trackCorrectAnswer,
+    trackIncorrectAnswer,
+    trackLevelComplete,
+    trackGameComplete,
+    dismissNotification,
+    resetAll: resetAchievements,
+  } = useAchievements({ gameId: 'equilibrium-shifter' });
 
   // Game state
   const [screen, setScreen] = useState<'menu' | 'mode-select' | 'game' | 'feedback' | 'results'>('menu');
@@ -75,6 +92,7 @@ function App() {
       timeoutHandledRef.current = true;
       setIsCorrect(false);
       setShowExplanation(true);
+      trackIncorrectAnswer(); // Track timeout as incorrect answer
       setStats(prev => ({
         ...prev,
         questionsAnswered: prev.questionsAnswered + 1,
@@ -156,6 +174,13 @@ function App() {
     setIsCorrect(correct);
     setShowExplanation(true);
 
+    // Track achievements
+    if (correct) {
+      trackCorrectAnswer({ firstAttempt: !showHint });
+    } else {
+      trackIncorrectAnswer();
+    }
+
     // Update stats
     const points = calculatePoints(correct, currentEquilibrium.difficulty);
 
@@ -201,6 +226,11 @@ function App() {
           problemsCompleted: progress.problemsCompleted + stats.correctAnswers,
           totalTimeSpent: progress.totalTimeSpent + stats.totalTime
         });
+
+        // Track challenge completion as level 1, and game complete
+        const maxScore = totalQuestions * 35; // Max possible score (30 base + 5 time bonus)
+        trackLevelComplete(1, stats.score, maxScore, { hintsUsed: stats.hintsUsed });
+        trackGameComplete();
       } else {
         // Next question
         setQuestionNumber(prev => prev + 1);
@@ -647,13 +677,21 @@ function App() {
       {/* Main Content */}
       <main id="main-content" className="container mx-auto px-4 py-8">
         {/* Header */}
-        <header className="mb-8 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-2" style={{ color: '#f36b22' }}>
-            Jafnvægisstjóri
-          </h1>
-          <p className="text-lg text-gray-600">
-            Le Chatelier Meginreglan
-          </p>
+        <header className="mb-8">
+          <div className="flex justify-end mb-2">
+            <AchievementsButton
+              achievements={achievements}
+              onClick={() => setShowAchievements(true)}
+            />
+          </div>
+          <div className="text-center">
+            <h1 className="text-4xl md:text-5xl font-bold mb-2" style={{ color: '#f36b22' }}>
+              Jafnvægisstjóri
+            </h1>
+            <p className="text-lg text-gray-600">
+              Le Chatelier Meginreglan
+            </p>
+          </div>
         </header>
 
         {/* Accessibility Menu */}
@@ -710,6 +748,22 @@ function App() {
       <footer className="text-center text-sm text-gray-500 py-4">
         <p>© 2024 Kvennaskólinn - Efnafræðileikir</p>
       </footer>
+
+      {/* Achievements Panel Modal */}
+      {showAchievements && (
+        <AchievementsPanel
+          achievements={achievements}
+          allAchievements={allAchievements}
+          onClose={() => setShowAchievements(false)}
+          onReset={resetAchievements}
+        />
+      )}
+
+      {/* Achievement Notifications */}
+      <AchievementNotificationsContainer
+        notifications={notifications}
+        onDismiss={dismissNotification}
+      />
     </div>
   );
 }

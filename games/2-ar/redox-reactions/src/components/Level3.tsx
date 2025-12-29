@@ -1,8 +1,10 @@
 import { useState } from 'react';
 
 interface Level3Props {
-  onComplete: (score: number) => void;
+  onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
   onBack: () => void;
+  onCorrectAnswer?: () => void;
+  onIncorrectAnswer?: () => void;
 }
 
 interface HalfReaction {
@@ -234,7 +236,7 @@ const problems: RedoxProblem[] = [
 
 type Step = 'identify' | 'write-ox' | 'write-red' | 'balance' | 'complete';
 
-export function Level3({ onComplete, onBack }: Level3Props) {
+export function Level3({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer }: Level3Props) {
   const [currentProblem, setCurrentProblem] = useState(0);
   const [step, setStep] = useState<Step>('identify');
   const [score, setScore] = useState(0);
@@ -252,6 +254,10 @@ export function Level3({ onComplete, onBack }: Level3Props) {
     correct: false,
     message: ''
   });
+  const [totalHintsUsed, setTotalHintsUsed] = useState(0);
+
+  // Maximum possible score: 6 problems * (15 identify + 10 ox + 10 red + 20 balance) = 6 * 55 = 330
+  const maxScore = problems.length * 55;
 
   const problem = problems[currentProblem];
 
@@ -262,12 +268,14 @@ export function Level3({ onComplete, onBack }: Level3Props) {
     if (oxCorrect && redCorrect) {
       setScore(prev => prev + 15);
       setFeedback({ show: true, correct: true, message: 'Rétt! Þú greindir hvað oxast og afoxast.' });
+      onCorrectAnswer?.();
     } else {
       setFeedback({
         show: true,
         correct: false,
         message: `${problem.oxidationHalf.speciesDisplay} oxast (gefur e⁻), ${problem.reductionHalf.speciesDisplay} afoxast (tekur e⁻).`
       });
+      onIncorrectAnswer?.();
     }
   };
 
@@ -278,12 +286,14 @@ export function Level3({ onComplete, onBack }: Level3Props) {
     if (oxM === problem.multiplierOx && redM === problem.multiplierRed) {
       setScore(prev => prev + 20);
       setFeedback({ show: true, correct: true, message: 'Frábært! Þú jafnaðir rafeindirnar rétt.' });
+      onCorrectAnswer?.();
     } else {
       setFeedback({
         show: true,
         correct: false,
         message: `Til að jafna ${problem.oxidationHalf.electrons}e⁻ og ${problem.reductionHalf.electrons}e⁻, þarftu margfaldara ${problem.multiplierOx} og ${problem.multiplierRed}.`
       });
+      onIncorrectAnswer?.();
     }
   };
 
@@ -312,7 +322,7 @@ export function Level3({ onComplete, onBack }: Level3Props) {
           redMultiplier: ''
         });
       } else {
-        onComplete(score);
+        onComplete(score, maxScore, totalHintsUsed);
       }
     }
   };
@@ -396,12 +406,14 @@ export function Level3({ onComplete, onBack }: Level3Props) {
                   if (correct) {
                     setScore(prev => prev + 10);
                     setFeedback({ show: true, correct: true, message: 'Rétt!' });
+                    onCorrectAnswer?.();
                   } else {
                     setFeedback({
                       show: true,
                       correct: false,
                       message: `${problem.oxidationHalf.speciesDisplay} → ${problem.oxidationHalf.productDisplay} + ${problem.oxidationHalf.electrons}e⁻`
                     });
+                    onIncorrectAnswer?.();
                   }
                 }}
                 disabled={!answers.oxElectrons}
@@ -447,12 +459,14 @@ export function Level3({ onComplete, onBack }: Level3Props) {
                   if (correct) {
                     setScore(prev => prev + 10);
                     setFeedback({ show: true, correct: true, message: 'Rétt!' });
+                    onCorrectAnswer?.();
                   } else {
                     setFeedback({
                       show: true,
                       correct: false,
                       message: `${problem.reductionHalf.speciesDisplay} + ${problem.reductionHalf.electrons}e⁻ → ${problem.reductionHalf.productDisplay}`
                     });
+                    onIncorrectAnswer?.();
                   }
                 }}
                 disabled={!answers.redElectrons}
@@ -634,7 +648,10 @@ export function Level3({ onComplete, onBack }: Level3Props) {
 
         {!showHint && !feedback.show && step !== 'complete' && (
           <button
-            onClick={() => setShowHint(true)}
+            onClick={() => {
+              setShowHint(true);
+              setTotalHintsUsed(prev => prev + 1);
+            }}
             className="w-full mt-4 bg-yellow-100 hover:bg-yellow-200 text-yellow-800 font-bold py-2 px-4 rounded-xl text-sm"
           >
             💡 Sýna vísbendingu

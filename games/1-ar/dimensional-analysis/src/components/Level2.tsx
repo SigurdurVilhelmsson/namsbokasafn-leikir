@@ -12,12 +12,14 @@ interface Level2Progress {
 }
 
 interface Level2Props {
-  onComplete: (progress: Level2Progress) => void;
+  onComplete: (progress: Level2Progress, maxScore?: number, hintsUsed?: number) => void;
   onBack: () => void;
   initialProgress?: Level2Progress;
+  onCorrectAnswer?: () => void;
+  onIncorrectAnswer?: () => void;
 }
 
-export function Level2({ onComplete, onBack, initialProgress }: Level2Props) {
+export function Level2({ onComplete, onBack, initialProgress, onCorrectAnswer, onIncorrectAnswer }: Level2Props) {
   const [currentProblemIndex, setCurrentProblemIndex] = useState(
     initialProgress?.problemsCompleted || 0
   );
@@ -38,6 +40,7 @@ export function Level2({ onComplete, onBack, initialProgress }: Level2Props) {
   const [pendingFactor, setPendingFactor] = useState('');
   const [showFeedback, setShowFeedback] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
+  const [totalHintsUsed] = useState(0); // Level 2 doesn't have hints, but we track for consistency
 
   const problem = level2Problems[currentProblemIndex];
 
@@ -108,6 +111,13 @@ export function Level2({ onComplete, onBack, initialProgress }: Level2Props) {
     setIsCorrect(finalCorrect);
     setShowFeedback(true);
 
+    // Track achievements
+    if (finalCorrect) {
+      onCorrectAnswer?.();
+    } else {
+      onIncorrectAnswer?.();
+    }
+
     const newProgress = {
       ...progress,
       finalAnswersCorrect: progress.finalAnswersCorrect + (finalCorrect ? 1 : 0)
@@ -133,7 +143,8 @@ export function Level2({ onComplete, onBack, initialProgress }: Level2Props) {
     if (currentProblemIndex < level2Problems.length - 1) {
       setCurrentProblemIndex(currentProblemIndex + 1);
     } else {
-      onComplete(newProgress);
+      // Max score is 100 per problem x 15 problems = 1500
+      onComplete(newProgress, 1500, totalHintsUsed);
     }
   };
 

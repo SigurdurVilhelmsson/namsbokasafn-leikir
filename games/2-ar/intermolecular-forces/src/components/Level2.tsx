@@ -1,8 +1,10 @@
 import { useState } from 'react';
 
 interface Level2Props {
-  onComplete: (score: number) => void;
+  onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
   onBack: () => void;
+  onCorrectAnswer?: () => void;
+  onIncorrectAnswer?: () => void;
 }
 
 interface Compound {
@@ -149,12 +151,16 @@ const problems: RankingProblem[] = [
   }
 ];
 
-export function Level2({ onComplete, onBack }: Level2Props) {
+// Max possible score: 8 problems * 15 points = 120 points
+const MAX_SCORE = 120;
+
+export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer }: Level2Props) {
   const [currentProblem, setCurrentProblem] = useState(0);
   const [userOrder, setUserOrder] = useState<string[]>([]);
   const [showResult, setShowResult] = useState(false);
   const [showHint, setShowHint] = useState(false);
   const [score, setScore] = useState(0);
+  const [totalHintsUsed, setTotalHintsUsed] = useState(0);
 
   const problem = problems[currentProblem];
   const unplacedCompounds = problem.compounds.filter(c => !userOrder.includes(c.id));
@@ -171,10 +177,15 @@ export function Level2({ onComplete, onBack }: Level2Props) {
 
   const checkAnswer = () => {
     const isCorrect = JSON.stringify(userOrder) === JSON.stringify(problem.correctOrder);
-    if (isCorrect && !showHint) {
-      setScore(prev => prev + 15);
-    } else if (isCorrect && showHint) {
-      setScore(prev => prev + 8);
+    if (isCorrect) {
+      if (!showHint) {
+        setScore(prev => prev + 15);
+      } else {
+        setScore(prev => prev + 8);
+      }
+      onCorrectAnswer?.();
+    } else {
+      onIncorrectAnswer?.();
     }
     setShowResult(true);
   };
@@ -186,8 +197,13 @@ export function Level2({ onComplete, onBack }: Level2Props) {
       setShowResult(false);
       setShowHint(false);
     } else {
-      onComplete(score);
+      onComplete(score, MAX_SCORE, totalHintsUsed);
     }
+  };
+
+  const handleShowHint = () => {
+    setShowHint(true);
+    setTotalHintsUsed(prev => prev + 1);
   };
 
   const isCorrect = showResult && JSON.stringify(userOrder) === JSON.stringify(problem.correctOrder);
@@ -326,7 +342,7 @@ export function Level2({ onComplete, onBack }: Level2Props) {
           {/* Hint */}
           {!showResult && !showHint && (
             <button
-              onClick={() => setShowHint(true)}
+              onClick={handleShowHint}
               className="text-indigo-600 hover:text-indigo-800 text-sm underline mb-4"
             >
               Sýna vísbendingu (-7 stig)

@@ -189,11 +189,13 @@ function MoleculeWithBreakdown({ elements }: { elements: { symbol: string; count
 
 interface Level2Props {
   onBack: () => void;
-  onComplete: () => void;
+  onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
+  onCorrectAnswer?: () => void;
+  onIncorrectAnswer?: () => void;
 }
 
 // Main Level 2 Component
-export function Level2({ onBack, onComplete }: Level2Props) {
+export function Level2({ onBack, onComplete, onCorrectAnswer, onIncorrectAnswer }: Level2Props) {
   const [challengeNumber, setChallengeNumber] = useState(0);
   const [challenge, setChallenge] = useState<Challenge>(() => generateChallenge(0));
   const [score, setScore] = useState(0);
@@ -202,6 +204,7 @@ export function Level2({ onBack, onComplete }: Level2Props) {
   const [selectedAnswer, setSelectedAnswer] = useState<number | string | null>(null);
   const [showHint, setShowHint] = useState(false);
   const [userInput, setUserInput] = useState('');
+  const [totalHintsUsed, setTotalHintsUsed] = useState(0);
 
   // For order_molecules
   const [orderedCompounds, setOrderedCompounds] = useState<Compound[]>([]);
@@ -272,6 +275,9 @@ export function Level2({ onBack, onComplete }: Level2Props) {
 
     if (correct) {
       setScore(prev => prev + 15);
+      onCorrectAnswer?.();
+    } else {
+      onIncorrectAnswer?.();
     }
   };
 
@@ -347,7 +353,7 @@ export function Level2({ onBack, onComplete }: Level2Props) {
 
           <div className="space-y-3">
             <button
-              onClick={onComplete}
+              onClick={() => onComplete(score, totalChallenges * 15, totalHintsUsed)}
               className="w-full bg-primary hover:bg-primary-dark text-white font-bold py-3 px-6 rounded-xl transition-colors btn-press"
             >
               Halda áfram í Stig 3 →
@@ -691,7 +697,10 @@ export function Level2({ onBack, onComplete }: Level2Props) {
         {/* Hint button */}
         {!showFeedback && !showHint && challenge.type === 'calculate_simple' && (
           <button
-            onClick={() => setShowHint(true)}
+            onClick={() => {
+              setShowHint(true);
+              setTotalHintsUsed(prev => prev + 1);
+            }}
             className="w-full bg-yellow-100 hover:bg-yellow-200 text-yellow-800 font-semibold py-3 px-4 rounded-xl transition-colors"
           >
             💡 Sýna útreikning

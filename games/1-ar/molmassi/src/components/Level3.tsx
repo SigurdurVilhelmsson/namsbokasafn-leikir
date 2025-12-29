@@ -9,9 +9,12 @@ type PlayMode = 'practice' | 'competition';
 
 interface Level3Props {
   onBack: () => void;
+  onComplete?: (score: number, maxScore: number, hintsUsed: number) => void;
+  onCorrectAnswer?: () => void;
+  onIncorrectAnswer?: () => void;
 }
 
-export function Level3({ onBack }: Level3Props) {
+export function Level3({ onBack, onComplete, onCorrectAnswer, onIncorrectAnswer }: Level3Props) {
   const [mode, setMode] = useState<'modeSelection' | 'difficultySelection' | 'playing' | 'gameOver'>('modeSelection');
   const [playMode, setPlayMode] = useState<PlayMode>('practice');
   const [difficulty, setDifficulty] = useState<Difficulty | 'mixed'>('mixed');
@@ -24,6 +27,7 @@ export function Level3({ onBack }: Level3Props) {
   const [streak, setStreak] = useState(0);
   const [bestStreak, setBestStreak] = useState(0);
   const [hintsUsed, setHintsUsed] = useState(0);
+  const [totalHintsUsed, setTotalHintsUsed] = useState(0);
   const [showFeedback, setShowFeedback] = useState(false);
   const [lastAnswerCorrect, setLastAnswerCorrect] = useState<boolean | null>(null);
   const [showSolution, setShowSolution] = useState(false);
@@ -33,13 +37,16 @@ export function Level3({ onBack }: Level3Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Track if game should end due to timer
+  const [shouldEndGame, setShouldEndGame] = useState(false);
+
   // Timer effect for competition mode
   useEffect(() => {
     if (mode === 'playing' && playMode === 'competition') {
       timerRef.current = setInterval(() => {
         setTimeRemaining(prev => {
           if (prev <= 1) {
-            setMode('gameOver');
+            setShouldEndGame(true);
             return 0;
           }
           return prev - 1;
@@ -51,6 +58,17 @@ export function Level3({ onBack }: Level3Props) {
       if (timerRef.current) clearInterval(timerRef.current);
     };
   }, [mode, playMode]);
+
+  // Handle timer-triggered game end
+  useEffect(() => {
+    if (shouldEndGame && mode === 'playing') {
+      // Calculate max score based on questions answered
+      const maxScore = questionsAnswered * 30;
+      onComplete?.(score, maxScore, totalHintsUsed);
+      setMode('gameOver');
+      setShouldEndGame(false);
+    }
+  }, [shouldEndGame, mode, questionsAnswered, score, totalHintsUsed, onComplete]);
 
   const startGame = (selectedPlayMode: PlayMode, selectedDifficulty: Difficulty | 'mixed') => {
     const newCompound = getRandomCompound(selectedDifficulty);
@@ -97,12 +115,14 @@ export function Level3({ onBack }: Level3Props) {
       setLastAnswerCorrect(true);
       setInputError('');
       setHintsUsed(0);
+      onCorrectAnswer?.();
     } else {
       setQuestionsAnswered(prev => prev + 1);
       setStreak(0);
       setShowFeedback(true);
       setLastAnswerCorrect(false);
       setInputError(generateContextualFeedback(userValue, currentCompound.molarMass));
+      onIncorrectAnswer?.();
     }
   };
 
@@ -121,6 +141,14 @@ export function Level3({ onBack }: Level3Props) {
   const showHint = () => {
     setShowSolution(true);
     setHintsUsed(prev => prev + 1);
+    setTotalHintsUsed(prev => prev + 1);
+  };
+
+  const endGame = () => {
+    // Calculate max score based on questions answered (each question worth ~20-50 points depending on difficulty and hints)
+    const maxScore = questionsAnswered * 30; // Average expected score per question
+    onComplete?.(score, maxScore, totalHintsUsed);
+    setMode('gameOver');
   };
 
   // Mode Selection
@@ -297,7 +325,7 @@ export function Level3({ onBack }: Level3Props) {
               )}
 
               <button
-                onClick={() => setMode('gameOver')}
+                onClick={endGame}
                 className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg transition-colors"
               >
                 Enda leik

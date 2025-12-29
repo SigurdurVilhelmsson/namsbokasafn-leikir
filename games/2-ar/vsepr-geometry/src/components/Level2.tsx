@@ -1,8 +1,10 @@
 import { useState } from 'react';
 
 interface Level2Props {
-  onComplete: (score: number) => void;
+  onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
   onBack: () => void;
+  onCorrectAnswer?: () => void;
+  onIncorrectAnswer?: () => void;
 }
 
 interface GeometryOption {
@@ -216,11 +218,12 @@ const STEPS: Step[] = [
   { id: 'explanation', label: 'Útskýra' }
 ];
 
-export function Level2({ onComplete, onBack }: Level2Props) {
+export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer }: Level2Props) {
   const [currentMolecule, setCurrentMolecule] = useState(0);
   const [currentStep, setCurrentStep] = useState(0);
   const [score, setScore] = useState(0);
   const [showHint, setShowHint] = useState(false);
+  const [totalHintsUsed, setTotalHintsUsed] = useState(0);
 
   // Step answers
   const [bondingPairsAnswer, setBondingPairsAnswer] = useState('');
@@ -234,6 +237,7 @@ export function Level2({ onComplete, onBack }: Level2Props) {
 
   const molecule = molecules[currentMolecule];
   const step = STEPS[currentStep];
+  const maxScore = molecules.length * STEPS.length * 10; // 10 points per step without hints
 
   const checkStep = () => {
     let correct = false;
@@ -257,10 +261,15 @@ export function Level2({ onComplete, onBack }: Level2Props) {
 
     setStepResult(correct ? 'correct' : 'incorrect');
 
-    if (correct && !showHint) {
-      setScore(prev => prev + 10);
-    } else if (correct && showHint) {
-      setScore(prev => prev + 5);
+    if (correct) {
+      onCorrectAnswer?.();
+      if (!showHint) {
+        setScore(prev => prev + 10);
+      } else {
+        setScore(prev => prev + 5);
+      }
+    } else {
+      onIncorrectAnswer?.();
     }
   };
 
@@ -275,7 +284,7 @@ export function Level2({ onComplete, onBack }: Level2Props) {
         setCurrentMolecule(prev => prev + 1);
         resetStepAnswers();
       } else {
-        onComplete(score);
+        onComplete(score, maxScore, totalHintsUsed);
       }
     }
   };
@@ -489,10 +498,13 @@ export function Level2({ onComplete, onBack }: Level2Props) {
           {/* Hint and buttons */}
           {!stepResult && !showHint && (
             <button
-              onClick={() => setShowHint(true)}
+              onClick={() => {
+                setShowHint(true);
+                setTotalHintsUsed(prev => prev + 1);
+              }}
               className="text-teal-600 hover:text-teal-800 text-sm underline mb-4"
             >
-              Sýna vísbendingu (-5 stig)
+              Syna visbendingu (-5 stig)
             </button>
           )}
 

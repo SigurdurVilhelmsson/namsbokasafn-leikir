@@ -2,8 +2,10 @@ import { useState, useEffect, useCallback } from 'react';
 import { getCompoundsByDifficulty, type Compound } from '../data/compounds';
 
 interface Level3Props {
-  onComplete: (moves: number, difficulty: string, pairs: number) => void;
+  onComplete: (moves: number, difficulty: string, pairs: number, maxScore: number, hintsUsed: number) => void;
   onBack: () => void;
+  onCorrectAnswer?: () => void;
+  onIncorrectAnswer?: () => void;
 }
 
 type Difficulty = 'easy' | 'medium' | 'hard';
@@ -45,7 +47,7 @@ const typeColors: Record<string, { bg: string; text: string; label: string }> = 
   'málmar-breytilega-hleðsla': { bg: 'bg-purple-100', text: 'text-purple-700', label: 'Breytileg hleðsla' }
 };
 
-export function Level3({ onComplete, onBack }: Level3Props) {
+export function Level3({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer }: Level3Props) {
   const [gameState, setGameState] = useState<'setup' | 'playing' | 'complete'>('setup');
   const [difficulty, setDifficulty] = useState<Difficulty>('easy');
   const [cards, setCards] = useState<GameCard[]>([]);
@@ -55,6 +57,7 @@ export function Level3({ onComplete, onBack }: Level3Props) {
   const [score, setScore] = useState(0);
   const [showMatchInfo, setShowMatchInfo] = useState<Compound | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [totalHintsUsed] = useState(0); // Level3 has no hints
 
   const initializeGame = useCallback((diff: Difficulty) => {
     const config = difficultyConfig[diff];
@@ -116,6 +119,7 @@ export function Level3({ onComplete, onBack }: Level3Props) {
       if (firstCard.compound.formula === secondCard.compound.formula &&
           firstCard.type !== secondCard.type) {
         // Match found!
+        onCorrectAnswer?.();
         setTimeout(() => {
           setCards(prev => prev.map(c =>
             c.id === firstId || c.id === secondId
@@ -133,6 +137,7 @@ export function Level3({ onComplete, onBack }: Level3Props) {
         }, 500);
       } else {
         // No match - flip back
+        onIncorrectAnswer?.();
         setTimeout(() => {
           setCards(prev => prev.map(c =>
             c.id === firstId || c.id === secondId
@@ -298,7 +303,7 @@ export function Level3({ onComplete, onBack }: Level3Props) {
               Spila aftur
             </button>
             <button
-              onClick={() => onComplete(moves, difficulty, difficultyConfig[difficulty].pairs)}
+              onClick={() => onComplete(moves, difficulty, difficultyConfig[difficulty].pairs, difficultyConfig[difficulty].pairs, totalHintsUsed)}
               className="flex-1 bg-purple-500 hover:bg-purple-600 text-white font-bold py-3 px-6 rounded-xl"
             >
               Ljúka stigi →

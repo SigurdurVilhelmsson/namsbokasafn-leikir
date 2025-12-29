@@ -1,8 +1,10 @@
 import { useState } from 'react';
 
 interface Level2Props {
-  onComplete: (score: number) => void;
+  onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
   onBack: () => void;
+  onCorrectAnswer?: () => void;
+  onIncorrectAnswer?: () => void;
 }
 
 interface LewisStructure {
@@ -312,7 +314,10 @@ const challenges: Challenge[] = [
   },
 ];
 
-export function Level2({ onComplete, onBack }: Level2Props) {
+// Calculate max score: 6 challenges * 3 steps each * 5 points = 90
+const MAX_SCORE = 90;
+
+export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer }: Level2Props) {
   const [currentChallenge, setCurrentChallenge] = useState(0);
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
@@ -320,6 +325,7 @@ export function Level2({ onComplete, onBack }: Level2Props) {
   const [showHint, setShowHint] = useState(false);
   const [stepCorrect, setStepCorrect] = useState<boolean[]>([]);
   const [score, setScore] = useState(0);
+  const [totalHintsUsed, setTotalHintsUsed] = useState(0);
 
   const challenge = challenges[currentChallenge];
   const step = challenge.steps[currentStep];
@@ -330,10 +336,15 @@ export function Level2({ onComplete, onBack }: Level2Props) {
     const correct = step.options.find(opt => opt.id === selectedAnswer)?.correct ?? false;
     setStepCorrect(prev => [...prev, correct]);
 
-    if (correct && !showHint) {
-      setScore(prev => prev + 5);
-    } else if (correct && showHint) {
-      setScore(prev => prev + 2);
+    if (correct) {
+      onCorrectAnswer?.();
+      if (!showHint) {
+        setScore(prev => prev + 5);
+      } else {
+        setScore(prev => prev + 2);
+      }
+    } else {
+      onIncorrectAnswer?.();
     }
 
     setShowStepResult(true);
@@ -357,7 +368,7 @@ export function Level2({ onComplete, onBack }: Level2Props) {
       setShowHint(false);
       setStepCorrect([]);
     } else {
-      onComplete(score);
+      onComplete(score, MAX_SCORE, totalHintsUsed);
     }
   };
 
@@ -522,7 +533,10 @@ export function Level2({ onComplete, onBack }: Level2Props) {
           {/* Hint button */}
           {!showStepResult && !showHint && (
             <button
-              onClick={() => setShowHint(true)}
+              onClick={() => {
+                setShowHint(true);
+                setTotalHintsUsed(prev => prev + 1);
+              }}
               className="text-green-600 hover:text-green-800 text-sm underline mb-4"
             >
               Sýna vísbendingu (-3 stig)

@@ -1,5 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { LEVEL1_CHALLENGES, type Level1Challenge } from '../data';
+
+interface Level1Props {
+  onCorrectAnswer?: () => void;
+  onIncorrectAnswer?: () => void;
+  onLevelComplete?: (score: number, maxScore: number, hintsUsed: number) => void;
+}
 
 /**
  * Level 1: Buffer Builder - Conceptual Foundation
@@ -11,7 +17,11 @@ import { LEVEL1_CHALLENGES, type Level1Challenge } from '../data';
  * - NO calculations - pure conceptual understanding
  */
 
-export default function Level1() {
+export default function Level1({
+  onCorrectAnswer,
+  onIncorrectAnswer,
+  onLevelComplete,
+}: Level1Props) {
   const [currentChallenge, setCurrentChallenge] = useState<Level1Challenge>(LEVEL1_CHALLENGES[0]);
   const [acidCount, setAcidCount] = useState(5);
   const [baseCount, setBaseCount] = useState(5);
@@ -20,6 +30,9 @@ export default function Level1() {
   const [showExplanation, setShowExplanation] = useState(false);
   const [score, setScore] = useState(0);
   const [challengesCompleted, setChallengesCompleted] = useState(0);
+  const [hintsUsedTotal, setHintsUsedTotal] = useState(0);
+  const [hintUsedForCurrentChallenge, setHintUsedForCurrentChallenge] = useState(false);
+  const levelCompleteReported = useRef(false);
 
   // Calculate current ratio [Base]/[Acid]
   const currentRatio = acidCount > 0 ? baseCount / acidCount : 0;
@@ -77,6 +90,7 @@ export default function Level1() {
   const checkBuffer = () => {
     if (acidCount === 0 || baseCount === 0) {
       setFeedback('Stuðpúði þarf BÆÐI sýru og basa!');
+      onIncorrectAnswer?.();
       return;
     }
 
@@ -86,6 +100,7 @@ export default function Level1() {
       setFeedback(`Frábært! Stuðpúðinn er tilbúinn! +${points} stig`);
       setChallengesCompleted(challengesCompleted + 1);
       setShowExplanation(true);
+      onCorrectAnswer?.();
     } else {
       const phDiff = Math.abs(estimatedPH - currentChallenge.targetPH);
       if (phDiff < 0.5) {
@@ -95,6 +110,7 @@ export default function Level1() {
       } else {
         setFeedback('pH er of lágt. Bættu við BASA eða fjarlægðu SÝRU.');
       }
+      onIncorrectAnswer?.();
     }
   };
 
@@ -108,7 +124,26 @@ export default function Level1() {
     setFeedback(null);
     setShowHint(false);
     setShowExplanation(false);
+    setHintUsedForCurrentChallenge(false);
   };
+
+  // Handle hint toggle and track usage
+  const toggleHint = () => {
+    if (!showHint && !hintUsedForCurrentChallenge) {
+      setHintsUsedTotal(prev => prev + 1);
+      setHintUsedForCurrentChallenge(true);
+    }
+    setShowHint(!showHint);
+  };
+
+  // Track level completion when all challenges are done
+  const maxScore = LEVEL1_CHALLENGES.length * 100;
+  useEffect(() => {
+    if (challengesCompleted >= LEVEL1_CHALLENGES.length && !levelCompleteReported.current) {
+      levelCompleteReported.current = true;
+      onLevelComplete?.(score, maxScore, hintsUsedTotal);
+    }
+  }, [challengesCompleted, score, maxScore, hintsUsedTotal, onLevelComplete]);
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
@@ -173,7 +208,7 @@ export default function Level1() {
 
             {/* Hint Button */}
             <button
-              onClick={() => setShowHint(!showHint)}
+              onClick={toggleHint}
               className="w-full py-2 px-4 bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition-colors mb-3"
             >
               {showHint ? 'Fela vísbendingu' : 'Sýna vísbendingu'}

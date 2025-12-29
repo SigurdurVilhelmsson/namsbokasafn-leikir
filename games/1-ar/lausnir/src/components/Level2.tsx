@@ -224,11 +224,13 @@ function BeforeAfterVisual({
 }
 
 interface Level2Props {
-  onComplete: (score: number) => void;
+  onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
   onBack: () => void;
+  onCorrectAnswer?: () => void;
+  onIncorrectAnswer?: () => void;
 }
 
-export function Level2({ onComplete, onBack }: Level2Props) {
+export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer }: Level2Props) {
   const [currentScenario, setCurrentScenario] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [showResult, setShowResult] = useState(false);
@@ -246,8 +248,11 @@ export function Level2({ onComplete, onBack }: Level2Props) {
     if (isCorrect) {
       setScore(prev => prev + 100);
       setCompleted(prev => [...prev, scenario.id]);
+      onCorrectAnswer?.();
+    } else {
+      onIncorrectAnswer?.();
     }
-  }, [selectedAnswer, isCorrect, scenario.id]);
+  }, [selectedAnswer, isCorrect, scenario.id, onCorrectAnswer, onIncorrectAnswer]);
 
   const handleNext = useCallback(() => {
     if (currentScenario < SCENARIOS.length - 1) {
@@ -255,7 +260,9 @@ export function Level2({ onComplete, onBack }: Level2Props) {
       setSelectedAnswer(null);
       setShowResult(false);
     } else {
-      onComplete(score + (isCorrect ? 100 : 0));
+      const finalScore = score + (isCorrect ? 100 : 0);
+      const maxScore = SCENARIOS.length * 100;
+      onComplete(finalScore, maxScore, 0); // Level 2 has no hints
     }
   }, [currentScenario, score, isCorrect, onComplete]);
 

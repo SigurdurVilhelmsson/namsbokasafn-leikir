@@ -10,9 +10,11 @@ interface Level1Progress {
 }
 
 interface Level1Props {
-  onComplete: (progress: Level1Progress) => void;
+  onComplete: (progress: Level1Progress, maxScore?: number, hintsUsed?: number) => void;
   onBack: () => void;
   initialProgress?: Level1Progress;
+  onCorrectAnswer?: () => void;
+  onIncorrectAnswer?: () => void;
 }
 
 // Challenge definitions - visual, conceptual challenges
@@ -120,7 +122,7 @@ function ConfettiParticles() {
  * Level 1 Conceptual - Visual learning with NO calculations
  * Students manipulate visual elements to understand dimensional analysis concepts
  */
-export function Level1Conceptual({ onComplete, onBack, initialProgress }: Level1Props) {
+export function Level1Conceptual({ onComplete, onBack, initialProgress, onCorrectAnswer, onIncorrectAnswer }: Level1Props) {
   const [currentChallengeIndex, setCurrentChallengeIndex] = useState(
     initialProgress?.questionsAnswered || 0
   );
@@ -140,6 +142,7 @@ export function Level1Conceptual({ onComplete, onBack, initialProgress }: Level1
   const [showIntro, setShowIntro] = useState(!initialProgress?.questionsAnswered);
   const [showSummary, setShowSummary] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
+  const [totalHintsUsed, setTotalHintsUsed] = useState(0);
 
   const challenge = challenges[currentChallengeIndex];
 
@@ -156,6 +159,9 @@ export function Level1Conceptual({ onComplete, onBack, initialProgress }: Level1
       setShowCelebration(false);
       setShowSuccess(true);
     }, 1200);
+
+    // Track correct answer for achievements
+    onCorrectAnswer?.();
 
     const newProgress = {
       ...progress,
@@ -184,13 +190,19 @@ export function Level1Conceptual({ onComplete, onBack, initialProgress }: Level1
   };
 
   const handleCompleteSummary = () => {
-    onComplete(progress);
+    // Max score is 100 per challenge x 6 challenges = 600
+    onComplete(progress, 600, totalHintsUsed);
   };
 
-  const handleAttempt = () => {
+  const handleAttempt = (isIncorrect: boolean = false) => {
     setAttempts(attempts + 1);
     if (attempts >= 2 && !showHint) {
       setShowHint(true);
+      setTotalHintsUsed(prev => prev + 1);
+    }
+    // Track incorrect attempt for achievements
+    if (isIncorrect) {
+      onIncorrectAnswer?.();
     }
   };
 
@@ -441,7 +453,7 @@ export function Level1Conceptual({ onComplete, onBack, initialProgress }: Level1
 
 interface ChallengeComponentProps {
   onSuccess: () => void;
-  onAttempt: () => void;
+  onAttempt: (isIncorrect?: boolean) => void;
 }
 
 /**

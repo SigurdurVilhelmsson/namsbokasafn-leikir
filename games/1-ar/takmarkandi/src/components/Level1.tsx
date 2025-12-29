@@ -4,8 +4,10 @@ import { REACTIONS } from '../data/reactions';
 import { Molecule } from './Molecule';
 
 interface Level1Props {
-  onComplete: (score: number) => void;
+  onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
   onBack: () => void;
+  onCorrectAnswer?: () => void;
+  onIncorrectAnswer?: () => void;
 }
 
 type ChallengeType =
@@ -55,7 +57,7 @@ function generateChallenge(challengeIndex: number): Challenge {
   return { type, reaction, r1Count, r2Count };
 }
 
-export function Level1({ onComplete, onBack }: Level1Props) {
+export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer }: Level1Props) {
   const [challengeIndex, setChallengeIndex] = useState(0);
   const [challenge, setChallenge] = useState<Challenge>(() => generateChallenge(0));
   const [score, setScore] = useState(0);
@@ -64,6 +66,7 @@ export function Level1({ onComplete, onBack }: Level1Props) {
   const [showFeedback, setShowFeedback] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
   const [showHint, setShowHint] = useState(false);
+  const [totalHintsUsed, setTotalHintsUsed] = useState(0);
 
   const totalChallenges = 8;
   const masteryThreshold = 6;
@@ -111,6 +114,9 @@ export function Level1({ onComplete, onBack }: Level1Props) {
     if (correct) {
       setScore(prev => prev + 10);
       setCorrectCount(prev => prev + 1);
+      onCorrectAnswer?.();
+    } else {
+      onIncorrectAnswer?.();
     }
   };
 
@@ -200,7 +206,7 @@ export function Level1({ onComplete, onBack }: Level1Props) {
             <div className="space-y-3">
               {passedLevel ? (
                 <button
-                  onClick={() => onComplete(score)}
+                  onClick={() => onComplete(score, totalChallenges * 10, totalHintsUsed)}
                   className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-xl transition-colors"
                 >
                   Halda áfram í Stig 2 →
@@ -214,6 +220,7 @@ export function Level1({ onComplete, onBack }: Level1Props) {
                     setChallenge(generateChallenge(0));
                     setSelectedAnswer(null);
                     setShowFeedback(false);
+                    setTotalHintsUsed(0);
                   }}
                   className="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-6 rounded-xl transition-colors"
                 >
@@ -471,7 +478,12 @@ export function Level1({ onComplete, onBack }: Level1Props) {
         {/* Hint */}
         {!showFeedback && (
           <button
-            onClick={() => setShowHint(!showHint)}
+            onClick={() => {
+              if (!showHint) {
+                setTotalHintsUsed(prev => prev + 1);
+              }
+              setShowHint(!showHint);
+            }}
             className="w-full bg-yellow-100 hover:bg-yellow-200 text-yellow-800 font-semibold py-3 px-4 rounded-xl transition-colors mb-4"
           >
             {showHint ? 'Fela vísbendingu' : '💡 Sýna vísbendingu'}

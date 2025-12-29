@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import { Level1 } from './components/Level1';
 import { Level2 } from './components/Level2';
 import { Level3 } from './components/Level3';
+import { useAchievements } from '@shared/hooks/useAchievements';
+import { AchievementsButton, AchievementsPanel } from '@shared/components/AchievementsPanel';
+import { AchievementNotificationsContainer } from '@shared/components/AchievementNotificationPopup';
 
 type ActiveLevel = 'menu' | 'level1' | 'level2' | 'level3' | 'complete';
 
@@ -52,12 +55,25 @@ function saveProgress(progress: Progress): void {
 function App() {
   const [activeLevel, setActiveLevel] = useState<ActiveLevel>('menu');
   const [progress, setProgress] = useState<Progress>(loadProgress());
+  const [showAchievements, setShowAchievements] = useState(false);
+
+  const {
+    achievements,
+    allAchievements,
+    notifications,
+    trackCorrectAnswer,
+    trackIncorrectAnswer,
+    trackLevelComplete,
+    trackGameComplete,
+    dismissNotification,
+    resetAll,
+  } = useAchievements({ gameId: 'lausnir' });
 
   useEffect(() => {
     saveProgress(progress);
   }, [progress]);
 
-  const handleLevel1Complete = (score: number) => {
+  const handleLevel1Complete = (score: number, maxScore: number, hintsUsed: number) => {
     const completed = score >= LEVEL1_MASTERY_SCORE;
     setProgress(prev => ({
       ...prev,
@@ -65,6 +81,9 @@ function App() {
       level1Completed: completed || prev.level1Completed,
       totalGamesPlayed: prev.totalGamesPlayed + 1,
     }));
+
+    // Track achievement
+    trackLevelComplete(1, score, maxScore, { hintsUsed });
 
     if (completed) {
       setActiveLevel('menu');
@@ -74,7 +93,7 @@ function App() {
     }
   };
 
-  const handleLevel2Complete = (score: number) => {
+  const handleLevel2Complete = (score: number, maxScore: number, hintsUsed: number) => {
     const completed = score >= LEVEL2_MASTERY_SCORE;
     setProgress(prev => ({
       ...prev,
@@ -83,16 +102,26 @@ function App() {
       totalGamesPlayed: prev.totalGamesPlayed + 1,
     }));
 
+    // Track achievement
+    trackLevelComplete(2, score, maxScore, { hintsUsed });
+
     setActiveLevel('menu');
   };
 
-  const handleLevel3Complete = (score: number) => {
+  const handleLevel3Complete = (score: number, maxScore: number, hintsUsed: number) => {
     setProgress(prev => ({
       ...prev,
       level3Score: Math.max(prev.level3Score || 0, score),
       level3Completed: true,
       totalGamesPlayed: prev.totalGamesPlayed + 1,
     }));
+
+    // Track achievement for level 3 completion
+    trackLevelComplete(3, score, maxScore, { hintsUsed });
+
+    // Track game completion since all 3 levels are now complete
+    trackGameComplete();
+
     setActiveLevel('complete');
   };
 
@@ -108,15 +137,54 @@ function App() {
 
   // Render active level
   if (activeLevel === 'level1') {
-    return <Level1 onComplete={handleLevel1Complete} onBack={() => setActiveLevel('menu')} />;
+    return (
+      <>
+        <Level1
+          onComplete={handleLevel1Complete}
+          onBack={() => setActiveLevel('menu')}
+          onCorrectAnswer={trackCorrectAnswer}
+          onIncorrectAnswer={trackIncorrectAnswer}
+        />
+        <AchievementNotificationsContainer
+          notifications={notifications}
+          onDismiss={dismissNotification}
+        />
+      </>
+    );
   }
 
   if (activeLevel === 'level2') {
-    return <Level2 onComplete={handleLevel2Complete} onBack={() => setActiveLevel('menu')} />;
+    return (
+      <>
+        <Level2
+          onComplete={handleLevel2Complete}
+          onBack={() => setActiveLevel('menu')}
+          onCorrectAnswer={trackCorrectAnswer}
+          onIncorrectAnswer={trackIncorrectAnswer}
+        />
+        <AchievementNotificationsContainer
+          notifications={notifications}
+          onDismiss={dismissNotification}
+        />
+      </>
+    );
   }
 
   if (activeLevel === 'level3') {
-    return <Level3 onComplete={handleLevel3Complete} onBack={() => setActiveLevel('menu')} />;
+    return (
+      <>
+        <Level3
+          onComplete={handleLevel3Complete}
+          onBack={() => setActiveLevel('menu')}
+          onCorrectAnswer={trackCorrectAnswer}
+          onIncorrectAnswer={trackIncorrectAnswer}
+        />
+        <AchievementNotificationsContainer
+          notifications={notifications}
+          onDismiss={dismissNotification}
+        />
+      </>
+    );
   }
 
   // Complete screen
@@ -200,12 +268,21 @@ function App() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-orange-100 p-4 md:p-8">
       <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-2xl p-6 md:p-8">
-        <h1 className="text-3xl md:text-4xl font-bold text-center mb-2 text-orange-600">
-          Lausnir
-        </h1>
-        <p className="text-center text-gray-600 mb-8">
-          Lærðu um mólstyrk, útþynningu og lausnir
-        </p>
+        {/* Header with achievements button */}
+        <div className="flex justify-between items-start mb-4">
+          <div className="flex-1">
+            <h1 className="text-3xl md:text-4xl font-bold text-center text-orange-600">
+              Lausnir
+            </h1>
+            <p className="text-center text-gray-600">
+              Laerdu um molstyrk, utthynningu og lausnir
+            </p>
+          </div>
+          <AchievementsButton
+            achievements={achievements}
+            onClick={() => setShowAchievements(true)}
+          />
+        </div>
 
         {/* Pedagogical explanation */}
         <div className="bg-orange-50 p-6 rounded-xl mb-8">
@@ -398,10 +475,26 @@ function App() {
             href="/games/1-ar/"
             className="text-gray-500 hover:text-gray-700 text-sm transition-colors"
           >
-            ← Til baka í leikjayfirlit
+            ← Til baka i leikjayfirlit
           </a>
         </div>
       </div>
+
+      {/* Achievements Panel Modal */}
+      {showAchievements && (
+        <AchievementsPanel
+          achievements={achievements}
+          allAchievements={allAchievements}
+          onClose={() => setShowAchievements(false)}
+          onReset={resetAll}
+        />
+      )}
+
+      {/* Achievement Notifications */}
+      <AchievementNotificationsContainer
+        notifications={notifications}
+        onDismiss={dismissNotification}
+      />
     </div>
   );
 }

@@ -1,8 +1,10 @@
 import { useState } from 'react';
 
 interface Level1Props {
-  onComplete: (score: number) => void;
+  onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
   onBack: () => void;
+  onCorrectAnswer?: () => void;
+  onIncorrectAnswer?: () => void;
 }
 
 interface OxidationRule {
@@ -73,7 +75,7 @@ const problems: OxidationProblem[] = [
   { id: 10, compound: "Cr2O7_2-", compoundDisplay: "Cr₂O₇²⁻", targetElement: "Cr", correctAnswer: 6, hint: "7O (-14) + heildarhleðsla (-2), 2 Cr þarf að gefa +12" }
 ];
 
-export function Level1({ onComplete, onBack }: Level1Props) {
+export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer }: Level1Props) {
   const [phase, setPhase] = useState<'learn' | 'practice'>('learn');
   const [currentRule, setCurrentRule] = useState(0);
   const [currentProblem, setCurrentProblem] = useState(0);
@@ -83,6 +85,10 @@ export function Level1({ onComplete, onBack }: Level1Props) {
   const [score, setScore] = useState(0);
   const [showHint, setShowHint] = useState(false);
   const [attempts, setAttempts] = useState(0);
+  const [totalHintsUsed, setTotalHintsUsed] = useState(0);
+
+  // Maximum possible score: 10 problems * 10 points each = 100
+  const maxScore = problems.length * 10;
 
   const handleNextRule = () => {
     if (currentRule < oxidationRules.length - 1) {
@@ -107,6 +113,9 @@ export function Level1({ onComplete, onBack }: Level1Props) {
     if (correct) {
       const points = attempts === 0 ? 10 : attempts === 1 ? 5 : 2;
       setScore(prev => prev + points);
+      onCorrectAnswer?.();
+    } else {
+      onIncorrectAnswer?.();
     }
   };
 
@@ -118,7 +127,7 @@ export function Level1({ onComplete, onBack }: Level1Props) {
       setShowHint(false);
       setAttempts(0);
     } else {
-      onComplete(score);
+      onComplete(score, maxScore, totalHintsUsed);
     }
   };
 
@@ -289,7 +298,10 @@ export function Level1({ onComplete, onBack }: Level1Props) {
             <div className="flex gap-4">
               {!showHint && (
                 <button
-                  onClick={() => setShowHint(true)}
+                  onClick={() => {
+                    setShowHint(true);
+                    setTotalHintsUsed(prev => prev + 1);
+                  }}
                   className="flex-1 bg-yellow-100 hover:bg-yellow-200 text-yellow-800 font-bold py-3 px-6 rounded-xl"
                 >
                   💡 Vísbending

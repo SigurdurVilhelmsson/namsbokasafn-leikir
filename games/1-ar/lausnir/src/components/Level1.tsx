@@ -362,12 +362,14 @@ function ConcentrationIndicator({
 }
 
 interface Level1Props {
-  onComplete: (score: number) => void;
+  onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
   onBack: () => void;
+  onCorrectAnswer?: () => void;
+  onIncorrectAnswer?: () => void;
 }
 
 // Main Level1 component
-export function Level1({ onComplete, onBack }: Level1Props) {
+export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer }: Level1Props) {
   const [currentChallenge, setCurrentChallenge] = useState(0);
   const [molecules, setMolecules] = useState(50);
   const [volumeML, setVolumeML] = useState(100);
@@ -376,6 +378,7 @@ export function Level1({ onComplete, onBack }: Level1Props) {
   const [score, setScore] = useState(0);
   const [showConcept, setShowConcept] = useState(false);
   const [gameComplete, setGameComplete] = useState(false);
+  const [totalHintsUsed, setTotalHintsUsed] = useState(0);
 
   const challenge = CHALLENGES[currentChallenge];
 
@@ -422,6 +425,7 @@ export function Level1({ onComplete, onBack }: Level1Props) {
       setScore(prev => prev + pointsEarned);
       setCompleted(prev => [...prev, challenge.id]);
       setShowConcept(true);
+      onCorrectAnswer?.();
 
       // Move to next challenge after delay
       setTimeout(() => {
@@ -431,8 +435,10 @@ export function Level1({ onComplete, onBack }: Level1Props) {
           setGameComplete(true);
         }
       }, 2500);
+    } else {
+      onIncorrectAnswer?.();
     }
-  }, [isCorrect, showHint, challenge.id, currentChallenge]);
+  }, [isCorrect, showHint, challenge.id, currentChallenge, onCorrectAnswer, onIncorrectAnswer]);
 
   // Game complete screen
   if (gameComplete) {
@@ -476,7 +482,7 @@ export function Level1({ onComplete, onBack }: Level1Props) {
               Spila aftur
             </button>
             <button
-              onClick={() => onComplete(score)}
+              onClick={() => onComplete(score, CHALLENGES.length * 100, totalHintsUsed)}
               className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl transition-colors"
             >
               Áfram í Stig 2 →
@@ -665,10 +671,13 @@ export function Level1({ onComplete, onBack }: Level1Props) {
           <div className="flex flex-col md:flex-row gap-4">
             {!showHint && !showConcept && (
               <button
-                onClick={() => setShowHint(true)}
+                onClick={() => {
+                  setShowHint(true);
+                  setTotalHintsUsed(prev => prev + 1);
+                }}
                 className="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-3 px-6 rounded-xl transition-colors"
               >
-                💡 Sýna vísbendingu (-50 stig)
+                Syna visbendingu (-50 stig)
               </button>
             )}
 

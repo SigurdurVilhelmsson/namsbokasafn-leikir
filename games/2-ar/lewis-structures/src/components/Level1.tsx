@@ -1,8 +1,10 @@
 import { useState } from 'react';
 
 interface Level1Props {
-  onComplete: (score: number) => void;
+  onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
   onBack: () => void;
+  onCorrectAnswer?: () => void;
+  onIncorrectAnswer?: () => void;
 }
 
 interface Challenge {
@@ -133,7 +135,10 @@ const challenges: Challenge[] = [
   },
 ];
 
-export function Level1({ onComplete, onBack }: Level1Props) {
+// Calculate max score: 8 challenges * 15 points each = 120
+const MAX_SCORE = 120;
+
+export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer }: Level1Props) {
   const [currentChallenge, setCurrentChallenge] = useState(0);
   const [userAnswer, setUserAnswer] = useState('');
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
@@ -141,6 +146,7 @@ export function Level1({ onComplete, onBack }: Level1Props) {
   const [showHint, setShowHint] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
   const [score, setScore] = useState(0);
+  const [totalHintsUsed, setTotalHintsUsed] = useState(0);
 
   const challenge = challenges[currentChallenge];
 
@@ -156,10 +162,15 @@ export function Level1({ onComplete, onBack }: Level1Props) {
     }
 
     setIsCorrect(correct);
-    if (correct && !showHint) {
-      setScore(prev => prev + 15);
-    } else if (correct && showHint) {
-      setScore(prev => prev + 8);
+    if (correct) {
+      onCorrectAnswer?.();
+      if (!showHint) {
+        setScore(prev => prev + 15);
+      } else {
+        setScore(prev => prev + 8);
+      }
+    } else {
+      onIncorrectAnswer?.();
     }
     setShowResult(true);
   };
@@ -173,7 +184,7 @@ export function Level1({ onComplete, onBack }: Level1Props) {
       setShowHint(false);
       setIsCorrect(false);
     } else {
-      onComplete(score);
+      onComplete(score, MAX_SCORE, totalHintsUsed);
     }
   };
 
@@ -291,7 +302,10 @@ export function Level1({ onComplete, onBack }: Level1Props) {
           {/* Hint button */}
           {!showResult && !showHint && (
             <button
-              onClick={() => setShowHint(true)}
+              onClick={() => {
+                setShowHint(true);
+                setTotalHintsUsed(prev => prev + 1);
+              }}
               className="text-blue-600 hover:text-blue-800 text-sm underline mb-4"
             >
               Sýna vísbendingu (-7 stig)

@@ -1,6 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { PROBLEMS } from './data';
 import { EntropyVisualization } from './components/EntropyVisualization';
+import { useAchievements } from '@shared/hooks/useAchievements';
+import { AchievementsButton, AchievementsPanel } from '@shared/components/AchievementsPanel';
+import { AchievementNotificationsContainer } from '@shared/components/AchievementNotificationPopup';
 import type { Difficulty, GameMode, Spontaneity, Problem } from './types';
 
 interface ThermoProgress {
@@ -49,7 +52,30 @@ function App() {
   const [progress, setProgress] = useState<ThermoProgress>(loadProgress);
   const [streak, setStreak] = useState(0);
   const [timeLeft, setTimeLeft] = useState(90);
+  const [showAchievements, setShowAchievements] = useState(false);
   const graphRef = useRef<HTMLCanvasElement>(null);
+
+  // Achievement system
+  const {
+    achievements,
+    allAchievements,
+    notifications,
+    trackLevelComplete,
+    trackGameComplete,
+    trackCorrectAnswer,
+    trackIncorrectAnswer,
+    dismissNotification,
+    resetAll: resetAchievements,
+  } = useAchievements({ gameId: 'thermodynamics-predictor' });
+
+  // Map difficulty to level number for achievements
+  const difficultyToLevel = (diff: Difficulty): 1 | 2 | 3 => {
+    switch (diff) {
+      case 'beginner': return 1;
+      case 'intermediate': return 2;
+      case 'advanced': return 3;
+    }
+  };
 
   // Save progress whenever it changes
   useEffect(() => {
@@ -124,8 +150,28 @@ function App() {
         bestStreak: Math.max(prev.bestStreak, newStreak)
       }));
       setFeedback(`Rétt! +${points} stig`);
+
+      // Track correct answer for achievements
+      trackCorrectAnswer({ firstAttempt: true });
+
+      // Track level completion every 5 problems completed (milestone-based)
+      const newProblemsCompleted = progress.problemsCompleted + 1;
+      if (newProblemsCompleted % 5 === 0) {
+        const level = difficultyToLevel(difficulty);
+        const maxScore = 100 * 5; // 100 points per problem, 5 problems
+        const scoreForLevel = Math.min(points * 5, maxScore);
+        // This game shows hints automatically (no interactive hint button), so hintsUsed is 0
+        trackLevelComplete(level, scoreForLevel, maxScore, { hintsUsed: 0 });
+
+        // Track game complete when player completes 15 problems on advanced difficulty
+        if (difficulty === 'advanced' && newProblemsCompleted >= 15) {
+          trackGameComplete();
+        }
+      }
     } else {
       setStreak(0);
+      // Track incorrect answer for achievements
+      trackIncorrectAnswer();
       if (!deltaGCorrect && !spontaneityCorrect) {
         setFeedback('Rangt. Bæði ΔG útreikningur og sjálfviljugheit eru röng.');
       } else if (!deltaGCorrect) {
@@ -236,12 +282,21 @@ function App() {
       <div className="min-h-screen bg-gray-50 py-8">
         <div className="max-w-4xl mx-auto px-4">
           <div className="bg-white rounded-lg shadow-lg p-8">
-            <h1 className="text-4xl font-bold text-center mb-4" style={{color: '#f36b22'}}>
-              🌡️ Varmafræði Spámaður
-            </h1>
-            <p className="text-center text-gray-600 mb-8">
-              Lærðu um Gibbs frjálsa orku og sjálfviljugheit efnahvarfa
-            </p>
+            {/* Header with achievements button */}
+            <div className="flex justify-between items-start mb-4">
+              <div className="flex-1">
+                <h1 className="text-4xl font-bold" style={{color: '#f36b22'}}>
+                  🌡️ Varmafræði Spámaður
+                </h1>
+                <p className="text-gray-600 mt-2">
+                  Lærðu um Gibbs frjálsa orku og sjálfviljugheit efnahvarfa
+                </p>
+              </div>
+              <AchievementsButton
+                achievements={achievements}
+                onClick={() => setShowAchievements(true)}
+              />
+            </div>
 
             {/* Progress Stats */}
             {(progress.highScore > 0 || progress.problemsCompleted > 0) && (
@@ -350,6 +405,22 @@ function App() {
             </div>
           </div>
         </div>
+
+        {/* Achievements Panel Modal */}
+        {showAchievements && (
+          <AchievementsPanel
+            achievements={achievements}
+            allAchievements={allAchievements}
+            onClose={() => setShowAchievements(false)}
+            onReset={resetAchievements}
+          />
+        )}
+
+        {/* Achievement Notifications */}
+        <AchievementNotificationsContainer
+          notifications={notifications}
+          onDismiss={dismissNotification}
+        />
       </div>
     );
   }
@@ -398,9 +469,15 @@ function App() {
               )}
             </div>
 
-            <div className="text-center">
-              <div className="text-sm text-gray-600">Spurning</div>
-              <div className="text-xl font-bold">{progress.problemsCompleted + 1}</div>
+            <div className="flex gap-4 items-center">
+              <div className="text-center">
+                <div className="text-sm text-gray-600">Spurning</div>
+                <div className="text-xl font-bold">{progress.problemsCompleted + 1}</div>
+              </div>
+              <AchievementsButton
+                achievements={achievements}
+                onClick={() => setShowAchievements(true)}
+              />
             </div>
           </div>
         </div>
@@ -698,6 +775,22 @@ function App() {
           </div>
         </div>
       </div>
+
+      {/* Achievements Panel Modal */}
+      {showAchievements && (
+        <AchievementsPanel
+          achievements={achievements}
+          allAchievements={allAchievements}
+          onClose={() => setShowAchievements(false)}
+          onReset={resetAchievements}
+        />
+      )}
+
+      {/* Achievement Notifications */}
+      <AchievementNotificationsContainer
+        notifications={notifications}
+        onDismiss={dismissNotification}
+      />
     </div>
   );
 }

@@ -1,8 +1,10 @@
 import { useState } from 'react';
 
 interface Level3Props {
-  onComplete: (score: number) => void;
+  onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
   onBack: () => void;
+  onCorrectAnswer?: () => void;
+  onIncorrectAnswer?: () => void;
 }
 
 interface Challenge {
@@ -178,23 +180,32 @@ const challenges: Challenge[] = [
   }
 ];
 
-export function Level3({ onComplete, onBack }: Level3Props) {
+// Max possible score: 10 challenges * 12 points = 120 points
+const MAX_SCORE = 120;
+
+export function Level3({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer }: Level3Props) {
   const [currentChallenge, setCurrentChallenge] = useState(0);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [showResult, setShowResult] = useState(false);
   const [showHint, setShowHint] = useState(false);
   const [showConcept, setShowConcept] = useState(false);
   const [score, setScore] = useState(0);
+  const [totalHintsUsed, setTotalHintsUsed] = useState(0);
 
   const challenge = challenges[currentChallenge];
 
   const checkAnswer = () => {
     const selected = challenge.options.find(opt => opt.id === selectedOption);
     const correct = selected?.correct ?? false;
-    if (correct && !showHint) {
-      setScore(prev => prev + 12);
-    } else if (correct && showHint) {
-      setScore(prev => prev + 6);
+    if (correct) {
+      if (!showHint) {
+        setScore(prev => prev + 12);
+      } else {
+        setScore(prev => prev + 6);
+      }
+      onCorrectAnswer?.();
+    } else {
+      onIncorrectAnswer?.();
     }
     setShowResult(true);
   };
@@ -207,8 +218,13 @@ export function Level3({ onComplete, onBack }: Level3Props) {
       setShowHint(false);
       setShowConcept(false);
     } else {
-      onComplete(score);
+      onComplete(score, MAX_SCORE, totalHintsUsed);
     }
+  };
+
+  const handleShowHint = () => {
+    setShowHint(true);
+    setTotalHintsUsed(prev => prev + 1);
   };
 
   const isCorrect = showResult && challenge.options.find(o => o.id === selectedOption)?.correct;
@@ -313,7 +329,7 @@ export function Level3({ onComplete, onBack }: Level3Props) {
           {/* Hint */}
           {!showResult && !showHint && (
             <button
-              onClick={() => setShowHint(true)}
+              onClick={handleShowHint}
               className="text-indigo-600 hover:text-indigo-800 text-sm underline mb-4"
             >
               Sýna vísbendingu (-6 stig)

@@ -1,8 +1,10 @@
 import { useState } from 'react';
 
 interface Level2Props {
-  onComplete: (score: number) => void;
+  onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
   onBack: () => void;
+  onCorrectAnswer?: () => void;
+  onIncorrectAnswer?: () => void;
 }
 
 interface Molecule {
@@ -37,7 +39,7 @@ const molecules: Molecule[] = [
   { id: 12, type: 'alkene', carbons: 5, structure: "C=C-C-C-C", formula: "C₅H₁₀", correctName: "1-penten", doublePosition: 1, hint: "5 kolefni, tvítengi á stað 1" }
 ];
 
-export function Level2({ onComplete, onBack }: Level2Props) {
+export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer }: Level2Props) {
   const [currentMolecule, setCurrentMolecule] = useState(0);
   const [userAnswer, setUserAnswer] = useState('');
   const [showFeedback, setShowFeedback] = useState(false);
@@ -45,6 +47,8 @@ export function Level2({ onComplete, onBack }: Level2Props) {
   const [score, setScore] = useState(0);
   const [showHint, setShowHint] = useState(false);
   const [attempts, setAttempts] = useState(0);
+  const [totalHintsUsed, setTotalHintsUsed] = useState(0);
+  const maxScore = molecules.length * 10;
 
   const molecule = molecules[currentMolecule];
 
@@ -69,6 +73,9 @@ export function Level2({ onComplete, onBack }: Level2Props) {
     if (correct) {
       const points = attempts === 0 ? 10 : attempts === 1 ? 5 : 2;
       setScore(prev => prev + points);
+      onCorrectAnswer?.();
+    } else {
+      onIncorrectAnswer?.();
     }
   };
 
@@ -80,7 +87,7 @@ export function Level2({ onComplete, onBack }: Level2Props) {
       setShowHint(false);
       setAttempts(0);
     } else {
-      onComplete(score);
+      onComplete(score, maxScore, totalHintsUsed);
     }
   };
 
@@ -220,7 +227,10 @@ export function Level2({ onComplete, onBack }: Level2Props) {
             <div className="flex gap-4">
               {!showHint && (
                 <button
-                  onClick={() => setShowHint(true)}
+                  onClick={() => {
+                    setShowHint(true);
+                    setTotalHintsUsed(prev => prev + 1);
+                  }}
                   className="flex-1 bg-yellow-100 hover:bg-yellow-200 text-yellow-800 font-bold py-3 px-6 rounded-xl"
                 >
                   💡 Vísbending

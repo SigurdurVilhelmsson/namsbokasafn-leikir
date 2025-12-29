@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import { Level1 } from './components/Level1';
 import { Level2 } from './components/Level2';
 import { Level3 } from './components/Level3';
+import { useAchievements } from '@shared/hooks/useAchievements';
+import { AchievementsButton, AchievementsPanel } from '@shared/components/AchievementsPanel';
+import { AchievementNotificationsContainer } from '@shared/components/AchievementNotificationPopup';
 
 type ActiveLevel = 'menu' | 'level1' | 'level2' | 'level3' | 'complete';
 
@@ -48,38 +51,59 @@ function saveProgress(progress: Progress): void {
 function App() {
   const [activeLevel, setActiveLevel] = useState<ActiveLevel>('menu');
   const [progress, setProgress] = useState<Progress>(loadProgress);
+  const [showAchievements, setShowAchievements] = useState(false);
+
+  // Achievement system
+  const {
+    achievements,
+    allAchievements,
+    notifications,
+    trackLevelComplete,
+    trackGameComplete,
+    trackCorrectAnswer,
+    trackIncorrectAnswer,
+    dismissNotification,
+    resetAll: resetAchievements,
+  } = useAchievements({ gameId: 'hess-law' });
 
   useEffect(() => {
     saveProgress(progress);
   }, [progress]);
 
-  const handleLevel1Complete = (score: number) => {
+  const handleLevel1Complete = (score: number, maxScore: number = 600, hintsUsed: number = 0) => {
     setProgress(prev => ({
       ...prev,
       level1Completed: true,
       level1Score: Math.max(prev.level1Score, score),
       totalGamesPlayed: prev.totalGamesPlayed + 1
     }));
+    // Track achievement
+    trackLevelComplete(1, score, maxScore, { hintsUsed });
     setActiveLevel('menu');
   };
 
-  const handleLevel2Complete = (score: number) => {
+  const handleLevel2Complete = (score: number, maxScore: number = 500, hintsUsed: number = 0) => {
     setProgress(prev => ({
       ...prev,
       level2Completed: true,
       level2Score: Math.max(prev.level2Score, score),
       totalGamesPlayed: prev.totalGamesPlayed + 1
     }));
+    // Track achievement
+    trackLevelComplete(2, score, maxScore, { hintsUsed });
     setActiveLevel('menu');
   };
 
-  const handleLevel3Complete = (score: number) => {
+  const handleLevel3Complete = (score: number, maxScore: number = 500, hintsUsed: number = 0) => {
     setProgress(prev => ({
       ...prev,
       level3Completed: true,
       level3Score: Math.max(prev.level3Score, score),
       totalGamesPlayed: prev.totalGamesPlayed + 1
     }));
+    // Track achievements
+    trackLevelComplete(3, score, maxScore, { hintsUsed });
+    trackGameComplete();
     setActiveLevel('complete');
   };
 
@@ -91,15 +115,54 @@ function App() {
 
   // Render active level
   if (activeLevel === 'level1') {
-    return <Level1 onComplete={handleLevel1Complete} onBack={() => setActiveLevel('menu')} />;
+    return (
+      <>
+        <Level1
+          onComplete={handleLevel1Complete}
+          onBack={() => setActiveLevel('menu')}
+          onCorrectAnswer={() => trackCorrectAnswer()}
+          onIncorrectAnswer={() => trackIncorrectAnswer()}
+        />
+        <AchievementNotificationsContainer
+          notifications={notifications}
+          onDismiss={dismissNotification}
+        />
+      </>
+    );
   }
 
   if (activeLevel === 'level2') {
-    return <Level2 onComplete={handleLevel2Complete} onBack={() => setActiveLevel('menu')} />;
+    return (
+      <>
+        <Level2
+          onComplete={handleLevel2Complete}
+          onBack={() => setActiveLevel('menu')}
+          onCorrectAnswer={() => trackCorrectAnswer()}
+          onIncorrectAnswer={() => trackIncorrectAnswer()}
+        />
+        <AchievementNotificationsContainer
+          notifications={notifications}
+          onDismiss={dismissNotification}
+        />
+      </>
+    );
   }
 
   if (activeLevel === 'level3') {
-    return <Level3 onComplete={handleLevel3Complete} onBack={() => setActiveLevel('menu')} />;
+    return (
+      <>
+        <Level3
+          onComplete={handleLevel3Complete}
+          onBack={() => setActiveLevel('menu')}
+          onCorrectAnswer={() => trackCorrectAnswer()}
+          onIncorrectAnswer={() => trackIncorrectAnswer()}
+        />
+        <AchievementNotificationsContainer
+          notifications={notifications}
+          onDismiss={dismissNotification}
+        />
+      </>
+    );
   }
 
   // Complete screen
@@ -179,12 +242,21 @@ function App() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-orange-100 p-4 md:p-8">
       <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-2xl p-6 md:p-8">
-        <h1 className="text-3xl md:text-4xl font-bold text-center mb-2 text-orange-600">
-          ⚗️ Lögmál Hess
-        </h1>
-        <p className="text-center text-gray-600 mb-8">
-          Lærðu um orkubreytingar í efnahvörfum og hvernig á að reikna ΔH
-        </p>
+        {/* Header with achievements button */}
+        <div className="flex justify-between items-start mb-4">
+          <div className="flex-1">
+            <h1 className="text-3xl md:text-4xl font-bold text-orange-600">
+              ⚗️ Lögmál Hess
+            </h1>
+            <p className="text-gray-600">
+              Lærðu um orkubreytingar í efnahvörfum og hvernig á að reikna ΔH
+            </p>
+          </div>
+          <AchievementsButton
+            achievements={achievements}
+            onClick={() => setShowAchievements(true)}
+          />
+        </div>
 
         {/* Pedagogical explanation */}
         <div className="bg-purple-50 p-6 rounded-xl mb-8">
@@ -347,6 +419,22 @@ function App() {
           Kafli 5 — Chemistry: The Central Science (Brown et al.)
         </div>
       </div>
+
+      {/* Achievements Panel Modal */}
+      {showAchievements && (
+        <AchievementsPanel
+          achievements={achievements}
+          allAchievements={allAchievements}
+          onClose={() => setShowAchievements(false)}
+          onReset={resetAchievements}
+        />
+      )}
+
+      {/* Achievement Notifications */}
+      <AchievementNotificationsContainer
+        notifications={notifications}
+        onDismiss={dismissNotification}
+      />
     </div>
   );
 }

@@ -1,8 +1,10 @@
 import { useState } from 'react';
 
 interface Level3Props {
-  onComplete: (score: number) => void;
+  onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
   onBack: () => void;
+  onCorrectAnswer?: () => void;
+  onIncorrectAnswer?: () => void;
 }
 
 interface Challenge {
@@ -206,7 +208,7 @@ const challenges: Challenge[] = [
   }
 ];
 
-export function Level3({ onComplete, onBack }: Level3Props) {
+export function Level3({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer }: Level3Props) {
   const [currentChallenge, setCurrentChallenge] = useState(0);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [showResult, setShowResult] = useState(false);
@@ -214,17 +216,24 @@ export function Level3({ onComplete, onBack }: Level3Props) {
   const [showConcept, setShowConcept] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
   const [score, setScore] = useState(0);
+  const [totalHintsUsed, setTotalHintsUsed] = useState(0);
 
   const challenge = challenges[currentChallenge];
+  const maxScore = challenges.length * 12; // 12 points per question without hints
 
   const checkAnswer = () => {
     const selected = challenge.options.find(opt => opt.id === selectedOption);
     const correct = selected?.correct ?? false;
     setIsCorrect(correct);
-    if (correct && !showHint) {
-      setScore(prev => prev + 12);
-    } else if (correct && showHint) {
-      setScore(prev => prev + 6);
+    if (correct) {
+      onCorrectAnswer?.();
+      if (!showHint) {
+        setScore(prev => prev + 12);
+      } else {
+        setScore(prev => prev + 6);
+      }
+    } else {
+      onIncorrectAnswer?.();
     }
     setShowResult(true);
   };
@@ -238,7 +247,7 @@ export function Level3({ onComplete, onBack }: Level3Props) {
       setShowConcept(false);
       setIsCorrect(false);
     } else {
-      onComplete(score);
+      onComplete(score, maxScore, totalHintsUsed);
     }
   };
 
@@ -342,10 +351,13 @@ export function Level3({ onComplete, onBack }: Level3Props) {
           {/* Hint */}
           {!showResult && !showHint && (
             <button
-              onClick={() => setShowHint(true)}
+              onClick={() => {
+                setShowHint(true);
+                setTotalHintsUsed(prev => prev + 1);
+              }}
               className="text-teal-600 hover:text-teal-800 text-sm underline mb-4"
             >
-              Sýna vísbendingu (-6 stig)
+              Syna visbendingu (-6 stig)
             </button>
           )}
 

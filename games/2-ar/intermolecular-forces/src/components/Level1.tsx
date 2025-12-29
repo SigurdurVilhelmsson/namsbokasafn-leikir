@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { AnimatedMolecule } from '@shared/components';
+import { imfToMolecule } from '../utils/imfConverter';
 
 interface Level1Props {
   onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
@@ -379,100 +381,6 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
     setTotalHintsUsed(prev => prev + 1);
   };
 
-  // Molecule visualization component
-  const renderMoleculeVisualization = (vis: MoleculeVisualization | undefined) => {
-    if (!vis) return null;
-
-    const getAtomColor = (color: string | undefined): string => {
-      switch (color) {
-        case 'red': return 'bg-red-500';
-        case 'blue': return 'bg-blue-500';
-        case 'green': return 'bg-green-500';
-        case 'yellow': return 'bg-yellow-400';
-        case 'purple': return 'bg-purple-600';
-        case 'gray': return 'bg-gray-600';
-        case 'white': return 'bg-white border-2 border-gray-300';
-        default: return 'bg-gray-400';
-      }
-    };
-
-    const getAtomSize = (size: string | undefined): string => {
-      switch (size) {
-        case 'small': return 'w-8 h-8 text-xs';
-        case 'large': return 'w-14 h-14 text-lg';
-        default: return 'w-11 h-11 text-sm';
-      }
-    };
-
-    const getPosition = (pos: string): string => {
-      switch (pos) {
-        case 'center': return 'left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2';
-        case 'left': return 'left-4 top-1/2 -translate-y-1/2';
-        case 'right': return 'right-4 top-1/2 -translate-y-1/2';
-        case 'top': return 'left-1/2 top-2 -translate-x-1/2';
-        case 'bottom': return 'left-1/2 bottom-2 -translate-x-1/2';
-        case 'top-left': return 'left-8 top-4';
-        case 'top-right': return 'right-8 top-4';
-        case 'bottom-left': return 'left-6 bottom-4';
-        case 'bottom-right': return 'right-6 bottom-4';
-        default: return 'left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2';
-      }
-    };
-
-    const renderPartialCharge = (charge: 'positive' | 'negative' | 'none' | undefined) => {
-      if (!charge || charge === 'none') return null;
-      return (
-        <span className={`absolute -top-1 -right-1 text-xs font-bold ${
-          charge === 'positive' ? 'text-red-600' : 'text-blue-600'
-        }`}>
-          {charge === 'positive' ? 'δ+' : 'δ−'}
-        </span>
-      );
-    };
-
-    const renderDipoleMoment = (direction: string | undefined) => {
-      if (!direction || direction === 'none') return null;
-
-      const arrowClasses = {
-        'up': 'bottom-0 left-1/2 -translate-x-1/2 rotate-0',
-        'down': 'top-0 left-1/2 -translate-x-1/2 rotate-180',
-        'left': 'right-0 top-1/2 -translate-y-1/2 -rotate-90',
-        'right': 'left-0 top-1/2 -translate-y-1/2 rotate-90',
-      };
-
-      return (
-        <div className={`absolute ${arrowClasses[direction as keyof typeof arrowClasses]} text-indigo-600`}>
-          <div className="flex flex-col items-center">
-            <div className="w-0.5 h-6 bg-indigo-600" />
-            <div className="text-lg leading-none">▼</div>
-          </div>
-        </div>
-      );
-    };
-
-    return (
-      <div className="relative h-32 w-full">
-        {/* Render atoms */}
-        {vis.atoms.map((atom, idx) => (
-          <div
-            key={idx}
-            className={`absolute ${getPosition(atom.position)} ${getAtomSize(atom.size)} ${getAtomColor(atom.color)} rounded-full flex items-center justify-center font-bold text-white shadow-md`}
-          >
-            {atom.symbol}
-            {renderPartialCharge(atom.partialCharge)}
-          </div>
-        ))}
-
-        {/* Dipole moment arrow */}
-        {vis.dipoleMoment && vis.dipoleMoment !== 'none' && (
-          <div className="absolute -right-2 top-1/2 -translate-y-1/2">
-            {renderDipoleMoment(vis.dipoleMoment)}
-          </div>
-        )}
-      </div>
-    );
-  };
-
   // IMF strength scale visualization
   const renderIMFStrengthScale = () => {
     return (
@@ -611,7 +519,23 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
             {/* Molecular structure visualization */}
             {molecule.visualization && (
               <div className="bg-gray-800 rounded-lg p-4 mb-4">
-                {renderMoleculeVisualization(molecule.visualization)}
+                <div className="flex justify-center py-2">
+                  <AnimatedMolecule
+                    molecule={imfToMolecule({
+                      formula: molecule.formula,
+                      name: molecule.name,
+                      isPolar: molecule.isPolar,
+                      hasHBond: molecule.hasHBond,
+                      visualization: molecule.visualization,
+                    })}
+                    mode="simple"
+                    size="md"
+                    animation="fade-in"
+                    showPartialCharges={molecule.isPolar}
+                    showDipoleMoment={molecule.isPolar && molecule.visualization.dipoleMoment !== 'none'}
+                    ariaLabel={`${molecule.name} sameindaformúla`}
+                  />
+                </div>
                 {/* Legend for partial charges */}
                 {molecule.isPolar && (
                   <div className="flex justify-center gap-4 mt-3 text-xs">

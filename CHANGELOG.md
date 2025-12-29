@@ -14,6 +14,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Created `docs/` directory with documentation index
   - Archived completed migration documentation
   - Added this CHANGELOG for future version tracking
+- Unit test infrastructure with Vitest (26 tests for scoring utilities)
+
+### Fixed
+
+#### Code Review Fixes (2025-12-28)
+
+**High Priority**
+- **TYPE-001**: Replaced `any` types with `Chemical` interface in `games/1-ar/lausnir/src/utils/problem-generator.ts`
+- **PERF-001**: Fixed timer effect dependencies in `games/3-ar/equilibrium-shifter/src/App.tsx` using `useRef` pattern to prevent stale closures
+
+**Medium Priority**
+- **ARCH-001**: Fixed hidden Unicode character in localStorage key in `games/1-ar/nafnakerfid/src/App.tsx`
+- **PERF-002**: Fixed `useEffect` dependency issue using functional state update pattern
+
+**Low Priority**
+- **SEC-002**: Added schema validation for localStorage data in `shared/utils/storage.ts`
+- **PERF-004**: Memoized confetti particle styles in `games/1-ar/dimensional-analysis/src/components/Level1Conceptual.tsx`
+- **REACT-003**: Replaced unreliable shuffle with Fisher-Yates algorithm in nafnakerfid and molmassi games
+
+### Removed
+- Unused archive directory from lausnir game (1053 lines of dead code)
 
 ---
 
@@ -126,7 +147,7 @@ Phase 2 Migration Complete! All 12 chemistry games successfully migrated to the 
 ## Future Plans
 
 See [IMPROVEMENTS.md](IMPROVEMENTS.md) for proposed enhancements:
-- Unit testing infrastructure (Vitest)
+- ✅ Unit testing infrastructure (Vitest) - Added 2025-12-28
 - Component testing (React Testing Library)
 - E2E testing (Playwright)
 - Error tracking (Sentry)

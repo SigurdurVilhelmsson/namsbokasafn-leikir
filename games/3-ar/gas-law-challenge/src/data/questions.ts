@@ -274,6 +274,177 @@ export const questions: GasLawQuestion[] = [
         'Calculate: T = 268 K (≈ -5°C, cold!)'
       ]
     }
+  },
+
+  // ===== ATMOSPHERIC APPLICATIONS =====
+  {
+    id: 9,
+    emoji: '🏔️',
+    scenario_is: 'Á toppi Everest (8849m) er loftþrýstingur aðeins 0.33 atm. Hversu mikið loft (mól) er í 5L lungum?',
+    scenario_en: 'At the summit of Everest (8849m), air pressure is only 0.33 atm. How much air (moles) is in 5L lungs?',
+    difficulty: 'Miðlungs',
+    given: {
+      P: { value: 0.33, unit: 'atm' },
+      V: { value: 5.0, unit: 'L' },
+      T: { value: 243, unit: 'K' }
+    },
+    find: 'n',
+    answer: 0.083,
+    tolerance: 0.002,
+    hints: [
+      'High altitude = low pressure = less air per breath',
+      'Use n = PV/RT',
+      'Substitute: n = (0.33)(5.0)/[(0.08206)(243)]',
+      'Calculate: n = 0.083 mol (only 1/3 of sea level!)'
+    ],
+    solution: {
+      formula: 'n = PV/RT',
+      substitution: 'n = (0.33 atm)(5.0 L) / [(0.08206 L·atm/mol·K)(243 K)]',
+      calculation: 'n = 0.083 mol',
+      steps: [
+        'At 8849m, atmospheric pressure is only 33% of sea level',
+        'Temperature at summit: about -30°C = 243 K',
+        'Rearrange PV = nRT to n = PV/RT',
+        'Substitute: n = (0.33)(5.0)/(0.08206 × 243)',
+        'Calculate: n = 0.083 mol (explains why climbers need oxygen!)'
+      ]
+    }
+  },
+
+  {
+    id: 10,
+    emoji: '✈️',
+    scenario_is: 'Farþegaflugvél flýgur á 10.000m hæð þar sem þrýstingur er 0.26 atm og hitastig -50°C.',
+    scenario_en: 'A passenger aircraft flies at 10,000m altitude where pressure is 0.26 atm and temperature is -50°C.',
+    difficulty: 'Miðlungs',
+    given: {
+      P: { value: 0.26, unit: 'atm' },
+      T: { value: 223, unit: 'K' },
+      n: { value: 0.50, unit: 'mol' }
+    },
+    find: 'V',
+    answer: 35.2,
+    tolerance: 0.7,
+    hints: [
+      'Low pressure and temperature affect gas volume',
+      'Use V = nRT/P',
+      'Substitute: V = (0.50)(0.08206)(223)/(0.26)',
+      'Calculate: V = 35.2 L'
+    ],
+    solution: {
+      formula: 'V = nRT/P',
+      substitution: 'V = (0.50 mol)(0.08206 L·atm/mol·K)(223 K) / (0.26 atm)',
+      calculation: 'V = 35.2 L',
+      steps: [
+        'At cruising altitude (10 km), pressure is very low',
+        'Temperature: -50°C = 223 K',
+        'Use PV = nRT, solve for V',
+        'Substitute: V = (0.50)(0.08206)(223)/(0.26)',
+        'Calculate: V = 35.2 L (this is why planes are pressurized!)'
+      ]
+    }
+  },
+
+  {
+    id: 11,
+    emoji: '🌡️',
+    scenario_is: 'Veðurspá: Lágþrýstingssvæði nálgast. Hvað gerist við loftþrýsting þegar hitastigið lækkar?',
+    scenario_en: 'Weather forecast: Low pressure system approaching. A weather balloon has 100 mol of gas.',
+    difficulty: 'Miðlungs',
+    given: {
+      V: { value: 2500, unit: 'L' },
+      T: { value: 288, unit: 'K' },
+      n: { value: 100, unit: 'mol' }
+    },
+    find: 'P',
+    answer: 0.946,
+    tolerance: 0.019,
+    hints: [
+      'Weather balloons measure atmospheric conditions',
+      'Use P = nRT/V',
+      'Substitute: P = (100)(0.08206)(288)/(2500)',
+      'Calculate: P = 0.946 atm (low pressure = stormy weather!)'
+    ],
+    solution: {
+      formula: 'P = nRT/V',
+      substitution: 'P = (100 mol)(0.08206 L·atm/mol·K)(288 K) / (2500 L)',
+      calculation: 'P = 0.946 atm',
+      steps: [
+        'Weather balloon carries instruments to measure atmosphere',
+        'Low pressure systems often bring clouds and rain',
+        'Use PV = nRT, solve for P',
+        'Substitute: P = (100)(0.08206)(288)/(2500)',
+        'Calculate: P = 0.946 atm (below standard 1.0 atm = low pressure system)'
+      ]
+    }
+  },
+
+  {
+    id: 12,
+    emoji: '🚀',
+    scenario_is: 'Geimferð: Í geimskipi er þrýstingi haldið við 0.7 atm (eins og á 3000m hæð á jörðu).',
+    scenario_en: 'Space travel: A spacecraft cabin is maintained at 0.7 atm (like 3000m altitude on Earth).',
+    difficulty: 'Erfitt',
+    given: {
+      P: { value: 0.7, unit: 'atm' },
+      V: { value: 50.0, unit: 'L' },
+      T: { value: 295, unit: 'K' }
+    },
+    find: 'n',
+    answer: 1.45,
+    tolerance: 0.03,
+    hints: [
+      'Spacecraft cabins use lower pressure to reduce stress on hull',
+      'Use n = PV/RT',
+      'Substitute: n = (0.7)(50.0)/[(0.08206)(295)]',
+      'Calculate: n = 1.45 mol'
+    ],
+    solution: {
+      formula: 'n = PV/RT',
+      substitution: 'n = (0.7 atm)(50.0 L) / [(0.08206 L·atm/mol·K)(295 K)]',
+      calculation: 'n = 1.45 mol',
+      steps: [
+        'Spacecraft use lower cabin pressure (0.7 atm) for safety',
+        'Astronauts adapt to this like being at 3000m altitude',
+        'Use n = PV/RT to find moles of air',
+        'Substitute: n = (0.7)(50.0)/(0.08206 × 295)',
+        'Calculate: n = 1.45 mol of breathing gas'
+      ]
+    }
+  },
+
+  {
+    id: 13,
+    emoji: '🎿',
+    scenario_is: 'Skíðasvæði á 2500m hæð. Loftþrýstingur er 0.74 atm. Á hvaða hitastigi er loftið?',
+    scenario_en: 'Ski resort at 2500m altitude. Air pressure is 0.74 atm. What is the air temperature?',
+    difficulty: 'Erfitt',
+    given: {
+      P: { value: 0.74, unit: 'atm' },
+      V: { value: 10.0, unit: 'L' },
+      n: { value: 0.35, unit: 'mol' }
+    },
+    find: 'T',
+    answer: 258,
+    tolerance: 5,
+    hints: [
+      'Mountain resorts have lower pressure and temperature',
+      'Use T = PV/nR',
+      'Substitute: T = (0.74)(10.0)/[(0.35)(0.08206)]',
+      'Calculate: T = 258 K (about -15°C, perfect for skiing!)'
+    ],
+    solution: {
+      formula: 'T = PV/nR',
+      substitution: 'T = (0.74 atm)(10.0 L) / [(0.35 mol)(0.08206 L·atm/mol·K)]',
+      calculation: 'T = 258 K',
+      steps: [
+        'At 2500m, pressure drops to about 74% of sea level',
+        'Use PV = nRT, solve for T',
+        'Substitute: T = (0.74)(10.0)/(0.35 × 0.08206)',
+        'Calculate: T = 258 K',
+        'Convert: 258 K - 273 = -15°C (typical ski resort temperature)'
+      ]
+    }
   }
 ];
 

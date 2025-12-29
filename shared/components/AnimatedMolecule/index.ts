@@ -44,6 +44,7 @@ export { AnimatedMolecule } from './AnimatedMolecule';
 // Sub-components (for advanced/custom usage)
 export { MoleculeAtom, MoleculeAtomDefs } from './MoleculeAtom';
 export { MoleculeBond, MoleculeBondDefs } from './MoleculeBond';
+export { MoleculeLonePair, MoleculeLonePairDefs, calculateLonePairAngles } from './MoleculeLonePair';
 
 // Constants and utilities
 export { ELEMENT_VISUALS, SIZE_CONFIG, GEOMETRY_COORDS, MOLECULE_COLORS } from './molecule.constants';

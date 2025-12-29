@@ -13,9 +13,11 @@ import { useMemo } from 'react';
 import type { AnimatedMoleculeProps } from '@shared/types';
 import { MoleculeAtom, MoleculeAtomDefs } from './MoleculeAtom';
 import { MoleculeBond, MoleculeBondDefs } from './MoleculeBond';
+import { MoleculeLonePair, MoleculeLonePairDefs, calculateLonePairAngles } from './MoleculeLonePair';
 import {
   calculateAtomPositions,
   calculateBondEndpoints,
+  calculateAngle,
   getElementVisual,
   getSizeConfig,
   ensureAtomIds,
@@ -29,7 +31,7 @@ export function AnimatedMolecule({
   size = 'md',
   animation = 'fade-in',
   animationDuration,
-  showLonePairs: _showLonePairs = false, // TODO: Phase 2
+  showLonePairs = false,
   showFormalCharges = true,
   showPartialCharges = false,
   showDipoleMoment: _showDipoleMoment = false, // TODO: Phase 4
@@ -66,6 +68,37 @@ export function AnimatedMolecule({
   const atomDelay = animation === 'build' ? baseDuration / atomsWithIds.length : 0;
   const bondDelay = animation === 'build' ? baseDuration : 0;
   const bondDelayIncrement = animation === 'build' ? baseDuration / Math.max(molecule.bonds.length, 1) : 0;
+  const lonePairDelay = animation === 'build' ? baseDuration * 2 : baseDuration;
+
+  // Calculate bond angles for each atom (needed for lone pair positioning)
+  const atomBondAngles = useMemo(() => {
+    const angles = new Map<string, number[]>();
+
+    for (const atom of atomsWithIds) {
+      const atomPos = atomPositions.get(atom.id);
+      if (!atomPos) continue;
+
+      const bondAnglesForAtom: number[] = [];
+
+      for (const bond of molecule.bonds) {
+        if (bond.from === atom.id) {
+          const otherPos = atomPositions.get(bond.to);
+          if (otherPos) {
+            bondAnglesForAtom.push(calculateAngle(atomPos, otherPos));
+          }
+        } else if (bond.to === atom.id) {
+          const otherPos = atomPositions.get(bond.from);
+          if (otherPos) {
+            bondAnglesForAtom.push(calculateAngle(atomPos, otherPos));
+          }
+        }
+      }
+
+      angles.set(atom.id, bondAnglesForAtom);
+    }
+
+    return angles;
+  }, [atomsWithIds, atomPositions, molecule.bonds]);
 
   // Get 3D depth info for VSEPR mode
   const depthInfo = useMemo(() => {
@@ -181,6 +214,7 @@ export function AnimatedMolecule({
       {/* SVG definitions for filters and animations */}
       <MoleculeAtomDefs />
       <MoleculeBondDefs />
+      <MoleculeLonePairDefs />
 
       {/* Background (optional) */}
       <rect
@@ -202,8 +236,39 @@ export function AnimatedMolecule({
         {renderedAtoms}
       </g>
 
+      {/* Lone pairs layer (Lewis mode only) */}
+      {showLonePairs && mode === 'lewis' && (
+        <g className="molecule-lone-pairs">
+          {atomsWithIds.map((atom, atomIndex) => {
+            if (!atom.lonePairs || atom.lonePairs === 0) return null;
+
+            const position = atomPositions.get(atom.id);
+            if (!position) return null;
+
+            const bondAngles = atomBondAngles.get(atom.id) || [];
+            const lonePairAngles = calculateLonePairAngles(bondAngles, atom.lonePairs);
+            const visual = getElementVisual(atom.symbol);
+            const radius = atomRadius * visual.radius;
+
+            // Distance from atom center to lone pairs
+            const lonePairDistance = radius + 8;
+
+            return lonePairAngles.map((angle, lpIndex) => (
+              <MoleculeLonePair
+                key={`${atom.id}-lp-${lpIndex}`}
+                atomPosition={position}
+                angle={angle}
+                distance={lonePairDistance}
+                dotSize={Math.max(4, fontSize * 0.4)}
+                animationDelay={lonePairDelay + atomIndex * 100 + lpIndex * 50}
+                reducedMotion={reducedMotion || animation === 'none'}
+              />
+            ));
+          })}
+        </g>
+      )}
+
       {/* TODO: Add dipole moment arrow in Phase 4 */}
-      {/* TODO: Add lone pairs in Phase 2 */}
     </svg>
   );
 }

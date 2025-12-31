@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { HintSystem } from '@shared/components';
 import type { TieredHints } from '@shared/types';
+import { CollisionDemo } from './CollisionDemo';
 
 interface Level1Props {
   onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
@@ -150,8 +150,8 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
   const [currentChallenge, setCurrentChallenge] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [showResult, setShowResult] = useState(false);
-  const [hintMultiplier, setHintMultiplier] = useState(1.0);
-  const [hintsUsedTier, setHintsUsedTier] = useState(0);
+  const [showHint, setShowHint] = useState(false);
+  const [totalHintsUsed, setTotalHintsUsed] = useState(0);
   const [score, setScore] = useState(0);
 
   const challenge = challenges[currentChallenge];
@@ -281,7 +281,7 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
           {showHint && !showResult && (
             <div className="bg-yellow-50 border border-yellow-200 p-4 rounded-xl mb-4">
               <span className="font-bold text-yellow-800">Vísbending: </span>
-              <span className="text-yellow-900">{challenge.hint}</span>
+              <span className="text-yellow-900">{challenge.hints.method}</span>
             </div>
           )}
 
@@ -315,6 +315,15 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
               {currentChallenge < challenges.length - 1 ? 'Næsta þraut' : 'Ljúka stigi 1'}
             </button>
           )}
+        </div>
+
+        {/* Interactive Collision Demo */}
+        <div className="mt-6">
+          <CollisionDemo
+            temperature={350}
+            activationEnergy={40}
+            showLabels={true}
+          />
         </div>
 
         {/* Visual concept helper */}

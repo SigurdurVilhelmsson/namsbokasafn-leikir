@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { HintSystem } from '@shared/components';
 import type { TieredHints } from '@shared/types';
+import { ParticleBeaker } from './ParticleBeaker';
 
 // Types for Level 1
 interface Challenge {
@@ -181,153 +181,6 @@ const CHALLENGES: Challenge[] = [
   }
 ];
 
-// Visual molecule component
-function MoleculeDisplay({
-  count,
-  volumeML,
-  maxVolume,
-  color = '#f97316'
-}: {
-  count: number;
-  volumeML: number;
-  maxVolume: number;
-  color?: string;
-}) {
-  // Scale molecule size based on concentration (more concentrated = closer together visually)
-  const concentration = count / (volumeML / 1000);
-  const fillPercent = Math.min(100, (volumeML / maxVolume) * 100);
-
-  // Beaker boundaries in SVG coordinates (viewBox 0 0 100 140)
-  // Beaker inner walls: x=16 to x=84, liquid from y=120 downward
-  const beakerLeft = 18;
-  const beakerRight = 82;
-  const beakerBottom = 118;
-  const liquidHeight = fillPercent * 1.1;
-  const liquidTop = 120 - liquidHeight + 2; // +2 for padding from meniscus
-
-  // Create molecule positions - use seeded positions for consistency
-  const moleculeElements = [];
-  const displayCount = Math.min(count, 80); // Cap visual molecules at 80 for performance
-
-  // Calculate grid dimensions based on liquid area
-  const liquidWidth = beakerRight - beakerLeft;
-  const availableLiquidHeight = Math.max(5, beakerBottom - liquidTop);
-
-  // Determine grid layout - molecules should spread evenly throughout liquid
-  const moleculeRadius = 2; // Smaller balls
-  const spacing = Math.max(moleculeRadius * 2.5, Math.min(8, Math.sqrt((liquidWidth * availableLiquidHeight) / displayCount)));
-
-  const cols = Math.max(1, Math.floor(liquidWidth / spacing));
-  const rows = Math.max(1, Math.ceil(displayCount / cols));
-
-  // Calculate actual spacing to fill the area evenly
-  const xSpacing = liquidWidth / (cols + 1);
-  const ySpacing = availableLiquidHeight / (rows + 1);
-
-  for (let i = 0; i < displayCount; i++) {
-    const row = Math.floor(i / cols);
-    const col = i % cols;
-
-    // Distribute evenly with small random jitter for natural look
-    // Use deterministic jitter based on index for consistency
-    const jitterX = ((i * 7) % 5 - 2) * 0.5;
-    const jitterY = ((i * 11) % 5 - 2) * 0.5;
-
-    const x = beakerLeft + xSpacing * (col + 1) + jitterX;
-    const y = liquidTop + ySpacing * (row + 1) + jitterY;
-
-    // Ensure molecule stays within liquid boundaries
-    const clampedX = Math.max(beakerLeft + moleculeRadius, Math.min(beakerRight - moleculeRadius, x));
-    const clampedY = Math.max(liquidTop + moleculeRadius, Math.min(beakerBottom - moleculeRadius, y));
-
-    moleculeElements.push(
-      <circle
-        key={i}
-        cx={clampedX}
-        cy={clampedY}
-        r={moleculeRadius}
-        fill={color}
-        opacity={0.9}
-        className="transition-all duration-300"
-      />
-    );
-  }
-
-  // Show count indicator if we're capping display
-  const showCountIndicator = count > displayCount;
-
-  return (
-    <div className="relative w-48 h-64 mx-auto">
-      <svg viewBox="0 0 100 140" className="w-full h-full">
-        {/* Beaker outline */}
-        <path
-          d="M15 10 L15 120 Q15 130 25 130 L75 130 Q85 130 85 120 L85 10"
-          fill="none"
-          stroke="#374151"
-          strokeWidth="3"
-        />
-
-        {/* Volume graduations */}
-        {[20, 40, 60, 80, 100].map((percent, i) => (
-          <g key={i}>
-            <line
-              x1="85"
-              y1={120 - (percent * 1.1)}
-              x2="92"
-              y2={120 - (percent * 1.1)}
-              stroke="#9ca3af"
-              strokeWidth="1"
-            />
-            <text
-              x="94"
-              y={120 - (percent * 1.1) + 3}
-              fontSize="6"
-              fill="#6b7280"
-            >
-              {percent}%
-            </text>
-          </g>
-        ))}
-
-        {/* Solution fill */}
-        <rect
-          x="16"
-          y={120 - (fillPercent * 1.1)}
-          width="68"
-          height={fillPercent * 1.1}
-          fill={color}
-          opacity={Math.min(0.4, 0.1 + concentration * 0.05)}
-          className="transition-all duration-300"
-        />
-
-        {/* Molecules */}
-        <g className="molecules">
-          {moleculeElements}
-        </g>
-
-        {/* Count indicator */}
-        {showCountIndicator && (
-          <text
-            x="50"
-            y={125}
-            textAnchor="middle"
-            fontSize="8"
-            fill="#374151"
-            fontWeight="bold"
-          >
-            +{count - displayCount} fleiri
-          </text>
-        )}
-      </svg>
-
-      {/* Volume label below beaker */}
-      <div className="text-center mt-2 text-sm text-gray-600">
-        {volumeML} mL
-      </div>
-    </div>
-  );
-}
-
 // Concentration indicator with color feedback
 function ConcentrationIndicator({
   current,
@@ -405,8 +258,8 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
   const [currentChallenge, setCurrentChallenge] = useState(0);
   const [molecules, setMolecules] = useState(50);
   const [volumeML, setVolumeML] = useState(100);
-  const [hintMultiplier, setHintMultiplier] = useState(1.0);
-  const [hintsUsedTier, setHintsUsedTier] = useState(0);
+  const [showHint, setShowHint] = useState(false);
+  const [totalHintsUsed, setTotalHintsUsed] = useState(0);
   const [completed, setCompleted] = useState<number[]>([]);
   const [score, setScore] = useState(0);
   const [showConcept, setShowConcept] = useState(false);
@@ -427,8 +280,7 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
     if (challenge) {
       setMolecules(challenge.initialState.molecules);
       setVolumeML(challenge.initialState.volumeML);
-      setHintMultiplier(1.0);
-      setHintsUsedTier(0);
+      setShowHint(false);
       setShowConcept(false);
     }
   }, [currentChallenge, challenge]);
@@ -454,7 +306,7 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
   // Submit answer
   const checkAnswer = useCallback(() => {
     if (isCorrect) {
-      const pointsEarned = Math.round(100 * hintMultiplier);
+      const pointsEarned = showHint ? 50 : 100;
       setScore(prev => prev + pointsEarned);
       setCompleted(prev => [...prev, challenge.id]);
       setShowConcept(true);
@@ -471,7 +323,7 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
     } else {
       onIncorrectAnswer?.();
     }
-  }, [isCorrect, hintMultiplier, challenge.id, currentChallenge, onCorrectAnswer, onIncorrectAnswer]);
+  }, [isCorrect, showHint, challenge.id, currentChallenge, onCorrectAnswer, onIncorrectAnswer]);
 
   // Game complete screen
   if (gameComplete) {
@@ -580,16 +432,18 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
 
           {/* Main interaction area */}
           <div className="grid md:grid-cols-2 gap-8 mb-6">
-            {/* Beaker visualization */}
+            {/* Beaker visualization with animated particles */}
             <div className="flex flex-col items-center">
-              <MoleculeDisplay
-                count={molecules}
-                volumeML={volumeML}
+              <ParticleBeaker
+                molecules={molecules}
+                volume={volumeML}
                 maxVolume={challenge.constraints.maxVolume}
+                concentration={currentConcentration}
                 color={challenge.type === 'dilution' ? '#f97316' : '#3b82f6'}
+                running={!showConcept}
               />
 
-              <div className="mt-4 text-center">
+              <div className="mt-8 text-center">
                 <div className="text-sm text-gray-600">
                   Sameindir: <span className="font-bold text-gray-800">{molecules}</span>
                 </div>
@@ -684,7 +538,7 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
           {showHint && (
             <div className="mb-6 bg-yellow-50 border-2 border-yellow-300 p-4 rounded-xl">
               <h4 className="font-semibold text-yellow-800 mb-2">💡 Vísbending:</h4>
-              <p className="text-yellow-900">{challenge.hint}</p>
+              <p className="text-yellow-900">{challenge.hints.method}</p>
             </div>
           )}
 

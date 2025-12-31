@@ -5,6 +5,7 @@ import { AchievementsButton, AchievementsPanel } from '@shared/components/Achiev
 import { AchievementNotificationsContainer } from '@shared/components/AchievementNotificationPopup';
 import { HintSystem } from '@shared/components';
 import type { TieredHints } from '@shared/types';
+import { ParticleEquilibrium } from './components/ParticleEquilibrium';
 import {
   Equilibrium,
   Stress,
@@ -515,6 +516,17 @@ function App() {
                 </div>
               </div>
             </div>
+          </div>
+
+          {/* Dynamic Particle Equilibrium Visualization */}
+          <div className="flex justify-center mb-6">
+            <ParticleEquilibrium
+              reactantCount={20}
+              productCount={20}
+              shiftDirection={showExplanation ? correctShift?.direction : null}
+              isExothermic={currentEquilibrium.thermodynamics.type === 'exothermic'}
+              running={screen === 'game'}
+            />
           </div>
 
           {/* Context/Description */}

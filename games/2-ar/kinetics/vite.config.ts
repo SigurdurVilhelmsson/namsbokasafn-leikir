@@ -17,6 +17,9 @@ export default defineConfig({
     outDir: '../../../2-ar',
     emptyOutDir: false,
     rollupOptions: {
+      input: {
+        kinetics: path.resolve(__dirname, 'index.html'),
+      },
       output: {
         entryFileNames: 'kinetics.js',
         assetFileNames: 'kinetics.[ext]',

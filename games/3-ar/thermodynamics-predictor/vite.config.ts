@@ -23,6 +23,9 @@ export default defineConfig({
     outDir: '../../../3-ar',
     emptyOutDir: false,
     rollupOptions: {
+      input: {
+        'thermodynamics-predictor': path.resolve(__dirname, 'index.html'),
+      },
       output: {
         entryFileNames: 'thermodynamics-predictor.js',
         assetFileNames: 'thermodynamics-predictor.[ext]',

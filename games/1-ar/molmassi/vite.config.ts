@@ -23,6 +23,9 @@ export default defineConfig({
     outDir: '../../../1-ar',
     emptyOutDir: false,
     rollupOptions: {
+      input: {
+        molmassi: path.resolve(__dirname, 'index.html'),
+      },
       output: {
         entryFileNames: 'molmassi.js',
         assetFileNames: 'molmassi.[ext]',

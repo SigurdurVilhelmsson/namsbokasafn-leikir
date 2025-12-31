@@ -23,9 +23,12 @@ export default defineConfig({
     outDir: '../../../1-ar',
     emptyOutDir: false,
     rollupOptions: {
+      input: {
+        'dimensional-analysis': path.resolve(__dirname, 'index.html'),
+      },
       output: {
-        entryFileNames: 'dimensional-analysis-game.js',
-        assetFileNames: 'dimensional-analysis-game.[ext]',
+        entryFileNames: 'dimensional-analysis.js',
+        assetFileNames: 'dimensional-analysis.[ext]',
       },
     },
   },

@@ -23,6 +23,9 @@ export default defineConfig({
     outDir: '../../../1-ar',
     emptyOutDir: false,
     rollupOptions: {
+      input: {
+        nafnakerfid: path.resolve(__dirname, 'index.html'),
+      },
       output: {
         entryFileNames: 'nafnakerfid.js',
         assetFileNames: 'nafnakerfid.[ext]',

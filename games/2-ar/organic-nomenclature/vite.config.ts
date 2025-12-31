@@ -23,6 +23,9 @@ export default defineConfig({
     outDir: '../../../2-ar',
     emptyOutDir: false,
     rollupOptions: {
+      input: {
+        'organic-nomenclature': path.resolve(__dirname, 'index.html'),
+      },
       output: {
         entryFileNames: 'organic-nomenclature.js',
         assetFileNames: 'organic-nomenclature.[ext]',

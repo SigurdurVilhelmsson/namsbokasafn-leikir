@@ -23,6 +23,9 @@ export default defineConfig({
     outDir: '../../../3-ar',
     emptyOutDir: false,
     rollupOptions: {
+      input: {
+        'buffer-recipe-creator': path.resolve(__dirname, 'index.html'),
+      },
       output: {
         entryFileNames: 'buffer-recipe-creator.js',
         assetFileNames: 'buffer-recipe-creator.[ext]',

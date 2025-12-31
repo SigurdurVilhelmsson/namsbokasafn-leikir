@@ -23,6 +23,9 @@ export default defineConfig({
     outDir: '../../../1-ar',
     emptyOutDir: false,
     rollupOptions: {
+      input: {
+        lausnir: path.resolve(__dirname, 'index.html'),
+      },
       output: {
         entryFileNames: 'lausnir.js',
         assetFileNames: 'lausnir.[ext]',

@@ -23,6 +23,9 @@ export default defineConfig({
     outDir: '../../../1-ar',
     emptyOutDir: false,
     rollupOptions: {
+      input: {
+        takmarkandi: path.resolve(__dirname, 'index.html'),
+      },
       output: {
         entryFileNames: 'takmarkandi.js',
         assetFileNames: 'takmarkandi.[ext]',

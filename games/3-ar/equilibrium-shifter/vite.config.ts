@@ -23,6 +23,9 @@ export default defineConfig({
     outDir: '../../../3-ar',
     emptyOutDir: false,
     rollupOptions: {
+      input: {
+        'equilibrium-shifter': path.resolve(__dirname, 'index.html'),
+      },
       output: {
         entryFileNames: 'equilibrium-shifter.js',
         assetFileNames: 'equilibrium-shifter.[ext]',

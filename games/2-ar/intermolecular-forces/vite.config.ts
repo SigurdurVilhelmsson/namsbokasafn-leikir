@@ -23,6 +23,9 @@ export default defineConfig({
     outDir: '../../../2-ar',
     emptyOutDir: false,
     rollupOptions: {
+      input: {
+        'intermolecular-forces': path.resolve(__dirname, 'index.html'),
+      },
       output: {
         entryFileNames: 'intermolecular-forces.js',
         assetFileNames: 'intermolecular-forces.[ext]',

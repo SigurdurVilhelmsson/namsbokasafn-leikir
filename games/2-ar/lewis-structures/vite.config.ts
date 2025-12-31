@@ -17,6 +17,9 @@ export default defineConfig({
     outDir: '../../../2-ar',
     emptyOutDir: false,
     rollupOptions: {
+      input: {
+        'lewis-structures': path.resolve(__dirname, 'index.html'),
+      },
       output: {
         entryFileNames: 'lewis-structures.js',
         assetFileNames: 'lewis-structures.[ext]',

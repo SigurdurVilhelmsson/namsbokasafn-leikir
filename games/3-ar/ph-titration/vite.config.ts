@@ -23,6 +23,9 @@ export default defineConfig({
     outDir: '../../../3-ar',
     emptyOutDir: false,
     rollupOptions: {
+      input: {
+        'ph-titration': path.resolve(__dirname, 'index.html'),
+      },
       output: {
         entryFileNames: 'ph-titration.js',
         assetFileNames: 'ph-titration.[ext]',

@@ -23,6 +23,9 @@ export default defineConfig({
     outDir: '../../../2-ar',
     emptyOutDir: false,
     rollupOptions: {
+      input: {
+        'hess-law': path.resolve(__dirname, 'index.html'),
+      },
       output: {
         entryFileNames: 'hess-law.js',
         assetFileNames: 'hess-law.[ext]',

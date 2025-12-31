@@ -23,6 +23,9 @@ export default defineConfig({
     outDir: '../../../2-ar',
     emptyOutDir: false,
     rollupOptions: {
+      input: {
+        'vsepr-geometry': path.resolve(__dirname, 'index.html'),
+      },
       output: {
         entryFileNames: 'vsepr-geometry.js',
         assetFileNames: 'vsepr-geometry.[ext]',

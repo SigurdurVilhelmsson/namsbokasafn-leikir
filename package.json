@@ -11,7 +11,10 @@
   ],
   "scripts": {
     "dev": "pnpm --filter './games/**' dev",
-    "build": "pnpm --workspace-concurrency=1 --filter './games/**' build",
+    "build": "node scripts/build-games.mjs",
+    "build:game": "node scripts/build-games.mjs --game",
+    "build:year": "node scripts/build-games.mjs --year",
+    "build:legacy": "pnpm --workspace-concurrency=1 --filter './games/**' build",
     "build:parallel": "pnpm --filter './games/**' build",
     "build:all": "pnpm build",
     "type-check": "pnpm --recursive run type-check",

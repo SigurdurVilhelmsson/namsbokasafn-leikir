@@ -17,6 +17,9 @@ export default defineConfig({
     outDir: '../../../2-ar',
     emptyOutDir: false,
     rollupOptions: {
+      input: {
+        'redox-reactions': path.resolve(__dirname, 'index.html'),
+      },
       output: {
         entryFileNames: 'redox-reactions.js',
         assetFileNames: 'redox-reactions.[ext]',

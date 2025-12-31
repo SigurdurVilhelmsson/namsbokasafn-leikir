@@ -23,6 +23,9 @@ export default defineConfig({
     outDir: '../../../3-ar',
     emptyOutDir: false,
     rollupOptions: {
+      input: {
+        'gas-law-challenge': path.resolve(__dirname, 'index.html'),
+      },
       output: {
         entryFileNames: 'gas-law-challenge.js',
         assetFileNames: 'gas-law-challenge.[ext]',

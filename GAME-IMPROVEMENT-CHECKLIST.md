@@ -15,7 +15,7 @@
 | Create InteractiveGraph component | ⬜ | Medium | Medium | Medium | For titration, thermodynamics, kinetics |
 | Create DragDropBuilder component | ⬜ | Medium | High | High | For equations, nomenclature |
 | Add shared audio utilities | ⬜ | Low | Medium | Medium | TTS for pronunciations |
-| Implement tiered hint system | ⬜ | High | Medium | High | 4-level progressive hints |
+| Implement tiered hint system | ✅ | High | Medium | High | 4-level progressive hints. All 17 games migrated |
 | Add detailed feedback explanations | ⬜ | High | Medium | High | Why correct/incorrect |
 | Create particle simulation library | ⬜ | Medium | High | High | For solutions, gas laws, kinetics |
 | Add 3D molecule viewer (Three.js) | ⬜ | Medium | High | High | For VSEPR, Lewis, IMF |
@@ -286,6 +286,7 @@ Building these once benefits multiple games:
 | 2025-12-29 | AnimatedMolecule Phase 4: MoleculeDipole arrows, useMoleculeLayout hook, VSEPR depth styling |
 | 2025-12-29 | AnimatedMolecule Phase 5: Organic mode with carbon chain layout, colored bonds, glow effects |
 | 2025-12-29 | **AnimatedMolecule COMPLETE** - All 5 phases implemented, ready for game migrations |
+| 2025-12-31 | **Tiered Hint System COMPLETE** - HintSystem component created, all 17 games migrated |
 
 ---
 

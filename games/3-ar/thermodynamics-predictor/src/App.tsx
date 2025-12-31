@@ -1,11 +1,11 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { PROBLEMS } from './data';
 import { EntropyVisualization } from './components/EntropyVisualization';
 import { useAchievements } from '@shared/hooks/useAchievements';
 import { AchievementsButton, AchievementsPanel } from '@shared/components/AchievementsPanel';
 import { AchievementNotificationsContainer } from '@shared/components/AchievementNotificationPopup';
-import { HintSystem } from '@shared/components';
-import type { TieredHints } from '@shared/types';
+import { InteractiveGraph } from '@shared/components';
+import type { DataPoint, DataSeries, MarkerConfig, RegionConfig, VerticalLineConfig } from '@shared/components';
 import type { Difficulty, GameMode, Spontaneity, Problem } from './types';
 
 interface ThermoProgress {
@@ -55,7 +55,6 @@ function App() {
   const [streak, setStreak] = useState(0);
   const [timeLeft, setTimeLeft] = useState(90);
   const [showAchievements, setShowAchievements] = useState(false);
-  const graphRef = useRef<HTMLCanvasElement>(null);
 
   // Achievement system
   const {
@@ -186,115 +185,81 @@ function App() {
     setShowSolution(true);
   };
 
-  // Draw graph
-  useEffect(() => {
-    if (!graphRef.current || !currentProblem) return;
+  // Generate graph data for InteractiveGraph
+  const graphData = useMemo(() => {
+    if (!currentProblem) return null;
 
-    const canvas = graphRef.current;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    const width = canvas.width;
-    const height = canvas.height;
-
-    // Clear canvas
-    ctx.clearRect(0, 0, width, height);
-
-    // Calculate values
     const deltaH = currentProblem.deltaH;
     const deltaS = currentProblem.deltaS / 1000;
     const tempRange = { min: 200, max: 1200 };
-    const deltaGRange = { min: -500, max: 500 };
 
-    // Draw axes
-    ctx.strokeStyle = '#374151';
-    ctx.lineWidth = 2;
-
-    // Y-axis
-    ctx.beginPath();
-    ctx.moveTo(50, 30);
-    ctx.lineTo(50, height - 30);
-    ctx.stroke();
-
-    // X-axis
-    ctx.beginPath();
-    ctx.moveTo(50, height / 2);
-    ctx.lineTo(width - 30, height / 2);
-    ctx.stroke();
-
-    // Labels
-    ctx.fillStyle = '#374151';
-    ctx.font = '12px sans-serif';
-    ctx.fillText('ΔG (kJ/mol)', 10, 20);
-    ctx.fillText('T (K)', width - 50, height - 10);
-
-    // Draw ΔG line
-    ctx.strokeStyle = '#f36b22';
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-
+    // Generate curve data points
+    const dataPoints: DataPoint[] = [];
     for (let t = tempRange.min; t <= tempRange.max; t += 10) {
       const deltaG = deltaH - (t * deltaS);
-      const x = 50 + ((t - tempRange.min) / (tempRange.max - tempRange.min)) * (width - 80);
-      const y = height / 2 - (deltaG / deltaGRange.max) * (height / 2 - 40);
-
-      if (t === tempRange.min) {
-        ctx.moveTo(x, y);
-      } else {
-        ctx.lineTo(x, y);
-      }
+      dataPoints.push({ x: t, y: deltaG });
     }
-    ctx.stroke();
 
-    // Draw current temperature marker
+    const series: DataSeries[] = [{
+      id: 'deltaG',
+      data: dataPoints,
+      color: '#f36b22',
+      lineWidth: 3,
+      label: 'ΔG°'
+    }];
+
+    // Spontaneity regions
+    const regions: RegionConfig[] = [
+      {
+        yMin: -500,
+        yMax: 0,
+        color: 'rgba(34, 197, 94, 0.1)',
+        label: 'Sjálfviljugt',
+        labelPosition: 'left'
+      },
+      {
+        yMin: 0,
+        yMax: 500,
+        color: 'rgba(239, 68, 68, 0.1)',
+        label: 'Ekki sjálfviljugt',
+        labelPosition: 'left'
+      }
+    ];
+
+    // Current temperature marker
     const currentDeltaG = calculateDeltaG(temperature);
-    const x = 50 + ((temperature - tempRange.min) / (tempRange.max - tempRange.min)) * (width - 80);
-    const y = height / 2 - (currentDeltaG / deltaGRange.max) * (height / 2 - 40);
+    const markers: MarkerConfig[] = [{
+      x: temperature,
+      y: currentDeltaG,
+      color: currentDeltaG < 0 ? '#22c55e' : '#ef4444',
+      radius: 6,
+      label: `${currentDeltaG.toFixed(0)} kJ/mol`
+    }];
 
-    ctx.fillStyle = currentDeltaG < 0 ? '#22c55e' : '#ef4444';
-    ctx.beginPath();
-    ctx.arc(x, y, 6, 0, 2 * Math.PI);
-    ctx.fill();
-
-    // Draw spontaneity zones
-    ctx.fillStyle = 'rgba(34, 197, 94, 0.1)';
-    ctx.fillRect(50, height / 2, width - 80, height / 2 - 30);
-
-    ctx.fillStyle = 'rgba(239, 68, 68, 0.1)';
-    ctx.fillRect(50, 30, width - 80, height / 2 - 30);
-
-    // Draw crossover temperature marker (where ΔG = 0)
+    // Crossover temperature line
+    const verticalLines: VerticalLineConfig[] = [];
     if (deltaS !== 0) {
       const crossTemp = Math.abs(deltaH / deltaS);
       if (crossTemp >= tempRange.min && crossTemp <= tempRange.max) {
-        const crossX = 50 + ((crossTemp - tempRange.min) / (tempRange.max - tempRange.min)) * (width - 80);
-
-        // Vertical dashed line at crossover
-        ctx.strokeStyle = '#8b5cf6';
-        ctx.lineWidth = 2;
-        ctx.setLineDash([5, 5]);
-        ctx.beginPath();
-        ctx.moveTo(crossX, 30);
-        ctx.lineTo(crossX, height - 30);
-        ctx.stroke();
-        ctx.setLineDash([]);
-
-        // Crossover point marker (where line crosses ΔG=0)
-        ctx.fillStyle = '#8b5cf6';
-        ctx.beginPath();
-        ctx.arc(crossX, height / 2, 8, 0, 2 * Math.PI);
-        ctx.fill();
-        ctx.strokeStyle = '#fff';
-        ctx.lineWidth = 2;
-        ctx.stroke();
-
-        // Label
-        ctx.fillStyle = '#8b5cf6';
-        ctx.font = 'bold 11px sans-serif';
-        ctx.fillText(`T_cross = ${crossTemp.toFixed(0)} K`, crossX - 40, height - 35);
+        verticalLines.push({
+          x: crossTemp,
+          color: '#8b5cf6',
+          lineDash: [5, 5],
+          label: `T_cross = ${crossTemp.toFixed(0)} K`,
+          labelPosition: 'bottom'
+        });
+        // Add crossover point marker
+        markers.push({
+          x: crossTemp,
+          y: 0,
+          color: '#8b5cf6',
+          radius: 8,
+          label: 'ΔG = 0'
+        });
       }
     }
 
+    return { series, regions, markers, verticalLines };
   }, [currentProblem, temperature]);
 
   // Timer for challenge mode
@@ -791,13 +756,25 @@ function App() {
             {/* Graph */}
             <div className="bg-white rounded-lg shadow-lg p-6">
               <h3 className="font-bold mb-3">📊 ΔG° vs Hitastig</h3>
-              <canvas
-                ref={graphRef}
-                id="deltaGGraph"
-                width="500"
-                height="300"
-                className="w-full"
-              />
+              {graphData && (
+                <InteractiveGraph
+                  width={500}
+                  height={300}
+                  series={graphData.series}
+                  xAxis={{ min: 200, max: 1200, label: 'T (K)', tickInterval: 200 }}
+                  yAxis={{ min: -500, max: 500, label: 'ΔG (kJ/mol)', tickInterval: 100 }}
+                  regions={graphData.regions}
+                  markers={graphData.markers}
+                  verticalLines={graphData.verticalLines}
+                  horizontalLines={[{
+                    y: 0,
+                    color: '#374151',
+                    lineWidth: 2,
+                    label: 'ΔG = 0'
+                  }]}
+                  ariaLabel="ΔG vs Hitastig graf"
+                />
+              )}
               <div className="mt-3 text-xs text-gray-600 grid grid-cols-2 gap-2">
                 <div>🟠 Línuhalli: -ΔS°</div>
                 <div>🟢 Sjálfviljugt: ΔG° &lt; 0</div>

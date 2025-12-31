@@ -7,7 +7,7 @@ import { Burette } from './Burette';
 import { Flask } from './Flask';
 import { TitrationCurve } from './TitrationCurve';
 import { IndicatorSelector } from './IndicatorSelector';
-import type { Titration, MonoproticTitration, IndicatorType } from '../types';
+import type { MonoproticTitration, IndicatorType } from '../types';
 
 interface Level2Props {
   onComplete: (score: number, maxScore?: number, hintsUsed?: number) => void;

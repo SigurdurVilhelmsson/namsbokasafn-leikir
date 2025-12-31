@@ -3,6 +3,7 @@ import { LEVEL1_CHALLENGES } from '../data/level1-challenges';
 import { generateTitrationCurve } from '../utils/ph-calculations';
 import { titrations } from '../data/titrations';
 import type { MonoproticTitration } from '../types';
+import { HintSystem } from '@shared/components';
 
 interface Level1Props {
   onComplete: (score: number, maxScore?: number, hintsUsed?: number) => void;
@@ -24,8 +25,9 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
   const [score, setScore] = useState(0);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [showResult, setShowResult] = useState(false);
-  const [showHint, setShowHint] = useState(false);
   const [hintsUsed, setHintsUsed] = useState(0);
+  const [hintMultiplier, setHintMultiplier] = useState(1.0);
+  const [hintResetKey, setHintResetKey] = useState(0);
   const [completed, setCompleted] = useState(0);
   const levelCompleteReported = useRef(false);
 
@@ -53,7 +55,7 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
     setShowResult(true);
 
     if (isCorrect) {
-      const points = showHint ? 50 : 100;
+      const points = Math.round(100 * hintMultiplier);
       setScore(prev => prev + points);
       onCorrectAnswer?.();
     } else {
@@ -68,15 +70,13 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
       setCurrentIndex(prev => prev + 1);
       setSelectedOption(null);
       setShowResult(false);
-      setShowHint(false);
+      setHintMultiplier(1.0);
+      setHintResetKey(prev => prev + 1);
     }
   };
 
-  const handleShowHint = () => {
-    if (!showHint) {
-      setShowHint(true);
-      setHintsUsed(prev => prev + 1);
-    }
+  const handleHintUsed = () => {
+    setHintsUsed(prev => prev + 1);
   };
 
   const selectedOpt = challenge.options?.find(o => o.id === selectedOption);
@@ -189,22 +189,17 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
           </div>
         </div>
 
-        {/* Hint */}
+        {/* Tiered Hint System */}
         {!showResult && (
           <div className="mb-4">
-            {showHint ? (
-              <div className="bg-yellow-50 border border-yellow-300 rounded-xl p-4">
-                <div className="font-bold text-yellow-800 mb-1">💡 Vísbending:</div>
-                <p className="text-yellow-900">{challenge.hintIs}</p>
-              </div>
-            ) : (
-              <button
-                onClick={handleShowHint}
-                className="text-yellow-600 hover:text-yellow-800 text-sm flex items-center gap-2"
-              >
-                💡 Sýna vísbendingu (-50 stig)
-              </button>
-            )}
+            <HintSystem
+              hints={challenge.hints}
+              basePoints={100}
+              onHintUsed={handleHintUsed}
+              onPointsChange={setHintMultiplier}
+              disabled={showResult}
+              resetKey={hintResetKey}
+            />
           </div>
         )}
 
@@ -213,8 +208,7 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
           <div className={`mb-6 p-4 rounded-xl ${isCorrect ? 'bg-green-50 border border-green-300' : 'bg-red-50 border border-red-300'}`}>
             <div className={`font-bold mb-2 ${isCorrect ? 'text-green-800' : 'text-red-800'}`}>
               {isCorrect ? '✓ Rétt!' : '✗ Rangt'}
-              {isCorrect && showHint && ' (50 stig með vísbendingu)'}
-              {isCorrect && !showHint && ' (+100 stig)'}
+              {isCorrect && ` (+${Math.round(100 * hintMultiplier)} stig)`}
             </div>
             <p className={isCorrect ? 'text-green-900' : 'text-red-900'}>
               {challenge.explanationIs}
@@ -225,7 +219,7 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
         {/* Action buttons */}
         <div className="flex justify-between">
           <div className="text-sm text-gray-500">
-            {showHint && '💡 Vísbending notuð'}
+            {hintMultiplier < 1 && '💡 Vísbending notuð'}
           </div>
           <div className="flex gap-3">
             {!showResult ? (

@@ -94,8 +94,12 @@ export const LEVEL1_CHALLENGES: Level1Challenge[] = [
       }
     ],
     curveType: 'weak-strong',
-    hintIs: 'Veik sýra er ekki alveg sundurgreind, svo upphaf-pH er hærra. Samþjöppuð basi myndast við jafngildispunkt.',
-    hint: 'Weak acid is not fully dissociated, so initial pH is higher. Conjugate base forms at equivalence point.',
+    hints: {
+      topic: 'Þetta snýst um títrunarkúrfur veikra sýra og sterkra basa.',
+      strategy: 'Veik sýra er ekki alveg sundurgreind, svo upphaf-pH er hærra. Hugsaðu hvað myndast við jafngildispunkt.',
+      method: 'Veik sýra + sterk basi myndar samþjöppuð basa (basískt) við jafngildispunkt → pH > 7.',
+      solution: 'Púffursvæði + jafngildispunktur yfir pH 7 eru lykileinkenni veikrar sýru + sterkrar basa.'
+    },
     explanationIs: 'Veik sýra + sterk basi hefur: 1) Hærra upphafs-pH (3-5) vegna hlutasundurgreiningar, 2) Púffursvæði við hálfan jafngildispunkt þar sem pH ≈ pKₐ, 3) Jafngildispunkt YFIR pH 7 vegna þess að samþjöppuð basi (t.d. CH₃COO⁻) er basísk.',
     explanation: 'Weak acid + strong base has: 1) Higher initial pH (3-5) due to partial dissociation, 2) Buffer region at half-equivalence where pH ≈ pKₐ, 3) Equivalence point ABOVE pH 7 because conjugate base (e.g., CH₃COO⁻) is basic.'
   },
@@ -126,8 +130,12 @@ export const LEVEL1_CHALLENGES: Level1Challenge[] = [
         isCorrect: false
       }
     ],
-    hintIs: 'Fenólftaleín breytir lit YFIR pH 8.3. Ef pH er undir 8.3, er lausnin litlaus.',
-    hint: 'Phenolphthalein changes color ABOVE pH 8.3. If pH is below 8.3, the solution is colorless.',
+    hints: {
+      topic: 'Þetta snýst um litbreytingasvið vísa og pH gildi.',
+      strategy: 'Fenólftaleín breytir lit YFIR pH 8.3. Berðu saman við pH 7.',
+      method: 'Ef pH < 8.3, þá er fenólftaleín í súrri formi → litlaus.',
+      solution: 'pH 7 < 8.3, svo fenólftaleín er LITLAUS við jafngildispunkt HCl + NaOH.'
+    },
     explanationIs: 'Við pH 7 (jafngildispunktur HCl + NaOH) er fenólftaleín LITLAUS vegna þess að pH < 8.3. Þetta þýðir að fenólftaleín er EKKI góður vísir fyrir sterka sýru + sterka basa títrun!',
     explanation: 'At pH 7 (HCl + NaOH equivalence point), phenolphthalein is COLORLESS because pH < 8.3. This means phenolphthalein is NOT a good indicator for strong acid + strong base titration!'
   },
@@ -158,8 +166,12 @@ export const LEVEL1_CHALLENGES: Level1Challenge[] = [
         isCorrect: true
       }
     ],
-    hintIs: 'pH 2 er UNDIR litbreytingarsviðinu (3.1-4.4). Hvaða lit hefur vísirinn í súrri lausn?',
-    hint: 'pH 2 is BELOW the color change range (3.1-4.4). What color does the indicator have in acidic solution?',
+    hints: {
+      topic: 'Þetta snýst um litbreytingasvið metýl appelsínugults.',
+      strategy: 'pH 2 er UNDIR litbreytingarsviðinu (3.1-4.4). Hvaða lit hefur vísirinn í súrri lausn?',
+      method: 'Metýl appelsínugult er rautt undir pH 3.1, appelsínugult á milli, og gult yfir pH 4.4.',
+      solution: 'pH 2 < 3.1, svo metýl appelsínugult er RAUTT.'
+    },
     explanationIs: 'Við pH 2 er lausnin mjög súr (undir 3.1), svo metýl appelsínugult sýnir RAUÐAN lit. Í sýru er vísirinn í prótónformi sínu.',
     explanation: 'At pH 2, the solution is very acidic (below 3.1), so methyl orange shows RED color. In acid, the indicator is in its protonated form.'
   },
@@ -195,8 +207,12 @@ export const LEVEL1_CHALLENGES: Level1Challenge[] = [
         isCorrect: false
       }
     ],
-    hintIs: 'Púffur myndast þegar bæði veik sýra og samþjöppuð basi hennar eru til staðar í sambærilegu magni.',
-    hint: 'Buffer forms when both weak acid and its conjugate base are present in comparable amounts.',
+    hints: {
+      topic: 'Þetta snýst um púffursvæði á títrunarkúrfu.',
+      strategy: 'Púffur myndast þegar bæði veik sýra og samþjöppuð basi hennar eru til staðar í sambærilegu magni.',
+      method: 'Við hálfan jafngildispunkt er [HA] = [A⁻], svo pH = pKₐ. Púffursvæði er pH = pKₐ ± 1.',
+      solution: 'Púffursvæðið er fyrir og eftir hálfan jafngildispunkt (pH = pKₐ ± 1).'
+    },
     explanationIs: 'Púffursvæðið er við pH = pKₐ ± 1. Við hálfan jafngildispunkt er [HA] = [A⁻], svo pH = pKₐ (Henderson-Hasselbalch). Þetta svæði mótstöðist pH breytingum best.',
     explanation: 'The buffer region is at pH = pKₐ ± 1. At half-equivalence point, [HA] = [A⁻], so pH = pKₐ (Henderson-Hasselbalch). This region resists pH changes best.'
   },
@@ -231,8 +247,12 @@ export const LEVEL1_CHALLENGES: Level1Challenge[] = [
         isCorrect: false
       }
     ],
-    hintIs: 'Jafngildispunktur er ekki alltaf við pH 7. Veik sýra + sterk basi hefur jafngildispunkt yfir pH 7.',
-    hint: 'Equivalence point is not always at pH 7. Weak acid + strong base has equivalence point above pH 7.',
+    hints: {
+      topic: 'Þetta snýst um val á vísi fyrir títrun.',
+      strategy: 'Jafngildispunktur er ekki alltaf við pH 7. Veldu vísi sem breytir lit við jafngildispunktinn.',
+      method: 'Litbreytingasvið vísisins verður að innihalda pH við jafngildispunkt.',
+      solution: 'HCl + NaOH (pH 7) → metýl rautt; CH₃COOH + NaOH (pH ~9) → fenólftaleín.'
+    },
     explanationIs: 'Besti vísirinn hefur litbreytingasvið sem inniheldur jafngildispunkt títrunarinnar. T.d.: HCl + NaOH (pH 7) → metýl rautt eða brómþýmól blátt; CH₃COOH + NaOH (pH ~9) → fenólftaleín.',
     explanation: 'The best indicator has a color change range containing the titration\'s equivalence point. E.g.: HCl + NaOH (pH 7) → methyl red or bromothymol blue; CH₃COOH + NaOH (pH ~9) → phenolphthalein.'
   }

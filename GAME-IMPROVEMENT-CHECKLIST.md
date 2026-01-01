@@ -87,7 +87,7 @@
 | Improvement | Status | Priority | Effort | Notes |
 |-------------|--------|----------|--------|-------|
 | Collision simulation | ✅ | High | High | CollisionDemo with activation energy visual |
-| Maxwell-Boltzmann visualization | ⬜ | High | Medium | Distribution curve |
+| Maxwell-Boltzmann visualization | ✅ | High | Medium | Interactive distribution curve synced with CollisionDemo, shaded Ea region, percentage display |
 | Concentration vs time graph | ⬜ | Medium | Medium | Interactive builder |
 | Catalyst effect demo | ⬜ | Medium | Medium | Before/after comparison |
 
@@ -203,10 +203,10 @@
 
 | Priority | Total | Completed | Percentage |
 |----------|-------|-----------|------------|
-| High | 42 | 7 | 16.7% |
+| High | 42 | 8 | 19.0% |
 | Medium | 45 | 8 | 17.8% |
 | Low | 21 | 1 | 4.8% |
-| **Total** | **108** | **16** | **14.8%** |
+| **Total** | **108** | **17** | **15.7%** |
 
 ### By Year
 
@@ -214,14 +214,14 @@
 |------|-------|-----------|------------|
 | Shared | 8 | 4 | 50% |
 | Year 1 | 20 | 3 | 15% |
-| Year 2 | 40 | 4 | 10% |
+| Year 2 | 40 | 5 | 12.5% |
 | Year 3 | 32 | 5 | 15.6% |
 
 ### By Category
 
 | Category | Total | Completed | Percentage |
 |----------|-------|-----------|------------|
-| Visualization | 45 | 5 | 11.1% |
+| Visualization | 45 | 6 | 13.3% |
 | Interactivity | 30 | 0 | 0% |
 | Content | 18 | 3 | 16.7% |
 | Gamification | 15 | 2 | 13.3% |
@@ -295,6 +295,8 @@ Building these once benefits multiple games:
 | 2025-12-31 | ParticleSimulation integrated into: kinetics (CollisionDemo with activation energy visual) |
 | 2025-12-31 | ParticleSimulation integrated into: equilibrium-shifter (ParticleEquilibrium with shift direction feedback) |
 | 2025-12-31 | ParticleSimulation integrated into: thermodynamics-predictor (EntropyVisualization replaced CSS with canvas) |
+| 2026-01-01 | **Maxwell-Boltzmann visualization COMPLETE** - Interactive energy distribution curve for Kinetics game |
+| 2026-01-01 | MaxwellBoltzmann.tsx: SVG-based curve with shaded Ea region, percentage display, synced with CollisionDemo |
 
 ---
 

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { TieredHints } from '@shared/types';
 import { CollisionDemo } from './CollisionDemo';
+import { MaxwellBoltzmann } from './MaxwellBoltzmann';
 
 interface Level1Props {
   onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
@@ -153,6 +154,10 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
   const [showHint, setShowHint] = useState(false);
   const [totalHintsUsed, setTotalHintsUsed] = useState(0);
   const [score, setScore] = useState(0);
+
+  // Shared state for visualizations
+  const [temperature, setTemperature] = useState(350);
+  const [activationEnergy, setActivationEnergy] = useState(40);
 
   const challenge = challenges[currentChallenge];
 
@@ -317,13 +322,74 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
           )}
         </div>
 
-        {/* Interactive Collision Demo */}
-        <div className="mt-6">
-          <CollisionDemo
-            temperature={350}
-            activationEnergy={40}
-            showLabels={true}
-          />
+        {/* Interactive Visualizations */}
+        <div className="mt-6 bg-white rounded-xl p-4 shadow">
+          <h3 className="font-bold text-gray-700 mb-4">Gagnvirk hermun</h3>
+
+          {/* Shared Controls */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 p-3 bg-gray-50 rounded-lg">
+            <div>
+              <label className="flex items-center justify-between text-sm text-gray-600 mb-1">
+                <span className="flex items-center gap-1">
+                  <span>🌡️</span> Hitastig
+                </span>
+                <span className="font-mono font-bold text-blue-600">{temperature} K</span>
+              </label>
+              <input
+                type="range"
+                min="250"
+                max="500"
+                step="10"
+                value={temperature}
+                onChange={(e) => setTemperature(Number(e.target.value))}
+                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-500"
+              />
+              <div className="flex justify-between text-xs text-gray-400 mt-1">
+                <span>250 K</span>
+                <span>500 K</span>
+              </div>
+            </div>
+
+            <div>
+              <label className="flex items-center justify-between text-sm text-gray-600 mb-1">
+                <span className="flex items-center gap-1">
+                  <span>⚡</span> Virkjunarorka (Ea)
+                </span>
+                <span className="font-mono font-bold text-red-600">{activationEnergy} kJ/mol</span>
+              </label>
+              <input
+                type="range"
+                min="20"
+                max="80"
+                step="5"
+                value={activationEnergy}
+                onChange={(e) => setActivationEnergy(Number(e.target.value))}
+                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-red-500"
+              />
+              <div className="flex justify-between text-xs text-gray-400 mt-1">
+                <span>20 kJ/mol</span>
+                <span>80 kJ/mol</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Side-by-side visualizations */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <MaxwellBoltzmann
+              temperature={temperature}
+              activationEnergy={activationEnergy}
+            />
+            <CollisionDemo
+              temperature={temperature}
+              activationEnergy={activationEnergy}
+              showLabels={true}
+            />
+          </div>
+
+          {/* Connection explanation */}
+          <div className="mt-3 text-center text-xs text-gray-500 bg-blue-50 p-2 rounded">
+            Prófaðu að breyta hitastigi og sjáðu hvernig bæði orkudreifingin og árekstrartíðnin breytast!
+          </div>
         </div>
 
         {/* Visual concept helper */}

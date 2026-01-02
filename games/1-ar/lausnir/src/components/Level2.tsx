@@ -269,7 +269,7 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
   const allComplete = currentScenario === SCENARIOS.length - 1 && showResult;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-100 p-4 md:p-8">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="bg-white rounded-2xl shadow-lg p-4 mb-6">

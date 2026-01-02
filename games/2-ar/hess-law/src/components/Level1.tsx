@@ -463,7 +463,7 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
   const showEquationControls = challenge.id >= 2 && challenge.id <= 4;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-100 p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 to-cyan-100 p-4 md:p-8">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="bg-white rounded-2xl shadow-lg p-4 mb-6">

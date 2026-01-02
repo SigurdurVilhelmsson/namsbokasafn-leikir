@@ -175,7 +175,7 @@ export function Level3({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
   // Setup screen
   if (gameState === 'setup') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-100 p-4 md:p-8">
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-100 p-4 md:p-8">
         <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-2xl p-6 md:p-8">
           <div className="flex justify-between items-center mb-6">
             <button onClick={onBack} className="text-gray-500 hover:text-gray-700">
@@ -247,7 +247,7 @@ export function Level3({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
     const finalScore = score + bonusScore;
 
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-100 p-4 md:p-8">
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-100 p-4 md:p-8">
         <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-2xl p-6 md:p-8">
           <div className="text-center mb-8">
             <div className="text-6xl mb-4">🎉</div>
@@ -319,7 +319,7 @@ export function Level3({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
                    difficulty === 'medium' ? 'grid-cols-4' : 'grid-cols-4 md:grid-cols-5';
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-100 p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-100 p-4 md:p-8">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="bg-white rounded-2xl shadow-lg p-4 mb-4">

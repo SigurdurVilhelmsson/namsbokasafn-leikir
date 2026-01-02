@@ -435,7 +435,7 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-100 p-4">
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div className="bg-white rounded-xl shadow-md p-4 mb-4">

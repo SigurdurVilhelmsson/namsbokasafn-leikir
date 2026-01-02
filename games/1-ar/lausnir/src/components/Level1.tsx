@@ -328,7 +328,7 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
   // Game complete screen
   if (gameComplete) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 p-4 md:p-8">
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-100 p-4 md:p-8">
         <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-2xl p-6 md:p-8">
           <h1 className="text-3xl md:text-4xl font-bold text-center mb-6 text-blue-600">
             Til hamingju!
@@ -379,7 +379,7 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-100 p-4 md:p-8">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="bg-white rounded-2xl shadow-lg p-4 mb-6">

@@ -163,7 +163,7 @@ export function Level3({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
   // Setup screen
   if (screen === 'setup') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-red-50 to-orange-50 p-4">
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-100 p-4">
         <div className="max-w-lg mx-auto">
           <div className="bg-white rounded-2xl shadow-xl p-8">
             <div className="text-center mb-8">
@@ -292,7 +292,7 @@ export function Level3({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
 
   // Game screen
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-purple-50 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-100 p-4">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="bg-white rounded-xl shadow-md p-4 mb-4">

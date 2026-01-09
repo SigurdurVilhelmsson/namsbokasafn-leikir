@@ -174,6 +174,9 @@ export function Level1Conceptual({ onComplete, onBack, initialProgress, onCorrec
   const [showCelebration, setShowCelebration] = useState(false);
   const [hintMultiplier, setHintMultiplier] = useState(1.0);
   const [hintsUsedTier, setHintsUsedTier] = useState(0);
+  const [showHint, setShowHint] = useState(false);
+  const [attempts, setAttempts] = useState(0);
+  const [totalHintsUsed, setTotalHintsUsed] = useState(0);
 
   const challenge = challenges[currentChallengeIndex];
 
@@ -182,6 +185,8 @@ export function Level1Conceptual({ onComplete, onBack, initialProgress, onCorrec
     setShowSuccess(false);
     setHintMultiplier(1.0);
     setHintsUsedTier(0);
+    setShowHint(false);
+    setAttempts(0);
   }, [currentChallengeIndex]);
 
   const handleSuccess = () => {

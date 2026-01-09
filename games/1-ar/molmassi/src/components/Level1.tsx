@@ -252,6 +252,8 @@ export function Level1({ onBack, onComplete, onCorrectAnswer, onIncorrectAnswer 
   const [selectedAnswer, setSelectedAnswer] = useState<number | string | null>(null);
   const [hintMultiplier, setHintMultiplier] = useState(1.0);
   const [hintsUsedTier, setHintsUsedTier] = useState(0);
+  const [totalHintsUsed, setTotalHintsUsed] = useState(0);
+  const [showHint, setShowHint] = useState(false);
 
   // For build_molecule challenge
   const [builtAtoms, setBuiltAtoms] = useState<{ symbol: string; count: number }[]>([]);
@@ -268,6 +270,7 @@ export function Level1({ onBack, onComplete, onCorrectAnswer, onIncorrectAnswer 
     setShowFeedback(false);
     setHintMultiplier(1.0);
     setHintsUsedTier(0);
+    setShowHint(false);
   }, [challenge]);
 
   const checkAnswer = (answer: number | string) => {

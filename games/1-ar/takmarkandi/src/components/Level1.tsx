@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Reaction } from '../types';
 import { REACTIONS } from '../data/reactions';
 import { Molecule } from './Molecule';
 import { HintSystem } from '@shared/components';
 import type { TieredHints } from '@shared/types';
+import { shuffleArray } from '@shared/utils';
 
 interface Level1Props {
   onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
@@ -405,11 +406,11 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
         options.add(correctAnswer * 2);
         if (correctAnswer > 2) options.add(Math.floor(correctAnswer / 2));
 
-        const sortedOptions = Array.from(options).sort((a, b) => a - b).slice(0, 4);
+        const shuffledNumericOptions = shuffleArray(Array.from(options).slice(0, 4));
 
         return (
           <div className="grid grid-cols-4 gap-3">
-            {sortedOptions.map(num => (
+            {shuffledNumericOptions.map(num => (
               <button
                 key={num}
                 onClick={() => !showFeedback && checkAnswer(num)}

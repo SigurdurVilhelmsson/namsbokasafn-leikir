@@ -5,6 +5,7 @@ import { titrations } from '../data/titrations';
 import type { MonoproticTitration } from '../types';
 import { HintSystem, InteractiveGraph } from '@shared/components';
 import type { DataPoint, DataSeries, MarkerConfig } from '@shared/components';
+import { shuffleArray } from '@shared/utils';
 
 interface Level1Props {
   onComplete: (score: number, maxScore?: number, hintsUsed?: number) => void;
@@ -35,6 +36,17 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
   const challenge = LEVEL1_CHALLENGES[currentIndex];
   const maxScore = LEVEL1_CHALLENGES.length * 100;
 
+  // Shuffle options for current challenge - memoize to keep stable during challenge
+  const shuffledOptions = useMemo(() => {
+    if (!challenge.options) return [];
+    const shuffled = shuffleArray(challenge.options);
+    // Assign new sequential IDs (a, b, c, d) after shuffling
+    return shuffled.map((opt, idx) => ({
+      ...opt,
+      id: String.fromCharCode(97 + idx) // 'a', 'b', 'c', 'd'
+    }));
+  }, [currentIndex, challenge.options]);
+
   useEffect(() => {
     if (completed >= LEVEL1_CHALLENGES.length && !levelCompleteReported.current) {
       levelCompleteReported.current = true;
@@ -50,7 +62,7 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
   const handleCheck = () => {
     if (!selectedOption || showResult) return;
 
-    const selectedOpt = challenge.options?.find(o => o.id === selectedOption);
+    const selectedOpt = shuffledOptions.find(o => o.id === selectedOption);
     const isCorrect = selectedOpt?.isCorrect ?? false;
 
     setShowResult(true);
@@ -80,7 +92,7 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
     setHintsUsed(prev => prev + 1);
   };
 
-  const selectedOpt = challenge.options?.find(o => o.id === selectedOption);
+  const selectedOpt = shuffledOptions.find(o => o.id === selectedOption);
   const isCorrect = selectedOpt?.isCorrect ?? false;
 
   return (
@@ -149,7 +161,7 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
 
           {/* Options */}
           <div className="space-y-3">
-            {challenge.options?.map(option => {
+            {shuffledOptions.map(option => {
               const isSelected = selectedOption === option.id;
               const isOptionCorrect = option.isCorrect;
 

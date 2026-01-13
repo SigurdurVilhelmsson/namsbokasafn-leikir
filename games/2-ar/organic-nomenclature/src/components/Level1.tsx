@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { HintSystem } from '@shared/components';
 import type { TieredHints } from '@shared/types';
+import { shuffleArray } from '@shared/utils';
 
 interface Level1Props {
   onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
@@ -299,6 +300,11 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
   // Quiz phase
   const question = quizQuestions[currentQuestion];
 
+  // Shuffle options for current question - memoize to keep stable during question
+  const shuffledQuizOptions = useMemo(() => {
+    return shuffleArray(question.options);
+  }, [currentQuestion, question.options]);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-teal-50 to-cyan-100 p-4 md:p-8">
       <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-2xl p-6 md:p-8">
@@ -328,7 +334,7 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
 
         {!showFeedback ? (
           <div className="grid grid-cols-2 gap-4">
-            {question.options.map((option, idx) => (
+            {shuffledQuizOptions.map((option, idx) => (
               <button
                 key={idx}
                 onClick={() => handleAnswer(option)}

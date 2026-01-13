@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { HintSystem } from '@shared/components';
 import type { TieredHints } from '@shared/types';
+import { shuffleArray } from '@shared/utils';
 
 /**
  * Multiplies all coefficients in a chemical equation string
@@ -406,6 +407,11 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
 
   const challenge = CHALLENGES[currentChallenge];
 
+  // Shuffle options for current challenge - memoize to keep stable during challenge
+  const shuffledOptions = useMemo(() => {
+    return shuffleArray(challenge.options);
+  }, [currentChallenge, challenge.options]);
+
   // Reset equation when challenge changes
   useEffect(() => {
     setEquation({ ...CHALLENGES[currentChallenge].equation });
@@ -427,7 +433,7 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
   const checkAnswer = () => {
     if (selectedAnswer === null) return;
 
-    const isCorrect = challenge.options[selectedAnswer].correct;
+    const isCorrect = shuffledOptions[selectedAnswer].correct;
     setShowResult(true);
 
     if (isCorrect) {
@@ -539,7 +545,7 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
             <h3 className="text-lg font-semibold text-gray-800 mb-4">{challenge.question}</h3>
 
             <div className="space-y-3">
-              {challenge.options.map((option, index) => (
+              {shuffledOptions.map((option, index) => (
                 <button
                   key={index}
                   onClick={() => !showResult && setSelectedAnswer(index)}

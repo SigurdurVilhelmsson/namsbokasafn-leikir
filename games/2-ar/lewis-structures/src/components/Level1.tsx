@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { HintSystem } from '@shared/components';
 import type { TieredHints } from '@shared/types';
+import { shuffleArray } from '@shared/utils';
 
 interface Level1Props {
   onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
@@ -193,11 +194,22 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
   const challenge = challenges[currentChallenge];
   const basePoints = 15;
 
+  // Shuffle options for current challenge - memoize to keep stable during challenge
+  const shuffledOptions = useMemo(() => {
+    if (!challenge.options) return [];
+    const shuffled = shuffleArray(challenge.options);
+    // Assign new sequential IDs (a, b, c, d) after shuffling
+    return shuffled.map((opt, idx) => ({
+      ...opt,
+      id: String.fromCharCode(97 + idx) // 'a', 'b', 'c', 'd'
+    }));
+  }, [currentChallenge, challenge.options]);
+
   const checkAnswer = () => {
     let correct = false;
 
-    if (challenge.options) {
-      const selected = challenge.options.find(opt => opt.id === selectedOption);
+    if (shuffledOptions.length > 0) {
+      const selected = shuffledOptions.find(opt => opt.id === selectedOption);
       correct = selected?.correct ?? false;
     } else {
       const numAnswer = parseInt(userAnswer);
@@ -292,9 +304,9 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
           <p className="text-gray-700 text-lg mb-6">{challenge.question}</p>
 
           {/* Multiple choice options */}
-          {challenge.options ? (
+          {shuffledOptions.length > 0 ? (
             <div className="space-y-3 mb-6">
-              {challenge.options.map(option => (
+              {shuffledOptions.map(option => (
                 <button
                   key={option.id}
                   onClick={() => !showResult && setSelectedOption(option.id)}
@@ -356,7 +368,7 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
           {!showResult && (
             <button
               onClick={checkAnswer}
-              disabled={challenge.options ? !selectedOption : !userAnswer}
+              disabled={shuffledOptions.length > 0 ? !selectedOption : !userAnswer}
               className="w-full bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 text-white font-bold py-4 px-6 rounded-xl transition-colors"
             >
               Athuga svar

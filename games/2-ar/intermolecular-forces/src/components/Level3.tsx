@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import { shuffleArray } from '@shared/utils';
 
 interface Level3Props {
   onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
@@ -194,8 +195,18 @@ export function Level3({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
 
   const challenge = challenges[currentChallenge];
 
+  // Shuffle options for current challenge - memoize to keep stable during challenge
+  const shuffledOptions = useMemo(() => {
+    const shuffled = shuffleArray(challenge.options);
+    // Assign new sequential IDs (a, b, c, d) after shuffling
+    return shuffled.map((opt, idx) => ({
+      ...opt,
+      id: String.fromCharCode(97 + idx) // 'a', 'b', 'c', 'd'
+    }));
+  }, [currentChallenge, challenge.options]);
+
   const checkAnswer = () => {
-    const selected = challenge.options.find(opt => opt.id === selectedOption);
+    const selected = shuffledOptions.find(opt => opt.id === selectedOption);
     const correct = selected?.correct ?? false;
     if (correct) {
       if (!showHint) {
@@ -227,7 +238,7 @@ export function Level3({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
     setTotalHintsUsed(prev => prev + 1);
   };
 
-  const isCorrect = showResult && challenge.options.find(o => o.id === selectedOption)?.correct;
+  const isCorrect = showResult && shuffledOptions.find(o => o.id === selectedOption)?.correct;
 
   const getTypeBadge = (type: string) => {
     switch (type) {
@@ -296,7 +307,7 @@ export function Level3({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
 
           {/* Options */}
           <div className="space-y-3 mb-6">
-            {challenge.options.map(option => (
+            {shuffledOptions.map(option => (
               <button
                 key={option.id}
                 onClick={() => !showResult && setSelectedOption(option.id)}

@@ -1,4 +1,5 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
+import { shuffleArray } from '@shared/utils';
 
 // Level 2: Application/Reasoning - "What happens when..." questions
 // Students predict outcomes without calculating
@@ -238,7 +239,18 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
   const [completed, setCompleted] = useState<number[]>([]);
 
   const scenario = SCENARIOS[currentScenario];
-  const selectedOption = scenario.options.find(o => o.id === selectedAnswer);
+
+  // Shuffle options for current scenario - memoize to keep stable during scenario
+  const shuffledOptions = useMemo(() => {
+    const shuffled = shuffleArray(scenario.options);
+    // Assign new sequential IDs (a, b, c, d) after shuffling
+    return shuffled.map((opt, idx) => ({
+      ...opt,
+      id: String.fromCharCode(97 + idx) // 'a', 'b', 'c', 'd'
+    }));
+  }, [currentScenario, scenario.options]);
+
+  const selectedOption = shuffledOptions.find(o => o.id === selectedAnswer);
   const isCorrect = selectedOption?.isCorrect ?? false;
 
   const handleSubmit = useCallback(() => {
@@ -337,7 +349,7 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
 
           {/* Options */}
           <div className="space-y-3 mb-6">
-            {scenario.options.map((option) => {
+            {shuffledOptions.map((option) => {
               let bgColor = 'bg-white hover:bg-gray-50';
               let borderColor = 'border-gray-200';
               let textColor = 'text-gray-800';

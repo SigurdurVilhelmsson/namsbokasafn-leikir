@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { AnimatedMolecule } from '@shared/components';
 import type { TieredHints } from '@shared/types';
 import { geometryToMolecule } from '../utils/vseprConverter';
+import { shuffleArray } from '@shared/utils';
 
 interface Level1Props {
   onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
@@ -320,10 +321,20 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
   const challenge = challenges[currentChallenge];
   const maxScore = challenges.length * 15; // 15 points per question without hints
 
+  // Shuffle options for current challenge - memoize to keep stable during challenge
+  const shuffledOptions = useMemo(() => {
+    const shuffled = shuffleArray(challenge.options);
+    // Assign new sequential IDs (a, b, c, d) after shuffling
+    return shuffled.map((opt, idx) => ({
+      ...opt,
+      id: String.fromCharCode(97 + idx) // 'a', 'b', 'c', 'd'
+    }));
+  }, [currentChallenge, challenge.options]);
+
   const basePoints = 15;
 
   const checkAnswer = () => {
-    const selected = challenge.options.find(opt => opt.id === selectedOption);
+    const selected = shuffledOptions.find(opt => opt.id === selectedOption);
     const correct = selected?.correct ?? false;
     setIsCorrect(correct);
     if (correct) {
@@ -523,7 +534,7 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
           })()}
 
           <div className="space-y-3 mb-6">
-            {challenge.options.map(option => (
+            {shuffledOptions.map(option => (
               <button
                 key={option.id}
                 onClick={() => !showResult && setSelectedOption(option.id)}

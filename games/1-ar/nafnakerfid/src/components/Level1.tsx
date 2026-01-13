@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { HintSystem } from '@shared/components';
 import type { TieredHints } from '@shared/types';
+import { shuffleArray } from '@shared/utils';
 
 interface Level1Props {
   onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
@@ -293,6 +294,16 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
   const question = quizQuestions[currentQuestion];
   const warmupQ = warmupQuestions[currentWarmup];
 
+  // Shuffle options for current question - memoize to keep stable during question
+  const shuffledOptions = useMemo(() => {
+    const indices = question.options.map((_, i) => i);
+    const shuffledIndices = shuffleArray(indices);
+    return {
+      options: shuffledIndices.map(i => question.options[i]),
+      correctShuffledIndex: shuffledIndices.indexOf(question.correctIndex)
+    };
+  }, [currentQuestion, question.options, question.correctIndex]);
+
   const handleNextRule = () => {
     if (currentRule < namingRules.length - 1) {
       setCurrentRule(prev => prev + 1);
@@ -337,7 +348,7 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
     setSelectedAnswer(index);
     setShowFeedback(true);
 
-    if (index === question.correctIndex) {
+    if (index === shuffledOptions.correctShuffledIndex) {
       const points = Math.round(10 * hintMultiplier);
       setScore(prev => prev + points);
       onCorrectAnswer?.();
@@ -658,13 +669,13 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
 
         {/* Options */}
         <div className="grid gap-3 mb-6">
-          {question.options.map((option, idx) => {
+          {shuffledOptions.options.map((option, idx) => {
             let buttonClass = 'bg-white border-2 border-gray-200 hover:border-indigo-400 hover:bg-indigo-50';
 
             if (showFeedback) {
-              if (idx === question.correctIndex) {
+              if (idx === shuffledOptions.correctShuffledIndex) {
                 buttonClass = 'bg-green-100 border-2 border-green-500 text-green-800';
-              } else if (idx === selectedAnswer && idx !== question.correctIndex) {
+              } else if (idx === selectedAnswer && idx !== shuffledOptions.correctShuffledIndex) {
                 buttonClass = 'bg-red-100 border-2 border-red-500 text-red-800';
               } else {
                 buttonClass = 'bg-gray-100 border-2 border-gray-200 text-gray-500';
@@ -688,21 +699,21 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
         {/* Feedback */}
         {showFeedback && (
           <div className={`p-4 rounded-xl mb-6 ${
-            selectedAnswer === question.correctIndex
+            selectedAnswer === shuffledOptions.correctShuffledIndex
               ? 'bg-green-100 border-2 border-green-400'
               : 'bg-amber-100 border-2 border-amber-400'
           }`}>
             <div className="flex items-center gap-2 mb-2">
               <span className="text-2xl">
-                {selectedAnswer === question.correctIndex ? '✓' : '💡'}
+                {selectedAnswer === shuffledOptions.correctShuffledIndex ? '✓' : '💡'}
               </span>
               <span className={`font-bold ${
-                selectedAnswer === question.correctIndex ? 'text-green-800' : 'text-amber-800'
+                selectedAnswer === shuffledOptions.correctShuffledIndex ? 'text-green-800' : 'text-amber-800'
               }`}>
-                {selectedAnswer === question.correctIndex ? 'Rétt!' : 'Útskýring:'}
+                {selectedAnswer === shuffledOptions.correctShuffledIndex ? 'Rétt!' : 'Útskýring:'}
               </span>
             </div>
-            <p className={selectedAnswer === question.correctIndex ? 'text-green-700' : 'text-amber-700'}>
+            <p className={selectedAnswer === shuffledOptions.correctShuffledIndex ? 'text-green-700' : 'text-amber-700'}>
               {question.hints.solution}
             </p>
           </div>

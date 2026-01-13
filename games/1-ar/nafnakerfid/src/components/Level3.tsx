@@ -112,8 +112,15 @@ export function Level3({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
       setIsProcessing(true);
 
       const [firstId, secondId] = newFlipped;
-      const firstCard = cards.find(c => c.id === firstId)!;
-      const secondCard = cards.find(c => c.id === secondId)!;
+      const firstCard = cards.find(c => c.id === firstId);
+      const secondCard = cards.find(c => c.id === secondId);
+
+      // Safety check - cards should always be found
+      if (!firstCard || !secondCard) {
+        setFlippedCards([]);
+        setIsProcessing(false);
+        return;
+      }
 
       // Check if they match (same compound, different type)
       if (firstCard.compound.formula === secondCard.compound.formula &&

@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { AnimatedMolecule } from '@shared/components';
 import { vseprToMolecule } from '../utils/vseprConverter';
+import { shuffleArray } from '@shared/utils';
 
 interface Level2Props {
   onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
@@ -241,6 +242,11 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
   const step = STEPS[currentStep];
   const maxScore = molecules.length * STEPS.length * 10; // 10 points per step without hints
 
+  // Shuffle geometry options for current molecule - memoize to keep stable during molecule
+  const shuffledGeometryOptions = useMemo(() => {
+    return shuffleArray(GEOMETRY_OPTIONS);
+  }, [currentMolecule]);
+
   const checkStep = () => {
     let correct = false;
 
@@ -440,7 +446,7 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
                     hvaða <strong>sameindarlögun</strong> hefur þessi sameind?
                   </p>
                   <div className="grid grid-cols-2 gap-2">
-                    {GEOMETRY_OPTIONS.map(geo => (
+                    {shuffledGeometryOptions.map(geo => (
                       <button
                         key={geo.id}
                         onClick={() => !stepResult && setSelectedGeometry(geo.id)}

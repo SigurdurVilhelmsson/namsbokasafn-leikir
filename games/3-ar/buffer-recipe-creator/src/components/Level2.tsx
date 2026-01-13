@@ -61,8 +61,20 @@ export default function Level2({
   const [showExplanation, setShowExplanation] = useState(false);
 
   const puzzle = LEVEL2_PUZZLES[currentIndex];
-  const problem = BUFFER_PROBLEMS.find(p => p.id === puzzle.problemId)!;
+  const problem = BUFFER_PROBLEMS.find(p => p.id === puzzle.problemId);
   const maxScore = LEVEL2_PUZZLES.length * 100;
+
+  // Safety check - should never happen with valid data
+  if (!problem) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-100 p-4 flex items-center justify-center">
+        <div className="bg-white rounded-xl p-6 shadow-lg text-center">
+          <p className="text-red-600 font-bold">Villa: Gat ekki fundið verkefnagögn</p>
+          <button onClick={onBack} className="mt-4 text-blue-600 underline">Til baka</button>
+        </div>
+      </div>
+    );
+  }
 
   // Determine correct direction
   const getCorrectDirection = (): Direction => {
@@ -92,12 +104,13 @@ export default function Level2({
       setDirectionFeedback('Rétt! Nú skaltu reikna hlutfallið.');
       setStep('ratio');
     } else {
+      const correctDir = getCorrectDirection();
       setDirectionFeedback(
         selectedDirection === 'higher'
-          ? 'Ekki rétt. Athugaðu: er markmiðs-pH stærra eða minna en pKa?'
+          ? `Ekki rétt. Markmiðs-pH (${problem.targetPH.toFixed(2)}) er ${correctDir === 'lower' ? 'minna' : 'jafnt'} pKa (${problem.pKa.toFixed(2)}), þannig að svarið er ekki "hærra".`
           : selectedDirection === 'lower'
-          ? 'Ekki rétt. Athugaðu: er markmiðs-pH stærra eða minna en pKa?'
-          : 'Ekki rétt. Berðu saman pH og pKa gildin.'
+          ? `Ekki rétt. Markmiðs-pH (${problem.targetPH.toFixed(2)}) er ${correctDir === 'higher' ? 'stærra' : 'jafnt'} pKa (${problem.pKa.toFixed(2)}), þannig að svarið er ekki "lægra".`
+          : `Ekki rétt. Markmiðs-pH (${problem.targetPH.toFixed(2)}) er ${correctDir === 'higher' ? 'stærra en' : correctDir === 'lower' ? 'minna en' : 'jafnt'} pKa (${problem.pKa.toFixed(2)}).`
       );
       onIncorrectAnswer?.();
     }

@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { AnimatedMolecule } from '@shared/components';
 import { lewisToMolecule } from '../utils/lewisConverter';
+import { shuffleArray } from '@shared/utils';
 
 interface Level2Props {
   onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
@@ -337,6 +338,11 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
   const isLastStep = currentStep === challenge.steps.length - 1;
   const isLastChallenge = currentChallenge === challenges.length - 1;
 
+  // Shuffle options for current step - memoize to keep stable during step
+  const shuffledStepOptions = useMemo(() => {
+    return shuffleArray(step.options);
+  }, [currentChallenge, currentStep, step.options]);
+
   // Convert Lewis structure to Molecule format for AnimatedMolecule
   const molecule = useMemo(() => {
     return lewisToMolecule(
@@ -350,7 +356,7 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
   const showLonePairs = isLastStep && showStepResult;
 
   const checkStep = () => {
-    const correct = step.options.find(opt => opt.id === selectedAnswer)?.correct ?? false;
+    const correct = shuffledStepOptions.find(opt => opt.id === selectedAnswer)?.correct ?? false;
     setStepCorrect(prev => [...prev, correct]);
 
     if (correct) {
@@ -507,7 +513,7 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
             </p>
 
             <div className="space-y-3">
-              {step.options.map(option => (
+              {shuffledStepOptions.map(option => (
                 <button
                   key={option.id}
                   onClick={() => !showStepResult && setSelectedAnswer(option.id)}
@@ -533,7 +539,7 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
           {/* Step result */}
           {showStepResult && (
             <div className={`p-4 rounded-xl mb-4 ${
-              step.options.find(o => o.id === selectedAnswer)?.correct
+              shuffledStepOptions.find(o => o.id === selectedAnswer)?.correct
                 ? 'bg-green-50 border border-green-200'
                 : 'bg-red-50 border border-red-200'
             }`}>

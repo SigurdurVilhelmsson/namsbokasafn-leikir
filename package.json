@@ -2,6 +2,7 @@
   "name": "@kvenno/chemistry-games",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "description": "Kvennaskólinn Chemistry Educational Games - Multi-year interactive learning platform",
   "author": "Kvennaskólinn",
   "license": "MIT",
@@ -33,7 +34,10 @@
     "check:security": "pnpm audit && echo '✅ Security check complete'",
     "check:quality": "pnpm type-check && pnpm lint && pnpm format:check && echo '✅ Quality check complete'",
     "check:deps": "pnpm outdated || true",
-    "check:all": "pnpm check:security && pnpm check:quality && pnpm check:deps"
+    "check:all": "pnpm check:security && pnpm check:quality && pnpm check:deps",
+    "check:builds": "node scripts/check-builds.js",
+    "docs:generate": "node scripts/generate-game-inventory.js",
+    "docs:check": "pnpm docs:generate && git diff --exit-code docs/_generated/"
   },
   "devDependencies": {
     "@testing-library/react": "^14.1.2",

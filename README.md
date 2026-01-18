@@ -244,20 +244,20 @@ See [tools/game-template/README.md](tools/game-template/README.md) for detailed 
 ## 📖 Documentation
 
 ### Planning & Roadmap
-- **[GAME-IMPROVEMENT-RECOMMENDATIONS.md](GAME-IMPROVEMENT-RECOMMENDATIONS.md)** - Research-based improvement plan (108 items)
-- **[GAME-IMPROVEMENT-CHECKLIST.md](GAME-IMPROVEMENT-CHECKLIST.md)** - Implementation progress tracker
-- **[GAME-REVIEW-PROMPT.md](GAME-REVIEW-PROMPT.md)** - Game review guidelines (three-level pedagogical framework)
+- **[Improvement Recommendations](docs/game-improvement/recommendations.md)** - Research-based improvement plan (108 items)
+- **[Improvement Checklist](docs/game-improvement/checklist.md)** - Implementation progress tracker
+- **[Game Review Prompt](docs/game-improvement/review-prompt.md)** - Game review guidelines (three-level pedagogical framework)
 
 ### Development
 - **[Developer Guide](docs/DEVELOPER-GUIDE.md)** - Complete development workflow
 - **[API Reference](docs/API-REFERENCE.md)** - Shared library API documentation
 - **[Architecture](docs/ARCHITECTURE.md)** - System architecture and design decisions
-- **[DEVELOPMENT.md](DEVELOPMENT.md)** - Scripts and tooling
-- **[DEBUGGING.md](DEBUGGING.md)** - Debugging techniques
+- **[Development Setup](docs/development.md)** - Scripts and tooling
+- **[Debugging](docs/debugging.md)** - Debugging techniques
 
 ### Deployment & Infrastructure
-- **[DEPLOYMENT.md](DEPLOYMENT.md)** - Deployment to kvenno.app
-- **[KVENNO-STRUCTURE.md](KVENNO-STRUCTURE.md)** - Site structure and design system
+- **[Deployment](docs/deployment.md)** - Deployment to kvenno.app
+- **[Kvenno Structure](docs/kvenno-structure.md)** - Site structure and design system
 
 ### Reference
 - **[Documentation Hub](docs/README.md)** - Complete documentation index
@@ -330,7 +330,7 @@ Built HTML files are placed in year directories (`1-ar/`, `2-ar/`, `3-ar/`) and 
 cp 1-ar/*.html /path/to/kvenno.app/1-ar/games/
 ```
 
-See [DEPLOYMENT.md](DEPLOYMENT.md) for complete deployment guide.
+See [docs/deployment.md](docs/deployment.md) for complete deployment guide.
 
 ---
 
@@ -403,8 +403,8 @@ This project follows a research-based improvement plan for enhancing all 18 educ
 
 | Document | Purpose |
 |----------|---------|
-| **[GAME-IMPROVEMENT-RECOMMENDATIONS.md](GAME-IMPROVEMENT-RECOMMENDATIONS.md)** | Comprehensive evaluation with 108 specific improvements based on 2024-2025 educational games research |
-| **[GAME-IMPROVEMENT-CHECKLIST.md](GAME-IMPROVEMENT-CHECKLIST.md)** | Implementation tracker with progress status for each improvement |
+| **[Recommendations](docs/game-improvement/recommendations.md)** | Comprehensive evaluation with 108 specific improvements based on 2024-2025 educational games research |
+| **[Checklist](docs/game-improvement/checklist.md)** | Implementation tracker with progress status for each improvement |
 
 ### Improvement Categories
 
@@ -418,7 +418,7 @@ Based on Barry Fishman's principles of effective educational games and PhET-styl
 
 ### Current Progress
 
-See [GAME-IMPROVEMENT-CHECKLIST.md](GAME-IMPROVEMENT-CHECKLIST.md) for detailed progress tracking.
+See [docs/game-improvement/checklist.md](docs/game-improvement/checklist.md) for detailed progress tracking.
 
 ---
 

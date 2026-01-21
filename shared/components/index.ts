@@ -53,3 +53,36 @@ export type { ResponsiveContainerProps } from './ResponsiveContainer';
 // MoleculeViewer - standardized molecule display with dark background
 export { MoleculeViewer, MoleculeViewerGrid } from './MoleculeViewer';
 export type { MoleculeViewerProps, MoleculeViewerGridProps } from './MoleculeViewer';
+
+// FeedbackPanel - detailed feedback for game answers
+export { FeedbackPanel } from './FeedbackPanel';
+export type {
+  DetailedFeedback,
+  FeedbackSeverity,
+  FeedbackPanelConfig,
+  FeedbackPanelProps,
+} from './FeedbackPanel';
+
+// DragDropBuilder - flexible drag-and-drop interface
+export {
+  DragDropBuilder,
+  DraggableItem,
+  DropZone,
+} from './DragDropBuilder';
+export type {
+  DraggableItemData,
+  DraggableItemProps,
+  DropZoneData,
+  DropZoneProps,
+  DropResult,
+  ZoneState,
+  DragDropBuilderProps,
+} from './DragDropBuilder';
+
+// MoleculeViewer3D - 3D molecule visualization (lazy-loaded)
+export { MoleculeViewer3D, MoleculeViewer3DLazy, MoleculeViewer3DDirect } from './MoleculeViewer3D';
+export type {
+  MoleculeViewer3DProps,
+  MoleculeViewer3DStyle,
+  CameraPreset,
+} from './MoleculeViewer3D';

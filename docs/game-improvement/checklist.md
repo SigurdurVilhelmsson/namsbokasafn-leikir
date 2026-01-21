@@ -13,12 +13,12 @@
 |------|--------|----------|--------|--------|-------|
 | Create AnimatedMolecule component | ✅ | High | High | High | All 5 phases complete. Integrated into: Molmassi, Lewis Structures, VSEPR Geometry, IMF, Organic Nomenclature |
 | Create InteractiveGraph component | ✅ | Medium | Medium | Medium | Canvas-based reusable graph. Integrated into: ph-titration (Level 1 & TitrationCurve), thermodynamics-predictor |
-| Create DragDropBuilder component | ⬜ | Medium | High | High | For equations, nomenclature |
+| Create DragDropBuilder component | ✅ | Medium | High | High | For equations, nomenclature. HTML5 drag-drop with touch support |
 | Add shared audio utilities | ⬜ | Low | Medium | Medium | TTS for pronunciations |
 | Implement tiered hint system | ✅ | High | Medium | High | 4-level progressive hints. All 17 games migrated |
-| Add detailed feedback explanations | ⬜ | High | Medium | High | Why correct/incorrect |
+| Add detailed feedback explanations | ✅ | High | Medium | High | FeedbackPanel component with expandable "Why?" section |
 | Create particle simulation library | ✅ | Medium | High | High | ParticleSimulation component with physics, presets, reactions. Integrated into: gas-law-challenge, lausnir, kinetics, equilibrium-shifter, thermodynamics-predictor |
-| Add 3D molecule viewer (Three.js) | ⬜ | Medium | High | High | For VSEPR, Lewis, IMF |
+| Add 3D molecule viewer (Three.js) | ✅ | Medium | High | High | MoleculeViewer3D with lazy loading, ball-stick/space-fill modes |
 
 ---
 
@@ -203,16 +203,16 @@
 
 | Priority | Total | Completed | Percentage |
 |----------|-------|-----------|------------|
-| High | 42 | 8 | 19.0% |
-| Medium | 45 | 8 | 17.8% |
+| High | 42 | 12 | 28.6% |
+| Medium | 45 | 10 | 22.2% |
 | Low | 21 | 1 | 4.8% |
-| **Total** | **108** | **17** | **15.7%** |
+| **Total** | **108** | **23** | **21.3%** |
 
 ### By Year
 
 | Year | Total | Completed | Percentage |
 |------|-------|-----------|------------|
-| Shared | 8 | 4 | 50% |
+| Shared | 8 | 8 | 100% |
 | Year 1 | 20 | 3 | 15% |
 | Year 2 | 40 | 5 | 12.5% |
 | Year 3 | 32 | 5 | 15.6% |
@@ -231,7 +231,7 @@
 | Category | Total | Completed | Percentage |
 |----------|-------|-----------|------------|
 | Infrastructure | 9 | 9 | 100% |
-| Testing & Automation | 10 | 0 | 0% |
+| Testing & Automation | 10 | 3 | 30% |
 
 ---
 
@@ -256,9 +256,10 @@ Building these once benefits multiple games:
 
 1. ✅ **AnimatedMolecule** → Lewis, VSEPR, IMF, Organic, Molar Mass
 2. ✅ **ParticleSimulation** → Gas Laws (integrated), Solutions, Kinetics, Equilibrium
-3. ⬜ **DragDropBuilder** → Hess's Law, Nomenclature, Redox
+3. ✅ **DragDropBuilder** → Hess's Law, Nomenclature, Redox
 4. ✅ **InteractiveGraph** → Titration, Thermodynamics, Kinetics
-5. ⬜ **3DMoleculeViewer** → VSEPR, Lewis, IMF, Organic
+5. ✅ **3DMoleculeViewer** → VSEPR, Lewis, IMF, Organic
+6. ✅ **FeedbackPanel** → Detailed feedback with explanations, misconceptions, related concepts
 
 ---
 
@@ -297,6 +298,11 @@ Building these once benefits multiple games:
 | 2025-12-31 | ParticleSimulation integrated into: thermodynamics-predictor (EntropyVisualization replaced CSS with canvas) |
 | 2026-01-01 | **Maxwell-Boltzmann visualization COMPLETE** - Interactive energy distribution curve for Kinetics game |
 | 2026-01-01 | MaxwellBoltzmann.tsx: SVG-based curve with shaded Ea region, percentage display, synced with CollisionDemo |
+| 2026-01-21 | **Developer Tooling COMPLETE** - Husky pre-commit hooks, lint-staged, commitlint with conventional commits |
+| 2026-01-21 | **Vitest Coverage** - Configured with v8 provider, 80% threshold for utils, 70% for hooks |
+| 2026-01-21 | **FeedbackPanel COMPLETE** - DetailedFeedback type, expandable "Why?" section, misconception warnings |
+| 2026-01-21 | **DragDropBuilder COMPLETE** - HTML5 drag-drop API with touch support, snap-to-zone, reordering |
+| 2026-01-21 | **MoleculeViewer3D COMPLETE** - Three.js lazy-loaded 3D viewer, ball-stick/space-fill modes, orbital controls |
 
 ---
 
@@ -322,9 +328,9 @@ Building these once benefits multiple games:
 
 | Item | Status | Priority | Effort | Notes |
 |------|--------|----------|--------|-------|
-| Git Hooks (Husky) | ⬜ | High | Low | Pre-commit type checking and linting |
-| Conventional Commits | ⬜ | High | Low | Automated changelog generation |
-| Unit Testing (Vitest) | ⬜ | High | Medium | Test scoring, validation, storage utils |
+| Git Hooks (Husky) | ✅ | High | Low | Pre-commit lint-staged, commit-msg hooks |
+| Conventional Commits | ✅ | High | Low | Commitlint with conventional commits config |
+| Unit Testing (Vitest) | ✅ | High | Medium | Coverage configured (80% utils, 70% hooks) |
 | Component Testing | ⬜ | Medium | Medium | React Testing Library for shared components |
 | E2E Testing (Playwright) | ⬜ | Medium | High | Game flow testing |
 | Automated Changelog | ⬜ | Medium | Low | conventional-changelog-cli |

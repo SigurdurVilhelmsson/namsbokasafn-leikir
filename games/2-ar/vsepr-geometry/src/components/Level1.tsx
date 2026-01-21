@@ -1,8 +1,19 @@
 import { useState, useMemo } from 'react';
-import { AnimatedMolecule } from '@shared/components';
+import { AnimatedMolecule, FeedbackPanel } from '@shared/components';
 import type { TieredHints } from '@shared/types';
 import { geometryToMolecule } from '../utils/vseprConverter';
 import { shuffleArray } from '@shared/utils';
+
+// Misconceptions for VSEPR geometry
+const VSEPR_MISCONCEPTIONS: Record<string, string> = {
+  electron_domains: 'Rafeinasvið = bindandi pör + einstæð pör. Tvítengi og þrítengi telja sem EITT svið.',
+  lone_pairs: 'Einstæð pör taka meira pláss en bindandi pör og ýta horninu niður.',
+  geometry: 'Rafeindaröðun (electron geometry) vs sameindaröðun (molecular geometry) - einstæð pör sjást ekki í sameindaröðun.',
+  bond_angle: 'Einstæð pör minnka hornið: fjórflötungur (109.5°) → pýramída (107°) → beygð (104.5°).',
+};
+
+// Related concepts for VSEPR
+const VSEPR_RELATED: string[] = ['VSEPR kenningin', 'Rafeinasvið', 'Sameindaröðun', 'Tengjahorn'];
 
 interface Level1Props {
   onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
@@ -593,21 +604,40 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
             </button>
           )}
 
-          {showResult && (
-            <>
-              <div className={`p-4 rounded-xl mb-4 ${isCorrect ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`}>
-                <div className={`font-bold text-lg ${isCorrect ? 'text-green-700' : 'text-red-700'}`}>
-                  {isCorrect ? 'Rétt!' : 'Rangt'}
+          {showResult && (() => {
+            const correctOption = shuffledOptions.find(opt => opt.correct);
+            return (
+              <>
+                <div className="mb-4">
+                  <FeedbackPanel
+                    feedback={{
+                      isCorrect,
+                      explanation: isCorrect
+                        ? `Rétt! ${correctOption?.explanation || ''}`
+                        : `${correctOption?.explanation || ''}`,
+                      misconception: isCorrect ? undefined : VSEPR_MISCONCEPTIONS.geometry,
+                      relatedConcepts: VSEPR_RELATED,
+                      nextSteps: isCorrect
+                        ? 'Frábært! Þú skilur VSEPR vel. Haltu áfram.'
+                        : 'Mundu: Teldu rafeinasvið fyrst, síðan athugaðu einstæð pör.',
+                    }}
+                    config={{
+                      showExplanation: true,
+                      showMisconceptions: !isCorrect,
+                      showRelatedConcepts: true,
+                      showNextSteps: true,
+                    }}
+                  />
                 </div>
-              </div>
-              <button
-                onClick={nextChallenge}
-                className="w-full bg-teal-500 hover:bg-teal-600 text-white font-bold py-4 px-6 rounded-xl transition-colors"
-              >
-                {currentChallenge < challenges.length - 1 ? 'Næsta spurning' : 'Ljúka stigi 1'}
-              </button>
-            </>
-          )}
+                <button
+                  onClick={nextChallenge}
+                  className="w-full bg-teal-500 hover:bg-teal-600 text-white font-bold py-4 px-6 rounded-xl transition-colors"
+                >
+                  {currentChallenge < challenges.length - 1 ? 'Næsta spurning' : 'Ljúka stigi 1'}
+                </button>
+              </>
+            );
+          })()}
         </div>
       </div>
     </div>

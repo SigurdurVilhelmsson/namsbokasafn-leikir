@@ -1,7 +1,23 @@
 import { useState, useMemo } from 'react';
-import { HintSystem } from '@shared/components';
+import { FeedbackPanel, HintSystem } from '@shared/components';
 import type { TieredHints } from '@shared/types';
 import { shuffleArray } from '@shared/utils';
+
+// Misconceptions for Lewis structure concepts
+const MISCONCEPTIONS: Record<string, string> = {
+  count_valence: 'Gildisrafeindir eru rafeindir í ystu skel. Hópnúmer (1-8 fyrir aðalflokka) segir beint til um fjöldann.',
+  total_electrons: 'Heildarfjöldi = summa gildisrafeinda allra atóma. Mundu að margfalda með fjölda atóma af hverri tegund.',
+  octet_rule: 'Áttureglan segir að atóm vilja hafa 8 rafeindir í ystu skel (nema H sem vill 2).',
+  electron_need: 'Rafeindaþörf = 8 - gildisrafeindir (eða 2 - gildisrafeindir fyrir H).',
+};
+
+// Related concepts for Lewis structures
+const RELATED_CONCEPTS: Record<string, string[]> = {
+  count_valence: ['Lotukerfið', 'Hópar', 'Rafeindaskel'],
+  total_electrons: ['Sameindaformúlur', 'Atómafjöldi', 'Summa rafeinda'],
+  octet_rule: ['Áttureglan', 'Stöðugleiki', 'Eðalgösin'],
+  electron_need: ['Efnatengi', 'Rafeindasameignir', 'Jónatengi'],
+};
 
 interface Level1Props {
   onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
@@ -377,18 +393,26 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
 
           {/* Result feedback */}
           {showResult && (
-            <div className={`p-4 rounded-xl mb-4 ${isCorrect ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`}>
-              <div className={`font-bold text-lg mb-2 ${isCorrect ? 'text-green-700' : 'text-red-700'}`}>
-                {isCorrect ? 'Rétt!' : 'Rangt'}
-              </div>
-              {!isCorrect && (
-                <div className="text-gray-700 mb-2">
-                  Rétt svar: <strong>{challenge.correctAnswer}</strong>
-                </div>
-              )}
-              <div className="text-sm text-gray-600">
-                {challenge.explanation}
-              </div>
+            <div className="mb-4">
+              <FeedbackPanel
+                feedback={{
+                  isCorrect,
+                  explanation: isCorrect
+                    ? challenge.explanation
+                    : `Rétt svar: ${challenge.correctAnswer}. ${challenge.explanation}`,
+                  misconception: isCorrect ? undefined : MISCONCEPTIONS[challenge.type],
+                  relatedConcepts: RELATED_CONCEPTS[challenge.type],
+                  nextSteps: isCorrect
+                    ? 'Frábært! Þú skilur þetta vel. Haltu áfram.'
+                    : 'Skoðaðu útskýringuna og reyndu að muna regluna.',
+                }}
+                config={{
+                  showExplanation: true,
+                  showMisconceptions: !isCorrect,
+                  showRelatedConcepts: true,
+                  showNextSteps: true,
+                }}
+              />
             </div>
           )}
 

@@ -1,8 +1,29 @@
 import { useState, useMemo } from 'react';
+import { FeedbackPanel } from '@shared/components';
 import type { TieredHints } from '@shared/types';
 import { CollisionDemo } from './CollisionDemo';
 import { MaxwellBoltzmann } from './MaxwellBoltzmann';
 import { shuffleArray } from '@shared/utils';
+
+// Misconceptions for kinetics concepts
+const MISCONCEPTIONS: Record<number, string> = {
+  1: 'Hvarfhraði = Δ[styrk]/Δtími. Mundu að deila, ekki margfalda!',
+  2: 'Í 1. stigs hvörf (order=1) tvöfaldast hraðinn þegar styrkur tvöfaldast. Í 2. stigs (order=2) fjórfaldast hann.',
+  3: 'Hitastig breytir EKKI virkjunarorku (Ea). Það eykur hlutfall sameinda sem hafa E ≥ Ea.',
+  4: 'Hvatar lækka Ea með öðrum hvarfgangshátt - þeir hita EKKI hvörfin upp.',
+  5: 'Yfirborð skiptir máli vegna fjölda árekstrarstaða, ekki efnaformúlu eða massa.',
+  6: 'Ekki nóg að árekstur hafi orku - stefna (orientation) skiptir líka máli!',
+};
+
+// Related concepts for each challenge
+const RELATED_CONCEPTS: Record<number, string[]> = {
+  1: ['Hvarfhraði', 'Styrkbreyting', 'M/s'],
+  2: ['Hvörfunarröð', 'Hraðajafna', 'k[A]^n'],
+  3: ['Maxwell-Boltzmann', 'Arrhenius', 'Ea og T'],
+  4: ['Hvatar', 'Virkjunarorka', 'Hvarfgangsháttur'],
+  5: ['Yfirborð', 'Árekstur', 'Heterogens hvörf'],
+  6: ['Árekstrarkennning', 'Orka og stefna', 'Árekstrartíðni'],
+};
 
 interface Level1Props {
   onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
@@ -313,13 +334,28 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
             </button>
           )}
 
-          {/* Concept explanation after answering */}
+          {/* Detailed Feedback Panel */}
           {showResult && (
-            <div className="bg-blue-50 p-4 rounded-xl mb-4">
-              <div className="font-bold text-blue-800 mb-2">Hugtak:</div>
-              <div className="text-blue-900 text-sm">
-                {challenge.conceptExplanation}
-              </div>
+            <div className="mb-4">
+              <FeedbackPanel
+                feedback={{
+                  isCorrect: shuffledOptions.find(opt => opt.id === selectedAnswer)?.correct || false,
+                  explanation: `${shuffledOptions.find(opt => opt.id === selectedAnswer)?.explanation || ''}\n\n**Hugtak:** ${challenge.conceptExplanation}`,
+                  misconception: shuffledOptions.find(opt => opt.id === selectedAnswer)?.correct
+                    ? undefined
+                    : MISCONCEPTIONS[challenge.id],
+                  relatedConcepts: RELATED_CONCEPTS[challenge.id],
+                  nextSteps: shuffledOptions.find(opt => opt.id === selectedAnswer)?.correct
+                    ? 'Frábært! Þú skilur þetta hugtak vel. Haltu áfram.'
+                    : 'Skoðaðu útskýringuna og hugsaðu um samband milli þáttanna.',
+                }}
+                config={{
+                  showExplanation: true,
+                  showMisconceptions: !shuffledOptions.find(opt => opt.id === selectedAnswer)?.correct,
+                  showRelatedConcepts: true,
+                  showNextSteps: true,
+                }}
+              />
             </div>
           )}
 

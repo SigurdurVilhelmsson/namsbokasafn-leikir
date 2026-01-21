@@ -1,7 +1,21 @@
 import { useState } from 'react';
-import { AnimatedMolecule, HintSystem } from '@shared/components';
-import type { TieredHints } from '@shared/types';
+import { AnimatedMolecule, FeedbackPanel } from '@shared/components';
 import { imfToMolecule } from '../utils/imfConverter';
+
+// Misconceptions for IMF types
+const MISCONCEPTIONS = {
+  polar: 'Skautaðar sameindir hafa bæði London krafta OG tvípól-tvípól. Mundu: London er ALLTAF til staðar!',
+  nonpolar: 'Óskautaðar sameindir hafa AÐEINS London krafta. Samhverfa sameindin (eins og CO₂, CCl₄) getur haft skautuð tengsl en vera samt óskautuð í heild.',
+  hbond: 'Vetnistengi krefst H bundið við F, O, eða N. Ef H er bundið við C eða Cl, þá eru engin vetnistengi.',
+  london_strength: 'London kraftar verða sterkari eftir því sem mólmassi eykst (stærri rafeindaský = meiri dreifistuðull).',
+};
+
+// Related concepts for IMF
+const RELATED_CONCEPTS: Record<string, string[]> = {
+  london: ['Dreifikraftar', 'Mólmassi', 'Tímabundnir tvípólar'],
+  dipole: ['Skautaðar sameindir', 'Rafneikvæðni', 'δ+ og δ-'],
+  hydrogen: ['H-F, H-O, H-N', 'Suðumark', 'Vatnseiginleikar'],
+};
 
 interface Level1Props {
   onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
@@ -651,11 +665,36 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
             </button>
           ) : (
             <>
-              <div className={`p-4 rounded-xl mb-4 ${isCorrect ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`}>
-                <div className={`font-bold ${isCorrect ? 'text-green-700' : 'text-red-700'}`}>
-                  {isCorrect ? 'Rétt!' : 'Ekki alveg rétt'}
-                </div>
-                <p className="text-sm text-gray-700 mt-2">{molecule.explanation}</p>
+              <div className="mb-4">
+                <FeedbackPanel
+                  feedback={{
+                    isCorrect,
+                    explanation: molecule.explanation,
+                    misconception: isCorrect
+                      ? undefined
+                      : molecule.hasHBond && !selectedIMFs.has('hydrogen')
+                        ? MISCONCEPTIONS.hbond
+                        : molecule.isPolar && !selectedIMFs.has('dipole')
+                          ? MISCONCEPTIONS.polar
+                          : !molecule.isPolar && selectedIMFs.has('dipole')
+                            ? MISCONCEPTIONS.nonpolar
+                            : MISCONCEPTIONS.london_strength,
+                    relatedConcepts: [
+                      ...RELATED_CONCEPTS.london,
+                      ...(molecule.isPolar ? RELATED_CONCEPTS.dipole : []),
+                      ...(molecule.hasHBond ? RELATED_CONCEPTS.hydrogen : []),
+                    ],
+                    nextSteps: isCorrect
+                      ? 'Frábært! Þú skilur IMF vel. Haltu áfram.'
+                      : 'Mundu: London er ALLTAF til staðar. Skautuð = tvípól. H-F/O/N = vetnistengi.',
+                  }}
+                  config={{
+                    showExplanation: true,
+                    showMisconceptions: !isCorrect,
+                    showRelatedConcepts: true,
+                    showNextSteps: true,
+                  }}
+                />
               </div>
               <button
                 onClick={nextMolecule}

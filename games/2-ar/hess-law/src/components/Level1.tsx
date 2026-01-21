@@ -1,7 +1,27 @@
 import { useState, useEffect, useMemo } from 'react';
-import { HintSystem } from '@shared/components';
+import { FeedbackPanel } from '@shared/components';
 import type { TieredHints } from '@shared/types';
 import { shuffleArray } from '@shared/utils';
+
+// Misconceptions for Hess's Law concepts
+const MISCONCEPTIONS: Record<number, string> = {
+  1: 'Neikvætt ΔH þýðir að orka fer ÚT úr kerfinu (exothermic), ekki inn. Jákvætt þýðir að orka fer inn (endothermic).',
+  2: 'Þegar þú snýrð við hvörfum, snýrðu við FORMERKINU á ΔH. Ef ΔH = -X, þá verður öfugt hvarf ΔH = +X.',
+  3: 'Við margföldun breytist formerkið EKKI. Ef ΔH = -X, þá er 2×ΔH = -2X (enn neikvætt).',
+  4: 'Mundu röðina: snúðu fyrst við (breytir formerki), SÍÐAN margfaldaðu.',
+  5: 'Til að nota Hess, þarftu að stilla jöfnur þannig að hvarfefni og afurðir strikist út rétt.',
+  6: 'Orkubraut: leiðin skiptir ekki máli, aðeins upphafs- og lokastaða. Heildar ΔH er summa allra skrefa.',
+};
+
+// Related concepts for each challenge
+const RELATED_CONCEPTS: Record<number, string[]> = {
+  1: ['Exothermic', 'Endothermic', 'Skammtavarmi'],
+  2: ['Öfug hvörf', 'Formerkisbreyting', 'Hverfanleiki'],
+  3: ['Stökefnafræði', 'Mólhlutföll', 'Hlutfallsleg orka'],
+  4: ['Samsett aðgerðir', 'Sundrun vs myndun', 'Margföldun'],
+  5: ['Lögmál Hess', 'Orkuvarðveisla', 'Hverfanleiki'],
+  6: ['Orkubraut', 'Ferlisstuðull', 'Heildar ΔH'],
+};
 
 /**
  * Multiplies all coefficients in a chemical equation string
@@ -579,7 +599,7 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
               {showHint ? (
                 <div className="bg-yellow-50 border-2 border-yellow-300 p-4 rounded-xl">
                   <h4 className="font-semibold text-yellow-800 mb-2">💡 Vísbending:</h4>
-                  <p className="text-yellow-900">{challenge.hint}</p>
+                  <p className="text-yellow-900">{challenge.hints?.method || ''}</p>
                 </div>
               ) : (
                 <button
@@ -589,6 +609,31 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
                   💡 Sýna vísbendingu (-50 stig)
                 </button>
               )}
+            </div>
+          )}
+
+          {/* Detailed Feedback Panel */}
+          {showResult && (
+            <div className="mb-6">
+              <FeedbackPanel
+                feedback={{
+                  isCorrect: shuffledOptions[selectedAnswer!]?.correct || false,
+                  explanation: shuffledOptions[selectedAnswer!]?.explanation || '',
+                  misconception: shuffledOptions[selectedAnswer!]?.correct
+                    ? undefined
+                    : MISCONCEPTIONS[challenge.id],
+                  relatedConcepts: RELATED_CONCEPTS[challenge.id],
+                  nextSteps: shuffledOptions[selectedAnswer!]?.correct
+                    ? 'Frábært! Þú skilur þetta hugtak vel. Haltu áfram.'
+                    : 'Skoðaðu útskýringuna og reyndu að muna regluna.',
+                }}
+                config={{
+                  showExplanation: true,
+                  showMisconceptions: !shuffledOptions[selectedAnswer!]?.correct,
+                  showRelatedConcepts: true,
+                  showNextSteps: true,
+                }}
+              />
             </div>
           )}
 

@@ -1,7 +1,26 @@
 import { useState, useMemo } from 'react';
-import { HintSystem } from '@shared/components';
-import type { TieredHints } from '@shared/types';
+import { FeedbackPanel } from '@shared/components';
+import type { TieredHints, DetailedFeedback } from '@shared/types';
 import { shuffleArray } from '@shared/utils';
+
+// Rule IDs for categorizing questions
+type RuleId = 'ionic-simple' | 'ionic-variable' | 'ionic-polyatomic' | 'molecular';
+
+// Misconceptions for each rule type
+const MISCONCEPTIONS: Record<RuleId, string> = {
+  'ionic-simple': 'Algeng villa er að rugla saman jónefnum og sameindum. Jónefni eru málmur + málmleysingi og nota ekki grísk forskeyti.',
+  'ionic-variable': 'Rómverska talan sýnir hleðslu málmsins, ekki fjölda atóma. (II) þýðir +2 hleðslu, ekki 2 atóm.',
+  'ionic-polyatomic': 'Fjölatóma jónir hafa föst nöfn sem þarf að læra. Súlfat er SO₄²⁻, ekki SO₃²⁻ (það er súlfít).',
+  'molecular': 'Í sameindum notum við grísk forskeyti (mono, dí, trí...) en fyrra frumefnið fær aldrei "mono-" forskeytið.',
+};
+
+// Related concepts for each rule type
+const RELATED_CONCEPTS: Record<RuleId, string[]> = {
+  'ionic-simple': ['Jónabindingar', 'Málmar og málmleysingjar', 'Endingar (-íð)'],
+  'ionic-variable': ['Breytilegar hleðslur', 'Rómverskar tölur', 'Þróunarmálmar'],
+  'ionic-polyatomic': ['Fjölatóma jónir', 'Hleðslujöfnun', 'Sérstök nöfn'],
+  'molecular': ['Samgild binding', 'Grísk forskeyti', 'Málmleysingjar'],
+};
 
 interface Level1Props {
   onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
@@ -698,24 +717,28 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
 
         {/* Feedback */}
         {showFeedback && (
-          <div className={`p-4 rounded-xl mb-6 ${
-            selectedAnswer === shuffledOptions.correctShuffledIndex
-              ? 'bg-green-100 border-2 border-green-400'
-              : 'bg-amber-100 border-2 border-amber-400'
-          }`}>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-2xl">
-                {selectedAnswer === shuffledOptions.correctShuffledIndex ? '✓' : '💡'}
-              </span>
-              <span className={`font-bold ${
-                selectedAnswer === shuffledOptions.correctShuffledIndex ? 'text-green-800' : 'text-amber-800'
-              }`}>
-                {selectedAnswer === shuffledOptions.correctShuffledIndex ? 'Rétt!' : 'Útskýring:'}
-              </span>
-            </div>
-            <p className={selectedAnswer === shuffledOptions.correctShuffledIndex ? 'text-green-700' : 'text-amber-700'}>
-              {question.hints.solution}
-            </p>
+          <div className="mb-6">
+            <FeedbackPanel
+              feedback={(() => {
+                const correct = selectedAnswer === shuffledOptions.correctShuffledIndex;
+                const ruleId = question.ruleId as RuleId;
+                return {
+                  isCorrect: correct,
+                  explanation: question.hints.solution,
+                  misconception: correct ? undefined : MISCONCEPTIONS[ruleId],
+                  relatedConcepts: RELATED_CONCEPTS[ruleId],
+                  nextSteps: correct
+                    ? 'Þú ert að ná góðum tökum á þessari reglu. Haltu áfram!'
+                    : 'Lestu útskýringuna vandlega og reyndu að muna regluna fyrir næstu spurningu.',
+                } as DetailedFeedback;
+              })()}
+              config={{
+                showExplanation: true,
+                showMisconceptions: selectedAnswer !== shuffledOptions.correctShuffledIndex,
+                showRelatedConcepts: true,
+                showNextSteps: true,
+              }}
+            />
           </div>
         )}
 

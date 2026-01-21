@@ -1,6 +1,26 @@
 import { useState, useEffect, useCallback } from 'react';
+import { FeedbackPanel } from '@shared/components';
 import type { TieredHints } from '@shared/types';
 import { ParticleBeaker } from './ParticleBeaker';
+
+// Challenge types for categorizing feedback
+type ChallengeType = 'dilution' | 'mixing' | 'buildSolution' | 'concentrationMatch';
+
+// Misconceptions for each challenge type
+const MISCONCEPTIONS: Record<ChallengeType, string> = {
+  dilution: 'Algeng villa er að halda að sameindir hverfi við útþynningu. Sameindir haldast óbreyttar - þær dreifast bara á stærra svæði.',
+  mixing: 'Þegar lausnir blandast, þarf að taka tillit til rúmmáls beggja lausnanna og fjölda sameinda í hvorum.',
+  buildSolution: 'Mundu að styrkur = sameindir/rúmmál. Bæði breyturnar hafa áhrif á lokastyrkinn.',
+  concentrationMatch: 'Til að auka styrk með föstu rúmmáli, verður þú að bæta við sameindum. Fleiri sameindir = hærri styrkur.',
+};
+
+// Related concepts for each challenge type
+const RELATED_CONCEPTS: Record<ChallengeType, string[]> = {
+  dilution: ['Útþynning', 'Styrkur og rúmmál', 'Öfug tengsl'],
+  mixing: ['Lausnablöndun', 'Magnjöfnun', 'Meðaltalsstyrkur'],
+  buildSolution: ['Styrkformúla', 'Mólstyrkur', 'Rúmmálseiningar'],
+  concentrationMatch: ['Styrkur', 'Sameindafjöldi', 'Föst rúmmál'],
+};
 
 // Types for Level 1
 interface Challenge {
@@ -544,12 +564,24 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
             </div>
 
             {predictionFeedback && (
-              <div className={`p-4 rounded-xl mb-4 ${
-                predictionComplete
-                  ? 'bg-green-100 border-2 border-green-400 text-green-800'
-                  : 'bg-yellow-100 border-2 border-yellow-400 text-yellow-800'
-              }`}>
-                {predictionFeedback}
+              <div className="mb-4">
+                <FeedbackPanel
+                  feedback={{
+                    isCorrect: predictionComplete,
+                    explanation: predictionFeedback,
+                    misconception: predictionComplete ? undefined : MISCONCEPTIONS[challenge.type as ChallengeType],
+                    relatedConcepts: RELATED_CONCEPTS[challenge.type as ChallengeType],
+                    nextSteps: predictionComplete
+                      ? 'Þú skilur venslin! Nú skaltu prófa að ná markmiðsstyrknum.'
+                      : 'Hugsaðu um hvað gerist við styrk þegar rúmmál eða sameindir breytast.',
+                  }}
+                  config={{
+                    showExplanation: true,
+                    showMisconceptions: !predictionComplete,
+                    showRelatedConcepts: true,
+                    showNextSteps: true,
+                  }}
+                />
               </div>
             )}
 
@@ -699,13 +731,25 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
 
           {/* Concept reveal after correct answer */}
           {showConcept && isCorrect && (
-            <div className="mb-6 bg-green-50 border-2 border-green-400 p-4 rounded-xl animate-pulse">
-              <h4 className="font-semibold text-green-800 mb-2">✓ Rétt!</h4>
-              <p className="text-green-900 font-semibold">
-                Lykilhugtak: {challenge.type === 'dilution'
-                  ? 'Við útþynningu haldast sameindir óbreyttar. Meira rúmmál = lægri styrkur!'
-                  : 'Styrkur = sameindir / rúmmál. Þú getur breytt hvoru tveggja til að ná markmiði!'}
-              </p>
+            <div className="mb-6">
+              <FeedbackPanel
+                feedback={{
+                  isCorrect: true,
+                  explanation: challenge.type === 'dilution'
+                    ? 'Við útþynningu haldast sameindir óbreyttar. Meira rúmmál = lægri styrkur!'
+                    : 'Styrkur = sameindir / rúmmál. Þú getur breytt hvoru tveggja til að ná markmiði!',
+                  relatedConcepts: RELATED_CONCEPTS[challenge.type as ChallengeType],
+                  nextSteps: currentChallenge < CHALLENGES.length - 1
+                    ? 'Næsta verkefni mun reyna meira á skilning þinn.'
+                    : 'Þú ert að ljúka stiginu! Sjáum hvað þú lærðir.',
+                }}
+                config={{
+                  showExplanation: true,
+                  showMisconceptions: false,
+                  showRelatedConcepts: true,
+                  showNextSteps: true,
+                }}
+              />
             </div>
           )}
 

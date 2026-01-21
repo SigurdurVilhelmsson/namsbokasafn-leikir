@@ -1,10 +1,30 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { Reaction } from '../types';
 import { REACTIONS } from '../data/reactions';
 import { Molecule } from './Molecule';
-import { HintSystem } from '@shared/components';
+import { HintSystem, FeedbackPanel } from '@shared/components';
 import type { TieredHints } from '@shared/types';
 import { shuffleArray } from '@shared/utils';
+
+// Misconceptions for each challenge type
+const MISCONCEPTIONS: Record<ChallengeType, string> = {
+  which_runs_out: 'Takmarkandi hvarfefni er ekki alltaf það sem er minna af - það ræðst af stuðlum í jöfnunni og hlutföllum.',
+  count_times_r1: 'Mundu að deila með stuðlinum, ekki margfalda. Fjöldi sameinda ÷ stuðull = fjöldi skipta.',
+  count_times_r2: 'Athugaðu stuðulinn vandlega. Ef þú þarft 2 af hvarfefni fyrir hvert hvarf, þá helmingast fjöldi skipta.',
+  which_is_limiting: 'Berðu saman fjölda skipta, ekki fjölda sameinda. Það hvarfefni sem gefur FÆRRI skipti er takmarkandi.',
+  count_products: 'Margfaldaðu fjölda skipta með stuðli AFURÐAR, ekki hvarfefnis. Athugaðu jöfnuna vandlega.',
+  count_excess: 'Afgangur = upphaf - notað. Notaðu fjölda skipta × stuðul til að finna notað magn.',
+};
+
+// Related concepts for each challenge type
+const RELATED_CONCEPTS: Record<ChallengeType, string[]> = {
+  which_runs_out: ['Takmarkandi hvarfefni', 'Stökefnafræðileg hlutföll', 'Hvörfunargeta'],
+  count_times_r1: ['Mólhlutföll', 'Stuðlar', 'Stökefnafræði'],
+  count_times_r2: ['Mólhlutföll', 'Stuðlar', 'Stökefnafræði'],
+  which_is_limiting: ['Takmarkandi hvarfefni', 'Hlutfallsleg magn', 'Hvörfunargeta'],
+  count_products: ['Afurðir', 'Stökefnafræðileg hlutföll', 'Hvörfunarútkoma'],
+  count_excess: ['Afgang', 'Nýting hvarfefna', 'Stökefnafræði'],
+};
 
 interface Level1Props {
   onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
@@ -483,25 +503,34 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
 
         {/* Feedback */}
         {showFeedback && (
-          <div className={`rounded-xl p-4 mb-4 ${isCorrect ? 'bg-green-100 border-2 border-green-500' : 'bg-red-100 border-2 border-red-500'}`}>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-2xl">{isCorrect ? '🎉' : '🤔'}</span>
-              <p className="text-lg font-bold">{isCorrect ? 'Rétt!' : 'Ekki alveg'}</p>
-            </div>
-            {isCorrect && <p className="text-green-700 text-sm">+10 stig!</p>}
-            {!isCorrect && (
-              <p className="text-gray-700 text-sm">
-                {challenge.type === 'which_runs_out' || challenge.type === 'which_is_limiting'
-                  ? `Rétt svar: ${limitingReactant}`
-                  : challenge.type === 'count_times_r1'
-                    ? `Rétt svar: ${timesR1}`
-                    : challenge.type === 'count_times_r2'
-                      ? `Rétt svar: ${timesR2}`
-                      : challenge.type === 'count_products'
-                        ? `Rétt svar: ${productCount}`
-                        : `Rétt svar: ${excessCount}`}
-              </p>
-            )}
+          <div className="mb-4">
+            <FeedbackPanel
+              feedback={{
+                isCorrect,
+                explanation: isCorrect
+                  ? `Rétt! ${info.hints.solution}`
+                  : `${challenge.type === 'which_runs_out' || challenge.type === 'which_is_limiting'
+                      ? `Rétt svar: ${limitingReactant}`
+                      : challenge.type === 'count_times_r1'
+                        ? `Rétt svar: ${timesR1}`
+                        : challenge.type === 'count_times_r2'
+                          ? `Rétt svar: ${timesR2}`
+                          : challenge.type === 'count_products'
+                            ? `Rétt svar: ${productCount}`
+                            : `Rétt svar: ${excessCount}`}. ${info.hints.solution}`,
+                misconception: isCorrect ? undefined : MISCONCEPTIONS[challenge.type],
+                relatedConcepts: RELATED_CONCEPTS[challenge.type],
+                nextSteps: isCorrect
+                  ? 'Þú skilur þetta hugtak vel. Haltu áfram!'
+                  : 'Lestu útskýringuna og reyndu að nota aðferðina í næstu áskorun.',
+              }}
+              config={{
+                showExplanation: true,
+                showMisconceptions: !isCorrect,
+                showRelatedConcepts: true,
+                showNextSteps: true,
+              }}
+            />
             <button
               onClick={nextChallenge}
               className="mt-3 w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-lg transition-colors"

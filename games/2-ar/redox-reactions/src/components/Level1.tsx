@@ -1,6 +1,18 @@
 import { useState } from 'react';
-import { HintSystem } from '@shared/components';
+import { FeedbackPanel } from '@shared/components';
 import type { TieredHints } from '@shared/types';
+
+// Misconceptions for oxidation states
+const OXIDATION_MISCONCEPTIONS: Record<string, string> = {
+  element: 'Hreint frumefni (ekki bundið við annað) hefur alltaf oxunartölu 0.',
+  hydrogen: 'Vetni er yfirleitt +1, NEMA í málmhýdríðum (t.d. NaH) þar sem það er -1.',
+  oxygen: 'Súrefni er yfirleitt -2, NEMA í peroxíðum (-1) og OF₂ (+2).',
+  halogen: 'Halógenar (F, Cl, Br, I) eru -1 þegar bundnar við málma eða vetni.',
+  sum: 'Summa oxunartalna í sameind = 0 (hlutlaust) eða = heildarhleðsla (jón).',
+};
+
+// Related concepts for redox
+const OXIDATION_RELATED: string[] = ['Oxunartölur', 'Redox hvörf', 'Rafeindasameignir'];
 
 interface Level1Props {
   onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
@@ -324,28 +336,25 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
           </div>
         ) : (
           <div className="space-y-4">
-            <div className={`p-6 rounded-xl text-center ${
-              isCorrect ? 'bg-green-100 border-2 border-green-400' : 'bg-red-100 border-2 border-red-400'
-            }`}>
-              <div className="text-4xl mb-2">{isCorrect ? '✓' : '✗'}</div>
-              <div className={`text-xl font-bold ${isCorrect ? 'text-green-800' : 'text-red-800'}`}>
-                {isCorrect ? 'Rétt!' : 'Rangt'}
-              </div>
-              {isCorrect ? (
-                <div className="mt-2">
-                  <span className="text-green-700">
-                    Oxunartala {problem.targetElement} í {problem.compoundDisplay} er{' '}
-                  </span>
-                  <span className={`inline-flex items-center justify-center w-10 h-10 rounded-full font-bold ${getOxidationColor(problem.correctAnswer)}`}>
-                    {problem.correctAnswer > 0 ? `+${problem.correctAnswer}` : problem.correctAnswer}
-                  </span>
-                </div>
-              ) : (
-                <div className="text-red-700 mt-2">
-                  Þú svaraðir {userAnswer}, en rétt svar er {problem.correctAnswer > 0 ? `+${problem.correctAnswer}` : problem.correctAnswer}
-                </div>
-              )}
-            </div>
+            <FeedbackPanel
+              feedback={{
+                isCorrect,
+                explanation: isCorrect
+                  ? `Rétt! Oxunartala ${problem.targetElement} í ${problem.compoundDisplay} er ${problem.correctAnswer > 0 ? `+${problem.correctAnswer}` : problem.correctAnswer}.`
+                  : `Þú svaraðir ${userAnswer}, en rétt svar er ${problem.correctAnswer > 0 ? `+${problem.correctAnswer}` : problem.correctAnswer}. ${problem.hint || ''}`,
+                misconception: isCorrect ? undefined : OXIDATION_MISCONCEPTIONS.sum,
+                relatedConcepts: OXIDATION_RELATED,
+                nextSteps: isCorrect
+                  ? 'Frábært! Þú skilur hvernig á að reikna oxunartölur.'
+                  : 'Mundu reglurnar: H=+1, O=-2, summa=0 (eða hleðsla).',
+              }}
+              config={{
+                showExplanation: true,
+                showMisconceptions: !isCorrect,
+                showRelatedConcepts: true,
+                showNextSteps: true,
+              }}
+            />
 
             {isCorrect ? (
               <button

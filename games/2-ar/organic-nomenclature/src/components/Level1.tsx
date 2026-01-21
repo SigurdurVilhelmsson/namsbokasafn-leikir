@@ -1,7 +1,21 @@
 import { useState, useMemo } from 'react';
-import { HintSystem } from '@shared/components';
+import { FeedbackPanel } from '@shared/components';
 import type { TieredHints } from '@shared/types';
 import { shuffleArray } from '@shared/utils';
+
+// Misconceptions for organic nomenclature
+const MISCONCEPTIONS: Record<string, string> = {
+  prefix: 'Forskeytið segir til um fjölda kolefna í keðjunni. meth=1, eth=2, prop=3, but=4, pent=5, hex=6...',
+  suffix: 'Viðskeytið segir til um tengjategund: -an (eintengi), -en (tvítengi), -yn (þrítengi).',
+  name: 'Nafnið er samsett úr forskeyti (fjöldi C) + viðskeyti (tengjategund). T.d. eth + en = eten.',
+};
+
+// Related concepts for organic nomenclature
+const RELATED_CONCEPTS: Record<string, string[]> = {
+  prefix: ['Kolefniskeðjur', 'Alkön', 'IUPAC nafnakerfi'],
+  suffix: ['Mettaðar sameindir', 'Ómettaðar sameindir', 'Efnatengi'],
+  name: ['Lífræn efni', 'Vetniskolefni', 'Formúlur'],
+};
 
 interface Level1Props {
   onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
@@ -346,19 +360,25 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
           </div>
         ) : (
           <div className="space-y-4">
-            <div className={`p-6 rounded-xl text-center ${
-              isCorrect ? 'bg-green-100 border-2 border-green-400' : 'bg-red-100 border-2 border-red-400'
-            }`}>
-              <div className="text-4xl mb-2">{isCorrect ? '✓' : '✗'}</div>
-              <div className={`text-xl font-bold ${isCorrect ? 'text-green-800' : 'text-red-800'}`}>
-                {isCorrect ? 'Rétt!' : 'Rangt'}
-              </div>
-              {!isCorrect && (
-                <div className="text-red-700 mt-2">
-                  Rétt svar: <strong>{question.correctAnswer}</strong>
-                </div>
-              )}
-            </div>
+            <FeedbackPanel
+              feedback={{
+                isCorrect,
+                explanation: isCorrect
+                  ? `Rétt! ${question.correctAnswer} er rétta svarið.`
+                  : `Rétt svar: ${question.correctAnswer}`,
+                misconception: isCorrect ? undefined : MISCONCEPTIONS[question.type],
+                relatedConcepts: RELATED_CONCEPTS[question.type],
+                nextSteps: isCorrect
+                  ? 'Frábært! Þú ert að ná góðum tökum á lífrænu nafnakerfinu.'
+                  : 'Skoðaðu minnisblaðið og reyndu að muna reglurnar.',
+              }}
+              config={{
+                showExplanation: true,
+                showMisconceptions: !isCorrect,
+                showRelatedConcepts: true,
+                showNextSteps: true,
+              }}
+            />
 
             <button
               onClick={handleNextQuestion}

@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef } from 'react';
-import { DropZoneProps, DraggableItemData } from './types';
+import type { DropZoneProps } from './types';
 import { DraggableItem } from './DraggableItem';
 
 /**

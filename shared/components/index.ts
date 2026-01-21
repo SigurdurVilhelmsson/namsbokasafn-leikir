@@ -80,7 +80,10 @@ export type {
 } from './DragDropBuilder';
 
 // MoleculeViewer3D - 3D molecule visualization (lazy-loaded)
-export { MoleculeViewer3D, MoleculeViewer3DLazy, MoleculeViewer3DDirect } from './MoleculeViewer3D';
+// Note: Requires three.js dependencies. Install with:
+// npm install three @react-three/fiber @react-three/drei
+// Then uncomment the exports below:
+// export { MoleculeViewer3D, MoleculeViewer3DLazy, MoleculeViewer3DDirect } from './MoleculeViewer3D';
 export type {
   MoleculeViewer3DProps,
   MoleculeViewer3DStyle,

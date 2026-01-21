@@ -1,6 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
 import { UnitBlock, ConversionFactorBlock, EquivalenceDisplay } from './UnitBlock';
-import { HintSystem } from '@shared/components';
 import type { TieredHints } from '@shared/types';
 
 interface Level1Progress {
@@ -172,9 +171,8 @@ export function Level1Conceptual({ onComplete, onBack, initialProgress, onCorrec
   const [showIntro, setShowIntro] = useState(!initialProgress?.questionsAnswered);
   const [showSummary, setShowSummary] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
-  const [hintMultiplier, setHintMultiplier] = useState(1.0);
-  const [hintsUsedTier, setHintsUsedTier] = useState(0);
   const [showHint, setShowHint] = useState(false);
+  const [hintTier, setHintTier] = useState(0);
   const [attempts, setAttempts] = useState(0);
   const [totalHintsUsed, setTotalHintsUsed] = useState(0);
 
@@ -183,8 +181,7 @@ export function Level1Conceptual({ onComplete, onBack, initialProgress, onCorrec
   // Reset state when challenge changes
   useEffect(() => {
     setShowSuccess(false);
-    setHintMultiplier(1.0);
-    setHintsUsedTier(0);
+    setHintTier(0);
     setShowHint(false);
     setAttempts(0);
   }, [currentChallengeIndex]);
@@ -449,10 +446,26 @@ export function Level1Conceptual({ onComplete, onBack, initialProgress, onCorrec
           </div>
 
           {/* Hint */}
-          {showHint && challenge.hint && !showSuccess && (
+          {showHint && challenge.hints && !showSuccess && (
             <div className="mb-6 p-4 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
-              <p className="text-sm font-semibold text-blue-800 mb-1">Vísbending:</p>
-              <p className="text-blue-700">{challenge.hint}</p>
+              <p className="text-sm font-semibold text-blue-800 mb-1">Vísbending {hintTier + 1}:</p>
+              <p className="text-blue-700">
+                {hintTier === 0 && challenge.hints.topic}
+                {hintTier === 1 && challenge.hints.strategy}
+                {hintTier === 2 && challenge.hints.method}
+                {hintTier >= 3 && challenge.hints.solution}
+              </p>
+              {hintTier < 3 && (
+                <button
+                  onClick={() => {
+                    setHintTier(prev => prev + 1);
+                    setTotalHintsUsed(prev => prev + 1);
+                  }}
+                  className="mt-2 text-sm text-blue-600 hover:text-blue-800 underline"
+                >
+                  Fá meiri hjálp
+                </button>
+              )}
             </div>
           )}
 

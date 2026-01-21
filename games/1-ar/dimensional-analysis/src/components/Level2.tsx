@@ -1,7 +1,19 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { level2Problems } from '../data/problems';
 import { UnitCancellationVisualizer } from './UnitCancellationVisualizer';
 import { UnitBlock, ConversionFactorBlock } from './UnitBlock';
+import { DragDropBuilder, FeedbackPanel } from '@shared/components';
+import type { DraggableItemData, DropZoneData, DropResult, ZoneState, DetailedFeedback } from '@shared/components';
+
+// Misconceptions for common errors
+const MISCONCEPTIONS: Record<string, string> = {
+  wrong_direction: 'Stuðullinn er rangur snúinn - einingin sem þú vilt losna við þarf að vera á gagnstæðri hlið (ef þú hefur g, settu g í nefnara).',
+  missing_step: 'Þú gætir þurft fleiri umbreytingarstuðla til að komast frá upphafseiningu til markeiningar.',
+  extra_step: 'Þú gætir notað of marga stuðla. Reyndu að finna beina leið.',
+};
+
+// Related concepts
+const RELATED_CONCEPTS = ['Umbreytingarstuðlar', 'Strikun eininga', 'Víddargreining', 'Factor-label aðferð'];
 
 interface Level2Progress {
   problemsCompleted: number;
@@ -17,6 +29,43 @@ interface Level2Props {
   initialProgress?: Level2Progress;
   onCorrectAnswer?: () => void;
   onIncorrectAnswer?: () => void;
+}
+
+// Generate distractor factors for a problem
+function generateDistractors(problem: typeof level2Problems[0]): string[] {
+  const distractors: string[] = [];
+  const correctFactors = new Set(problem.correctPath);
+
+  // Common conversion factors to use as distractors
+  const commonFactors = [
+    '1000 g / 1 kg', '1 kg / 1000 g',
+    '1000 mL / 1 L', '1 L / 1000 mL',
+    '100 cm / 1 m', '1 m / 100 cm',
+    '1000 m / 1 km', '1 km / 1000 m',
+    '1000 mg / 1 g', '1 g / 1000 mg',
+    '60 s / 1 mín', '1 mín / 60 s',
+    '3600 s / 1 klst', '1 klst / 3600 s',
+    '1000 mm / 1 m', '1 m / 1000 mm',
+  ];
+
+  // Add inverted versions of correct factors as distractors
+  for (const factor of problem.correctPath) {
+    const [num, den] = factor.split(' / ');
+    const inverted = `${den} / ${num}`;
+    if (!correctFactors.has(inverted)) {
+      distractors.push(inverted);
+    }
+  }
+
+  // Add some common factors that aren't correct
+  for (const factor of commonFactors) {
+    if (!correctFactors.has(factor) && !distractors.includes(factor)) {
+      distractors.push(factor);
+      if (distractors.length >= 3) break;
+    }
+  }
+
+  return distractors.slice(0, 3);
 }
 
 export function Level2({ onComplete, onBack, initialProgress, onCorrectAnswer, onIncorrectAnswer }: Level2Props) {
@@ -44,8 +93,46 @@ export function Level2({ onComplete, onBack, initialProgress, onCorrectAnswer, o
   const [isCorrect, setIsCorrect] = useState(false);
   const [totalHintsUsed] = useState(0); // Level 2 doesn't have hints, but we track for consistency
   const [, setRationaleCorrectCount] = useState(0);
+  const [zoneState, setZoneState] = useState<ZoneState>({});
+  const [useDragDrop, setUseDragDrop] = useState(true);
 
   const problem = level2Problems[currentProblemIndex];
+
+  // Generate draggable items for DragDropBuilder
+  const { draggableItems, dropZones, availableFactors } = useMemo(() => {
+    if (!problem) return { draggableItems: [], dropZones: [], availableFactors: [] };
+
+    // Combine correct path with distractors and shuffle
+    const distractors = generateDistractors(problem);
+    const allFactors = [...problem.correctPath, ...distractors];
+    const shuffled = allFactors.sort(() => Math.random() - 0.5);
+
+    const items: DraggableItemData[] = shuffled.map((factor, idx) => {
+      const [numPart, denPart] = factor.split(' / ');
+      return {
+        id: `factor-${idx}`,
+        content: (
+          <div className="flex flex-col items-center p-2 min-w-[100px]">
+            <div className="font-bold text-blue-600 text-sm">{numPart}</div>
+            <div className="w-full h-0.5 bg-gray-800 my-1" />
+            <div className="font-bold text-green-600 text-sm">{denPart}</div>
+          </div>
+        ),
+        data: { factor, numPart, denPart },
+      };
+    });
+
+    const zones: DropZoneData[] = [
+      {
+        id: 'conversion-chain',
+        label: 'Dragðu stuðla hingað til að byggja umbreytingakeðju',
+        maxItems: 5,
+        placeholder: '← Dragðu umbreytingarstuðla hingað',
+      },
+    ];
+
+    return { draggableItems: items, dropZones: zones, availableFactors: shuffled };
+  }, [currentProblemIndex, problem]);
 
   useEffect(() => {
     if (problem) {
@@ -53,6 +140,7 @@ export function Level2({ onComplete, onBack, initialProgress, onCorrectAnswer, o
       setUserAnswer('');
       setPredictedUnit('');
       setShowFeedback(false);
+      setZoneState({});
     }
   }, [currentProblemIndex, problem]);
 
@@ -61,6 +149,92 @@ export function Level2({ onComplete, onBack, initialProgress, onCorrectAnswer, o
     setPredictionPhase('unit');
     setSelectedRationale(null);
     setShowPredictionPrompt(true);
+  };
+
+  // Handle drag-drop events
+  const handleDrop = (result: DropResult) => {
+    const { itemId, zoneId, index } = result;
+
+    // Update zone state manually
+    setZoneState(prev => {
+      const newState = { ...prev };
+      // Remove item from pool/other zones
+      for (const key of Object.keys(newState)) {
+        newState[key] = newState[key].filter(id => id !== itemId);
+      }
+      // Add item to target zone at the specified index
+      if (!newState[zoneId]) {
+        newState[zoneId] = [];
+      }
+      newState[zoneId].splice(index, 0, itemId);
+      return newState;
+    });
+
+    // Get the factor from the dropped item
+    const item = draggableItems.find(i => i.id === itemId);
+    if (item && zoneId === 'conversion-chain' && item.data?.factor) {
+      // Trigger prediction prompt for the dropped factor
+      setPendingFactor(item.data.factor as string);
+      setPredictionPhase('unit');
+      setSelectedRationale(null);
+      setShowPredictionPrompt(true);
+    }
+  };
+
+  // Handle reordering within a zone
+  const handleReorder = (zoneId: string, newOrder: string[]) => {
+    setZoneState(prev => ({
+      ...prev,
+      [zoneId]: newOrder,
+    }));
+  };
+
+  // Sync selectedFactors with zone state
+  useEffect(() => {
+    const chainItems = zoneState['conversion-chain'] || [];
+    const factors = chainItems.map(itemId => {
+      const item = draggableItems.find(i => i.id === itemId);
+      return item?.data?.factor as string;
+    }).filter(Boolean);
+    setSelectedFactors(factors);
+  }, [zoneState, draggableItems]);
+
+  // Generate feedback for FeedbackPanel
+  const getDetailedFeedback = (): DetailedFeedback => {
+    const pathCorrect = problem.correctPath.every((step, idx) => selectedFactors[idx] === step);
+    const userNum = parseFloat(userAnswer);
+    let expectedAnswer = problem.startValue;
+    problem.correctPath.forEach(factor => {
+      const [num, den] = factor.split(' / ');
+      const numVal = parseFloat(num.split(' ')[0]);
+      const denVal = parseFloat(den.split(' ')[0]);
+      expectedAnswer = expectedAnswer * numVal / denVal;
+    });
+    const answerCorrect = Math.abs(userNum - expectedAnswer) < 0.01;
+
+    if (pathCorrect && answerCorrect) {
+      return {
+        isCorrect: true,
+        explanation: `Rétt! ${problem.startValue} ${problem.startUnit} = ${expectedAnswer} ${problem.targetUnit}`,
+        relatedConcepts: RELATED_CONCEPTS,
+        nextSteps: 'Þú getur nú prófað flóknari umbreytingar með fleiri skrefum.',
+      };
+    }
+
+    let misconception = MISCONCEPTIONS.wrong_direction;
+    if (selectedFactors.length < problem.correctPath.length) {
+      misconception = MISCONCEPTIONS.missing_step;
+    } else if (selectedFactors.length > problem.correctPath.length) {
+      misconception = MISCONCEPTIONS.extra_step;
+    }
+
+    return {
+      isCorrect: false,
+      explanation: `Rétta leiðin er: ${problem.correctPath.join(' × ')}`,
+      misconception,
+      relatedConcepts: RELATED_CONCEPTS,
+      nextSteps: 'Athugaðu hvort einingarnar strikist rétt út í hverju skrefi.',
+    };
   };
 
   // Generate rationale options based on the pending factor
@@ -305,32 +479,59 @@ export function Level2({ onComplete, onBack, initialProgress, onCorrectAnswer, o
 
           {!showFeedback && (
             <>
-              {/* Available factors */}
-              <div className="mb-6">
-                <p className="text-sm font-semibold mb-3">Veldu umbreytingarstuðul:</p>
-                <div className="flex flex-wrap justify-center gap-4">
-                  {problem.correctPath.slice(selectedFactors.length, selectedFactors.length + 3).map((factor, idx) => {
-                    // Parse factor string like "1 L / 1000 mL"
-                    const [numPart, denPart] = factor.split(' / ');
-                    const numValue = parseFloat(numPart.split(' ')[0]);
-                    const numUnit = numPart.split(' ').slice(1).join(' ');
-                    const denValue = parseFloat(denPart.split(' ')[0]);
-                    const denUnit = denPart.split(' ').slice(1).join(' ');
-
-                    return (
-                      <ConversionFactorBlock
-                        key={idx}
-                        numeratorValue={numValue}
-                        numeratorUnit={numUnit}
-                        denominatorValue={denValue}
-                        denominatorUnit={denUnit}
-                        onClick={() => handleFactorSelect(factor)}
-                        size="medium"
-                      />
-                    );
-                  })}
-                </div>
+              {/* Mode toggle */}
+              <div className="mb-4 flex justify-end">
+                <button
+                  onClick={() => setUseDragDrop(!useDragDrop)}
+                  className="text-xs px-3 py-1 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600"
+                >
+                  {useDragDrop ? '🖱️ Skipta í smella-ham' : '✋ Skipta í draga-ham'}
+                </button>
               </div>
+
+              {/* Drag-and-drop factor selection */}
+              {useDragDrop ? (
+                <div className="mb-6">
+                  <p className="text-sm font-semibold mb-3">Dragðu umbreytingarstuðla til að byggja keðju:</p>
+                  <DragDropBuilder
+                    items={draggableItems}
+                    zones={dropZones}
+                    initialState={zoneState}
+                    onDrop={handleDrop}
+                    onReorder={handleReorder}
+                    orientation="horizontal"
+                  />
+                </div>
+              ) : (
+                /* Classic button-based factor selection */
+                <div className="mb-6">
+                  <p className="text-sm font-semibold mb-3">Veldu umbreytingarstuðul:</p>
+                  <div className="flex flex-wrap justify-center gap-4">
+                    {availableFactors.slice(0, Math.min(6, problem.correctPath.length + 3)).map((factor, idx) => {
+                      // Parse factor string like "1 L / 1000 mL"
+                      const [numPart, denPart] = factor.split(' / ');
+                      const numValue = parseFloat(numPart.split(' ')[0]);
+                      const numUnit = numPart.split(' ').slice(1).join(' ');
+                      const denValue = parseFloat(denPart.split(' ')[0]);
+                      const denUnit = denPart.split(' ').slice(1).join(' ');
+                      const isUsed = selectedFactors.includes(factor);
+
+                      return (
+                        <ConversionFactorBlock
+                          key={idx}
+                          numeratorValue={numValue}
+                          numeratorUnit={numUnit}
+                          denominatorValue={denValue}
+                          denominatorUnit={denUnit}
+                          onClick={isUsed ? undefined : () => handleFactorSelect(factor)}
+                          size="medium"
+                          isSelected={isUsed}
+                        />
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
 
               {/* Answer input */}
               <div className="mb-6 p-4 bg-gradient-to-r from-orange-50 to-yellow-50 rounded-xl border-2 border-orange-200">
@@ -360,15 +561,18 @@ export function Level2({ onComplete, onBack, initialProgress, onCorrectAnswer, o
           )}
 
           {showFeedback && (
-            <div className={`p-6 rounded-xl border-2 ${isCorrect ? 'bg-green-100 border-green-300' : 'bg-yellow-100 border-yellow-300'}`}>
-              <div className="text-center mb-4">
-                <div className="text-5xl mb-2">{isCorrect ? '🎉' : '💡'}</div>
-                <h3 className="text-2xl font-bold">
-                  {isCorrect ? 'Rétt svar!' : 'Nálægt!'}
-                </h3>
-              </div>
+            <div className="space-y-4">
+              <FeedbackPanel
+                feedback={getDetailedFeedback()}
+                config={{
+                  showExplanation: true,
+                  showMisconceptions: !isCorrect,
+                  showRelatedConcepts: true,
+                  showNextSteps: true,
+                }}
+              />
 
-              <div className="mb-6 p-4 bg-white rounded-lg">
+              <div className="p-4 bg-white rounded-lg border border-gray-200">
                 <p className="text-sm text-gray-600 mb-2">Rétt umbreytingarleið:</p>
                 <div className="flex flex-wrap justify-center gap-2">
                   {problem.correctPath.map((factor, idx) => {
@@ -395,7 +599,7 @@ export function Level2({ onComplete, onBack, initialProgress, onCorrectAnswer, o
                 </div>
               </div>
 
-              <div className="flex items-center justify-center gap-4 mb-6">
+              <div className="flex items-center justify-center gap-4">
                 <div className="text-center">
                   <p className="text-xs text-gray-600">Spánákvæmni</p>
                   <p className={`text-2xl font-bold ${predictionAccuracy >= 70 ? 'text-green-600' : 'text-yellow-600'}`}>

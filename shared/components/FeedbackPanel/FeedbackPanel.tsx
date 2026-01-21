@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import {
-  DetailedFeedback,
+import type {
   FeedbackSeverity,
   FeedbackPanelConfig,
   FeedbackPanelProps,

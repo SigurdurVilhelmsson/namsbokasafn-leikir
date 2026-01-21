@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { AnimatedMolecule, FeedbackPanel } from '@shared/components';
+import { AnimatedMolecule, FeedbackPanel, MoleculeViewer3DLazy } from '@shared/components';
 import type { TieredHints } from '@shared/types';
 import { geometryToMolecule } from '../utils/vseprConverter';
 import { shuffleArray } from '@shared/utils';
@@ -319,6 +319,7 @@ const challenges: Challenge[] = [
 export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer }: Level1Props) {
   const [phase, setPhase] = useState<'explore' | 'quiz'>('explore');
   const [selectedGeometry, setSelectedGeometry] = useState<Geometry | null>(null);
+  const [viewMode, setViewMode] = useState<'2d' | '3d'>('2d');
   const [currentChallenge, setCurrentChallenge] = useState(0);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [showResult, setShowResult] = useState(false);
@@ -422,24 +423,73 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
               <div className="bg-teal-50 rounded-xl p-6 animate-slide-in">
                 <div className="flex flex-col md:flex-row gap-6">
                   {/* Visual representation */}
-                  <div className="flex-1 bg-gray-900 rounded-xl p-6 flex items-center justify-center min-h-48">
-                    <div className="text-center">
-                      <AnimatedMolecule
-                        molecule={geometryToMolecule({
-                          id: selectedGeometry.id,
-                          example: selectedGeometry.example,
-                          exampleName: selectedGeometry.exampleName,
-                          bondingPairs: selectedGeometry.bondingPairs,
-                          lonePairs: selectedGeometry.lonePairs,
-                        })}
-                        mode="vsepr"
-                        size="lg"
-                        animation="scale-in"
-                        showLonePairs={true}
-                        ariaLabel={`${selectedGeometry.name} lögun: ${selectedGeometry.example}`}
-                      />
-                      <div className="text-2xl font-bold text-teal-400 mt-4">{selectedGeometry.example}</div>
-                      <div className="text-gray-400">{selectedGeometry.exampleName}</div>
+                  <div className="flex-1">
+                    {/* 2D/3D Toggle */}
+                    <div className="flex justify-center gap-2 mb-3">
+                      <button
+                        onClick={() => setViewMode('2d')}
+                        className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                          viewMode === '2d'
+                            ? 'bg-teal-600 text-white'
+                            : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+                        }`}
+                      >
+                        2D
+                      </button>
+                      <button
+                        onClick={() => setViewMode('3d')}
+                        className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                          viewMode === '3d'
+                            ? 'bg-teal-600 text-white'
+                            : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+                        }`}
+                      >
+                        3D
+                      </button>
+                    </div>
+
+                    <div className="bg-gray-900 rounded-xl p-6 flex items-center justify-center min-h-48">
+                      <div className="text-center w-full">
+                        {viewMode === '2d' ? (
+                          <AnimatedMolecule
+                            molecule={geometryToMolecule({
+                              id: selectedGeometry.id,
+                              example: selectedGeometry.example,
+                              exampleName: selectedGeometry.exampleName,
+                              bondingPairs: selectedGeometry.bondingPairs,
+                              lonePairs: selectedGeometry.lonePairs,
+                            })}
+                            mode="vsepr"
+                            size="lg"
+                            animation="scale-in"
+                            showLonePairs={true}
+                            ariaLabel={`${selectedGeometry.name} lögun: ${selectedGeometry.example}`}
+                          />
+                        ) : (
+                          <MoleculeViewer3DLazy
+                            molecule={geometryToMolecule({
+                              id: selectedGeometry.id,
+                              example: selectedGeometry.example,
+                              exampleName: selectedGeometry.exampleName,
+                              bondingPairs: selectedGeometry.bondingPairs,
+                              lonePairs: selectedGeometry.lonePairs,
+                            })}
+                            style="ball-stick"
+                            showLabels={true}
+                            autoRotate={true}
+                            autoRotateSpeed={1.5}
+                            height={200}
+                            backgroundColor="transparent"
+                          />
+                        )}
+                        <div className="text-2xl font-bold text-teal-400 mt-4">{selectedGeometry.example}</div>
+                        <div className="text-gray-400">{selectedGeometry.exampleName}</div>
+                        {viewMode === '3d' && (
+                          <div className="text-xs text-gray-500 mt-2">
+                            Dragðu til að snúa, skrollaðu til að stækka
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
 

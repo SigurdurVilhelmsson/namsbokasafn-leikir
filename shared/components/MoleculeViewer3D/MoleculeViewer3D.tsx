@@ -1,6 +1,3 @@
-// @ts-nocheck
-// Note: This file requires three.js dependencies that may not be installed.
-// Type checking is disabled until dependencies are added: npm install three @react-three/fiber @react-three/drei
 /**
  * MoleculeViewer3D - Three.js based 3D molecule visualization
  *
@@ -12,7 +9,7 @@ import { Suspense, useMemo, useCallback, useRef } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Text, Html } from '@react-three/drei';
 import * as THREE from 'three';
-import type { MoleculeViewer3DProps, Atom3DProps, Bond3DProps, Position3DArray } from './types';
+import type { MoleculeViewer3DProps, Atom3DProps, Bond3DProps } from './types';
 import type { MoleculeAtom, MoleculeBond } from '../../types/molecule.types';
 import { ELEMENT_VISUALS, DEFAULT_ELEMENT_VISUAL } from '../AnimatedMolecule/molecule.constants';
 
@@ -111,7 +108,7 @@ function Atom3D({
   const meshRef = useRef<THREE.Mesh>(null);
 
   const handleClick = useCallback(
-    (e: THREE.Event) => {
+    (e: { stopPropagation: () => void }) => {
       e.stopPropagation();
       onClick?.();
     },

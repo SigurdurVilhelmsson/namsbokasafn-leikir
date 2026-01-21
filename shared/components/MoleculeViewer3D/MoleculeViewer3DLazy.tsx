@@ -1,6 +1,3 @@
-// @ts-nocheck
-// Note: This file requires three.js dependencies that may not be installed.
-// Type checking is disabled until dependencies are added: npm install three @react-three/fiber @react-three/drei
 /**
  * Lazy-loaded wrapper for MoleculeViewer3D
  *
@@ -17,7 +14,7 @@
  * ```
  */
 
-import { lazy, Suspense, ComponentProps, useState, useEffect } from 'react';
+import { lazy, Suspense, useState, useEffect } from 'react';
 import type { MoleculeViewer3DProps } from './types';
 
 // Lazy load the actual 3D viewer component

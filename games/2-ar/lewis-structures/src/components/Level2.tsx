@@ -1,7 +1,19 @@
 import { useState, useMemo } from 'react';
-import { AnimatedMolecule } from '@shared/components';
+import { AnimatedMolecule, DragDropBuilder, FeedbackPanel } from '@shared/components';
+import type { DraggableItemData, DropZoneData, DropResult, ZoneState } from '@shared/components';
 import { lewisToMolecule } from '../utils/lewisConverter';
 import { shuffleArray } from '@shared/utils';
+
+// Misconceptions for Lewis structure building
+const LEWIS_MISCONCEPTIONS: Record<string, string> = {
+  central_atom: 'Miðatómið er venjulega atómið með flestum gildisrafeindum (nema H sem er alltaf ytri atóm).',
+  lone_pairs: 'Einstæð pör eru rafeindir sem tilheyra einu atómi og taka ekki þátt í efnabindingum.',
+  bond_count: 'Fjöldi tengja ákvarðast af því hversu margar rafeindir atóm þurfa til að ná áttureglunni.',
+  octet: 'Áttureglan: Atóm vilja hafa 8 rafeindir í ystu skel (nema H sem vill 2).',
+};
+
+// Related concepts
+const LEWIS_RELATED = ['Lewis-formúlur', 'Gildisrafeindir', 'Áttureglan', 'Efnatengi'];
 
 interface Level2Props {
   onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
@@ -332,11 +344,154 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
   const [stepCorrect, setStepCorrect] = useState<boolean[]>([]);
   const [score, setScore] = useState(0);
   const [totalHintsUsed, setTotalHintsUsed] = useState(0);
+  const [buildMode, setBuildMode] = useState(false);
+  const [zoneState, setZoneState] = useState<ZoneState>({});
+  const [buildComplete, setBuildComplete] = useState(false);
+  const [buildCorrect, setBuildCorrect] = useState(false);
 
   const challenge = challenges[currentChallenge];
   const step = challenge.steps[currentStep];
   const isLastStep = currentStep === challenge.steps.length - 1;
   const isLastChallenge = currentChallenge === challenges.length - 1;
+
+  // Generate draggable items for building Lewis structure
+  const { electronItems, atomZones } = useMemo(() => {
+    const structure = challenge.correctStructure;
+
+    // Create draggable electron pairs
+    const items: DraggableItemData[] = [];
+
+    // Add lone pairs to drag (we'll create more than needed for challenge)
+    const totalLonePairs = structure.centralLonePairs +
+      structure.surroundingAtoms.reduce((sum, a) => sum + a.lonePairs, 0);
+
+    for (let i = 0; i < totalLonePairs + 2; i++) {
+      items.push({
+        id: `lone-pair-${i}`,
+        content: (
+          <div className="flex items-center gap-1 p-2">
+            <div className="w-2 h-2 rounded-full bg-blue-600" />
+            <div className="w-2 h-2 rounded-full bg-blue-600" />
+            <span className="text-xs ml-1">Einstætt par</span>
+          </div>
+        ),
+        category: 'electron',
+        data: { type: 'lone-pair' },
+      });
+    }
+
+    // Create drop zones for atoms
+    const zones: DropZoneData[] = [
+      {
+        id: `zone-${structure.centralAtom}`,
+        label: `${structure.centralAtom} (miðatóm)`,
+        maxItems: 4,
+        placeholder: 'Dragðu einstæð pör hingað',
+        data: {
+          atom: structure.centralAtom,
+          expectedPairs: structure.centralLonePairs,
+          isCentral: true
+        },
+      },
+    ];
+
+    // Add zones for surrounding atoms (only those with lone pairs)
+    structure.surroundingAtoms.forEach((atom, idx) => {
+      if (atom.lonePairs > 0) {
+        zones.push({
+          id: `zone-${atom.symbol}-${idx}`,
+          label: `${atom.symbol} (ytri atóm)`,
+          maxItems: 4,
+          placeholder: 'Dragðu einstæð pör hingað',
+          data: {
+            atom: atom.symbol,
+            expectedPairs: atom.lonePairs,
+            isCentral: false
+          },
+        });
+      }
+    });
+
+    return { electronItems: items, atomZones: zones };
+  }, [challenge]);
+
+  // Handle drag-drop events
+  const handleDrop = (result: DropResult) => {
+    const { itemId, zoneId, index } = result;
+
+    setZoneState(prev => {
+      const newState = { ...prev };
+      // Remove item from other zones
+      for (const key of Object.keys(newState)) {
+        newState[key] = newState[key].filter(id => id !== itemId);
+      }
+      // Add to target zone
+      if (!newState[zoneId]) {
+        newState[zoneId] = [];
+      }
+      newState[zoneId].splice(index, 0, itemId);
+      return newState;
+    });
+  };
+
+  const handleReorder = (zoneId: string, newOrder: string[]) => {
+    setZoneState(prev => ({
+      ...prev,
+      [zoneId]: newOrder,
+    }));
+  };
+
+  // Check if build is correct
+  const checkBuild = () => {
+    let correct = true;
+
+    for (const zone of atomZones) {
+      const placedItems = zoneState[zone.id] || [];
+      const expectedPairs = (zone.data?.expectedPairs as number) || 0;
+
+      if (placedItems.length !== expectedPairs) {
+        correct = false;
+        break;
+      }
+    }
+
+    setBuildCorrect(correct);
+    setBuildComplete(true);
+
+    if (correct) {
+      onCorrectAnswer?.();
+      setScore(prev => prev + 10);
+    } else {
+      onIncorrectAnswer?.();
+    }
+  };
+
+  // Get feedback for build mode
+  const getBuildFeedback = () => {
+    if (buildCorrect) {
+      return {
+        isCorrect: true,
+        explanation: `Rétt! ${challenge.molecule} hefur ${challenge.correctStructure.centralLonePairs} einstæð pör á ${challenge.correctStructure.centralAtom}.`,
+        relatedConcepts: LEWIS_RELATED,
+        nextSteps: 'Þú skilur hvernig einstæð pör dreifast á atóm í Lewis-formúlum.',
+      };
+    }
+
+    let feedback = 'Athugaðu fjölda einstæðra para á hverju atómi:\n';
+    for (const zone of atomZones) {
+      const placed = (zoneState[zone.id] || []).length;
+      const expected = (zone.data?.expectedPairs as number) || 0;
+      feedback += `• ${zone.data?.atom}: ${placed}/${expected} pör\n`;
+    }
+
+    return {
+      isCorrect: false,
+      explanation: feedback,
+      misconception: LEWIS_MISCONCEPTIONS.lone_pairs,
+      relatedConcepts: LEWIS_RELATED,
+      nextSteps: 'Reiknaðu heildarfjölda gildisrafeinda og dreifðu þeim rétt.',
+    };
+  };
 
   // Shuffle options for current step - memoize to keep stable during step
   const shuffledStepOptions = useMemo(() => {
@@ -382,6 +537,13 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
     }
   };
 
+  const enterBuildMode = () => {
+    setBuildMode(true);
+    setZoneState({});
+    setBuildComplete(false);
+    setBuildCorrect(false);
+  };
+
   const nextChallenge = () => {
     if (!isLastChallenge) {
       setCurrentChallenge(prev => prev + 1);
@@ -390,6 +552,10 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
       setShowStepResult(false);
       setShowHint(false);
       setStepCorrect([]);
+      setBuildMode(false);
+      setZoneState({});
+      setBuildComplete(false);
+      setBuildCorrect(false);
     } else {
       onComplete(score, MAX_SCORE, totalHintsUsed);
     }
@@ -548,10 +714,66 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
           )}
 
           {/* Final explanation */}
-          {isLastStep && showStepResult && (
+          {isLastStep && showStepResult && !buildMode && (
             <div className="bg-indigo-50 p-4 rounded-xl mb-4">
               <div className="font-bold text-indigo-800 mb-2">Lewis-formúla:</div>
               <p className="text-indigo-900 text-sm">{challenge.finalExplanation}</p>
+            </div>
+          )}
+
+          {/* Build Mode - Drag and drop electron pairs */}
+          {buildMode && (
+            <div className="mb-6">
+              <div className="bg-green-50 border border-green-200 rounded-xl p-4 mb-4">
+                <h3 className="font-bold text-green-800 mb-2">
+                  Byggðu Lewis-formúluna
+                </h3>
+                <p className="text-green-700 text-sm mb-4">
+                  Dragðu einstæð rafeindarapör á réttu atómin til að ljúka Lewis-formúlunni fyrir {challenge.molecule}.
+                </p>
+
+                <DragDropBuilder
+                  items={electronItems}
+                  zones={atomZones}
+                  initialState={zoneState}
+                  onDrop={handleDrop}
+                  onReorder={handleReorder}
+                  orientation="horizontal"
+                  disabled={buildComplete}
+                />
+              </div>
+
+              {/* Build result feedback */}
+              {buildComplete && (
+                <div className="mb-4">
+                  <FeedbackPanel
+                    feedback={getBuildFeedback()}
+                    config={{
+                      showExplanation: true,
+                      showMisconceptions: !buildCorrect,
+                      showRelatedConcepts: true,
+                      showNextSteps: true,
+                    }}
+                  />
+                </div>
+              )}
+
+              {/* Build action buttons */}
+              {!buildComplete ? (
+                <button
+                  onClick={checkBuild}
+                  className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-6 rounded-xl transition-colors"
+                >
+                  Athuga byggingu
+                </button>
+              ) : (
+                <button
+                  onClick={nextChallenge}
+                  className="w-full bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-4 px-6 rounded-xl transition-colors"
+                >
+                  {isLastChallenge ? 'Ljúka stigi 2' : 'Næsta sameind'}
+                </button>
+              )}
             </div>
           )}
 
@@ -576,28 +798,43 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
           )}
 
           {/* Action buttons */}
-          {!showStepResult ? (
-            <button
-              onClick={checkStep}
-              disabled={!selectedAnswer}
-              className="w-full bg-green-500 hover:bg-green-600 disabled:bg-gray-300 text-white font-bold py-4 px-6 rounded-xl transition-colors"
-            >
-              Athuga
-            </button>
-          ) : isLastStep ? (
-            <button
-              onClick={nextChallenge}
-              className="w-full bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-4 px-6 rounded-xl transition-colors"
-            >
-              {isLastChallenge ? 'Ljúka stigi 2' : 'Næsta sameind'}
-            </button>
-          ) : (
-            <button
-              onClick={nextStep}
-              className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 px-6 rounded-xl transition-colors"
-            >
-              Næsta skref
-            </button>
+          {!buildMode && (
+            <>
+              {!showStepResult ? (
+                <button
+                  onClick={checkStep}
+                  disabled={!selectedAnswer}
+                  className="w-full bg-green-500 hover:bg-green-600 disabled:bg-gray-300 text-white font-bold py-4 px-6 rounded-xl transition-colors"
+                >
+                  Athuga
+                </button>
+              ) : isLastStep ? (
+                <div className="space-y-3">
+                  {/* Show build mode option if there are lone pairs to place */}
+                  {atomZones.length > 0 && (
+                    <button
+                      onClick={enterBuildMode}
+                      className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-6 rounded-xl transition-colors flex items-center justify-center gap-2"
+                    >
+                      <span>✋</span> Byggja Lewis-formúlu (bónus +10 stig)
+                    </button>
+                  )}
+                  <button
+                    onClick={nextChallenge}
+                    className="w-full bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-4 px-6 rounded-xl transition-colors"
+                  >
+                    {isLastChallenge ? 'Ljúka stigi 2' : 'Næsta sameind'}
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={nextStep}
+                  className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 px-6 rounded-xl transition-colors"
+                >
+                  Næsta skref
+                </button>
+              )}
+            </>
           )}
         </div>
 

@@ -1,6 +1,26 @@
 import { useState, useEffect } from 'react';
-import { level1Questions } from '../data/questions';
+import { FeedbackPanel } from '@shared/components';
+import type { DetailedFeedback } from '@shared/types';
+import { level1Questions, QuestionType } from '../data/questions';
 import { scoreExplanation } from '../utils/scoring';
+
+// Misconceptions for each question type
+const MISCONCEPTIONS: Record<QuestionType, string> = {
+  equivalence: 'Umbreytingarstuðull jafngildir 1 aðeins þegar teljarinn og nefnarinn eru sama magn í mismunandi einingum (t.d. 1000 mL = 1 L).',
+  cancellation_prediction: 'Einingar strikast út eins og tölur í almennum brotum - ef sama eining er í teljara og nefnara, þá hverfa þær.',
+  factor_selection: 'Veldu stuðul þannig að einingin sem þú vilt losna við sé á gagnstæðri hlið við upphafsmagn (ef þú hefur g, settu g í nefnara).',
+  error_identification: 'Algeng villa er að snúa stuðlinum rangt - athugaðu alltaf hvort einingin sem þú vilt losna við sé þar sem hún getur strikast út.',
+  conceptual: 'Umbreyting breytir ekki magninu, aðeins hvernig við tjáum það. 1 kg og 1000 g er sama magnið.',
+};
+
+// Related concepts for each question type
+const RELATED_CONCEPTS: Record<QuestionType, string[]> = {
+  equivalence: ['Umbreytingarstuðlar', 'Jafngildi eininga', 'Brot'],
+  cancellation_prediction: ['Strikun eininga', 'Brotareglur', 'Víddargreining'],
+  factor_selection: ['Factor-label aðferð', 'Umbreytingar', 'Einingaval'],
+  error_identification: ['Algengar villur', 'Víddargreining', 'Einingaathugun'],
+  conceptual: ['Einingakerfi', 'SI-einingar', 'Umbreytingar'],
+};
 
 interface Level1Progress {
   questionsAnswered: number;
@@ -140,6 +160,30 @@ export function Level1({ onComplete, onBack, initialProgress }: Level1Props) {
     ? Math.round((progress.questionsCorrect / progress.questionsAnswered) * 100)
     : 0;
 
+  // Generate detailed feedback for FeedbackPanel
+  const getDetailedFeedback = (): DetailedFeedback => {
+    const baseExplanation = question.correctText || '';
+
+    if (isCorrect) {
+      return {
+        isCorrect: true,
+        explanation: baseExplanation || 'Rétt! Þú skildir hvernig á að nota umbreytingarstuðla.',
+        relatedConcepts: RELATED_CONCEPTS[question.type],
+        nextSteps: question.type === 'conceptual'
+          ? 'Þú ert tilbúin/n að æfa umbreytingar með tölum.'
+          : 'Reyndu næst flóknari umbreytingu með mörgum skrefum.',
+      };
+    }
+
+    return {
+      isCorrect: false,
+      explanation: baseExplanation || 'Skoðaðu hvernig umbreytingarstuðlar virka.',
+      misconception: MISCONCEPTIONS[question.type],
+      relatedConcepts: RELATED_CONCEPTS[question.type],
+      nextSteps: 'Lestu útskýringuna vandlega og reyndu svipað dæmi.',
+    };
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 p-4">
       <div className="max-w-4xl mx-auto">
@@ -255,17 +299,23 @@ export function Level1({ onComplete, onBack, initialProgress }: Level1Props) {
           )}
 
           {showFeedback && (
-            <div className={`p-6 rounded-lg ${isCorrect ? 'bg-green-100' : 'bg-yellow-100'}`}>
-              <h3 className="text-xl font-bold mb-4">
-                {isCorrect ? '✓ Rétt svar!' : '○ Ekki alveg rétt'}
-              </h3>
+            <div className="space-y-4">
+              <FeedbackPanel
+                feedback={getDetailedFeedback()}
+                config={{
+                  showExplanation: true,
+                  showMisconceptions: !isCorrect,
+                  showRelatedConcepts: true,
+                  showNextSteps: true,
+                }}
+              />
 
               {question.explanationRequired && (
-                <div className="mb-4">
+                <div className="bg-blue-50 rounded-lg p-4">
                   <p className="text-sm font-semibold text-gray-700 mb-1">Útskýringareinkunn:</p>
                   <div className="w-full bg-gray-200 rounded-full h-2.5">
                     <div
-                      className="bg-blue-600 h-2.5 rounded-full"
+                      className="bg-blue-600 h-2.5 rounded-full transition-all duration-500"
                       style={{ width: `${explanationScore * 100}%` }}
                     ></div>
                   </div>
@@ -273,14 +323,12 @@ export function Level1({ onComplete, onBack, initialProgress }: Level1Props) {
                 </div>
               )}
 
-              {question.correctText && (
-                <p className="text-sm text-gray-700 mb-4">
-                  <strong>Útskýring:</strong> {question.correctText}
-                </p>
-              )}
-
               {question.visualization && (
-                <p className="text-sm text-gray-600 italic mb-4">{question.visualization}</p>
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <p className="text-sm text-gray-600 italic">
+                    <strong>Sjónrænt:</strong> {question.visualization}
+                  </p>
+                </div>
               )}
 
               <button

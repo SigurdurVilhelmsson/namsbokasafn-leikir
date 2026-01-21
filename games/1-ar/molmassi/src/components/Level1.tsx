@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { AnimatedMolecule, ELEMENT_VISUALS, HintSystem } from '@shared/components';
-import type { TieredHints } from '@shared/types';
+import { AnimatedMolecule, ELEMENT_VISUALS, HintSystem, FeedbackPanel } from '@shared/components';
+import type { TieredHints, DetailedFeedback } from '@shared/types';
 import { elementsToAtomCluster } from '../utils/moleculeConverter';
 
 // Icelandic names for elements
@@ -37,6 +37,24 @@ const ATOMIC_MASSES: Record<string, number> = {
   P: 30.974,
   Al: 26.982,
   Cu: 63.546,
+};
+
+// Visual properties for atoms (used in UI)
+const ATOM_VISUALS: Record<string, { color: string; size: number; name: string; mass: number }> = {
+  H: { color: '#F3F4F6', size: 24, name: 'Vetni', mass: 1.008 },
+  C: { color: '#4B5563', size: 30, name: 'Kolefni', mass: 12.011 },
+  N: { color: '#3B82F6', size: 28, name: 'Köfnunarefni', mass: 14.007 },
+  O: { color: '#EF4444', size: 28, name: 'Súrefni', mass: 15.999 },
+  S: { color: '#EAB308', size: 32, name: 'Brennisteinn', mass: 32.065 },
+  Cl: { color: '#22C55E', size: 32, name: 'Klór', mass: 35.453 },
+  Na: { color: '#8B5CF6', size: 34, name: 'Natríum', mass: 22.990 },
+  Ca: { color: '#F97316', size: 36, name: 'Kalsíum', mass: 40.078 },
+  Fe: { color: '#78716C', size: 34, name: 'Járn', mass: 55.845 },
+  K: { color: '#EC4899', size: 38, name: 'Kalíum', mass: 39.098 },
+  Mg: { color: '#14B8A6', size: 34, name: 'Magnesíum', mass: 24.305 },
+  P: { color: '#F59E0B', size: 30, name: 'Fosfór', mass: 30.974 },
+  Al: { color: '#A1A1AA', size: 32, name: 'Ál', mass: 26.982 },
+  Cu: { color: '#B45309', size: 32, name: 'Kopar', mass: 63.546 },
 };
 
 // Challenge types for Level 1
@@ -766,6 +784,108 @@ export function Level1({ onBack, onComplete, onCorrectAnswer, onIncorrectAnswer 
     }
   };
 
+  // Generate detailed feedback for FeedbackPanel
+  const getDetailedFeedback = (): DetailedFeedback => {
+    const elementName = ATOM_VISUALS[challenge.targetElement!]?.name || challenge.targetElement;
+
+    switch (challenge.type) {
+      case 'count_atoms': {
+        if (isCorrect) {
+          return {
+            isCorrect: true,
+            explanation: `Rétt! Í ${challenge.compound.formula} eru ${challenge.correctCount} ${elementName} frumeindir. Þú fannst rétt tölu með því að lesa formúluna.`,
+            relatedConcepts: ['Efnaformúlur', 'Subscripts', 'Frumeindir'],
+            nextSteps: 'Reyndu næst að bera saman massa sameinda.',
+          };
+        }
+        return {
+          isCorrect: false,
+          explanation: `Í ${challenge.compound.formula} eru ${challenge.correctCount} ${elementName} (${challenge.targetElement}) frumeindir. Líttu á töluna við hliðina á ${challenge.targetElement} í formúlunni.`,
+          misconception: 'Mundu: Ef engin tala er við hliðina á frumefninu, þá er 1 frumeind. Talan (subscript) á aðeins við það frumefni sem hún er við.',
+          relatedConcepts: ['Efnaformúlur', 'Subscripts'],
+          nextSteps: 'Æfðu þig í að lesa subscripts í mismunandi formúlum.',
+        };
+      }
+
+      case 'compare_mass': {
+        const heavier = challenge.compound.molarMass > (challenge.compareCompound?.molarMass || 0)
+          ? challenge.compound
+          : challenge.compareCompound;
+        const lighter = challenge.compound.molarMass <= (challenge.compareCompound?.molarMass || 0)
+          ? challenge.compound
+          : challenge.compareCompound;
+
+        if (isCorrect) {
+          return {
+            isCorrect: true,
+            explanation: `Rétt! ${heavier?.name} (${heavier?.molarMass.toFixed(1)} g/mol) er þyngri en ${lighter?.name} (${lighter?.molarMass.toFixed(1)} g/mol).`,
+            relatedConcepts: ['Mólmassi', 'Atómmassi', 'Samanburður'],
+            nextSteps: 'Reyndu að áætla í hvaða massabil sameind fellur.',
+          };
+        }
+        return {
+          isCorrect: false,
+          explanation: `${heavier?.name} er í raun þyngri (${heavier?.molarMass.toFixed(1)} g/mol) en ${lighter?.name} (${lighter?.molarMass.toFixed(1)} g/mol).`,
+          misconception: 'Stærri frumeindir (eins og O, Cl, Na) hafa meiri massa en litlar (eins og H). Fleiri frumeindir þýðir líka meiri massa.',
+          relatedConcepts: ['Mólmassi', 'Atómmassi'],
+          nextSteps: 'Hugsaðu um bæði stærð og fjölda frumefna þegar þú berð saman.',
+        };
+      }
+
+      case 'build_molecule': {
+        const targetFormula = challenge.compound.elements.map(e =>
+          `${e.count}× ${ATOM_VISUALS[e.symbol]?.name || e.symbol}`
+        ).join(' + ');
+
+        if (isCorrect) {
+          return {
+            isCorrect: true,
+            explanation: `Frábært! Þú byggðir ${challenge.compound.name} (${challenge.compound.formula}) rétt: ${targetFormula}.`,
+            relatedConcepts: ['Efnaformúlur', 'Sameindir', 'Frumeindir'],
+            nextSteps: 'Reyndu nú að áætla mólmassa þessarar sameindar.',
+          };
+        }
+        return {
+          isCorrect: false,
+          explanation: `${challenge.compound.name} (${challenge.compound.formula}) inniheldur: ${targetFormula}. Berðu saman við það sem þú byggðir.`,
+          misconception: 'Lestu formúluna vandlega - hver tala (subscript) segir þér nákvæmlega hversu margar af hverri frumeind þarf.',
+          relatedConcepts: ['Efnaformúlur', 'Sameindir'],
+          nextSteps: 'Byrjaðu á fyrsta frumefninu og farðu kerfisbundið í gegnum formúluna.',
+        };
+      }
+
+      case 'estimate_range': {
+        const mass = challenge.compound.molarMass;
+        const correctRange = challenge.ranges?.[challenge.correctRangeIndex!];
+        const calculation = challenge.compound.elements.map(e =>
+          `${e.count}×${ATOMIC_MASSES[e.symbol]?.toFixed(0) || '?'}`
+        ).join(' + ');
+
+        if (isCorrect) {
+          return {
+            isCorrect: true,
+            explanation: `Rétt! ${challenge.compound.name} = ${mass.toFixed(1)} g/mol (${calculation}), sem fellur í bilið ${correctRange?.label}.`,
+            relatedConcepts: ['Mólmassi', 'Atómmassi', 'Útreikningar'],
+            nextSteps: 'Þú ert tilbúin/n að reikna nákvæman mólmassa!',
+          };
+        }
+        return {
+          isCorrect: false,
+          explanation: `${challenge.compound.name} = ${calculation} = ${mass.toFixed(1)} g/mol, sem fellur í bilið ${correctRange?.label}.`,
+          misconception: 'Mundu atómmassamina: H≈1, C≈12, N≈14, O≈16 g/mol. Margfaldaðu með fjöldanum og leggðu saman.',
+          relatedConcepts: ['Mólmassi', 'Atómmassi'],
+          nextSteps: 'Æfðu þig í að leggja saman atómmassa - það er grunnurinn að mólmassaútreikningum.',
+        };
+      }
+
+      default:
+        return {
+          isCorrect,
+          explanation: isCorrect ? 'Rétt svar!' : 'Rangt svar.',
+        };
+    }
+  };
+
   const challengeHints = getChallengeHints();
 
   return (
@@ -804,34 +924,27 @@ export function Level1({ onBack, onComplete, onCorrectAnswer, onIncorrectAnswer 
           {renderChallenge()}
         </div>
 
-        {/* Feedback with animations */}
+        {/* Detailed Feedback with FeedbackPanel */}
         {showFeedback && (
-          <div className={`rounded-xl p-4 mb-4 animate-fade-in-up ${isCorrect ? 'bg-green-100 border-2 border-green-500 animate-success' : 'bg-red-100 border-2 border-red-500 animate-error'}`}>
-            <div className="flex items-center gap-2">
-              <span className={`text-2xl ${isCorrect ? 'animate-bounce-in' : 'animate-wiggle'}`}>
-                {isCorrect ? '🎉' : '🤔'}
-              </span>
-              <p className={`text-lg font-bold ${isCorrect ? 'text-green-800' : 'text-red-800'}`}>
-                {isCorrect ? 'Rétt!' : 'Ekki alveg'}
-              </p>
-            </div>
-            {!isCorrect && challenge.type === 'count_atoms' && (
-              <p className="text-gray-700 mt-1">
-                Rétt svar: {challenge.correctCount} {ATOM_VISUALS[challenge.targetElement!]?.name} frumeindir
-              </p>
-            )}
-            {!isCorrect && challenge.type === 'compare_mass' && (
-              <p className="text-gray-700 mt-1">
-                {challenge.compound.name} er {challenge.compound.molarMass > (challenge.compareCompound?.molarMass || 0) ? 'þyngri' : 'léttari'}
-              </p>
-            )}
+          <div className="mb-4 animate-fade-in-up">
+            <FeedbackPanel
+              feedback={getDetailedFeedback()}
+              config={{
+                showExplanation: true,
+                showMisconceptions: true,
+                showRelatedConcepts: true,
+                showNextSteps: true,
+              }}
+              className="mb-3"
+            />
+
             {isCorrect && (
-              <p className="text-green-700 mt-1 text-sm">+10 stig!</p>
+              <p className="text-green-700 text-sm text-center mb-3">+{Math.round(10 * hintMultiplier)} stig!</p>
             )}
 
             <button
               onClick={nextChallenge}
-              className="mt-3 w-full bg-primary hover:bg-primary-dark text-white font-bold py-2 px-4 rounded-lg transition-colors btn-press"
+              className="w-full bg-primary hover:bg-primary-dark text-white font-bold py-2 px-4 rounded-lg transition-colors btn-press"
             >
               {challengeNumber + 1 < totalChallenges ? 'Næsta áskorun →' : 'Sjá niðurstöður →'}
             </button>

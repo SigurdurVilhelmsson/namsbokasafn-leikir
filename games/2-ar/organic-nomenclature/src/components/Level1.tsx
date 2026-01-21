@@ -63,7 +63,7 @@ interface QuizQuestion {
   question: string;
   correctAnswer: string;
   options: string[];
-  hints: TieredHints;
+  hints?: TieredHints;
 }
 
 const quizQuestions: QuizQuestion[] = [

@@ -1,6 +1,16 @@
-import { useState } from 'react';
-import { AnimatedMolecule } from '@shared/components';
+import { useState, useMemo } from 'react';
+import { AnimatedMolecule, DragDropBuilder, FeedbackPanel } from '@shared/components';
+import type { DraggableItemData, DropZoneData, DropResult, ZoneState } from '@shared/components';
 import { organicToMolecule } from '../utils/organicConverter';
+
+// Misconceptions for organic nomenclature
+const NOMENCLATURE_MISCONCEPTIONS: Record<string, string> = {
+  prefix: 'Forskeytið ákvarðast af fjölda kolefna: meth=1, eth=2, prop=3, but=4, pent=5, hex=6.',
+  suffix: 'Viðskeytið ákvarðast af tengjategund: -an (eintengi), -en (tvítengi), -yn (þrítengi).',
+  position: 'Staðsetningartala þarf fyrir 4+ kolefni til að sýna hvar tvítengi/þrítengi er.',
+};
+
+const NOMENCLATURE_RELATED = ['IUPAC nafnakerfi', 'Kolefniskeðjur', 'Vetniskolefni', 'Hóptengi'];
 
 interface Level2Props {
   onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
@@ -50,9 +60,230 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
   const [showHint, setShowHint] = useState(false);
   const [attempts, setAttempts] = useState(0);
   const [totalHintsUsed, setTotalHintsUsed] = useState(0);
+  const [useDragDrop, setUseDragDrop] = useState(true);
+  const [zoneState, setZoneState] = useState<ZoneState>({});
   const maxScore = molecules.length * 10;
 
   const molecule = molecules[currentMolecule];
+
+  // Generate draggable items for building names
+  const { nameItems, nameZones } = useMemo(() => {
+    // Prefixes for carbon counts
+    const prefixes = [
+      { id: 'prefix-meth', label: 'meth-', carbons: 1 },
+      { id: 'prefix-eth', label: 'eth-', carbons: 2 },
+      { id: 'prefix-prop', label: 'prop-', carbons: 3 },
+      { id: 'prefix-but', label: 'but-', carbons: 4 },
+      { id: 'prefix-pent', label: 'pent-', carbons: 5 },
+      { id: 'prefix-hex', label: 'hex-', carbons: 6 },
+    ];
+
+    // Position numbers (for molecules with 4+ carbons)
+    const positions = [
+      { id: 'pos-1', label: '1-' },
+      { id: 'pos-2', label: '2-' },
+      { id: 'pos-3', label: '3-' },
+    ];
+
+    // Suffixes for bond types
+    const suffixes = [
+      { id: 'suffix-an', label: '-an', type: 'alkane' },
+      { id: 'suffix-en', label: '-en', type: 'alkene' },
+      { id: 'suffix-yn', label: '-yn', type: 'alkyne' },
+    ];
+
+    const items: DraggableItemData[] = [];
+
+    // Add prefix items
+    prefixes.forEach(p => {
+      items.push({
+        id: p.id,
+        content: (
+          <div className="px-3 py-2 bg-blue-100 rounded-lg border-2 border-blue-300 font-bold text-blue-700">
+            {p.label}
+          </div>
+        ),
+        category: 'prefix',
+        data: { label: p.label, carbons: p.carbons },
+      });
+    });
+
+    // Add position items (only if molecule needs position)
+    const needsPosition = molecule.carbons >= 4 && molecule.type !== 'alkane';
+    if (needsPosition) {
+      positions.forEach(p => {
+        items.push({
+          id: p.id,
+          content: (
+            <div className="px-3 py-2 bg-red-100 rounded-lg border-2 border-red-300 font-bold text-red-700">
+              {p.label}
+            </div>
+          ),
+          category: 'position',
+          data: { label: p.label },
+        });
+      });
+    }
+
+    // Add suffix items
+    suffixes.forEach(s => {
+      items.push({
+        id: s.id,
+        content: (
+          <div className={`px-3 py-2 rounded-lg border-2 font-bold ${
+            s.type === 'alkane' ? 'bg-gray-100 border-gray-300 text-gray-700' :
+            s.type === 'alkene' ? 'bg-green-100 border-green-300 text-green-700' :
+            'bg-purple-100 border-purple-300 text-purple-700'
+          }`}>
+            {s.label}
+          </div>
+        ),
+        category: 'suffix',
+        data: { label: s.label, type: s.type },
+      });
+    });
+
+    // Create drop zones
+    const zones: DropZoneData[] = [];
+
+    if (needsPosition) {
+      zones.push({
+        id: 'zone-position',
+        label: 'Staðsetning',
+        maxItems: 1,
+        placeholder: '?-',
+        acceptedCategories: ['position'],
+      });
+    }
+
+    zones.push({
+      id: 'zone-prefix',
+      label: 'Forskeyti',
+      maxItems: 1,
+      placeholder: '???-',
+      acceptedCategories: ['prefix'],
+    });
+
+    zones.push({
+      id: 'zone-suffix',
+      label: 'Viðskeyti',
+      maxItems: 1,
+      placeholder: '-???',
+      acceptedCategories: ['suffix'],
+    });
+
+    return { nameItems: items, nameZones: zones };
+  }, [currentMolecule, molecule]);
+
+  // Handle drag-drop events
+  const handleDrop = (result: DropResult) => {
+    const { itemId, zoneId } = result;
+
+    setZoneState(prev => {
+      const newState = { ...prev };
+      // Remove item from other zones
+      for (const key of Object.keys(newState)) {
+        newState[key] = newState[key].filter(id => id !== itemId);
+      }
+      // Add to target zone
+      if (!newState[zoneId]) {
+        newState[zoneId] = [];
+      }
+      // Replace existing item in zone (max 1)
+      newState[zoneId] = [itemId];
+      return newState;
+    });
+  };
+
+  // Build name from zone state
+  const getBuiltName = (): string => {
+    let name = '';
+
+    // Get position if present
+    const positionItem = zoneState['zone-position']?.[0];
+    if (positionItem) {
+      const item = nameItems.find(i => i.id === positionItem);
+      if (item?.data?.label) {
+        name += item.data.label;
+      }
+    }
+
+    // Get prefix
+    const prefixItem = zoneState['zone-prefix']?.[0];
+    if (prefixItem) {
+      const item = nameItems.find(i => i.id === prefixItem);
+      if (item?.data?.label) {
+        const label = item.data.label as string;
+        name += label.replace('-', '');
+      }
+    }
+
+    // Get suffix
+    const suffixItem = zoneState['zone-suffix']?.[0];
+    if (suffixItem) {
+      const item = nameItems.find(i => i.id === suffixItem);
+      if (item?.data?.label) {
+        const label = item.data.label as string;
+        name += label.replace('-', '');
+      }
+    }
+
+    return name;
+  };
+
+  // Check drag-drop answer
+  const handleDragDropSubmit = () => {
+    const builtName = getBuiltName();
+    const normalizedBuilt = normalizeAnswer(builtName);
+    const normalizedCorrect = normalizeAnswer(molecule.correctName);
+    const correct = normalizedBuilt === normalizedCorrect;
+
+    setIsCorrect(correct);
+    setShowFeedback(true);
+
+    if (correct) {
+      const points = attempts === 0 ? 10 : attempts === 1 ? 5 : 2;
+      setScore(prev => prev + points);
+      onCorrectAnswer?.();
+    } else {
+      onIncorrectAnswer?.();
+    }
+  };
+
+  // Get detailed feedback
+  const getDragDropFeedback = () => {
+    const builtName = getBuiltName();
+
+    if (isCorrect) {
+      return {
+        isCorrect: true,
+        explanation: `Rétt! ${molecule.correctName} er rétt nafn fyrir ${molecule.formula}.`,
+        relatedConcepts: NOMENCLATURE_RELATED,
+        nextSteps: 'Frábært! Þú ert að ná góðum tökum á IUPAC nafnakerfinu.',
+      };
+    }
+
+    // Determine what went wrong
+    let misconception = NOMENCLATURE_MISCONCEPTIONS.prefix;
+    const prefixItem = zoneState['zone-prefix']?.[0];
+    const suffixItem = zoneState['zone-suffix']?.[0];
+
+    if (!prefixItem) {
+      misconception = NOMENCLATURE_MISCONCEPTIONS.prefix;
+    } else if (!suffixItem) {
+      misconception = NOMENCLATURE_MISCONCEPTIONS.suffix;
+    } else if (molecule.carbons >= 4 && molecule.type !== 'alkane') {
+      misconception = NOMENCLATURE_MISCONCEPTIONS.position;
+    }
+
+    return {
+      isCorrect: false,
+      explanation: `Þú skrifaðir "${builtName || '(ekkert)'}" en rétt svar er "${molecule.correctName}".`,
+      misconception,
+      relatedConcepts: NOMENCLATURE_RELATED,
+      nextSteps: 'Athugaðu kolefnisfjölda og tengjategund sameindarinnar.',
+    };
+  };
 
   const normalizeAnswer = (answer: string): string => {
     return answer.toLowerCase().trim()
@@ -88,6 +319,7 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
       setShowFeedback(false);
       setShowHint(false);
       setAttempts(0);
+      setZoneState({});
     } else {
       onComplete(score, maxScore, totalHintsUsed);
     }
@@ -96,6 +328,7 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
   const handleTryAgain = () => {
     setShowFeedback(false);
     setUserAnswer('');
+    setZoneState({});
     setAttempts(prev => prev + 1);
     setShowHint(true);
   };
@@ -201,19 +434,55 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
 
         {!showFeedback ? (
           <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Hvert er nafn þessarar sameindar?
-              </label>
-              <input
-                type="text"
-                value={userAnswer}
-                onChange={(e) => setUserAnswer(e.target.value)}
-                placeholder="Sláðu inn nafnið..."
-                className="w-full text-center text-xl font-bold p-4 border-2 border-green-300 rounded-xl focus:border-green-500 focus:outline-none"
-                onKeyPress={(e) => e.key === 'Enter' && userAnswer && handleSubmit()}
-              />
+            {/* Mode toggle */}
+            <div className="flex justify-end">
+              <button
+                onClick={() => setUseDragDrop(!useDragDrop)}
+                className="text-xs px-3 py-1 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600"
+              >
+                {useDragDrop ? '⌨️ Skipta í skrifa-ham' : '✋ Skipta í draga-ham'}
+              </button>
             </div>
+
+            {useDragDrop ? (
+              /* Drag-and-drop name builder */
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Dragðu hluta til að byggja nafnið:
+                </label>
+
+                <DragDropBuilder
+                  items={nameItems}
+                  zones={nameZones}
+                  initialState={zoneState}
+                  onDrop={handleDrop}
+                  orientation="horizontal"
+                />
+
+                {/* Preview of built name */}
+                <div className="mt-4 p-4 bg-emerald-50 rounded-xl border-2 border-emerald-200 text-center">
+                  <div className="text-sm text-gray-500 mb-1">Nafnið sem þú byggir:</div>
+                  <div className="text-2xl font-bold text-emerald-700">
+                    {getBuiltName() || '—'}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              /* Text input mode */
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Hvert er nafn þessarar sameindar?
+                </label>
+                <input
+                  type="text"
+                  value={userAnswer}
+                  onChange={(e) => setUserAnswer(e.target.value)}
+                  placeholder="Sláðu inn nafnið..."
+                  className="w-full text-center text-xl font-bold p-4 border-2 border-green-300 rounded-xl focus:border-green-500 focus:outline-none"
+                  onKeyPress={(e) => e.key === 'Enter' && userAnswer && handleSubmit()}
+                />
+              </div>
+            )}
 
             <div className="flex gap-4">
               {!showHint && (
@@ -228,10 +497,10 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
                 </button>
               )}
               <button
-                onClick={handleSubmit}
-                disabled={!userAnswer.trim()}
+                onClick={useDragDrop ? handleDragDropSubmit : handleSubmit}
+                disabled={useDragDrop ? !getBuiltName() : !userAnswer.trim()}
                 className={`flex-1 font-bold py-3 px-6 rounded-xl ${
-                  !userAnswer.trim()
+                  (useDragDrop ? !getBuiltName() : !userAnswer.trim())
                     ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
                     : 'bg-green-500 hover:bg-green-600 text-white'
                 }`}
@@ -242,23 +511,35 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
           </div>
         ) : (
           <div className="space-y-4">
-            <div className={`p-6 rounded-xl text-center ${
-              isCorrect ? 'bg-green-100 border-2 border-green-400' : 'bg-red-100 border-2 border-red-400'
-            }`}>
-              <div className="text-4xl mb-2">{isCorrect ? '✓' : '✗'}</div>
-              <div className={`text-xl font-bold ${isCorrect ? 'text-green-800' : 'text-red-800'}`}>
-                {isCorrect ? 'Rétt!' : 'Rangt'}
+            {useDragDrop ? (
+              <FeedbackPanel
+                feedback={getDragDropFeedback()}
+                config={{
+                  showExplanation: true,
+                  showMisconceptions: !isCorrect,
+                  showRelatedConcepts: true,
+                  showNextSteps: true,
+                }}
+              />
+            ) : (
+              <div className={`p-6 rounded-xl text-center ${
+                isCorrect ? 'bg-green-100 border-2 border-green-400' : 'bg-red-100 border-2 border-red-400'
+              }`}>
+                <div className="text-4xl mb-2">{isCorrect ? '✓' : '✗'}</div>
+                <div className={`text-xl font-bold ${isCorrect ? 'text-green-800' : 'text-red-800'}`}>
+                  {isCorrect ? 'Rétt!' : 'Rangt'}
+                </div>
+                {isCorrect ? (
+                  <div className="mt-2 text-green-700">
+                    <span className="text-2xl font-bold">{molecule.correctName}</span> er rétt!
+                  </div>
+                ) : (
+                  <div className="mt-2 text-red-700">
+                    Rétt svar er: <span className="font-bold">{molecule.correctName}</span>
+                  </div>
+                )}
               </div>
-              {isCorrect ? (
-                <div className="mt-2 text-green-700">
-                  <span className="text-2xl font-bold">{molecule.correctName}</span> er rétt!
-                </div>
-              ) : (
-                <div className="mt-2 text-red-700">
-                  Rétt svar er: <span className="font-bold">{molecule.correctName}</span>
-                </div>
-              )}
-            </div>
+            )}
 
             <div className="bg-gray-50 p-4 rounded-xl">
               <div className="font-bold text-gray-700 mb-2">Útskýring:</div>

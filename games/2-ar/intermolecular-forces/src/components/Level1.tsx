@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { AnimatedMolecule, FeedbackPanel } from '@shared/components';
+import { AnimatedMolecule, FeedbackPanel, MoleculeViewer3DLazy } from '@shared/components';
 import { imfToMolecule } from '../utils/imfConverter';
 
 // Misconceptions for IMF types
@@ -347,6 +347,7 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
   const [showHint, setShowHint] = useState(false);
   const [score, setScore] = useState(0);
   const [totalHintsUsed, setTotalHintsUsed] = useState(0);
+  const [viewMode, setViewMode] = useState<'2d' | '3d'>('2d');
 
   const molecule = molecules[currentMolecule];
 
@@ -531,31 +532,79 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
               <div className="text-gray-400">{molecule.name}</div>
             </div>
 
+            {/* 2D/3D Toggle */}
+            <div className="flex justify-center gap-2 mb-4">
+              <button
+                onClick={() => setViewMode('2d')}
+                className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                  viewMode === '2d'
+                    ? 'bg-indigo-600 text-white'
+                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                }`}
+              >
+                2D
+              </button>
+              <button
+                onClick={() => setViewMode('3d')}
+                className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                  viewMode === '3d'
+                    ? 'bg-indigo-600 text-white'
+                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                }`}
+              >
+                3D
+              </button>
+            </div>
+
             {/* Molecular structure visualization */}
             {molecule.visualization && (
               <div className="bg-gray-800 rounded-lg p-4 mb-4">
                 <div className="flex justify-center py-2">
-                  <AnimatedMolecule
-                    molecule={imfToMolecule({
-                      formula: molecule.formula,
-                      name: molecule.name,
-                      isPolar: molecule.isPolar,
-                      hasHBond: molecule.hasHBond,
-                      visualization: molecule.visualization,
-                    })}
-                    mode="simple"
-                    size="md"
-                    animation="fade-in"
-                    showPartialCharges={molecule.isPolar}
-                    showDipoleMoment={molecule.isPolar && molecule.visualization.dipoleMoment !== 'none'}
-                    ariaLabel={`${molecule.name} sameindaformúla`}
-                  />
+                  {viewMode === '2d' ? (
+                    <AnimatedMolecule
+                      molecule={imfToMolecule({
+                        formula: molecule.formula,
+                        name: molecule.name,
+                        isPolar: molecule.isPolar,
+                        hasHBond: molecule.hasHBond,
+                        visualization: molecule.visualization,
+                      })}
+                      mode="simple"
+                      size="md"
+                      animation="fade-in"
+                      showPartialCharges={molecule.isPolar}
+                      showDipoleMoment={molecule.isPolar && molecule.visualization.dipoleMoment !== 'none'}
+                      ariaLabel={`${molecule.name} sameindaformúla`}
+                    />
+                  ) : (
+                    <MoleculeViewer3DLazy
+                      molecule={imfToMolecule({
+                        formula: molecule.formula,
+                        name: molecule.name,
+                        isPolar: molecule.isPolar,
+                        hasHBond: molecule.hasHBond,
+                        visualization: molecule.visualization,
+                      })}
+                      style="ball-stick"
+                      showLabels={true}
+                      autoRotate={true}
+                      autoRotateSpeed={1.5}
+                      height={180}
+                      width="100%"
+                      backgroundColor="transparent"
+                    />
+                  )}
                 </div>
                 {/* Legend for partial charges */}
-                {molecule.isPolar && (
+                {molecule.isPolar && viewMode === '2d' && (
                   <div className="flex justify-center gap-4 mt-3 text-xs">
                     <span className="text-red-400">δ+ = Jákvætt skautað</span>
                     <span className="text-blue-400">δ− = Neikvætt skautað</span>
+                  </div>
+                )}
+                {viewMode === '3d' && (
+                  <div className="text-xs text-gray-400 text-center mt-2">
+                    Dragðu til að snúa, skrollaðu til að stækka
                   </div>
                 )}
               </div>

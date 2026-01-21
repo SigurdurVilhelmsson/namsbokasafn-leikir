@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { AnimatedMolecule } from '@shared/components';
+import { AnimatedMolecule, MoleculeViewer3DLazy } from '@shared/components';
 import { vseprToMolecule } from '../utils/vseprConverter';
 import { shuffleArray } from '@shared/utils';
 
@@ -227,6 +227,7 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
   const [score, setScore] = useState(0);
   const [showHint, setShowHint] = useState(false);
   const [totalHintsUsed, setTotalHintsUsed] = useState(0);
+  const [viewMode, setViewMode] = useState<'2d' | '3d'>('2d');
 
   // Step answers
   const [bondingPairsAnswer, setBondingPairsAnswer] = useState('');
@@ -367,28 +368,81 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
         <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-8">
           {/* Molecule display */}
           <div className="flex flex-col md:flex-row gap-6 mb-8">
-            <div className="flex-1 bg-gray-900 rounded-xl p-6">
-              <div className="text-center">
-                <div className="text-3xl font-bold text-white mb-2">{molecule.formula}</div>
-                <div className="text-gray-400 mb-4">{molecule.name}</div>
-                <div className="flex justify-center py-4">
-                  <AnimatedMolecule
-                    molecule={vseprToMolecule({
-                      formula: molecule.formula,
-                      name: molecule.name,
-                      centralAtom: molecule.centralAtom,
-                      bondingPairs: molecule.bondingPairs,
-                      lonePairs: molecule.lonePairs,
-                      electronDomains: molecule.electronDomains,
-                      correctGeometryId: molecule.correctGeometryId,
-                      isPolar: molecule.isPolar,
-                    })}
-                    mode="vsepr"
-                    size="lg"
-                    animation="scale-in"
-                    showLonePairs={true}
-                    ariaLabel={`${molecule.name} VSEPR lögun`}
-                  />
+            <div className="flex-1">
+              {/* 2D/3D Toggle */}
+              <div className="flex justify-center gap-2 mb-3">
+                <button
+                  onClick={() => setViewMode('2d')}
+                  className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                    viewMode === '2d'
+                      ? 'bg-teal-600 text-white'
+                      : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+                  }`}
+                >
+                  2D
+                </button>
+                <button
+                  onClick={() => setViewMode('3d')}
+                  className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                    viewMode === '3d'
+                      ? 'bg-teal-600 text-white'
+                      : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+                  }`}
+                >
+                  3D
+                </button>
+              </div>
+
+              <div className="bg-gray-900 rounded-xl p-6">
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-white mb-2">{molecule.formula}</div>
+                  <div className="text-gray-400 mb-4">{molecule.name}</div>
+                  <div className="flex justify-center py-4">
+                    {viewMode === '2d' ? (
+                      <AnimatedMolecule
+                        molecule={vseprToMolecule({
+                          formula: molecule.formula,
+                          name: molecule.name,
+                          centralAtom: molecule.centralAtom,
+                          bondingPairs: molecule.bondingPairs,
+                          lonePairs: molecule.lonePairs,
+                          electronDomains: molecule.electronDomains,
+                          correctGeometryId: molecule.correctGeometryId,
+                          isPolar: molecule.isPolar,
+                        })}
+                        mode="vsepr"
+                        size="lg"
+                        animation="scale-in"
+                        showLonePairs={true}
+                        ariaLabel={`${molecule.name} VSEPR lögun`}
+                      />
+                    ) : (
+                      <MoleculeViewer3DLazy
+                        molecule={vseprToMolecule({
+                          formula: molecule.formula,
+                          name: molecule.name,
+                          centralAtom: molecule.centralAtom,
+                          bondingPairs: molecule.bondingPairs,
+                          lonePairs: molecule.lonePairs,
+                          electronDomains: molecule.electronDomains,
+                          correctGeometryId: molecule.correctGeometryId,
+                          isPolar: molecule.isPolar,
+                        })}
+                        style="ball-stick"
+                        showLabels={true}
+                        autoRotate={true}
+                        autoRotateSpeed={1.5}
+                        height={200}
+                        width="100%"
+                        backgroundColor="transparent"
+                      />
+                    )}
+                  </div>
+                  {viewMode === '3d' && (
+                    <div className="text-xs text-gray-500 mt-2">
+                      Dragðu til að snúa, skrollaðu til að stækka
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

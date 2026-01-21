@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { AnimatedMolecule, DragDropBuilder, FeedbackPanel } from '@shared/components';
+import { AnimatedMolecule, DragDropBuilder, FeedbackPanel, MoleculeViewer3DLazy } from '@shared/components';
 import type { DraggableItemData, DropZoneData, DropResult, ZoneState } from '@shared/components';
 import { lewisToMolecule } from '../utils/lewisConverter';
 import { shuffleArray } from '@shared/utils';
@@ -348,6 +348,7 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
   const [zoneState, setZoneState] = useState<ZoneState>({});
   const [buildComplete, setBuildComplete] = useState(false);
   const [buildCorrect, setBuildCorrect] = useState(false);
+  const [viewMode, setViewMode] = useState<'2d' | '3d'>('2d');
 
   const challenge = challenges[currentChallenge];
   const step = challenge.steps[currentStep];
@@ -600,16 +601,60 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
 
           {/* Lewis structure visualization */}
           <div className="bg-gray-50 rounded-xl p-4 mb-6">
+            {/* 2D/3D Toggle - only show when structure is complete */}
+            {isLastStep && showStepResult && (
+              <div className="flex justify-center gap-2 mb-3">
+                <button
+                  onClick={() => setViewMode('2d')}
+                  className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                    viewMode === '2d'
+                      ? 'bg-green-600 text-white'
+                      : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+                  }`}
+                >
+                  2D Lewis
+                </button>
+                <button
+                  onClick={() => setViewMode('3d')}
+                  className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                    viewMode === '3d'
+                      ? 'bg-green-600 text-white'
+                      : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+                  }`}
+                >
+                  3D lögun
+                </button>
+              </div>
+            )}
+
             <div className="flex justify-center py-4">
-              <AnimatedMolecule
-                molecule={molecule}
-                mode="lewis"
-                size="lg"
-                animation={showStepResult ? 'fade-in' : 'none'}
-                showLonePairs={showLonePairs}
-                showFormalCharges={showLonePairs}
-                ariaLabel={`Lewis-formúla fyrir ${challenge.molecule}`}
-              />
+              {viewMode === '2d' || !showLonePairs ? (
+                <AnimatedMolecule
+                  molecule={molecule}
+                  mode="lewis"
+                  size="lg"
+                  animation={showStepResult ? 'fade-in' : 'none'}
+                  showLonePairs={showLonePairs}
+                  showFormalCharges={showLonePairs}
+                  ariaLabel={`Lewis-formúla fyrir ${challenge.molecule}`}
+                />
+              ) : (
+                <div className="w-full">
+                  <MoleculeViewer3DLazy
+                    molecule={molecule}
+                    style="ball-stick"
+                    showLabels={true}
+                    autoRotate={true}
+                    autoRotateSpeed={1.5}
+                    height={200}
+                    width="100%"
+                    backgroundColor="#f9fafb"
+                  />
+                  <div className="text-xs text-gray-500 text-center mt-2">
+                    Dragðu til að snúa, skrollaðu til að stækka
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Legend - shown when structure is complete */}

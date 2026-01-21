@@ -3,9 +3,21 @@ import { LEVEL1_CHALLENGES } from '../data/level1-challenges';
 import { generateTitrationCurve } from '../utils/ph-calculations';
 import { titrations } from '../data/titrations';
 import type { MonoproticTitration } from '../types';
-import { HintSystem, InteractiveGraph } from '@shared/components';
+import { HintSystem, InteractiveGraph, FeedbackPanel } from '@shared/components';
 import type { DataPoint, DataSeries, MarkerConfig } from '@shared/components';
 import { shuffleArray } from '@shared/utils';
+
+// Misconceptions for titration concepts
+const TITRATION_MISCONCEPTIONS: Record<string, string> = {
+  equivalence: 'Jafngildi (equivalence point) er þar sem mól sýru = mól basa. pH fer ekki alltaf í 7!',
+  strong_strong: 'Sterk sýra + sterkur basi gefur pH = 7 við jafngildi vegna þess að salt og vatn myndast.',
+  weak_strong: 'Veik sýra + sterkur basi gefur pH > 7 við jafngildi vegna þess að samoki basinn er eftir.',
+  indicator: 'Veljið vísi sem breytir lit nálægt pH við jafngildi, ekki endilega pH = 7.',
+  buffer_region: 'Á milli upphafs og jafngildis er stuðpúðasvæðið þar sem pH breytist hægt.',
+};
+
+// Related concepts for titration
+const TITRATION_RELATED: string[] = ['Títrun', 'Jafngildispunktur', 'Vísar', 'Stuðpúðasvæði'];
 
 interface Level1Props {
   onComplete: (score: number, maxScore?: number, hintsUsed?: number) => void;
@@ -218,14 +230,24 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
 
         {/* Result feedback */}
         {showResult && (
-          <div className={`mb-6 p-4 rounded-xl ${isCorrect ? 'bg-green-50 border border-green-300' : 'bg-red-50 border border-red-300'}`}>
-            <div className={`font-bold mb-2 ${isCorrect ? 'text-green-800' : 'text-red-800'}`}>
-              {isCorrect ? '✓ Rétt!' : '✗ Rangt'}
-              {isCorrect && ` (+${Math.round(100 * hintMultiplier)} stig)`}
-            </div>
-            <p className={isCorrect ? 'text-green-900' : 'text-red-900'}>
-              {challenge.explanationIs}
-            </p>
+          <div className="mb-6">
+            <FeedbackPanel
+              feedback={{
+                isCorrect,
+                explanation: `${isCorrect ? '✓ Rétt!' : '✗ Rangt'}${isCorrect ? ` (+${Math.round(100 * hintMultiplier)} stig)` : ''}\n\n${challenge.explanationIs}`,
+                misconception: isCorrect ? undefined : TITRATION_MISCONCEPTIONS.equivalence,
+                relatedConcepts: TITRATION_RELATED,
+                nextSteps: isCorrect
+                  ? 'Frábært! Þú skilur títrunarkúrfur vel.'
+                  : 'Skoðaðu kúrfuna og athugaðu hvar pH breytist mest.',
+              }}
+              config={{
+                showExplanation: true,
+                showMisconceptions: !isCorrect,
+                showRelatedConcepts: true,
+                showNextSteps: true,
+              }}
+            />
           </div>
         )}
 

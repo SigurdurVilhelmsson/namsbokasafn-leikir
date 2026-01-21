@@ -1,6 +1,17 @@
 import { useState, useEffect, useRef } from 'react';
 import { LEVEL1_CHALLENGES, type Level1Challenge } from '../data';
-import { HintSystem } from '@shared/components';
+import { HintSystem, FeedbackPanel } from '@shared/components';
+
+// Misconceptions for buffer concepts
+const BUFFER_MISCONCEPTIONS = {
+  ratio_low: 'Ef hlutfallið [Basi]/[Sýra] er of lágt, þá er of mikið af sýru og pH verður lægra en markmiðið.',
+  ratio_high: 'Ef hlutfallið [Basi]/[Sýra] er of hátt, þá er of mikið af basa og pH verður hærra en markmiðið.',
+  equal: 'Þegar [Basi] = [Sýra], þá er pH = pKa. Þetta er miðpunktur stuðpúðans.',
+  concept: 'Stuðpúðar virka vegna þess að veika sýran og samoki basinn geta tekið við eða gefið frá sér H⁺ jónir.',
+};
+
+// Related concepts for buffers
+const BUFFER_RELATED: string[] = ['Henderson-Hasselbalch', 'pKa', 'Stuðpúðargeta', 'Veik sýru-basa pör'];
 
 interface Level1Props {
   onCorrectAnswer?: () => void;
@@ -394,22 +405,30 @@ export default function Level1({
 
             {/* Feedback */}
             {feedback && (
-              <div className={`rounded-lg p-4 mb-3 transition-all duration-300 ${
-                feedback.includes('Frábært')
-                  ? 'bg-green-100 border-2 border-green-500'
-                  : feedback.includes('Næstum')
-                  ? 'bg-yellow-100 border-2 border-yellow-500'
-                  : 'bg-red-100 border-2 border-red-500'
-              }`}>
-                <p className="font-bold text-lg">{feedback}</p>
-              </div>
-            )}
-
-            {/* Post-Success Explanation */}
-            {showExplanation && (
-              <div className="bg-green-50 border-2 border-green-300 rounded-lg p-4 mb-3">
-                <h4 className="font-bold text-green-800 mb-2">Af hverju virkar þetta?</h4>
-                <p className="text-green-700">{currentChallenge.explanation}</p>
+              <div className="mb-3">
+                <FeedbackPanel
+                  feedback={{
+                    isCorrect: feedback.includes('Frábært'),
+                    explanation: showExplanation
+                      ? `${feedback} ${currentChallenge.explanation}`
+                      : feedback,
+                    misconception: feedback.includes('Frábært')
+                      ? undefined
+                      : currentRatio < 1
+                        ? BUFFER_MISCONCEPTIONS.ratio_low
+                        : BUFFER_MISCONCEPTIONS.ratio_high,
+                    relatedConcepts: BUFFER_RELATED,
+                    nextSteps: feedback.includes('Frábært')
+                      ? 'Frábært! Þú skilur hvernig hlutfallið hefur áhrif á pH.'
+                      : 'Stilltu hlutfallið [Basi]/[Sýra] til að ná markmiðs-pH.',
+                  }}
+                  config={{
+                    showExplanation: true,
+                    showMisconceptions: !feedback.includes('Frábært'),
+                    showRelatedConcepts: true,
+                    showNextSteps: true,
+                  }}
+                />
               </div>
             )}
 

@@ -397,6 +397,53 @@ mkdir -p docs/checklists
 
 ---
 
+## 📝 Quick Prompts for Common Tasks
+
+### Documentation Audit
+
+Use this prompt to start a comprehensive documentation audit:
+
+```
+Perform a comprehensive documentation audit and cleanup for this repository.
+
+Phase 1: Audit (Do First)
+1. Find all .md, .txt, and documentation .html files in root and /docs/
+2. Classify each file:
+   - ✅ Up-to-date & Essential - Keep as-is
+   - 🔄 Outdated (Update) - Needs updates but keep
+   - 📦 Outdated (Archive) - Historical value, move to archive
+   - 🗑️ Irrelevant - Delete or archive
+3. Create classification table and STOP for approval
+
+Phase 2: Cleanup (After Approval)
+1. Create docs/archive/ structure and move historical docs
+2. Create/update CHANGELOG.md (Keep a Changelog format)
+3. Create docs/README.md as documentation hub
+4. Update root README.md to reference new structure
+5. Fix any broken links
+```
+
+### Code Cleanup
+
+Use this prompt to start a code cleanup audit:
+
+```
+Perform a comprehensive code cleanup audit following these phases:
+
+Phase 1: Code Quality - Set up ESLint, Prettier, fix issues
+Phase 2: Development Workflows - Scripts, CI/CD, DEVELOPMENT.md
+Phase 3: Debugging Infrastructure - VSCode configs, error handling
+Phase 4: Project Organization - File structure, naming conventions
+Phase 5: Testing & Validation - Test setup, validation scripts
+Phase 6: Documentation Updates - README, inline docs
+
+After each phase: Update CLEANUP-PLAN.md, commit, wait for confirmation.
+```
+
+See `docs/CODE-CLEANUP-GUIDE.md` for detailed instructions.
+
+---
+
 ## 🚀 Next Steps
 
 1. **I'll create the check script** (2 minutes)
@@ -404,4 +451,7 @@ mkdir -p docs/checklists
 3. **I'll set up the automation** (5 minutes)
 4. **You just ask "Check my repository status"** going forward!
 
-Would you like me to set this up now?
+---
+
+**Last Updated:** 2025-01-22
+**Version:** 1.1

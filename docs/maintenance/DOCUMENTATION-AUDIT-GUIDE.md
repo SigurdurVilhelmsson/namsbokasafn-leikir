@@ -416,6 +416,87 @@ Use this checklist to ensure consistency across all kvenno.app repositories:
 
 ---
 
+## 📝 Documentation Quality Checklist
+
+Use this checklist for monthly documentation reviews (30-60 min):
+
+### README.md Review (15 min)
+
+- [ ] **Project title & description** accurate
+- [ ] **Features section** lists all major features
+- [ ] **Installation instructions** work on clean environment
+- [ ] **Usage examples** are current and working
+- [ ] **Available scripts** documented
+- [ ] **Project structure** explained
+- [ ] **License** mentioned
+
+**Red Flags:**
+- 🔴 README says "Coming soon"
+- 🔴 Installation instructions don't work
+- 🔴 Code examples throw errors
+
+### Development Docs (15 min)
+
+- [ ] **DEVELOPER-GUIDE.md** covers:
+  - Quick start
+  - Prerequisites
+  - Running locally
+  - Available scripts
+  - Testing procedures
+  - Troubleshooting
+
+- [ ] **Architecture docs** (if complex project):
+  - High-level architecture
+  - Key design decisions
+  - Data flow diagrams
+
+### API Documentation (10 min)
+
+- [ ] **All public APIs documented** with JSDoc:
+  ```typescript
+  /**
+   * @param date - The date to format
+   * @returns Formatted date string
+   * @example formatDate(new Date()) // '2025-01-22'
+   */
+  ```
+
+- [ ] **Component props documented** (React)
+- [ ] **Types exported** for external use
+
+### Inline Documentation (10 min)
+
+- [ ] **Complex functions have comments** (why, not what)
+- [ ] **No misleading comments** (comments match code)
+- [ ] **TODO comments tracked** and addressed
+- [ ] **Complex regex/algorithms explained**
+
+**Red Flags:**
+- 🔴 Commented-out code (remove it)
+- 🔴 Comments contradict code
+- 🔴 100+ TODO comments
+
+### Configuration Documentation (5 min)
+
+- [ ] **Environment variables documented**:
+  - `.env.example` exists
+  - All variables listed with descriptions
+
+- [ ] **Config files explained**
+
+### Link Verification (5 min)
+
+```bash
+# Check all markdown links
+find . -name "*.md" -exec markdown-link-check {} \;
+```
+
+- [ ] Internal links work
+- [ ] External links current
+- [ ] Anchor links valid
+
+---
+
 ## 📞 Support
 
 If you encounter issues during the audit process:
@@ -426,8 +507,8 @@ If you encounter issues during the audit process:
 
 ---
 
-**Guide Version:** 1.0
-**Last Updated:** 2025-11-29
+**Guide Version:** 1.1
+**Last Updated:** 2025-01-22
 **Maintainer:** Sigurður E. Vilhelmsson, Kvennaskólinn í Reykjavík
 
 **Reference Implementation:** ChemistryGames repository documentation audit (2025-11-29)

@@ -23,7 +23,7 @@ This document describes the architecture, design decisions, and component relati
 
 ## System Overview
 
-The Chemistry Games platform is an educational web application consisting of 14+ interactive chemistry games organized by academic year level. It follows a monorepo architecture with a centralized shared library.
+The Chemistry Games platform is an educational web application consisting of 17 interactive chemistry games organized by academic year level. It follows a monorepo architecture with a centralized shared library.
 
 ### Key Characteristics
 
@@ -50,14 +50,19 @@ The Chemistry Games platform is an educational web application consisting of 14+
 │  │                    GAME APPLICATIONS                      │   │
 │  ├──────────────┬──────────────┬──────────────────────────┬─┤   │
 │  │   Year 1     │    Year 2    │         Year 3           │ │   │
-│  │  (5 games)   │   (3 games)  │        (6 games)         │ │   │
+│  │  (5 games)   │   (7 games)  │        (5 games)         │ │   │
 │  │              │              │                          │ │   │
 │  │ dimensional  │  hess-law    │  buffer-recipe-creator   │ │   │
 │  │ molmassi     │  kinetics    │  equilibrium-shifter     │ │   │
 │  │ nafnakerfid  │  lewis-      │  gas-law-challenge       │ │   │
-│  │ lausnir      │  structures  │  ph-titration-master     │ │   │
-│  │ takmarkandi  │              │  ph-titration-practice   │ │   │
-│  │              │              │  thermodynamics-predictor│ │   │
+│  │ lausnir      │   structures │  ph-titration            │ │   │
+│  │ takmarkandi  │  vsepr-      │  thermodynamics-predictor│ │   │
+│  │              │   geometry   │                          │ │   │
+│  │              │  intermol-   │                          │ │   │
+│  │              │   forces     │                          │ │   │
+│  │              │  organic-    │                          │ │   │
+│  │              │   nomencl.   │                          │ │   │
+│  │              │  redox       │                          │ │   │
 │  └──────────────┴──────────────┴──────────────────────────┴─┘   │
 │                              │                                   │
 │                              ▼                                   │
@@ -720,7 +725,7 @@ export default defineConfig({
 ### Scalability Path
 
 ```
-Current:  18 games × 230KB = 4.1MB total
+Current:  17 games × 230KB = 3.9MB total
 Future:   50 games × 200KB = 10MB total (still manageable)
 
 If needed, implement:
@@ -742,4 +747,4 @@ The Chemistry Games architecture prioritizes:
 5. **Accessibility** - Built-in accessibility features
 6. **Internationalization** - Multi-language support
 
-This architecture successfully supports 14+ games while maintaining consistency and enabling rapid development of new educational content.
+This architecture successfully supports 17 games while maintaining consistency and enabling rapid development of new educational content.

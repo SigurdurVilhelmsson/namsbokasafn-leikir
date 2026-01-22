@@ -1088,6 +1088,110 @@ nvm install --lts
 
 ---
 
+## Quick Prompt for Claude
+
+Use this prompt in any Kvenno.app repository to start a code cleanup audit:
+
+```
+I need you to perform a comprehensive code cleanup audit on this repository.
+
+Work through these phases systematically:
+
+PHASE 1: Code Quality & Standards
+- Set up ESLint and Prettier configurations
+- Add code quality scripts to package.json
+- Fix all linting and formatting issues
+- Ensure TypeScript strict mode
+- Remove unused dependencies and dead code
+
+PHASE 2: Development Workflows
+- Create/update development scripts (dev, build, test, lint, format)
+- Set up pre-commit hooks (optional)
+- Create GitHub Actions CI/CD workflow
+- Add DEVELOPMENT.md guide
+
+PHASE 3: Debugging Infrastructure
+- Set up VSCode debugging configurations
+- Add error boundaries (for React)
+- Create DEBUGGING.md guide
+- Ensure source maps are enabled
+
+PHASE 4: Project Organization
+- Review and optimize project structure
+- Ensure consistent file naming conventions
+- Organize imports consistently
+- Update .gitignore
+
+PHASE 5: Testing & Validation
+- Set up testing infrastructure
+- Add test scripts and examples
+- Create validation script
+
+PHASE 6: Documentation Updates
+- Update README.md
+- Document all available scripts
+- Add troubleshooting section
+
+After each phase: Update CLEANUP-PLAN.md, commit changes, wait for confirmation.
+```
+
+---
+
+## Cleanup Plan Template
+
+Copy this template to `CLEANUP-PLAN.md` when starting a cleanup audit:
+
+```markdown
+# Code Cleanup Plan
+
+## Repository Information
+- **Repository**: [Name]
+- **Technology Stack**: [e.g., React + TypeScript + Vite]
+- **Cleanup Started**: [Date]
+- **Cleanup Completed**: [Date or "In Progress"]
+
+## Status Overview
+
+**Overall Progress**: [X/6] Phases Complete
+
+| Phase | Status | Started | Completed |
+|-------|--------|---------|-----------|
+| Phase 1: Code Quality & Standards | ⏳ | - | - |
+| Phase 2: Development Workflows | ⏳ | - | - |
+| Phase 3: Debugging Infrastructure | ⏳ | - | - |
+| Phase 4: Project Organization | ⏳ | - | - |
+| Phase 5: Testing & Validation | ⏳ | - | - |
+| Phase 6: Documentation Updates | ⏳ | - | - |
+
+**Legend:** ⏳ Not Started | 🚧 In Progress | ✅ Completed | ⏭️ Skipped
+
+## Quality Checklist
+
+### Code Quality
+- [ ] ESLint passing (`pnpm lint`)
+- [ ] Prettier formatted (`pnpm format:check`)
+- [ ] TypeScript compiling (`pnpm type-check`)
+- [ ] No unused dependencies
+
+### Final Validation
+- [ ] `pnpm validate` passes
+- [ ] CI/CD pipeline passes
+- [ ] Fresh install works
+- [ ] Build succeeds
+
+## Summary
+
+### What Was Accomplished
+[Summarize the cleanup work done]
+
+### Metrics
+- **Code formatted**: X files
+- **Linting errors fixed**: X issues
+- **Dependencies removed**: X packages
+```
+
+---
+
 ## Resources
 
 - [ESLint Documentation](https://eslint.org/)
@@ -1098,6 +1202,6 @@ nvm install --lts
 
 ---
 
-**Last Updated:** 2025-11-29
-**Version:** 1.0.0
+**Last Updated:** 2025-01-22
+**Version:** 1.1.0
 **Maintained by:** Kvenno.app Development Team

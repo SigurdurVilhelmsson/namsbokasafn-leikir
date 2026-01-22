@@ -358,6 +358,73 @@ This checklist is referenced by:
 
 ---
 
+## Performance Audit (Quarterly)
+
+### Quick Lighthouse Check (15 min)
+
+1. **Open Chrome DevTools** (F12) → Lighthouse tab
+2. **Select "Performance"** only
+3. **Click "Analyze page load"**
+
+**Target Scores:**
+- ✅ **90-100**: Excellent
+- ⚠️ **50-89**: Needs improvement
+- 🔴 **0-49**: Poor
+
+### Core Web Vitals
+
+| Metric | Target | Description |
+|--------|--------|-------------|
+| **LCP** | < 2.5s | Largest Contentful Paint |
+| **FID** | < 100ms | First Input Delay |
+| **CLS** | < 0.1 | Cumulative Layout Shift |
+
+### Bundle Analysis
+
+```bash
+# Check file sizes after build
+pnpm build
+ls -lh dist/*.html  # Should be < 250KB
+```
+
+### Performance Checklist
+
+- [ ] **Page load < 2 seconds** on fast connection
+- [ ] **Page load < 5 seconds** on 3G throttled
+- [ ] **Smooth animations** (60 FPS) - check with Performance tab
+- [ ] **No long tasks** blocking main thread (>50ms)
+- [ ] **Images optimized** (WebP, lazy loading)
+- [ ] **Bundle size under budget** (HTML < 250KB)
+- [ ] **No memory leaks** (run game, check Memory tab)
+
+### Common Performance Fixes
+
+**Large bundle?**
+- Remove unused dependencies (`pnpm depcheck`)
+- Use tree-shakeable imports
+- Lazy load heavy components
+
+**Slow image loading?**
+- Convert to WebP format
+- Add `loading="lazy"` attribute
+- Use responsive images with srcset
+
+**Layout shifts?**
+- Always specify image dimensions
+- Reserve space for dynamic content
+- Use font-display: swap
+
+**Poor animation FPS?**
+```css
+/* Use transform/opacity instead of top/left */
+.animated {
+  transform: translateX(100px);  /* ✅ GPU accelerated */
+  /* NOT: left: 100px; */
+}
+```
+
+---
+
 ## Status Update Template
 
 After completing checklist:
@@ -370,15 +437,17 @@ After completing checklist:
 **ESLint**: ✅ 0 errors, 2 warnings
 **Prettier**: ✅ All files formatted
 **Unused Deps**: ✅ 0 found
+**Performance**: ✅ Lighthouse 95/100
 **Overall**: 🟢 Excellent
 
 **Actions Taken**:
 - Fixed 3 linting issues
 - Removed 2 unused dependencies
 - Formatted all files
+- Optimized images to WebP
 ```
 
 ---
 
-**Last Updated**: 2025-11-29
+**Last Updated**: 2025-01-22
 **Next Review**: [Date + 1 week]

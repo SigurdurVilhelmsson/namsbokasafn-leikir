@@ -58,8 +58,8 @@ pnpm type-check
 ChemistryGames/
 ├── games/                 # Game implementations
 │   ├── 1-ar/             # Year 1 games (5 games)
-│   ├── 2-ar/             # Year 2 games (3 games)
-│   └── 3-ar/             # Year 3 games (6 games)
+│   ├── 2-ar/             # Year 2 games (7 games)
+│   └── 3-ar/             # Year 3 games (5 games)
 ├── shared/               # Shared library (hooks, utils, types)
 ├── tools/                # Development tools
 ├── docs/                 # Documentation
@@ -599,6 +599,42 @@ const { t } = useI18n();
 
 ## Testing
 
+### Automated Testing with Vitest
+
+The project uses Vitest for unit testing. Test files are located in `__tests__/` directories alongside the code they test.
+
+```bash
+# Run all tests
+pnpm test
+
+# Run tests in watch mode
+pnpm test --watch
+
+# Run tests with coverage
+pnpm test --coverage
+
+# Run specific test file
+pnpm test shared/utils/__tests__/scoring.test.ts
+```
+
+**Current Test Coverage:**
+- `shared/hooks/` - useI18n, useProgress, useAccessibility, useAchievements
+- `shared/utils/` - scoring, storage, export, shuffle, achievements
+
+**Writing Tests:**
+
+```typescript
+// shared/utils/__tests__/myUtil.test.ts
+import { describe, it, expect } from 'vitest';
+import { myFunction } from '../myUtil';
+
+describe('myFunction', () => {
+  it('should return expected value', () => {
+    expect(myFunction('input')).toBe('expected');
+  });
+});
+```
+
 ### Type Checking
 
 ```bash
@@ -631,6 +667,71 @@ Test in:
 - Edge (latest)
 - Mobile Safari (iOS)
 - Chrome Mobile (Android)
+
+---
+
+## Common Game Patterns
+
+### Timer-Based Game
+
+```typescript
+const [timeRemaining, setTimeRemaining] = useState(90);
+
+useEffect(() => {
+  if (timeRemaining <= 0) return;
+
+  const timer = setInterval(() => {
+    setTimeRemaining(prev => prev - 1);
+  }, 1000);
+
+  return () => clearInterval(timer);
+}, [timeRemaining]);
+```
+
+### Multi-Level Game
+
+```typescript
+const [level, setLevel] = useState(1);
+const [levelProgress, setLevelProgress] = useState(0);
+
+const completeLevel = () => {
+  updateProgress({ currentLevel: level + 1 });
+  setLevel(level + 1);
+  setLevelProgress(0);
+};
+```
+
+### Hint System with Penalties
+
+```typescript
+const [hintsUsed, setHintsUsed] = useState(0);
+const [showHint, setShowHint] = useState(false);
+const maxHints = 3;
+
+const handleShowHint = () => {
+  if (hintsUsed < maxHints) {
+    setShowHint(true);
+    setHintsUsed(hintsUsed + 1);
+  }
+};
+
+// Deduct points for hints
+const finalScore = baseScore - (hintsUsed * 2);
+```
+
+### Question-Answer Flow
+
+```typescript
+const [currentQ, setCurrentQ] = useState(0);
+const [score, setScore] = useState(0);
+
+const handleAnswer = (answer: string) => {
+  if (answer === questions[currentQ].correct) {
+    setScore(score + 10);
+  }
+  setCurrentQ(currentQ + 1);
+};
+```
 
 ---
 

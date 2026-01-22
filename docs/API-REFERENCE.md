@@ -15,12 +15,20 @@ This document provides comprehensive API documentation for the shared component 
    - [useI18n](#usei18n)
    - [useProgress](#useprogress)
    - [useAccessibility](#useaccessibility)
+   - [useAchievements](#useachievements)
 4. [Components](#components)
    - [ErrorBoundary](#errorboundary)
+   - [MoleculeViewer3D](#moleculeviewer3d)
+   - [DragDropBuilder](#dragdropbuilder)
+   - [FeedbackPanel](#feedbackpanel)
+   - [HintSystem](#hintsystem)
+   - [ParticleSimulation](#particlesimulation)
+   - [InteractiveGraph](#interactivegraph)
 5. [Utilities](#utilities)
    - [Storage](#storage)
    - [Scoring](#scoring)
    - [Export](#export)
+   - [Achievements](#achievements)
 6. [Types](#types)
 7. [Theme](#theme)
 
@@ -337,6 +345,78 @@ The hook automatically applies CSS classes to `<html>`:
 
 ---
 
+### useAchievements
+
+Hook for managing the achievement system with automatic unlocking and persistence.
+
+#### Signature
+
+```typescript
+function useAchievements(options: UseAchievementsOptions): {
+  achievements: PlayerAchievements;
+  unlocked: Achievement[];
+  progress: Record<string, AchievementProgress>;
+  totalPoints: number;
+  checkAchievement: (event: AchievementEvent) => AchievementNotification[];
+  getAchievement: (id: string) => Achievement | undefined;
+  resetAchievements: () => void;
+}
+
+interface UseAchievementsOptions {
+  gameId: string;
+  customAchievements?: Achievement[];
+}
+```
+
+#### Returns
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `achievements` | `PlayerAchievements` | Full achievement state |
+| `unlocked` | `Achievement[]` | List of unlocked achievements |
+| `progress` | `Record<string, AchievementProgress>` | Progress for all achievements |
+| `totalPoints` | `number` | Total achievement points earned |
+| `checkAchievement` | `(event) => AchievementNotification[]` | Check for new unlocks |
+| `getAchievement` | `(id) => Achievement` | Get achievement by ID |
+| `resetAchievements` | `() => void` | Reset all achievements |
+
+#### Example
+
+```tsx
+import { useAchievements } from '@shared';
+
+function GameScreen() {
+  const {
+    unlocked,
+    totalPoints,
+    checkAchievement
+  } = useAchievements({ gameId: 'my-game' });
+
+  const handleCorrectAnswer = () => {
+    const newUnlocks = checkAchievement({
+      type: 'answer_correct',
+      gameId: 'my-game',
+      level: 1,
+      firstAttempt: true
+    });
+
+    // Show notification for each new unlock
+    newUnlocks.forEach(notification => {
+      showToast(`Achievement: ${notification.achievement.name}`);
+    });
+  };
+
+  return (
+    <div>
+      <p>Points: {totalPoints}</p>
+      <p>Achievements: {unlocked.length}</p>
+    </div>
+  );
+}
+```
+
+---
+
 ## Components
 
 ### ErrorBoundary
@@ -398,6 +478,276 @@ function TestComponent() {
     <button onClick={() => throwError(new Error('Test error'))}>
       Trigger Error
     </button>
+  );
+}
+```
+
+---
+
+### MoleculeViewer3D
+
+Interactive 3D molecule visualization with 2D/3D toggle. Uses lazy loading for performance.
+
+#### Props
+
+| Prop | Type | Required | Default | Description |
+|------|------|----------|---------|-------------|
+| `formula` | `string` | Yes | - | Chemical formula (e.g., 'H2O') |
+| `name` | `string` | No | - | Molecule name for accessibility |
+| `initialView` | `'2d' \| '3d'` | No | `'2d'` | Initial view mode |
+| `width` | `number` | No | `400` | Canvas width |
+| `height` | `number` | No | `300` | Canvas height |
+| `showToggle` | `boolean` | No | `true` | Show 2D/3D toggle button |
+| `rotatable` | `boolean` | No | `true` | Enable 3D rotation |
+| `className` | `string` | No | - | Additional CSS classes |
+
+#### Example
+
+```tsx
+import { MoleculeViewer3D } from '@shared/components';
+
+function MoleculeDisplay() {
+  return (
+    <MoleculeViewer3D
+      formula="H2O"
+      name="Water"
+      initialView="3d"
+      width={500}
+      height={400}
+      rotatable={true}
+    />
+  );
+}
+```
+
+---
+
+### DragDropBuilder
+
+Flexible drag-and-drop interface for building sequences, equations, or ordered compositions.
+
+#### Props
+
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `DraggableItemData[]` | Yes | Pool of draggable items |
+| `zones` | `DropZoneConfig[]` | Yes | Drop zone configurations |
+| `initialState` | `ZoneState` | No | Pre-populated zone state |
+| `onDrop` | `(result: DropResult) => void` | No | Callback when item is dropped |
+| `onReorder` | `(zoneId: string, newOrder: string[]) => void` | No | Callback on reorder |
+| `validateDrop` | `(itemId: string, zoneId: string) => boolean` | No | Custom validation |
+| `orientation` | `'horizontal' \| 'vertical'` | No | Item layout direction |
+| `disabled` | `boolean` | No | Disable all interactions |
+
+#### Example
+
+```tsx
+import { DragDropBuilder } from '@shared/components';
+
+function ChemicalEquation() {
+  return (
+    <DragDropBuilder
+      items={[
+        { id: 'h2', content: 'H₂' },
+        { id: 'o2', content: 'O₂' },
+        { id: 'h2o', content: 'H₂O' },
+      ]}
+      zones={[
+        { id: 'reactants', label: 'Reactants', maxItems: 2 },
+        { id: 'products', label: 'Products', maxItems: 1 },
+      ]}
+      onDrop={(result) => console.log('Dropped:', result)}
+      validateDrop={(itemId, zoneId) => true}
+    />
+  );
+}
+```
+
+---
+
+### FeedbackPanel
+
+Rich feedback display component with explanations, misconceptions, and related concepts.
+
+#### Props
+
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| `feedback` | `DetailedFeedback` | Yes | Feedback data to display |
+| `severity` | `FeedbackSeverity` | No | Visual style (auto-detected) |
+| `config` | `FeedbackPanelConfig` | No | Display options |
+| `onDismiss` | `() => void` | No | Callback on dismiss |
+| `onConceptClick` | `(conceptId: string) => void` | No | Callback for concept links |
+
+#### Example
+
+```tsx
+import { FeedbackPanel } from '@shared/components';
+
+function AnswerFeedback() {
+  return (
+    <FeedbackPanel
+      feedback={{
+        isCorrect: false,
+        explanation: 'The molar mass of H₂O is 18 g/mol, not 16 g/mol.',
+        misconception: 'Remember to count ALL hydrogen atoms (2×1 = 2).',
+        relatedConcepts: ['atomic mass', 'molar mass calculation'],
+        nextSteps: 'Review the periodic table values for H and O.'
+      }}
+      config={{
+        showExplanation: true,
+        showMisconceptions: true,
+        showRelatedConcepts: true
+      }}
+    />
+  );
+}
+```
+
+---
+
+### HintSystem
+
+4-tier progressive hint system with score penalties.
+
+#### Props
+
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| `hints` | `TieredHints` | Yes | Hint content for all 4 tiers |
+| `onReveal` | `(tier: number, multiplier: number) => void` | No | Callback on hint reveal |
+| `disabled` | `boolean` | No | Disable hint buttons |
+| `showMultiplier` | `boolean` | No | Show score impact |
+
+#### Hint Tiers
+
+| Tier | Key | Description | Score Multiplier |
+|------|-----|-------------|-----------------|
+| 1 | `topic` | General concept area | 80% |
+| 2 | `strategy` | Approach to solve | 60% |
+| 3 | `method` | Specific formula/technique | 40% |
+| 4 | `solution` | Full worked example | 40% |
+
+#### Example
+
+```tsx
+import { HintSystem } from '@shared/components';
+
+function ProblemWithHints() {
+  const [multiplier, setMultiplier] = useState(1.0);
+
+  return (
+    <HintSystem
+      hints={{
+        topic: 'This problem involves molar mass calculations.',
+        strategy: 'Add up atomic masses for each element.',
+        method: 'M = Σ(atoms × atomic mass). Use H=1, O=16.',
+        solution: 'H₂O: 2(1) + 1(16) = 18 g/mol'
+      }}
+      onReveal={(tier, mult) => setMultiplier(mult)}
+      showMultiplier={true}
+    />
+  );
+}
+```
+
+---
+
+### ParticleSimulation
+
+Canvas-based particle physics simulation for kinetic theory visualizations.
+
+#### Props
+
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| `container` | `ContainerConfig` | Yes | Simulation container settings |
+| `particleTypes` | `ParticleType[]` | Yes | Particle type definitions |
+| `particles` | `ParticleGroup[]` | Yes | Initial particle configuration |
+| `physics` | `PhysicsConfig` | No | Physics settings |
+| `reactions` | `ReactionConfig[]` | No | Chemical reactions |
+| `temperature` | `number` | No | Kelvin temperature (affects speed) |
+| `running` | `boolean` | No | Start/stop simulation |
+| `onParticleCountChange` | `(counts) => void` | No | Callback on count change |
+| `showLabels` | `boolean` | No | Show particle labels |
+| `showVelocityVectors` | `boolean` | No | Show velocity vectors |
+
+#### Example
+
+```tsx
+import { ParticleSimulation } from '@shared/components';
+
+function GasSimulation() {
+  return (
+    <ParticleSimulation
+      container={{ width: 400, height: 300, pressure: 'normal' }}
+      particleTypes={[
+        { id: 'n2', color: '#3b82f6', label: 'N₂', mass: 28 },
+        { id: 'o2', color: '#ef4444', label: 'O₂', mass: 32 }
+      ]}
+      particles={[
+        { typeId: 'n2', count: 30 },
+        { typeId: 'o2', count: 10 }
+      ]}
+      temperature={300}
+      running={true}
+      physics={{ enableCollisions: true, speedMultiplier: 1 }}
+    />
+  );
+}
+```
+
+---
+
+### InteractiveGraph
+
+Canvas-based graph component with hover interactions, markers, and regions.
+
+#### Props
+
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| `width` | `number` | No | Canvas width (default: 600) |
+| `height` | `number` | No | Canvas height (default: 400) |
+| `series` | `DataSeries[]` | Yes | Data series to plot |
+| `xAxis` | `AxisConfig` | Yes | X-axis configuration |
+| `yAxis` | `AxisConfig` | Yes | Y-axis configuration |
+| `markers` | `Marker[]` | No | Point markers |
+| `regions` | `Region[]` | No | Shaded regions |
+| `horizontalLines` | `ReferenceLine[]` | No | Horizontal reference lines |
+| `verticalLines` | `ReferenceLine[]` | No | Vertical reference lines |
+| `showGrid` | `boolean` | No | Show grid lines |
+| `onPointHover` | `(point, series) => void` | No | Hover callback |
+| `onPointClick` | `(point, series) => void` | No | Click callback |
+| `currentPoint` | `DataPoint` | No | Highlighted point |
+
+#### Example
+
+```tsx
+import { InteractiveGraph } from '@shared/components';
+
+function TitrationCurve() {
+  return (
+    <InteractiveGraph
+      series={[{
+        id: 'titration',
+        data: titrationData,
+        color: '#3b82f6',
+        lineWidth: 3
+      }]}
+      xAxis={{ min: 0, max: 50, label: 'Volume (mL)', tickInterval: 10 }}
+      yAxis={{ min: 0, max: 14, label: 'pH', tickInterval: 2 }}
+      horizontalLines={[
+        { y: 7, color: '#22c55e', label: 'Neutral', lineDash: [5, 5] }
+      ]}
+      markers={[
+        { x: 25, y: 7, color: '#f59e0b', label: 'Equivalence Point' }
+      ]}
+      regions={[
+        { yMin: 0, yMax: 7, color: 'rgba(239,68,68,0.1)', label: 'Acidic' },
+        { yMin: 7, yMax: 14, color: 'rgba(59,130,246,0.1)', label: 'Basic' }
+      ]}
+    />
   );
 }
 ```
@@ -653,6 +1003,54 @@ Calculates and rounds percentage.
 
 ---
 
+### Achievements
+
+Functions for managing the achievement system.
+
+#### checkAchievementUnlock
+
+```typescript
+function checkAchievementUnlock(
+  achievement: Achievement,
+  state: PlayerAchievements,
+  event: AchievementEvent
+): boolean
+```
+
+Checks if an achievement should be unlocked based on the event.
+
+#### getAchievementProgress
+
+```typescript
+function getAchievementProgress(
+  achievement: Achievement,
+  state: PlayerAchievements
+): AchievementProgress
+```
+
+Gets the current progress for an achievement.
+
+#### createDefaultPlayerAchievements
+
+```typescript
+function createDefaultPlayerAchievements(): PlayerAchievements
+```
+
+Creates a new player achievements state with default values.
+
+#### getUnlockedAchievements
+
+```typescript
+function getUnlockedAchievements(
+  state: PlayerAchievements,
+  achievements: Achievement[]
+): Achievement[]
+```
+
+Returns all unlocked achievements.
+
+---
+
 ## Types
 
 ### GameLevel
@@ -763,6 +1161,103 @@ interface HintConfig {
   cost?: number;           // percentage penalty
   maxHints?: number;
   requiresFailedAttempt?: boolean;
+}
+```
+
+### TieredHints
+
+```typescript
+interface TieredHints {
+  topic: string;      // Tier 1: General concept area
+  strategy: string;   // Tier 2: Approach to solve
+  method: string;     // Tier 3: Specific formula/technique
+  solution: string;   // Tier 4: Full worked example
+}
+```
+
+### HintState
+
+```typescript
+interface HintState {
+  currentTier: 0 | 1 | 2 | 3 | 4;  // Highest tier revealed
+  pointMultiplier: number;         // Score multiplier (1.0, 0.8, 0.6, 0.4)
+  revealedTiers: number[];         // Tiers that have been shown
+}
+```
+
+### DetailedFeedback
+
+```typescript
+interface DetailedFeedback {
+  isCorrect: boolean;
+  explanation: string;
+  misconception?: string;
+  relatedConcepts?: string[];
+  nextSteps?: string;
+}
+```
+
+### FeedbackSeverity
+
+```typescript
+type FeedbackSeverity = 'success' | 'error' | 'warning' | 'info';
+```
+
+### Achievement
+
+```typescript
+interface Achievement {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  category: AchievementCategory;
+  rarity: AchievementRarity;
+  criteria: AchievementCriteria;
+  points: number;
+  secret?: boolean;
+}
+
+type AchievementCategory =
+  | 'performance'   // Score-based
+  | 'streak'        // Consecutive correct
+  | 'speed'         // Time-based
+  | 'mastery'       // Level completion
+  | 'dedication'    // Playing regularly
+  | 'special';      // Unique
+
+type AchievementRarity = 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary';
+```
+
+### PlayerAchievements
+
+```typescript
+interface PlayerAchievements {
+  unlocked: string[];
+  progress: Record<string, AchievementProgress>;
+  totalPoints: number;
+  currentStreak: number;
+  bestStreak: number;
+  daysPlayed: string[];
+  totalProblemsSolved: number;
+  totalGamesCompleted: number;
+  lastUpdated: string;
+}
+```
+
+### AchievementEvent
+
+```typescript
+interface AchievementEvent {
+  type: 'answer_correct' | 'answer_incorrect' | 'level_complete' |
+        'game_complete' | 'hint_used' | 'game_start';
+  gameId: string;
+  level?: 1 | 2 | 3;
+  score?: number;
+  maxScore?: number;
+  timeTaken?: number;
+  hintsUsed?: number;
+  firstAttempt?: boolean;
 }
 ```
 
@@ -913,6 +1408,17 @@ Use Tailwind classes that reference CSS variables:
 ---
 
 ## Changelog
+
+### v1.1.0 (2025-01-22)
+- Added useAchievements hook
+- Added MoleculeViewer3D component (3D molecule visualization)
+- Added DragDropBuilder component (drag-and-drop interface)
+- Added FeedbackPanel component (rich feedback display)
+- Added HintSystem component (4-tier progressive hints)
+- Added ParticleSimulation component (kinetic theory visualizations)
+- Added InteractiveGraph component (canvas-based graphing)
+- Added achievement system utilities
+- Added new types: TieredHints, HintState, DetailedFeedback, Achievement, PlayerAchievements
 
 ### v1.0.0 (2025-12-28)
 - Initial release

@@ -1,25 +1,7 @@
 import { useState, useEffect } from 'react';
-import { AnimatedMolecule, ELEMENT_VISUALS, HintSystem, FeedbackPanel } from '@shared/components';
-import type { TieredHints, DetailedFeedback } from '@shared/types';
-import { elementsToAtomCluster } from '../utils/moleculeConverter';
-
-// Icelandic names for elements
-const ELEMENT_NAMES: Record<string, string> = {
-  H: 'Vetni',
-  C: 'Kolefni',
-  N: 'Köfnunarefni',
-  O: 'Súrefni',
-  S: 'Brennisteinn',
-  Cl: 'Klór',
-  Na: 'Natríum',
-  Ca: 'Kalsíum',
-  Fe: 'Járn',
-  K: 'Kalíum',
-  Mg: 'Magnesíum',
-  P: 'Fosfór',
-  Al: 'Ál',
-  Cu: 'Kopar',
-};
+import { FeedbackPanel, MoleculeViewer3DLazy } from '@shared/components';
+import type { DetailedFeedback } from '@shared/types';
+import { elementsToMolecule } from '../utils/moleculeConverter';
 
 // Atomic masses for calculations
 const ATOMIC_MASSES: Record<string, number> = {
@@ -270,8 +252,9 @@ export function Level1({ onBack, onComplete, onCorrectAnswer, onIncorrectAnswer 
   const [selectedAnswer, setSelectedAnswer] = useState<number | string | null>(null);
   const [hintMultiplier, setHintMultiplier] = useState(1.0);
   const [hintsUsedTier, setHintsUsedTier] = useState(0);
-  const [totalHintsUsed, setTotalHintsUsed] = useState(0);
+  const [_totalHintsUsed, setTotalHintsUsed] = useState(0);
   const [showHint, setShowHint] = useState(false);
+  const [viewMode, setViewMode] = useState<'2d' | '3d'>('2d');
 
   // For build_molecule challenge
   const [builtAtoms, setBuiltAtoms] = useState<{ symbol: string; count: number }[]>([]);
@@ -500,7 +483,24 @@ export function Level1({ onBack, onComplete, onCorrectAnswer, onIncorrectAnswer 
                 {challenge.compound.formula}
               </div>
 
-              <MoleculeVisual elements={challenge.compound.elements} />
+              {viewMode === '2d' ? (
+                <MoleculeVisual elements={challenge.compound.elements} />
+              ) : (
+                <div className="bg-gray-900 rounded-xl p-4">
+                  <MoleculeViewer3DLazy
+                    molecule={elementsToMolecule(challenge.compound.elements, challenge.compound.formula, challenge.compound.name)}
+                    style="ball-stick"
+                    showLabels={true}
+                    autoRotate={true}
+                    autoRotateSpeed={1.5}
+                    height={180}
+                    backgroundColor="transparent"
+                  />
+                  <div className="text-xs text-gray-400 mt-2">
+                    Dragðu til að snúa, skrollaðu til að stækka
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="flex flex-wrap justify-center gap-3">
@@ -562,7 +562,21 @@ export function Level1({ onBack, onComplete, onCorrectAnswer, onIncorrectAnswer 
                   {challenge.compound.formula}
                 </div>
                 <div className="text-sm text-gray-600 mb-3">{challenge.compound.name}</div>
-                <MoleculeVisual elements={challenge.compound.elements} />
+                {viewMode === '2d' ? (
+                  <MoleculeVisual elements={challenge.compound.elements} />
+                ) : (
+                  <div className="bg-gray-900 rounded-lg p-2">
+                    <MoleculeViewer3DLazy
+                      molecule={elementsToMolecule(challenge.compound.elements, challenge.compound.formula, challenge.compound.name)}
+                      style="ball-stick"
+                      showLabels={true}
+                      autoRotate={true}
+                      autoRotateSpeed={2}
+                      height={120}
+                      backgroundColor="transparent"
+                    />
+                  </div>
+                )}
               </button>
 
               <button
@@ -582,7 +596,21 @@ export function Level1({ onBack, onComplete, onCorrectAnswer, onIncorrectAnswer 
                   {challenge.compareCompound?.formula}
                 </div>
                 <div className="text-sm text-gray-600 mb-3">{challenge.compareCompound?.name}</div>
-                <MoleculeVisual elements={challenge.compareCompound?.elements || []} />
+                {viewMode === '2d' ? (
+                  <MoleculeVisual elements={challenge.compareCompound?.elements || []} />
+                ) : (
+                  <div className="bg-gray-900 rounded-lg p-2">
+                    <MoleculeViewer3DLazy
+                      molecule={elementsToMolecule(challenge.compareCompound?.elements || [], challenge.compareCompound?.formula || '', challenge.compareCompound?.name)}
+                      style="ball-stick"
+                      showLabels={true}
+                      autoRotate={true}
+                      autoRotateSpeed={2}
+                      height={120}
+                      backgroundColor="transparent"
+                    />
+                  </div>
+                )}
               </button>
             </div>
 
@@ -691,7 +719,24 @@ export function Level1({ onBack, onComplete, onCorrectAnswer, onIncorrectAnswer 
                 {challenge.compound.formula}
               </div>
 
-              <MoleculeVisual elements={challenge.compound.elements} showMassBar={true} />
+              {viewMode === '2d' ? (
+                <MoleculeVisual elements={challenge.compound.elements} showMassBar={true} />
+              ) : (
+                <div className="bg-gray-900 rounded-xl p-4 mb-4">
+                  <MoleculeViewer3DLazy
+                    molecule={elementsToMolecule(challenge.compound.elements, challenge.compound.formula, challenge.compound.name)}
+                    style="ball-stick"
+                    showLabels={true}
+                    autoRotate={true}
+                    autoRotateSpeed={1.5}
+                    height={180}
+                    backgroundColor="transparent"
+                  />
+                  <div className="text-xs text-gray-400 mt-2">
+                    Dragðu til að snúa, skrollaðu til að stækka
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="space-y-3">
@@ -738,51 +783,8 @@ export function Level1({ onBack, onComplete, onCorrectAnswer, onIncorrectAnswer 
     }
   };
 
-  // Get tiered hints for each challenge type
-  const getChallengeHints = (): TieredHints => {
-    const elementName = ATOM_VISUALS[challenge.targetElement!]?.name || challenge.targetElement;
-
-    switch (challenge.type) {
-      case 'count_atoms':
-        return {
-          topic: 'Þetta snýst um að lesa efnaformúlur og finna fjölda frumefna.',
-          strategy: 'Líttu á lítlu tölurnar (subscripts) í formúlunni við hliðina á hverju frumefni.',
-          method: `Finndu táknið ${challenge.targetElement} í formúlunni. Talan við hliðina á því segir þér fjöldann. Ef engin tala er, þá er 1.`,
-          solution: `Í ${challenge.compound.formula} eru ${challenge.correctCount} ${elementName} (${challenge.targetElement}) frumeindir.`
-        };
-      case 'compare_mass':
-        const heavier = challenge.compound.molarMass > (challenge.compareCompound?.molarMass || 0)
-          ? challenge.compound.name
-          : challenge.compareCompound?.name;
-        return {
-          topic: 'Þetta snýst um að bera saman mólmassa sameinda.',
-          strategy: 'Hugsaðu um stærð og fjölda frumefna. Stærri frumeindir og fleiri frumeindir þýðir meiri massa.',
-          method: `Berðu saman stærð frumefnanna: O≈16, C≈12, N≈14, Cl≈35, Na≈23 g/mol. Leggðu saman fjölda × massa.`,
-          solution: `${challenge.compound.name} (${challenge.compound.molarMass.toFixed(1)} g/mol) vs ${challenge.compareCompound?.name} (${challenge.compareCompound?.molarMass.toFixed(1)} g/mol). ${heavier} er þyngri.`
-        };
-      case 'build_molecule':
-        const buildFormula = challenge.compound.elements.map(e =>
-          `${e.count} ${ATOM_VISUALS[e.symbol]?.name || e.symbol}`
-        ).join(', ');
-        return {
-          topic: 'Þetta snýst um að lesa efnaformúlur og byggja sameindir.',
-          strategy: 'Lestu formúluna vandlega. Hver bókstafur er frumefni og tölurnar segja fjöldann.',
-          method: `Í ${challenge.compound.formula}: líttu á hvern bókstaf og tölu. Enginn tala þýðir 1.`,
-          solution: `${challenge.compound.name} (${challenge.compound.formula}) inniheldur: ${buildFormula}.`
-        };
-      case 'estimate_range':
-        const mass = challenge.compound.molarMass;
-        const correctRange = challenge.ranges?.[challenge.correctRangeIndex!];
-        return {
-          topic: 'Þetta snýst um að áætla mólmassa sameinda.',
-          strategy: 'Notaðu atómmassamina: H≈1, C≈12, N≈14, O≈16 g/mol. Leggðu saman.',
-          method: `Reiknaðu: ${challenge.compound.elements.map(e => `${e.count}×${ATOMIC_MASSES[e.symbol]?.toFixed(0) || '?'}`).join(' + ')} g/mol`,
-          solution: `${challenge.compound.name} = ${mass.toFixed(1)} g/mol, sem fellur í bilið ${correctRange?.label}.`
-        };
-      default:
-        return { topic: '', strategy: '', method: '', solution: '' };
-    }
-  };
+  // Note: TieredHints available via HintSystem component for future integration
+  // getChallengeHints() can be implemented when HintSystem is added to this game
 
   // Generate detailed feedback for FeedbackPanel
   const getDetailedFeedback = (): DetailedFeedback => {
@@ -886,7 +888,7 @@ export function Level1({ onBack, onComplete, onCorrectAnswer, onIncorrectAnswer 
     }
   };
 
-  const challengeHints = getChallengeHints();
+  // Hints available via getChallengeHints() for future HintSystem integration
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white p-4">
@@ -917,6 +919,30 @@ export function Level1({ onBack, onComplete, onCorrectAnswer, onIncorrectAnswer 
               />
             </div>
           </div>
+        </div>
+
+        {/* 2D/3D Toggle */}
+        <div className="flex justify-center gap-2 mb-4">
+          <button
+            onClick={() => setViewMode('2d')}
+            className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+              viewMode === '2d'
+                ? 'bg-primary text-white'
+                : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+            }`}
+          >
+            2D
+          </button>
+          <button
+            onClick={() => setViewMode('3d')}
+            className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+              viewMode === '3d'
+                ? 'bg-primary text-white'
+                : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+            }`}
+          >
+            3D
+          </button>
         </div>
 
         {/* Challenge Card with entrance animation */}

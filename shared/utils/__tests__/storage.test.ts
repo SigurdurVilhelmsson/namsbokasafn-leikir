@@ -42,10 +42,11 @@ const createValidProgress = (overrides?: Partial<GameProgress>): GameProgress =>
   totalTimeSpent: 3600,
   levelProgress: {
     level1: {
-      completed: true,
-      score: 85,
-      attempts: 2,
-      bestTime: 120,
+      questionsAnswered: 10,
+      questionsCorrect: 8,
+      explanationsProvided: 5,
+      explanationScores: [80, 90, 85],
+      mastered: true,
     },
   },
   ...overrides,
@@ -453,9 +454,27 @@ describe('storage', () => {
         lastPlayedDate: '2024-06-15T14:30:00Z',
         totalTimeSpent: 7200,
         levelProgress: {
-          level1: { completed: true, score: 100, attempts: 1, bestTime: 60 },
-          level2: { completed: true, score: 90, attempts: 2, bestTime: 120 },
-          level3: { completed: false, score: 45, attempts: 1, bestTime: 0 },
+          level1: {
+            questionsAnswered: 15,
+            questionsCorrect: 15,
+            explanationsProvided: 10,
+            explanationScores: [100, 95, 100],
+            mastered: true,
+          },
+          level2: {
+            problemsCompleted: 20,
+            predictionsMade: 18,
+            predictionsCorrect: 16,
+            finalAnswersCorrect: 18,
+            mastered: true,
+          },
+          level3: {
+            problemsCompleted: 5,
+            compositeScores: [75, 80],
+            achievements: ['quick-thinker'],
+            mastered: false,
+            hintsUsed: 2,
+          },
         },
       });
 

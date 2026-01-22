@@ -39,10 +39,11 @@ const createValidProgress = (overrides?: Partial<GameProgress>): GameProgress =>
   totalTimeSpent: 3600,
   levelProgress: {
     level1: {
-      completed: true,
-      score: 85,
-      attempts: 2,
-      bestTime: 120,
+      questionsAnswered: 10,
+      questionsCorrect: 8,
+      explanationsProvided: 5,
+      explanationScores: [80, 90, 85],
+      mastered: true,
     },
   },
   ...overrides,
@@ -192,16 +193,23 @@ describe('useProgress', () => {
       act(() => {
         result.current.updateProgress({
           levelProgress: {
-            level1: { completed: true, score: 100, attempts: 1, bestTime: 60 },
+            level1: {
+              questionsAnswered: 15,
+              questionsCorrect: 15,
+              explanationsProvided: 10,
+              explanationScores: [100, 95, 100],
+              mastered: true,
+            },
           },
         });
       });
 
       expect(result.current.progress.levelProgress.level1).toEqual({
-        completed: true,
-        score: 100,
-        attempts: 1,
-        bestTime: 60,
+        questionsAnswered: 15,
+        questionsCorrect: 15,
+        explanationsProvided: 10,
+        explanationScores: [100, 95, 100],
+        mastered: true,
       });
     });
   });

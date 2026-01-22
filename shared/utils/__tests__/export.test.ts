@@ -76,8 +76,10 @@ describe('export', () => {
 
   describe('exportProgressAsJSON', () => {
     let mockLink: { href: string; download: string; click: ReturnType<typeof vi.fn> };
-    let appendChildSpy: ReturnType<typeof vi.spyOn>;
-    let removeChildSpy: ReturnType<typeof vi.spyOn>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let appendChildSpy: any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let removeChildSpy: any;
     let mockUrl: string;
 
     const mockProgress: GameProgress = {
@@ -87,10 +89,11 @@ describe('export', () => {
       totalTimeSpent: 1200,
       levelProgress: {
         level1: {
-          completed: true,
-          score: 90,
-          attempts: 2,
-          bestTime: 180,
+          questionsAnswered: 10,
+          questionsCorrect: 9,
+          explanationsProvided: 5,
+          explanationScores: [90, 88, 92],
+          mastered: true,
         },
       },
     };

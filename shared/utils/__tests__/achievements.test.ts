@@ -388,7 +388,7 @@ describe('achievements', () => {
     describe('streak achievements', () => {
       it('should unlock streak-3 after 3 correct answers', () => {
         let achievements = createPlayerAchievements();
-        const event: AchievementEvent = { type: 'answer_correct' };
+        const event: AchievementEvent = { type: 'answer_correct', gameId: 'test-game' };
 
         // Answer 3 times correctly
         for (let i = 0; i < 3; i++) {
@@ -411,7 +411,7 @@ describe('achievements', () => {
           'kvenno-chemistry-achievements': JSON.stringify(achievements),
         });
 
-        const event: AchievementEvent = { type: 'answer_incorrect' };
+        const event: AchievementEvent = { type: 'answer_incorrect', gameId: 'test-game' };
         checkAchievements(achievements, event);
 
         const loaded = loadAchievements();
@@ -427,7 +427,7 @@ describe('achievements', () => {
         });
 
         // Build a new streak
-        const event: AchievementEvent = { type: 'answer_correct' };
+        const event: AchievementEvent = { type: 'answer_correct', gameId: 'test-game' };
         for (let i = 0; i < 4; i++) {
           checkAchievements(achievements, event);
           achievements = loadAchievements();
@@ -442,6 +442,7 @@ describe('achievements', () => {
         const achievements = createPlayerAchievements();
         const event: AchievementEvent = {
           type: 'level_complete',
+          gameId: 'test-game',
           level: 1,
           score: 100,
           maxScore: 100,
@@ -456,6 +457,7 @@ describe('achievements', () => {
         const achievements = createPlayerAchievements();
         const event: AchievementEvent = {
           type: 'level_complete',
+          gameId: 'test-game',
           level: 1,
           score: 99,
           maxScore: 100,
@@ -470,6 +472,7 @@ describe('achievements', () => {
         const achievements = createPlayerAchievements();
         const event: AchievementEvent = {
           type: 'level_complete',
+          gameId: 'test-game',
           level: 2,
           score: 50,
           maxScore: 50,
@@ -487,6 +490,7 @@ describe('achievements', () => {
         const achievements = createPlayerAchievements();
         const event: AchievementEvent = {
           type: 'level_complete',
+          gameId: 'test-game',
           level: 1,
           score: 92,
         };
@@ -500,6 +504,7 @@ describe('achievements', () => {
         const achievements = createPlayerAchievements();
         const event: AchievementEvent = {
           type: 'level_complete',
+          gameId: 'test-game',
           level: 1,
           score: 89,
         };
@@ -515,6 +520,7 @@ describe('achievements', () => {
         const achievements = createPlayerAchievements();
         const event: AchievementEvent = {
           type: 'level_complete',
+          gameId: 'test-game',
           level: 1,
           timeTaken: 45,
         };
@@ -528,6 +534,7 @@ describe('achievements', () => {
         const achievements = createPlayerAchievements();
         const event: AchievementEvent = {
           type: 'level_complete',
+          gameId: 'test-game',
           level: 1,
           timeTaken: 25,
         };
@@ -541,6 +548,7 @@ describe('achievements', () => {
         const achievements = createPlayerAchievements();
         const event: AchievementEvent = {
           type: 'level_complete',
+          gameId: 'test-game',
           level: 1,
           timeTaken: 120,
         };
@@ -557,6 +565,7 @@ describe('achievements', () => {
         const achievements = createPlayerAchievements();
         const event: AchievementEvent = {
           type: 'level_complete',
+          gameId: 'test-game',
           level: 1,
         };
 
@@ -606,7 +615,7 @@ describe('achievements', () => {
           'kvenno-chemistry-achievements': JSON.stringify(achievements),
         });
 
-        const event: AchievementEvent = { type: 'answer_correct' };
+        const event: AchievementEvent = { type: 'answer_correct', gameId: 'test-game' };
         const notifications = checkAchievements(achievements, event);
 
         expect(notifications.some((n) => n.achievement.id === 'problem-solver-10')).toBe(true);
@@ -620,7 +629,7 @@ describe('achievements', () => {
           'kvenno-chemistry-achievements': JSON.stringify(achievements),
         });
 
-        const event: AchievementEvent = { type: 'answer_correct' };
+        const event: AchievementEvent = { type: 'answer_correct', gameId: 'test-game' };
         checkAchievements(achievements, event);
 
         const loaded = loadAchievements();
@@ -637,7 +646,7 @@ describe('achievements', () => {
           'kvenno-chemistry-achievements': JSON.stringify(achievements),
         });
 
-        const event: AchievementEvent = { type: 'answer_correct' };
+        const event: AchievementEvent = { type: 'answer_correct', gameId: 'test-game' };
         checkAchievements(achievements, event);
 
         const loaded = loadAchievements();
@@ -653,7 +662,7 @@ describe('achievements', () => {
         });
 
         // Simulate playing on a new day (today)
-        const event: AchievementEvent = { type: 'answer_correct' };
+        const event: AchievementEvent = { type: 'answer_correct', gameId: 'test-game' };
         const notifications = checkAchievements(achievements, event);
 
         expect(notifications.some((n) => n.achievement.id === 'daily-player-3')).toBe(true);
@@ -665,6 +674,7 @@ describe('achievements', () => {
         const achievements = createPlayerAchievements();
         const event: AchievementEvent = {
           type: 'level_complete',
+          gameId: 'test-game',
           level: 1,
           hintsUsed: 0,
         };
@@ -678,6 +688,7 @@ describe('achievements', () => {
         const achievements = createPlayerAchievements();
         const event: AchievementEvent = {
           type: 'level_complete',
+          gameId: 'test-game',
           level: 1,
           hintsUsed: 2,
         };
@@ -697,6 +708,7 @@ describe('achievements', () => {
 
         const event: AchievementEvent = {
           type: 'answer_correct',
+          gameId: 'test-game',
           firstAttempt: true,
         };
 
@@ -718,6 +730,7 @@ describe('achievements', () => {
 
         const event: AchievementEvent = {
           type: 'answer_correct',
+          gameId: 'test-game',
           firstAttempt: false,
         };
 
@@ -741,7 +754,7 @@ describe('achievements', () => {
         });
 
         // Trigger event that would normally unlock streak-3
-        const event: AchievementEvent = { type: 'answer_correct' };
+        const event: AchievementEvent = { type: 'answer_correct', gameId: 'test-game' };
         for (let i = 0; i < 5; i++) {
           checkAchievements(loadAchievements(), event);
         }
@@ -758,7 +771,7 @@ describe('achievements', () => {
         });
 
         // Unlock streak-3 which gives 5 points
-        const event: AchievementEvent = { type: 'answer_correct' };
+        const event: AchievementEvent = { type: 'answer_correct', gameId: 'test-game' };
         for (let i = 0; i < 3; i++) {
           checkAchievements(loadAchievements(), event);
         }
@@ -773,7 +786,7 @@ describe('achievements', () => {
           'kvenno-chemistry-achievements': JSON.stringify(achievements),
         });
 
-        const event: AchievementEvent = { type: 'answer_correct' };
+        const event: AchievementEvent = { type: 'answer_correct', gameId: 'test-game' };
         let notifications: { achievement: Achievement; isNew: boolean }[] = [];
         for (let i = 0; i < 3; i++) {
           notifications = checkAchievements(loadAchievements(), event);
@@ -788,7 +801,7 @@ describe('achievements', () => {
       it('should save achievements after checking', () => {
         const achievements = createPlayerAchievements();
 
-        const event: AchievementEvent = { type: 'answer_correct' };
+        const event: AchievementEvent = { type: 'answer_correct', gameId: 'test-game' };
         checkAchievements(achievements, event);
 
         expect(mockStorage.setItem).toHaveBeenCalled();
@@ -967,15 +980,16 @@ describe('achievements', () => {
 
       // Player gets 5 correct answers in a row
       for (let i = 0; i < 5; i++) {
-        checkAchievements(loadAchievements(), { type: 'answer_correct' });
+        checkAchievements(loadAchievements(), { type: 'answer_correct', gameId: 'test-game' });
       }
 
       // One wrong answer
-      checkAchievements(loadAchievements(), { type: 'answer_incorrect' });
+      checkAchievements(loadAchievements(), { type: 'answer_incorrect', gameId: 'test-game' });
 
       // Complete level with good score
       checkAchievements(loadAchievements(), {
         type: 'level_complete',
+        gameId: 'test-game',
         level: 1,
         score: 95,
         maxScore: 100,
@@ -1022,7 +1036,7 @@ describe('achievements', () => {
       expect(loaded.daysPlayed).toEqual(['2024-01-01', '2024-01-02']);
 
       // Continue session
-      checkAchievements(loaded, { type: 'answer_correct' });
+      checkAchievements(loaded, { type: 'answer_correct', gameId: 'test-game' });
 
       // Verify updated
       const reloaded = loadAchievements();

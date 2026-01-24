@@ -1,11 +1,12 @@
 import { useState, useCallback, useMemo } from 'react';
 import { shuffleArray } from '@shared/utils';
 import { ConcentrationComparison } from './StoichiometryVisualization';
+import { TemperatureComparison, TemperatureSolubilityCurve, SOLUBILITY_DATA, SolubilityData } from './TemperatureSolubility';
 
 // Level 2: Application/Reasoning - "What happens when..." questions
 // Students predict outcomes without calculating
 
-interface Scenario {
+interface BaseScenario {
   id: number;
   title: string;
   setup: string;
@@ -17,6 +18,10 @@ interface Scenario {
     explanation: string;
   }[];
   concept: string;
+}
+
+interface ConcentrationScenario extends BaseScenario {
+  type: 'concentration';
   visualBefore: {
     molecules: number;
     volumeML: number;
@@ -29,9 +34,24 @@ interface Scenario {
   };
 }
 
+interface TemperatureScenario extends BaseScenario {
+  type: 'temperature';
+  compound: SolubilityData;
+  tempBefore: number;
+  tempAfter: number;
+}
+
+type Scenario = ConcentrationScenario | TemperatureScenario;
+
+// Get compound data by formula
+const getCompound = (formula: string): SolubilityData =>
+  SOLUBILITY_DATA.find(d => d.formula === formula) || SOLUBILITY_DATA[0];
+
 const SCENARIOS: Scenario[] = [
+  // Concentration scenarios (original)
   {
     id: 1,
+    type: 'concentration',
     title: 'Útþynning með vatni',
     setup: 'Þú ert með 100 mL af 2.0 M NaCl lausn.',
     question: 'Hvað gerist við styrkinn ef þú bætir við 100 mL af vatni?',
@@ -47,6 +67,7 @@ const SCENARIOS: Scenario[] = [
   },
   {
     id: 2,
+    type: 'concentration',
     title: 'Bæta við leysiefni',
     setup: 'Þú ert með 200 mL af 1.5 M glúkósalausn.',
     question: 'Þú leysir upp meira af glúkósu í lausninni (án þess að breyta rúmmáli). Hvað gerist?',
@@ -62,6 +83,7 @@ const SCENARIOS: Scenario[] = [
   },
   {
     id: 3,
+    type: 'concentration',
     title: 'Blanda tveggja lausna',
     setup: 'Þú blandar 100 mL af 3.0 M lausn við 100 mL af 1.0 M lausn (sama efni).',
     question: 'Hver verður endanlegur styrkur blöndunnar?',
@@ -75,8 +97,62 @@ const SCENARIOS: Scenario[] = [
     visualBefore: { molecules: 30, volumeML: 100, concentration: 3.0 },
     visualAfter: { molecules: 40, volumeML: 200, concentration: 2.0 }
   },
+  // Temperature scenarios (new)
   {
     id: 4,
+    type: 'temperature',
+    title: 'Hitun á saltlausn',
+    setup: 'Þú ert með mettuð NaCl (borðsalt) lausn við 20°C.',
+    question: 'Þú hitar lausnina upp í 80°C. Hvað gerist við leysigetu saltsins?',
+    options: [
+      { id: 'a', text: 'Leysigeta eykst talsvert', isCorrect: false, explanation: 'Nei - NaCl er óvenjulegt. Leysigeta þess breytist mjög lítið með hitastigi.' },
+      { id: 'b', text: 'Leysigeta eykst lítillega', isCorrect: true, explanation: 'Rétt! NaCl fer úr 36 g/100g við 20°C í 38 g/100g við 80°C - bara ~6% aukning!' },
+      { id: 'c', text: 'Leysigeta minnkar', isCorrect: false, explanation: 'Nei - leysigeta NaCl minnkar ekki við hitun.' },
+      { id: 'd', text: 'Leysigeta helst nákvæmlega óbreytt', isCorrect: false, explanation: 'Nei - hún breytist aðeins, en minna en flest önnur efni.' }
+    ],
+    concept: 'NaCl er sérstakt: leysigeta þess breytist mjög lítið með hitastigi (35.7-39.2 g/100g frá 0°C til 100°C).',
+    compound: getCompound('NaCl'),
+    tempBefore: 20,
+    tempAfter: 80
+  },
+  {
+    id: 5,
+    type: 'temperature',
+    title: 'Hitun á KNO₃ lausn',
+    setup: 'Þú ert með mettuð kalíumnítrat (KNO₃) lausn við 20°C.',
+    question: 'Þú hitar lausnina upp í 60°C. Hvað gerist við leysigetu KNO₃?',
+    options: [
+      { id: 'a', text: 'Leysigeta eykst mikið (meira en tvöfaldast)', isCorrect: true, explanation: 'Rétt! KNO₃ fer úr 32 g/100g við 20°C í 110 g/100g við 60°C - meira en þrefaldast!' },
+      { id: 'b', text: 'Leysigeta eykst lítillega', isCorrect: false, explanation: 'Nei - KNO₃ hefur eina hæstu hitabreytni í leysigetu. Hún eykst gríðarlega.' },
+      { id: 'c', text: 'Leysigeta minnkar', isCorrect: false, explanation: 'Nei - fyrir flest fast efni eykst leysigeta við hitun.' },
+      { id: 'd', text: 'Leysigeta helst óbreytt', isCorrect: false, explanation: 'Nei - KNO₃ er þekkt fyrir mikla hitaháða leysigetu.' }
+    ],
+    concept: 'KNO₃ er dæmi um efni með mikla hitaháðni: leysigeta fer frá 13 g/100g við 0°C upp í 246 g/100g við 100°C.',
+    compound: getCompound('KNO₃'),
+    tempBefore: 20,
+    tempAfter: 60
+  },
+  {
+    id: 6,
+    type: 'temperature',
+    title: 'Kæling á gosi',
+    setup: 'Þú ert með glas af gosi (kolsýrt vatn, CO₂) við 20°C.',
+    question: 'Þú setur gosið í ísskáp (5°C). Hvað gerist við CO₂ innihaldið?',
+    options: [
+      { id: 'a', text: 'Meira CO₂ leysist upp', isCorrect: true, explanation: 'Rétt! Lofttegundir leysast betur í köldu vatni. Þess vegna er kalt gos fríðara!' },
+      { id: 'b', text: 'Minna CO₂ leysist upp', isCorrect: false, explanation: 'Nei - þetta á við um föst efni, ekki lofttegundir.' },
+      { id: 'c', text: 'CO₂ innihald helst óbreytt', isCorrect: false, explanation: 'Nei - hitastig hefur mikil áhrif á leysigetu lofttegunda.' },
+      { id: 'd', text: 'Allt CO₂ gufar upp', isCorrect: false, explanation: 'Nei - kæling hjálpar að halda CO₂ í vatninu.' }
+    ],
+    concept: 'Lofttegundir (eins og CO₂, O₂) leysast BETUR í köldu vatni - öfugt við föst efni!',
+    compound: getCompound('CO₂'),
+    tempBefore: 20,
+    tempAfter: 5
+  },
+  // More concentration scenarios
+  {
+    id: 7,
+    type: 'concentration',
     title: 'Uppgufun',
     setup: 'Þú hefur 500 mL af 0.5 M saltlausn í opinni skál. Helmingur vatnsins gufar upp.',
     question: 'Hvað gerist við styrkinn?',
@@ -91,7 +167,25 @@ const SCENARIOS: Scenario[] = [
     visualAfter: { molecules: 25, volumeML: 250, concentration: 1.0 }
   },
   {
-    id: 5,
+    id: 8,
+    type: 'temperature',
+    title: 'Súrefni í vatni',
+    setup: 'Fiskar þurfa súrefni (O₂) sem leyst er upp í vatni. Vatnið er 20°C.',
+    question: 'Ef vatnið hlýnar upp í 30°C á heitu sumri, hvað gerist við súrefnisinnihaldið?',
+    options: [
+      { id: 'a', text: 'Súrefni í vatninu minnkar', isCorrect: true, explanation: 'Rétt! Lofttegundir leysast verr í heitu vatni. Þetta getur skaðað fiska!' },
+      { id: 'b', text: 'Súrefni í vatninu eykst', isCorrect: false, explanation: 'Nei - lofttegundir leysast VERR í heitu vatni, ekki betur.' },
+      { id: 'c', text: 'Súrefni helst óbreytt', isCorrect: false, explanation: 'Nei - hitastig hefur mikil áhrif á leysigetu lofttegunda.' },
+      { id: 'd', text: 'Fiskar þurfa ekki súrefni', isCorrect: false, explanation: 'Nei - fiskar anda súrefni sem leyst er í vatninu!' }
+    ],
+    concept: 'Lofttegundir leysast verr í heitu vatni. Þetta er alvarlegt vandamál þegar vötn hitna vegna loftslagsbreytinga.',
+    compound: getCompound('O₂'),
+    tempBefore: 20,
+    tempAfter: 30
+  },
+  {
+    id: 9,
+    type: 'concentration',
     title: 'Þríföld útþynning',
     setup: 'Þú þarft að þynna 6.0 M sýru niður í 2.0 M.',
     question: 'Hversu mikið þarftu að auka rúmmálið?',
@@ -106,19 +200,21 @@ const SCENARIOS: Scenario[] = [
     visualAfter: { molecules: 60, volumeML: 300, concentration: 2.0 }
   },
   {
-    id: 6,
-    title: 'Ósamhverf blöndun',
-    setup: 'Þú blandar 300 mL af 2.0 M lausn við 100 mL af 6.0 M lausn.',
-    question: 'Verður lokastyrkurinn nær 2.0 M eða 6.0 M?',
+    id: 10,
+    type: 'temperature',
+    title: 'Sykurlausn',
+    setup: 'Þú ert að búa til karamellulausn. Þú hefur mettuð sykurlausn við 20°C.',
+    question: 'Þú hitar lausnina upp í 80°C. Getur þú nú bætt við meiri sykri?',
     options: [
-      { id: 'a', text: 'Nær 2.0 M', isCorrect: true, explanation: 'Rétt! Meira rúmmál af veikari lausninni "dregur" lokastyrk nær henni.' },
-      { id: 'b', text: 'Nær 6.0 M', isCorrect: false, explanation: 'Nei - þó sterkari lausnin hafi meiri styrk, þá er hennar rúmmál minna.' },
-      { id: 'c', text: 'Nákvæmlega í miðjunni (4.0 M)', isCorrect: false, explanation: 'Nei - miðjugildi á bara við þegar rúmmálin eru jöfn.' },
-      { id: 'd', text: 'Engin leið að vita', isCorrect: false, explanation: 'Nei - stærra rúmmálið hefur meiri áhrif á lokastyrk.' }
+      { id: 'a', text: 'Já, miklu meira', isCorrect: true, explanation: 'Rétt! Sykur fer úr 204 g/100g við 20°C í 362 g/100g við 80°C - næstum tvöfaldast!' },
+      { id: 'b', text: 'Já, aðeins meira', isCorrect: false, explanation: 'Nei - sykur hefur mikla hitabreytni í leysigetu, ekki litla.' },
+      { id: 'c', text: 'Nei, leysigeta helst óbreytt', isCorrect: false, explanation: 'Nei - sykur leysist mun betur í heitu vatni.' },
+      { id: 'd', text: 'Nei, sykurinn brennur', isCorrect: false, explanation: 'Nei - við 80°C er sykurinn enn langt frá brennslumarki.' }
     ],
-    concept: 'Við blöndun: stærra rúmmálið hefur meiri áhrif á lokastyrk (vegið meðaltal).',
-    visualBefore: { molecules: 60, volumeML: 300, concentration: 2.0 },
-    visualAfter: { molecules: 75, volumeML: 400, concentration: 3.0 }
+    concept: 'Sykur er gott dæmi um efni með mikla hitaháðni í leysigetu (179 g/100g við 0°C upp í 487 g/100g við 100°C).',
+    compound: getCompound('C₁₂H₂₂O₁₁'),
+    tempBefore: 20,
+    tempAfter: 80
   }
 ];
 
@@ -238,6 +334,9 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
   const [showResult, setShowResult] = useState(false);
   const [score, setScore] = useState(0);
   const [completed, setCompleted] = useState<number[]>([]);
+  const [showExplorer, setShowExplorer] = useState(false);
+  const [explorerTemp, setExplorerTemp] = useState(25);
+  const [selectedCompounds, setSelectedCompounds] = useState<string[]>(['KNO₃', 'NaCl', 'CO₂']);
 
   const scenario = SCENARIOS[currentScenario];
 
@@ -301,6 +400,13 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
               >
                 ← Til baka
               </button>
+              <button
+                onClick={() => setShowExplorer(true)}
+                className="bg-purple-100 hover:bg-purple-200 text-purple-700 px-3 py-1 rounded-lg text-sm font-medium transition-colors"
+                title="Kanna leysigetu"
+              >
+                🔬 Kanna
+              </button>
               <div className="text-center">
                 <div className="text-xl font-bold text-green-600">{score}</div>
                 <div className="text-xs text-gray-600">Stig</div>
@@ -335,12 +441,21 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
               <p className="text-lg text-gray-800">{scenario.setup}</p>
             </div>
 
-            {/* Visual representation */}
-            <BeforeAfterVisual
-              before={scenario.visualBefore}
-              after={scenario.visualAfter}
-              showAfter={showResult}
-            />
+            {/* Visual representation - depends on scenario type */}
+            {scenario.type === 'concentration' ? (
+              <BeforeAfterVisual
+                before={scenario.visualBefore}
+                after={scenario.visualAfter}
+                showAfter={showResult}
+              />
+            ) : (
+              <TemperatureComparison
+                compound={scenario.compound}
+                tempBefore={scenario.tempBefore}
+                tempAfter={scenario.tempAfter}
+                showAfter={showResult}
+              />
+            )}
 
             {/* Question */}
             <div className="text-xl font-semibold text-gray-800 mb-4">
@@ -403,17 +518,44 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
                 <strong>Lykilhugtak:</strong> {scenario.concept}
               </div>
 
-              {/* Visual stoichiometry comparison */}
+              {/* Visual comparison - depends on scenario type */}
               <div className="mt-4 p-4 bg-white rounded-xl">
                 <div className="text-sm font-semibold text-gray-600 text-center mb-3">
                   Samantekt á breytingum:
                 </div>
-                <ConcentrationComparison
-                  before={scenario.visualBefore}
-                  after={scenario.visualAfter}
-                  showParticles={true}
-                  animate={false}
-                />
+                {scenario.type === 'concentration' ? (
+                  <ConcentrationComparison
+                    before={scenario.visualBefore}
+                    after={scenario.visualAfter}
+                    showParticles={true}
+                    animate={false}
+                  />
+                ) : (
+                  <div className="text-center">
+                    <div className="flex justify-center items-center gap-4 text-lg">
+                      <span className="font-mono bg-blue-100 px-3 py-1 rounded">
+                        {scenario.tempBefore}°C
+                      </span>
+                      <span className="text-gray-400">→</span>
+                      <span className="font-mono bg-red-100 px-3 py-1 rounded">
+                        {scenario.tempAfter}°C
+                      </span>
+                    </div>
+                    <div className="mt-3 text-sm text-gray-700">
+                      {scenario.compound.type === 'gas' ? (
+                        <span>
+                          Lofttegundir leysast {scenario.tempAfter < scenario.tempBefore ? 'betur' : 'verr'} við{' '}
+                          {scenario.tempAfter < scenario.tempBefore ? 'lægra' : 'hærra'} hitastig
+                        </span>
+                      ) : (
+                        <span>
+                          Flest föst efni leysast {scenario.tempAfter > scenario.tempBefore ? 'betur' : 'verr'} við{' '}
+                          {scenario.tempAfter > scenario.tempBefore ? 'hærra' : 'lægra'} hitastig
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -463,6 +605,89 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
           ))}
         </div>
       </div>
+
+      {/* Temperature Explorer Modal */}
+      {showExplorer && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-2xl font-bold text-purple-700">🔬 Könnun á leysigetu</h2>
+                <button
+                  onClick={() => setShowExplorer(false)}
+                  className="text-gray-500 hover:text-gray-700 text-2xl"
+                >
+                  ×
+                </button>
+              </div>
+
+              <p className="text-gray-600 mb-4">
+                Dragðu sleðann til að sjá hvernig hitastig hefur áhrif á leysigetu mismunandi efna.
+                Taktu eftir muninum á föstum efnum og lofttegundum!
+              </p>
+
+              {/* Compound selection */}
+              <div className="mb-4">
+                <div className="text-sm font-semibold text-gray-700 mb-2">Veldu efni til að skoða:</div>
+                <div className="flex flex-wrap gap-2">
+                  {SOLUBILITY_DATA.map(compound => (
+                    <button
+                      key={compound.formula}
+                      onClick={() => {
+                        setSelectedCompounds(prev =>
+                          prev.includes(compound.formula)
+                            ? prev.filter(f => f !== compound.formula)
+                            : [...prev, compound.formula]
+                        );
+                      }}
+                      className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                        selectedCompounds.includes(compound.formula)
+                          ? 'text-white'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                      style={{
+                        backgroundColor: selectedCompounds.includes(compound.formula)
+                          ? compound.color
+                          : undefined
+                      }}
+                    >
+                      {compound.emoji} {compound.formula}
+                      {compound.type === 'gas' && ' (gas)'}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Solubility curve */}
+              <TemperatureSolubilityCurve
+                selectedCompounds={selectedCompounds}
+                temperature={explorerTemp}
+                onTemperatureChange={setExplorerTemp}
+                interactive={true}
+                showCurve={true}
+              />
+
+              {/* Key insight */}
+              <div className="mt-4 bg-purple-50 p-4 rounded-xl">
+                <h3 className="font-bold text-purple-800 mb-2">Lykilatriði</h3>
+                <ul className="text-sm text-purple-900 space-y-1">
+                  <li>• <strong>Föst efni:</strong> Flest leysast betur við hærra hitastig (KNO₃, sykur)</li>
+                  <li>• <strong>Undantekning:</strong> Sum efni eins og CaSO₄ leysast verr við hærra hitastig</li>
+                  <li>• <strong>Lofttegundir:</strong> Leysast VERR við hærra hitastig (O₂, CO₂)</li>
+                  <li>• <strong>NaCl:</strong> Næstum óháð hitastigi (sértilfelli)</li>
+                </ul>
+              </div>
+
+              <button
+                onClick={() => setShowExplorer(false)}
+                className="mt-4 w-full bg-purple-500 hover:bg-purple-600 text-white font-bold py-3 rounded-xl transition-colors"
+              >
+                Loka og halda áfram
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

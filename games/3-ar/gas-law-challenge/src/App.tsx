@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { GasLawQuestion, GameMode, GameStats, QuestionFeedback } from './types';
+import { GasLawQuestion, GameMode, GameStats, QuestionFeedback, GasLaw, GAS_LAW_INFO } from './types';
 import { questions, getRandomQuestion } from './data';
 import { checkAnswer, calculateError, getUnit, getVariableName } from './utils/gas-calculations';
 import { useAchievements } from '@shared/hooks/useAchievements';
@@ -42,7 +42,7 @@ function saveStats(stats: GameStats): void {
 function App() {
   // Game state
   const [screen, setScreen] = useState<'menu' | 'game' | 'feedback'>('menu');
-  const { t, language, setLanguage } = useGameI18n({ gameTranslations });
+  const { language, setLanguage } = useGameI18n({ gameTranslations });
   const [gameMode, setGameMode] = useState<GameMode>('practice');
   const [currentQuestion, setCurrentQuestion] = useState<GasLawQuestion | null>(null);
   const [userAnswer, setUserAnswer] = useState('');
@@ -53,6 +53,11 @@ function App() {
   const [showAchievements, setShowAchievements] = useState(false);
   const [sessionHintsUsed, setSessionHintsUsed] = useState(0);
   const [sessionQuestionsAnswered, setSessionQuestionsAnswered] = useState(0);
+
+  // Law selection step state (practice mode only)
+  const [gameStep, setGameStep] = useState<'select-law' | 'solve'>('select-law');
+  const [selectedLaw, setSelectedLaw] = useState<GasLaw | null>(null);
+  const [lawFeedback, setLawFeedback] = useState<{ correct: boolean; message: string } | null>(null);
 
   // Stats with localStorage persistence
   const [stats, setStats] = useState<GameStats>(loadStats);
@@ -91,7 +96,41 @@ function App() {
     setShowSolution(false);
     setFeedback(null);
     setTimeRemaining(mode === 'challenge' ? 90 : null);
+    // Law selection step - only in practice mode
+    setGameStep(mode === 'practice' ? 'select-law' : 'solve');
+    setSelectedLaw(null);
+    setLawFeedback(null);
     setScreen('game');
+  };
+
+  // Check selected gas law
+  const checkSelectedLaw = () => {
+    if (!currentQuestion || !selectedLaw) return;
+
+    const isCorrect = selectedLaw === currentQuestion.gasLaw;
+    const correctLawInfo = GAS_LAW_INFO[currentQuestion.gasLaw];
+
+    if (isCorrect) {
+      setLawFeedback({
+        correct: true,
+        message: `Rétt! Þetta er ${correctLawInfo.nameIs} (${correctLawInfo.formula})`
+      });
+      // Move to solve step after short delay
+      setTimeout(() => {
+        setGameStep('solve');
+      }, 1500);
+    } else {
+      setLawFeedback({
+        correct: false,
+        message: `Ekki rétt. Þetta verkefni notar ${correctLawInfo.nameIs}: ${correctLawInfo.formula}. ${correctLawInfo.description}.`
+      });
+      trackIncorrectAnswer();
+    }
+  };
+
+  // Skip law selection (practice mode only)
+  const skipLawSelection = () => {
+    setGameStep('solve');
   };
 
   // Timer for challenge mode
@@ -430,6 +469,101 @@ function App() {
               </div>
             </div>
 
+            {/* Law Selection Step (Practice Mode Only) */}
+            {gameStep === 'select-law' && gameMode === 'practice' && (
+              <div className="mb-6">
+                <div className="bg-gradient-to-r from-indigo-50 to-purple-50 p-6 rounded-xl border-2 border-indigo-200">
+                  <h3 className="text-lg font-bold text-indigo-900 mb-4 flex items-center gap-2">
+                    <span className="text-2xl">📚</span> Skref 1: Hvaða lögmál á við?
+                  </h3>
+
+                  {/* Question context */}
+                  <div className="bg-white p-3 rounded-lg border border-gray-200 mb-4">
+                    <h4 className="font-bold text-gray-800 mb-1">{currentQuestion.emoji} {currentQuestion.scenario_is}</h4>
+                    <p className="text-xs text-gray-500">{currentQuestion.scenario_en}</p>
+                  </div>
+
+                  {/* Given values preview */}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4 text-xs">
+                    {currentQuestion.given.P && (
+                      <div className="bg-blue-50 px-2 py-1 rounded text-center">
+                        <span className="font-semibold">P:</span> {currentQuestion.given.P.value} {currentQuestion.given.P.unit}
+                      </div>
+                    )}
+                    {currentQuestion.given.V && (
+                      <div className="bg-blue-50 px-2 py-1 rounded text-center">
+                        <span className="font-semibold">V:</span> {currentQuestion.given.V.value} {currentQuestion.given.V.unit}
+                      </div>
+                    )}
+                    {currentQuestion.given.T && (
+                      <div className="bg-blue-50 px-2 py-1 rounded text-center">
+                        <span className="font-semibold">T:</span> {currentQuestion.given.T.value} {currentQuestion.given.T.unit}
+                      </div>
+                    )}
+                    {currentQuestion.given.n && (
+                      <div className="bg-blue-50 px-2 py-1 rounded text-center">
+                        <span className="font-semibold">n:</span> {currentQuestion.given.n.value} {currentQuestion.given.n.unit}
+                      </div>
+                    )}
+                    <div className="bg-orange-50 px-2 py-1 rounded text-center">
+                      <span className="font-semibold text-orange-700">Finna: {currentQuestion.find}</span>
+                    </div>
+                  </div>
+
+                  {/* Law selection buttons */}
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mb-4">
+                    {(Object.keys(GAS_LAW_INFO) as GasLaw[]).map((law) => {
+                      const info = GAS_LAW_INFO[law];
+                      return (
+                        <button
+                          key={law}
+                          onClick={() => setSelectedLaw(law)}
+                          className={`p-3 rounded-lg border-2 transition-all text-left ${
+                            selectedLaw === law
+                              ? 'border-indigo-500 bg-indigo-50'
+                              : 'border-gray-200 hover:border-indigo-300 bg-white'
+                          }`}
+                        >
+                          <div className="font-semibold text-sm text-gray-800">{info.nameIs}</div>
+                          <div className="font-mono text-xs text-indigo-600">{info.formula}</div>
+                          <div className="text-xs text-gray-500 mt-1">{info.constants}</div>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Feedback */}
+                  {lawFeedback && (
+                    <div className={`p-3 rounded-lg mb-4 ${
+                      lawFeedback.correct ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                    }`}>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xl">{lawFeedback.correct ? '✅' : '❌'}</span>
+                        <span>{lawFeedback.message}</span>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Action buttons */}
+                  <div className="flex gap-2">
+                    <button
+                      onClick={checkSelectedLaw}
+                      disabled={!selectedLaw}
+                      className="flex-1 py-2 px-4 rounded-lg font-bold text-white transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed bg-indigo-600 hover:bg-indigo-700"
+                    >
+                      Athuga lögmál
+                    </button>
+                    <button
+                      onClick={skipLawSelection}
+                      className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition text-sm"
+                    >
+                      Sleppa →
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div className="grid md:grid-cols-2 gap-6">
               {/* Left: Visualization */}
               <div>
@@ -494,9 +628,25 @@ function App() {
 
               {/* Right: Input and Hints */}
               <div>
+                {/* Law indicator (shows after selection in practice mode) */}
+                {gameMode === 'practice' && gameStep === 'solve' && currentQuestion.gasLaw && (
+                  <div className="bg-indigo-50 p-3 rounded-lg border border-indigo-200 mb-4">
+                    <div className="flex items-center gap-2 text-sm">
+                      <span className="text-indigo-600 font-semibold">📚 Lögmál:</span>
+                      <span className="font-mono bg-white px-2 py-1 rounded text-indigo-800">
+                        {GAS_LAW_INFO[currentQuestion.gasLaw].formula}
+                      </span>
+                      <span className="text-gray-600">({GAS_LAW_INFO[currentQuestion.gasLaw].nameIs})</span>
+                    </div>
+                  </div>
+                )}
+
                 {/* Question */}
-                <div className="bg-orange-50 p-4 rounded-lg border-2 border-orange-200 mb-4">
+                <div className={`bg-orange-50 p-4 rounded-lg border-2 border-orange-200 mb-4 ${
+                  gameMode === 'practice' && gameStep === 'select-law' ? 'opacity-50' : ''
+                }`}>
                   <h3 className="font-bold text-orange-900 mb-2">
+                    {gameMode === 'practice' && gameStep === 'select-law' && '(Skref 2) '}
                     Finndu {getVariableName(currentQuestion.find)} ({currentQuestion.find}):
                   </h3>
                   <div className="flex gap-2">
@@ -504,9 +654,10 @@ function App() {
                       type="number"
                       value={userAnswer}
                       onChange={(e) => setUserAnswer(e.target.value)}
-                      placeholder="Sláðu inn svar..."
-                      className="flex-1 px-4 py-3 rounded-lg border-2 border-gray-300 focus:border-orange-500 focus:outline-none text-lg"
-                      onKeyPress={(e) => e.key === 'Enter' && checkUserAnswer()}
+                      placeholder={gameMode === 'practice' && gameStep === 'select-law' ? 'Veldu lögmál fyrst...' : 'Sláðu inn svar...'}
+                      className="flex-1 px-4 py-3 rounded-lg border-2 border-gray-300 focus:border-orange-500 focus:outline-none text-lg disabled:bg-gray-100 disabled:cursor-not-allowed"
+                      onKeyPress={(e) => e.key === 'Enter' && gameStep === 'solve' && checkUserAnswer()}
+                      disabled={gameMode === 'practice' && gameStep === 'select-law'}
                     />
                     <div className="bg-white px-4 py-3 rounded-lg border-2 border-gray-300 font-bold text-gray-700">
                       {getUnit(currentQuestion.find)}
@@ -514,8 +665,9 @@ function App() {
                   </div>
                   <button
                     onClick={checkUserAnswer}
-                    className="w-full mt-3 py-3 px-6 rounded-lg font-bold text-white transition hover:opacity-90"
-                    style={{ backgroundColor: '#f36b22' }}
+                    disabled={gameMode === 'practice' && gameStep === 'select-law'}
+                    className="w-full mt-3 py-3 px-6 rounded-lg font-bold text-white transition hover:opacity-90 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                    style={{ backgroundColor: (gameMode !== 'practice' || gameStep !== 'select-law') ? '#f36b22' : undefined }}
                   >
                     Athuga Svar (Enter)
                   </button>

@@ -12,6 +12,7 @@ export const questions: GasLawQuestion[] = [
     scenario_is: 'Þú ert að blása upp blöðru fyrir afmælisveislu. Loftið í andanum þínum er um 37°C.',
     scenario_en: "You're blowing up a balloon for a birthday party. The air from your breath is about 37°C.",
     difficulty: 'Auðvelt',
+    gasLaw: 'ideal',
     given: {
       P: { value: 1.0, unit: 'atm' },
       T: { value: 310, unit: 'K' },
@@ -45,6 +46,7 @@ export const questions: GasLawQuestion[] = [
     scenario_is: 'Þú ert að athuga loftþrýsting í hjólbarða hjólreiðarinnar þinnar að morgni.',
     scenario_en: "You're checking the tire pressure on your bicycle in the morning.",
     difficulty: 'Auðvelt',
+    gasLaw: 'ideal',
     given: {
       P: { value: 2.5, unit: 'atm' },
       V: { value: 2.0, unit: 'L' },
@@ -78,6 +80,7 @@ export const questions: GasLawQuestion[] = [
     scenario_is: 'Kólaflaska inniheldur koltvísýring undir þrýstingi.',
     scenario_en: 'A soda bottle contains carbon dioxide under pressure.',
     difficulty: 'Auðvelt',
+    gasLaw: 'ideal',
     given: {
       V: { value: 2.0, unit: 'L' },
       T: { value: 298, unit: 'K' },
@@ -111,6 +114,7 @@ export const questions: GasLawQuestion[] = [
     scenario_is: 'Í efnafræðistofu ertu að vinna með lofteinangrun við staðalskilyrði.',
     scenario_en: "In the chemistry lab, you're working with a gas sample at standard conditions.",
     difficulty: 'Auðvelt',
+    gasLaw: 'ideal',
     given: {
       P: { value: 1.0, unit: 'atm' },
       V: { value: 5.0, unit: 'L' },
@@ -145,6 +149,7 @@ export const questions: GasLawQuestion[] = [
     scenario_is: 'Köfunarílát við 10m dýpi þar sem þrýstingur er 2.0 atm.',
     scenario_en: 'A scuba tank at 10m depth where the pressure is 2.0 atm.',
     difficulty: 'Miðlungs',
+    gasLaw: 'ideal',
     given: {
       P: { value: 2.0, unit: 'atm' },
       V: { value: 12.0, unit: 'L' },
@@ -179,6 +184,7 @@ export const questions: GasLawQuestion[] = [
     scenario_is: 'Loftbelgur er hitaður upp úr 300K í 400K við fast þrýsðing.',
     scenario_en: 'A hot air balloon is heated from 300K to 400K at constant pressure.',
     difficulty: 'Miðlungs',
+    gasLaw: 'ideal',
     given: {
       P: { value: 1.0, unit: 'atm' },
       T: { value: 400, unit: 'K' },
@@ -214,6 +220,7 @@ export const questions: GasLawQuestion[] = [
     scenario_is: 'Iðnaðargastankur með mjög háum þrýstingi.',
     scenario_en: 'Industrial gas cylinder with very high pressure.',
     difficulty: 'Erfitt',
+    gasLaw: 'ideal',
     given: {
       V: { value: 50.0, unit: 'L' },
       T: { value: 298, unit: 'K' },
@@ -248,6 +255,7 @@ export const questions: GasLawQuestion[] = [
     scenario_is: 'Djúpköfun á 100m dýpi þar sem þrýstingur er 11 atm.',
     scenario_en: 'Deep sea dive at 100m depth where pressure is 11 atm.',
     difficulty: 'Erfitt',
+    gasLaw: 'ideal',
     given: {
       P: { value: 11.0, unit: 'atm' },
       V: { value: 3.0, unit: 'L' },
@@ -283,6 +291,7 @@ export const questions: GasLawQuestion[] = [
     scenario_is: 'Á toppi Everest (8849m) er loftþrýstingur aðeins 0.33 atm. Hversu mikið loft (mól) er í 5L lungum?',
     scenario_en: 'At the summit of Everest (8849m), air pressure is only 0.33 atm. How much air (moles) is in 5L lungs?',
     difficulty: 'Miðlungs',
+    gasLaw: 'ideal',
     given: {
       P: { value: 0.33, unit: 'atm' },
       V: { value: 5.0, unit: 'L' },
@@ -317,6 +326,7 @@ export const questions: GasLawQuestion[] = [
     scenario_is: 'Farþegaflugvél flýgur á 10.000m hæð þar sem þrýstingur er 0.26 atm og hitastig -50°C.',
     scenario_en: 'A passenger aircraft flies at 10,000m altitude where pressure is 0.26 atm and temperature is -50°C.',
     difficulty: 'Miðlungs',
+    gasLaw: 'ideal',
     given: {
       P: { value: 0.26, unit: 'atm' },
       T: { value: 223, unit: 'K' },
@@ -351,6 +361,7 @@ export const questions: GasLawQuestion[] = [
     scenario_is: 'Veðurspá: Lágþrýstingssvæði nálgast. Hvað gerist við loftþrýsting þegar hitastigið lækkar?',
     scenario_en: 'Weather forecast: Low pressure system approaching. A weather balloon has 100 mol of gas.',
     difficulty: 'Miðlungs',
+    gasLaw: 'ideal',
     given: {
       V: { value: 2500, unit: 'L' },
       T: { value: 288, unit: 'K' },
@@ -385,6 +396,7 @@ export const questions: GasLawQuestion[] = [
     scenario_is: 'Geimferð: Í geimskipi er þrýstingi haldið við 0.7 atm (eins og á 3000m hæð á jörðu).',
     scenario_en: 'Space travel: A spacecraft cabin is maintained at 0.7 atm (like 3000m altitude on Earth).',
     difficulty: 'Erfitt',
+    gasLaw: 'ideal',
     given: {
       P: { value: 0.7, unit: 'atm' },
       V: { value: 50.0, unit: 'L' },
@@ -419,6 +431,7 @@ export const questions: GasLawQuestion[] = [
     scenario_is: 'Skíðasvæði á 2500m hæð. Loftþrýstingur er 0.74 atm. Á hvaða hitastigi er loftið?',
     scenario_en: 'Ski resort at 2500m altitude. Air pressure is 0.74 atm. What is the air temperature?',
     difficulty: 'Erfitt',
+    gasLaw: 'ideal',
     given: {
       P: { value: 0.74, unit: 'atm' },
       V: { value: 10.0, unit: 'L' },

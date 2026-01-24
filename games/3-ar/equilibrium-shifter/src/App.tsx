@@ -7,6 +7,7 @@ import { HintSystem, LanguageSwitcher } from '@shared/components';
 import { gameTranslations } from './i18n';
 import type { TieredHints } from '@shared/types';
 import { ParticleEquilibrium } from './components/ParticleEquilibrium';
+import { QKComparison } from './components/QKComparison';
 import {
   Equilibrium,
   Stress,
@@ -34,7 +35,7 @@ function App() {
 
   const { settings, toggleHighContrast, setTextSize } = useAccessibility();
   const { t, language, setLanguage } = useI18n();
-  const { t: tGame } = useGameI18n({ gameTranslations });
+  useGameI18n({ gameTranslations }); // Initialize game translations
 
   // Achievements
   const [showAchievements, setShowAchievements] = useState(false);
@@ -636,6 +637,18 @@ function App() {
                       {language === 'is' ? correctShift.explanationIs : correctShift.explanation}
                     </p>
                   </div>
+
+                  {/* Q vs K Comparison - shows in learning mode or for wrong answers */}
+                  {(gameMode === 'learning' || !isCorrect) && appliedStress && (
+                    <div className="mb-4">
+                      <QKComparison
+                        shiftDirection={correctShift.direction}
+                        stress={appliedStress}
+                        isExothermic={currentEquilibrium.thermodynamics.type === 'exothermic'}
+                        animate={true}
+                      />
+                    </div>
+                  )}
 
                   {gameMode === 'learning' && (
                     <div className="mb-4">

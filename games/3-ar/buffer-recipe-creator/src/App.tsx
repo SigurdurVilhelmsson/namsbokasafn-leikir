@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import Level1 from './components/Level1';
 import Level2 from './components/Level2';
+import Level3 from './components/Level3';
 import { useAchievements } from '@shared/hooks/useAchievements';
 import { useGameI18n } from '@shared/hooks';
 import { AchievementsButton, AchievementsPanel } from '@shared/components/AchievementsPanel';
@@ -9,13 +10,15 @@ import { LanguageSwitcher } from '@shared/components';
 import { gameTranslations } from './i18n';
 import './styles.css';
 
-type ActiveLevel = 'menu' | 'level1' | 'level2';
+type ActiveLevel = 'menu' | 'level1' | 'level2' | 'level3';
 
 interface Progress {
   level1Completed: boolean;
   level1Score: number;
   level2Completed: boolean;
   level2Score: number;
+  level3Completed: boolean;
+  level3Score: number;
   totalGamesPlayed: number;
 }
 
@@ -39,6 +42,8 @@ function getDefaultProgress(): Progress {
     level1Score: 0,
     level2Completed: false,
     level2Score: 0,
+    level3Completed: false,
+    level3Score: 0,
     totalGamesPlayed: 0
   };
 }
@@ -56,7 +61,7 @@ function saveProgress(progress: Progress): void {
  */
 function App() {
   const [activeLevel, setActiveLevel] = useState<ActiveLevel>('menu');
-  const { t, language, setLanguage } = useGameI18n({ gameTranslations });
+  const { language, setLanguage } = useGameI18n({ gameTranslations });
   const [progress, setProgress] = useState<Progress>(loadProgress);
   const [showAchievements, setShowAchievements] = useState(false);
 
@@ -97,6 +102,18 @@ function App() {
       totalGamesPlayed: prev.totalGamesPlayed + 1
     }));
     trackLevelComplete(2, score, maxScore, { hintsUsed });
+    setActiveLevel('menu');
+  };
+
+  // Handle level 3 completion
+  const handleLevel3Complete = (score: number, maxScore: number, hintsUsed: number) => {
+    setProgress(prev => ({
+      ...prev,
+      level3Completed: true,
+      level3Score: Math.max(prev.level3Score, score),
+      totalGamesPlayed: prev.totalGamesPlayed + 1
+    }));
+    trackLevelComplete(3, score, maxScore, { hintsUsed });
     setActiveLevel('menu');
   };
 
@@ -181,9 +198,37 @@ function App() {
     );
   }
 
+  // Render Level 3
+  if (activeLevel === 'level3') {
+    return (
+      <>
+        <Level3
+          onComplete={handleLevel3Complete}
+          onBack={() => setActiveLevel('menu')}
+          onCorrectAnswer={() => trackCorrectAnswer()}
+          onIncorrectAnswer={() => trackIncorrectAnswer()}
+        />
+
+        {showAchievements && (
+          <AchievementsPanel
+            achievements={achievements}
+            allAchievements={allAchievements}
+            onClose={() => setShowAchievements(false)}
+            onReset={resetAchievements}
+          />
+        )}
+
+        <AchievementNotificationsContainer
+          notifications={notifications}
+          onDismiss={dismissNotification}
+        />
+      </>
+    );
+  }
+
   // Main Menu
-  const totalScore = progress.level1Score + progress.level2Score;
-  const levelsCompleted = [progress.level1Completed, progress.level2Completed].filter(Boolean).length;
+  const totalScore = progress.level1Score + progress.level2Score + progress.level3Score;
+  const levelsCompleted = [progress.level1Completed, progress.level2Completed, progress.level3Completed].filter(Boolean).length;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-100 p-4 md:p-8">
@@ -305,31 +350,49 @@ function App() {
             </div>
           </button>
 
-          {/* Level 3 - Coming Soon */}
-          <div
-            className="w-full p-6 rounded-xl border-4 border-gray-200 bg-gray-50 opacity-60 text-left"
+          {/* Level 3 */}
+          <button
+            onClick={() => progress.level2Completed && setActiveLevel('level3')}
+            className={`w-full p-6 rounded-xl border-4 transition-all text-left ${
+              progress.level2Completed
+                ? 'hover:shadow-lg cursor-pointer'
+                : 'opacity-60 cursor-not-allowed'
+            }`}
+            style={{
+              borderColor: progress.level2Completed ? '#10b981' : '#d1d5db',
+              backgroundColor: progress.level2Completed ? 'rgba(16, 185, 129, 0.05)' : '#f9fafb'
+            }}
           >
             <div className="flex items-center gap-4">
               <div className="text-4xl">🏭</div>
               <div className="flex-1">
                 <div className="flex items-center gap-2">
-                  <span className="text-xl font-bold text-gray-500">
+                  <span className={`text-xl font-bold ${
+                    progress.level2Completed ? 'text-emerald-700' : 'text-gray-500'
+                  }`}>
                     Stig 3: Hönnun
                   </span>
-                  <span className="text-xs text-gray-400 bg-gray-200 px-2 py-1 rounded-full">
-                    Kemur fljótlega
-                  </span>
+                  {progress.level3Completed && (
+                    <span className="bg-emerald-500 text-white text-xs px-2 py-1 rounded-full">
+                      ✓ {progress.level3Score} stig
+                    </span>
+                  )}
+                  {!progress.level2Completed && (
+                    <span className="text-xs text-gray-500">(Ljúktu stigi 2 fyrst)</span>
+                  )}
                 </div>
-                <div className="text-sm text-gray-500 mt-1">
-                  Hönnunarskorður og birgðalausnir
+                <div className={`text-sm mt-1 ${
+                  progress.level2Completed ? 'text-emerald-600' : 'text-gray-500'
+                }`}>
+                  Birgðalausnir og rúmmálsútreikningar
                 </div>
-                <div className="text-xs text-gray-500 mt-2">
-                  Búðu til stuðpúða með takmarkaðar birgðalausnir, markmið rúmmál,
-                  og skekkjumörk.
+                <div className="text-xs text-gray-600 mt-2">
+                  Notaðu tilbúnar birgðalausnir til að búa til stuðpúða.
+                  Reiknaðu rúmmál til að taka úr hverri birgðalausn.
                 </div>
               </div>
             </div>
-          </div>
+          </button>
         </div>
 
         {/* Progress Summary */}
@@ -346,7 +409,7 @@ function App() {
             </div>
             <div className="grid grid-cols-3 gap-4 text-center">
               <div className="rounded-lg p-3" style={{ backgroundColor: 'rgba(243, 107, 34, 0.1)' }}>
-                <div className="text-2xl font-bold" style={{ color: '#f36b22' }}>{levelsCompleted}/2</div>
+                <div className="text-2xl font-bold" style={{ color: '#f36b22' }}>{levelsCompleted}/3</div>
                 <div className="text-xs text-gray-600">Stig lokið</div>
               </div>
               <div className="bg-green-50 rounded-lg p-3">

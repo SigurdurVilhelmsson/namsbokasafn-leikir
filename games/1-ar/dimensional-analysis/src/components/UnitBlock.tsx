@@ -6,10 +6,13 @@ interface UnitBlockProps {
   isSelected?: boolean;
   isCancelling?: boolean;
   isCancelled?: boolean;
+  isMatching?: boolean;
   onClick?: () => void;
   color?: 'blue' | 'green' | 'orange' | 'red' | 'gray';
   size?: 'small' | 'medium' | 'large';
   showValue?: boolean;
+  /** Use enhanced strikethrough animation */
+  useStrikethrough?: boolean;
 }
 
 const colorClasses = {
@@ -36,30 +39,56 @@ export function UnitBlock({
   isSelected = false,
   isCancelling = false,
   isCancelled = false,
+  isMatching = false,
   onClick,
   color = 'blue',
   size = 'medium',
-  showValue = true
+  showValue = true,
+  useStrikethrough = false
 }: UnitBlockProps) {
   const [animationClass, setAnimationClass] = useState('');
+  const [showStrikethrough, setShowStrikethrough] = useState(false);
+  const [showBurst, setShowBurst] = useState(false);
 
   useEffect(() => {
     if (isCancelling) {
-      setAnimationClass('animate-pulse scale-110');
-      const timer = setTimeout(() => {
-        setAnimationClass('animate-shrink opacity-0 scale-0');
-      }, 300);
-      return () => clearTimeout(timer);
+      if (useStrikethrough) {
+        // Enhanced strikethrough animation
+        setShowStrikethrough(true);
+        setShowBurst(true);
+        setAnimationClass('');
+        const timer = setTimeout(() => {
+          setAnimationClass('unit-cancelled');
+        }, 400);
+        return () => clearTimeout(timer);
+      } else {
+        // Legacy animation
+        setAnimationClass('animate-pulse scale-110');
+        const timer = setTimeout(() => {
+          setAnimationClass('animate-shrink opacity-0 scale-0');
+        }, 300);
+        return () => clearTimeout(timer);
+      }
     } else if (isCancelled) {
-      setAnimationClass('opacity-0 scale-0');
-    } else if (isSelected) {
-      setAnimationClass('ring-4 ring-yellow-400 scale-105');
+      if (useStrikethrough) {
+        setShowStrikethrough(true);
+        setAnimationClass('unit-cancelled');
+      } else {
+        setAnimationClass('opacity-0 scale-0');
+      }
+    } else if (isSelected || isMatching) {
+      setAnimationClass(isMatching ? 'unit-match-glow ring-4 ring-orange-400 scale-105' : 'ring-4 ring-yellow-400 scale-105');
+      setShowStrikethrough(false);
+      setShowBurst(false);
     } else {
       setAnimationClass('');
+      setShowStrikethrough(false);
+      setShowBurst(false);
     }
-  }, [isCancelling, isCancelled, isSelected]);
+  }, [isCancelling, isCancelled, isSelected, isMatching, useStrikethrough]);
 
-  if (isCancelled && !isCancelling) {
+  // For legacy mode, hide completely when cancelled
+  if (isCancelled && !isCancelling && !useStrikethrough) {
     return null;
   }
 
@@ -72,6 +101,33 @@ export function UnitBlock({
     ${onClick ? 'cursor-pointer hover:scale-105 active:scale-95' : ''}
     ${animationClass}
   `;
+
+  // Wrap in container for strikethrough effect
+  if (useStrikethrough) {
+    return (
+      <div className="unit-cancel-container">
+        <div
+          className={baseClasses}
+          onClick={onClick}
+          role={onClick ? 'button' : undefined}
+          tabIndex={onClick ? 0 : undefined}
+          onKeyDown={(e) => {
+            if (onClick && (e.key === 'Enter' || e.key === ' ')) {
+              e.preventDefault();
+              onClick();
+            }
+          }}
+        >
+          {showValue && <span className="mr-1">{value}</span>}
+          <span>{unit}</span>
+        </div>
+        {/* Strikethrough line */}
+        <div className={`unit-cancel-line ${showStrikethrough ? 'animate' : ''}`} />
+        {/* Burst effect */}
+        {showBurst && <div className={`cancel-burst ${showBurst ? 'animate' : ''}`} />}
+      </div>
+    );
+  }
 
   return (
     <div

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { UnitBlock } from './UnitBlock';
 
 interface UnitCancellationVisualizerProps {
@@ -6,6 +6,10 @@ interface UnitCancellationVisualizerProps {
   denominatorUnits: string[];
   onCancel?: (unit: string) => void;
   showCancelButton?: boolean;
+  /** Enable enhanced animations with strikethrough and connecting lines */
+  enhancedAnimation?: boolean;
+  /** Auto-animate cancellation on mount */
+  autoAnimate?: boolean;
 }
 
 /**
@@ -17,42 +21,75 @@ export function UnitCancellationVisualizer({
   numeratorUnits,
   denominatorUnits,
   onCancel,
-  showCancelButton = false
+  showCancelButton = false,
+  enhancedAnimation = true,
+  autoAnimate = false
 }: UnitCancellationVisualizerProps) {
   const [cancellingUnit, setCancellingUnit] = useState<string | null>(null);
   const [cancelledUnits, setCancelledUnits] = useState<Set<string>>(new Set());
+  const [connectingLines, setConnectingLines] = useState<Array<{numIdx: number, denIdx: number, unit: string}>>([]);
+  const [animatingLine, setAnimatingLine] = useState<number | null>(null);
+
+  const containerRef = useRef<HTMLDivElement>(null);
+  const numRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const denRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   // Find matching units that can be cancelled
   const matchingUnits = numeratorUnits.filter(u => denominatorUnits.includes(u) && !cancelledUnits.has(u));
   const hasMatchingUnits = matchingUnits.length > 0;
 
-  // Track which units are already cancelled (appear in both)
-  useEffect(() => {
-    const cancelled = new Set<string>();
-    const numCounts: Record<string, number> = {};
-    const denCounts: Record<string, number> = {};
+  // Calculate connecting lines between matching units
+  const updateConnectingLines = useCallback(() => {
+    if (!enhancedAnimation) return;
 
-    numeratorUnits.forEach(u => { numCounts[u] = (numCounts[u] || 0) + 1; });
-    denominatorUnits.forEach(u => { denCounts[u] = (denCounts[u] || 0) + 1; });
+    const lines: Array<{numIdx: number, denIdx: number, unit: string}> = [];
+    const usedDenIndices = new Set<number>();
 
-    // Mark units that appear in both as "can be cancelled"
-    Object.keys(numCounts).forEach(unit => {
-      if (denCounts[unit]) {
-        const cancelCount = Math.min(numCounts[unit], denCounts[unit]);
-        for (let i = 0; i < cancelCount; i++) {
-          cancelled.add(`${unit}-${i}`);
-        }
+    numeratorUnits.forEach((unit, numIdx) => {
+      if (cancelledUnits.has(unit)) return;
+
+      const denIdx = denominatorUnits.findIndex((d, idx) =>
+        d === unit && !usedDenIndices.has(idx) && !cancelledUnits.has(d)
+      );
+
+      if (denIdx !== -1) {
+        lines.push({ numIdx, denIdx, unit });
+        usedDenIndices.add(denIdx);
       }
     });
-  }, [numeratorUnits, denominatorUnits]);
+
+    setConnectingLines(lines);
+  }, [numeratorUnits, denominatorUnits, cancelledUnits, enhancedAnimation]);
+
+  useEffect(() => {
+    updateConnectingLines();
+  }, [updateConnectingLines]);
+
+  // Auto-animate on mount if enabled
+  useEffect(() => {
+    if (autoAnimate && hasMatchingUnits && matchingUnits.length > 0) {
+      const timer = setTimeout(() => {
+        handleCancel(matchingUnits[0]);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [autoAnimate]);
 
   const handleCancel = (unit: string) => {
     setCancellingUnit(unit);
+
+    // Find and animate the connecting line
+    const lineIdx = connectingLines.findIndex(l => l.unit === unit);
+    if (lineIdx !== -1) {
+      setAnimatingLine(lineIdx);
+    }
+
     setTimeout(() => {
       if (onCancel) onCancel(unit);
       setCancellingUnit(null);
       setCancelledUnits(prev => new Set([...prev, unit]));
-    }, 600);
+      setAnimatingLine(null);
+    }, enhancedAnimation ? 800 : 600);
   };
 
   // Determine which units are matching and should be highlighted
@@ -62,7 +99,7 @@ export function UnitCancellationVisualizer({
 
     // Check if this unit has a match in the other position
     const otherUnits = position === 'numerator' ? denominatorUnits : numeratorUnits;
-    if (otherUnits.includes(unit)) return 'matching';
+    if (otherUnits.includes(unit) && !cancelledUnits.has(unit)) return 'matching';
 
     return 'normal';
   };
@@ -73,8 +110,57 @@ export function UnitCancellationVisualizer({
     return position === 'numerator' ? 'blue' : 'green';
   };
 
+  // Get SVG path for connecting line between two units
+  const getConnectingLinePath = (numIdx: number, denIdx: number): string => {
+    const numEl = numRefs.current[numIdx];
+    const denEl = denRefs.current[denIdx];
+    const container = containerRef.current;
+
+    if (!numEl || !denEl || !container) return '';
+
+    const containerRect = container.getBoundingClientRect();
+    const numRect = numEl.getBoundingClientRect();
+    const denRect = denEl.getBoundingClientRect();
+
+    const x1 = numRect.left + numRect.width / 2 - containerRect.left;
+    const y1 = numRect.bottom - containerRect.top;
+    const x2 = denRect.left + denRect.width / 2 - containerRect.left;
+    const y2 = denRect.top - containerRect.top;
+
+    // Create a curved path
+    const midY = (y1 + y2) / 2;
+    return `M ${x1} ${y1} Q ${x1} ${midY} ${(x1 + x2) / 2} ${midY} Q ${x2} ${midY} ${x2} ${y2}`;
+  };
+
   return (
-    <div className="bg-gradient-to-b from-gray-50 to-white p-6 rounded-2xl shadow-lg border-2 border-gray-200">
+    <div ref={containerRef} className="bg-gradient-to-b from-gray-50 to-white p-6 rounded-2xl shadow-lg border-2 border-gray-200 relative">
+      {/* SVG overlay for connecting lines */}
+      {enhancedAnimation && connectingLines.length > 0 && (
+        <svg
+          className="absolute inset-0 pointer-events-none z-20"
+          style={{ width: '100%', height: '100%' }}
+        >
+          {connectingLines.map((line, idx) => {
+            const isAnimating = animatingLine === idx;
+            const isCancelled = cancelledUnits.has(line.unit);
+            if (isCancelled) return null;
+
+            return (
+              <path
+                key={`line-${idx}`}
+                d={getConnectingLinePath(line.numIdx, line.denIdx)}
+                fill="none"
+                stroke={isAnimating ? '#ef4444' : '#f97316'}
+                strokeWidth={isAnimating ? 3 : 2}
+                strokeDasharray={isAnimating ? '8,4' : '4,4'}
+                className={`connect-line ${isAnimating ? 'animate-draw' : ''} ${cancellingUnit === line.unit ? 'animate-fade' : ''}`}
+                opacity={0.7}
+              />
+            );
+          })}
+        </svg>
+      )}
+
       {/* Header */}
       <div className="text-center mb-4">
         <h3 className="text-sm font-bold text-gray-700 uppercase tracking-wide">Einingagreining</h3>
@@ -86,24 +172,26 @@ export function UnitCancellationVisualizer({
         <div className="flex items-center gap-2 mb-2">
           <span className="text-xs font-semibold text-blue-600 bg-blue-100 px-2 py-1 rounded">Teljari</span>
         </div>
-        <div className="min-h-[60px] border-2 border-dashed border-blue-300 rounded-xl p-3 bg-blue-50 flex flex-wrap items-center justify-center gap-2">
+        <div className="min-h-[60px] border-2 border-dashed border-blue-300 rounded-xl p-3 bg-blue-50 flex flex-wrap items-center justify-center gap-3">
           {numeratorUnits.length === 0 ? (
             <span className="text-gray-400 text-sm italic">Engar einingar</span>
           ) : (
             numeratorUnits.map((unit, idx) => {
               const status = getUnitStatus(unit, 'numerator');
               return (
-                <UnitBlock
-                  key={`num-${idx}`}
-                  value={1}
-                  unit={unit}
-                  color={getUnitColor(status, 'numerator')}
-                  size="medium"
-                  showValue={false}
-                  isCancelling={status === 'cancelling'}
-                  isCancelled={status === 'cancelled'}
-                  isSelected={status === 'matching'}
-                />
+                <div key={`num-${idx}`} ref={el => numRefs.current[idx] = el}>
+                  <UnitBlock
+                    value={1}
+                    unit={unit}
+                    color={getUnitColor(status, 'numerator')}
+                    size="medium"
+                    showValue={false}
+                    isCancelling={status === 'cancelling'}
+                    isCancelled={status === 'cancelled'}
+                    isMatching={status === 'matching'}
+                    useStrikethrough={enhancedAnimation}
+                  />
+                </div>
               );
             })
           )}
@@ -115,7 +203,7 @@ export function UnitCancellationVisualizer({
         <div className="h-1 bg-gray-800 rounded-full" />
         {hasMatchingUnits && (
           <div className="absolute -top-1 left-1/2 transform -translate-x-1/2">
-            <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center animate-pulse">
+            <div className={`w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center ${cancellingUnit ? 'animate-ping' : 'animate-pulse'}`}>
               <span className="text-white text-lg">×</span>
             </div>
           </div>
@@ -127,24 +215,26 @@ export function UnitCancellationVisualizer({
         <div className="flex items-center gap-2 mb-2">
           <span className="text-xs font-semibold text-green-600 bg-green-100 px-2 py-1 rounded">Nefnari</span>
         </div>
-        <div className="min-h-[60px] border-2 border-dashed border-green-300 rounded-xl p-3 bg-green-50 flex flex-wrap items-center justify-center gap-2">
+        <div className="min-h-[60px] border-2 border-dashed border-green-300 rounded-xl p-3 bg-green-50 flex flex-wrap items-center justify-center gap-3">
           {denominatorUnits.length === 0 ? (
             <span className="text-gray-400 text-sm italic">Engar einingar</span>
           ) : (
             denominatorUnits.map((unit, idx) => {
               const status = getUnitStatus(unit, 'denominator');
               return (
-                <UnitBlock
-                  key={`denom-${idx}`}
-                  value={1}
-                  unit={unit}
-                  color={getUnitColor(status, 'denominator')}
-                  size="medium"
-                  showValue={false}
-                  isCancelling={status === 'cancelling'}
-                  isCancelled={status === 'cancelled'}
-                  isSelected={status === 'matching'}
-                />
+                <div key={`denom-${idx}`} ref={el => denRefs.current[idx] = el}>
+                  <UnitBlock
+                    value={1}
+                    unit={unit}
+                    color={getUnitColor(status, 'denominator')}
+                    size="medium"
+                    showValue={false}
+                    isCancelling={status === 'cancelling'}
+                    isCancelled={status === 'cancelled'}
+                    isMatching={status === 'matching'}
+                    useStrikethrough={enhancedAnimation}
+                  />
+                </div>
               );
             })
           )}

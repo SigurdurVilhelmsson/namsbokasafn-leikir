@@ -276,6 +276,150 @@
   animation: confetti-fall 1.5s ease-out forwards;
 }
 
+/* ==================== Unit Cancellation Animations ==================== */
+
+/* Strikethrough line animation - draws a diagonal line across */
+@keyframes strikethrough-draw {
+  0% {
+    width: 0;
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    width: 140%;
+    opacity: 1;
+  }
+}
+
+/* Unit fade out after strikethrough */
+@keyframes cancel-fade {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0.3;
+    transform: scale(0.9);
+    filter: grayscale(100%);
+  }
+}
+
+/* Strikethrough container */
+.unit-cancel-container {
+  position: relative;
+  display: inline-flex;
+}
+
+/* The strikethrough line */
+.unit-cancel-line {
+  position: absolute;
+  top: 50%;
+  left: -10%;
+  height: 4px;
+  width: 0;
+  background: linear-gradient(90deg, transparent, #ef4444, #ef4444, transparent);
+  transform: translateY(-50%) rotate(-15deg);
+  transform-origin: left center;
+  border-radius: 2px;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.unit-cancel-line.animate {
+  animation: strikethrough-draw 0.4s ease-out forwards;
+}
+
+/* Cancelled unit styling */
+.unit-cancelled {
+  animation: cancel-fade 0.3s ease-out 0.3s forwards;
+}
+
+/* Glow effect on matching units before cancel */
+@keyframes match-glow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(249, 115, 22, 0);
+  }
+  50% {
+    box-shadow: 0 0 20px 5px rgba(249, 115, 22, 0.6);
+  }
+}
+
+.unit-match-glow {
+  animation: match-glow 1s ease-in-out infinite;
+}
+
+/* Connecting line between matching units */
+@keyframes connect-line-draw {
+  0% {
+    stroke-dashoffset: 100;
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
+@keyframes connect-line-fade {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.connect-line {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+}
+
+.connect-line.animate-draw {
+  animation: connect-line-draw 0.5s ease-out forwards;
+}
+
+.connect-line.animate-fade {
+  animation: connect-line-fade 0.3s ease-out 0.5s forwards;
+}
+
+/* Cancel burst effect */
+@keyframes cancel-burst {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+.cancel-burst {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  background: radial-gradient(circle, rgba(239, 68, 68, 0.8) 0%, transparent 70%);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  pointer-events: none;
+  z-index: 15;
+}
+
+.cancel-burst.animate {
+  animation: cancel-burst 0.5s ease-out forwards;
+}
+
 /* Touch-friendly styles */
 @media (pointer: coarse) {
   button {

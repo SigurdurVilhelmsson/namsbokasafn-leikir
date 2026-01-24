@@ -2,11 +2,12 @@ import { useState, useEffect } from 'react';
 import { Level1 } from './components/Level1';
 import { Level2 } from './components/Level2';
 import { Level3 } from './components/Level3';
+import { NameBuilder } from './components/NameBuilder';
 import { useAchievements } from '@shared/hooks/useAchievements';
 import { AchievementsButton, AchievementsPanel } from '@shared/components/AchievementsPanel';
 import { AchievementNotificationsContainer } from '@shared/components/AchievementNotificationPopup';
 
-type Screen = 'menu' | 'level1' | 'level2' | 'level3';
+type Screen = 'menu' | 'level1' | 'level2' | 'level3' | 'namebuilder';
 
 interface Progress {
   level1Completed: boolean;
@@ -180,6 +181,29 @@ function App() {
     );
   }
 
+  if (screen === 'namebuilder') {
+    return (
+      <>
+        <NameBuilder
+          onComplete={() => {
+            setProgress(prev => ({
+              ...prev,
+              totalGamesPlayed: prev.totalGamesPlayed + 1,
+            }));
+            setScreen('menu');
+          }}
+          onBack={() => setScreen('menu')}
+          onCorrectAnswer={trackCorrectAnswer}
+          onIncorrectAnswer={trackIncorrectAnswer}
+        />
+        <AchievementNotificationsContainer
+          notifications={notifications}
+          onDismiss={dismissNotification}
+        />
+      </>
+    );
+  }
+
   // Main Menu
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex items-center justify-center p-4">
@@ -304,6 +328,28 @@ function App() {
                     <div className="text-gray-400 text-3xl">→</div>
                   )}
                 </div>
+              </div>
+            </button>
+
+            {/* Name Builder - Bonus Mode */}
+            <button
+              onClick={() => setScreen('namebuilder')}
+              className="w-full bg-gradient-to-r from-purple-50 to-pink-50 border-2 border-purple-200 hover:border-purple-400 hover:from-purple-100 hover:to-pink-100 rounded-xl p-6 text-left transition-all"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-sm font-bold px-3 py-1 rounded-full">
+                      Bónus
+                    </span>
+                    <h3 className="text-xl font-bold text-gray-800">Nafnasmiðja</h3>
+                    <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full">Nýtt!</span>
+                  </div>
+                  <p className="text-gray-600 text-sm">
+                    Byggðu efnanöfn úr pörtum - læra nafnareglurnar!
+                  </p>
+                </div>
+                <div className="text-purple-500 text-3xl">🔧</div>
               </div>
             </button>
           </div>

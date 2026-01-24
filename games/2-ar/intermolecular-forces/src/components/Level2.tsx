@@ -148,11 +148,43 @@ const problems: RankingProblem[] = [
     orderDirection: 'lowestFirst',
     explanation: 'Yfirborðsspenna eykst með sterkari IMF. Hexan (aðeins London) < Metanól (vetnistengi) < Vatn (sterkari vetnistengi vegna 2 O-H).',
     hint: 'Yfirborðsspenna tengist styrk IMF — sterkari kraftar = meiri spenna.'
+  },
+  // Problem 9: H-bonding "non-example" - CH₄ has H but no H-bonding
+  {
+    id: 9,
+    question: 'Raðaðu eftir SUÐUMARKI (lægst til hæst):',
+    property: 'boilingPoint',
+    propertyName: 'Suðumark',
+    compounds: [
+      { id: 'A', formula: 'CH₄', name: 'Metan', molarMass: 16, boilingPoint: -161, imfs: ['London'] },
+      { id: 'B', formula: 'NH₃', name: 'Ammóníak', molarMass: 17, boilingPoint: -33, imfs: ['London', 'Tvípól', 'H-tengi'] },
+      { id: 'C', formula: 'H₂O', name: 'Vatn', molarMass: 18, boilingPoint: 100, imfs: ['London', 'Tvípól', 'H-tengi'] },
+    ],
+    correctOrder: ['A', 'B', 'C'],
+    orderDirection: 'lowestFirst',
+    explanation: '⚠️ MIKILVÆGT: CH₄ hefur 4 vetnisatóm en ENGIN vetnistengi! Kolefni er ekki rafneikvætt nóg. Aðeins H bundið við F, O, eða N myndar vetnistengi. NH₃ og H₂O hafa vetnistengi, þar af er vatn með sterkustu vetnistengsl.',
+    hint: 'Vetnistengi myndast AÐEINS þegar H er bundið við F, O, eða N — ekki C!'
+  },
+  // Problem 10: Comparing similar molecules to reinforce the concept
+  {
+    id: 10,
+    question: 'Raðaðu eftir SUÐUMARKI (lægst til hæst):',
+    property: 'boilingPoint',
+    propertyName: 'Suðumark',
+    compounds: [
+      { id: 'A', formula: 'C₂H₆', name: 'Etan', molarMass: 30, boilingPoint: -89, imfs: ['London'] },
+      { id: 'B', formula: 'CH₃F', name: 'Flúormetan', molarMass: 34, boilingPoint: -78, imfs: ['London', 'Tvípól'] },
+      { id: 'C', formula: 'CH₃OH', name: 'Metanól', molarMass: 32, boilingPoint: 65, imfs: ['London', 'Tvípól', 'H-tengi'] },
+    ],
+    correctOrder: ['A', 'B', 'C'],
+    orderDirection: 'lowestFirst',
+    explanation: 'Etan er óskautað (aðeins London). CH₃F er skautað en C-H bindingin gefur ekki vetnistengi (F getur tekið við H frá öðrum sameindum, en CH₃F getur ekki gefið). Metanól með O-H hópinn gefur og tekur vetnistengi → langsterkast.',
+    hint: 'Skoðaðu hvort sameindin getur GEFIÐ H til vetnistengis (þarf H bundið við F, O, eða N).'
   }
 ];
 
-// Max possible score: 8 problems * 15 points = 120 points
-const MAX_SCORE = 120;
+// Max possible score: 10 problems * 15 points = 150 points
+const MAX_SCORE = 150;
 
 export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer }: Level2Props) {
   const [currentProblem, setCurrentProblem] = useState(0);
@@ -377,6 +409,47 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
                 )}
                 <p className="text-sm text-gray-700 mt-2">{problem.explanation}</p>
               </div>
+
+              {/* Real boiling point data visualization */}
+              {problem.property === 'boilingPoint' && (
+                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-xl mb-4 border border-blue-200">
+                  <div className="font-bold text-indigo-800 mb-3 flex items-center gap-2">
+                    <span className="text-lg">📊</span> Raunveruleg suðumörk
+                  </div>
+                  <div className="space-y-2">
+                    {problem.correctOrder.map((id, idx) => {
+                      const compound = problem.compounds.find(c => c.id === id)!;
+                      // Calculate bar width (scale from -200 to 300 for visualization)
+                      const minTemp = -200;
+                      const maxTemp = 300;
+                      const normalized = ((compound.boilingPoint - minTemp) / (maxTemp - minTemp)) * 100;
+                      const barWidth = Math.max(5, Math.min(100, normalized));
+
+                      return (
+                        <div key={id} className="flex items-center gap-3">
+                          <div className="w-16 text-sm font-bold text-gray-700">{compound.formula}</div>
+                          <div className="flex-1 bg-gray-200 rounded-full h-6 relative overflow-hidden">
+                            <div
+                              className={`h-full rounded-full transition-all duration-500 flex items-center justify-end pr-2 ${
+                                idx === 0 ? 'bg-blue-400' : idx === problem.correctOrder.length - 1 ? 'bg-red-400' : 'bg-purple-400'
+                              }`}
+                              style={{ width: `${barWidth}%` }}
+                            >
+                              <span className="text-xs font-bold text-white drop-shadow">
+                                {compound.boilingPoint}°C
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <div className="mt-3 text-xs text-gray-500 text-center">
+                    Blár = lægst | Fjólublár = miðja | Rauður = hæst
+                  </div>
+                </div>
+              )}
+
               <button
                 onClick={nextProblem}
                 className="w-full bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-4 px-6 rounded-xl"

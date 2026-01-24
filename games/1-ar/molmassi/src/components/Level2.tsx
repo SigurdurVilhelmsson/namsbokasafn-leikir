@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { PeriodicTable } from './PeriodicTable';
 
 // Fisher-Yates shuffle for reliable randomization
 function shuffle<T>(array: T[]): T[] {
@@ -246,6 +247,9 @@ export function Level2({ onBack, onComplete, onCorrectAnswer, onIncorrectAnswer 
 
   // For order_molecules
   const [orderedCompounds, setOrderedCompounds] = useState<Compound[]>([]);
+
+  // Periodic table modal
+  const [showPeriodicTable, setShowPeriodicTable] = useState(false);
 
   const totalChallenges = 8;
   const isComplete = challengeNumber >= totalChallenges;
@@ -829,9 +833,17 @@ export function Level2({ onBack, onComplete, onCorrectAnswer, onIncorrectAnswer 
           </button>
         )}
 
-        {/* Reference card */}
+        {/* Reference card with periodic table button */}
         <div className="mt-6 bg-purple-50 rounded-xl p-4">
-          <h3 className="font-bold text-purple-800 mb-2">Nálgunartöflur:</h3>
+          <div className="flex justify-between items-center mb-2">
+            <h3 className="font-bold text-purple-800">Nálgunartöflur:</h3>
+            <button
+              onClick={() => setShowPeriodicTable(true)}
+              className="bg-purple-500 hover:bg-purple-600 text-white text-xs font-semibold py-1 px-3 rounded-lg transition-colors"
+            >
+              📊 Opna lotukerfið
+            </button>
+          </div>
           <div className="grid grid-cols-4 gap-2 text-xs text-center">
             {['H', 'C', 'N', 'O', 'S', 'Cl', 'Na', 'Ca'].map(symbol => (
               <div key={symbol} className="bg-white rounded p-1">
@@ -841,6 +853,14 @@ export function Level2({ onBack, onComplete, onCorrectAnswer, onIncorrectAnswer 
             ))}
           </div>
         </div>
+
+        {/* Periodic Table Modal */}
+        {showPeriodicTable && (
+          <PeriodicTable
+            onClose={() => setShowPeriodicTable(false)}
+            showApproximate={true}
+          />
+        )}
 
         {/* Back button */}
         <button

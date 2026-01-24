@@ -10,6 +10,63 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
+#### Year 1 Game Improvements (1-ar)
+- **Molar Mass (Mólmassi)**
+  - Mystery Molecule mode in Level 3 - students work backwards from molar mass to identify compounds
+  - Proper periodic table with grid layout
+  - MoleculeViewer3D with 2D/3D toggle
+
+- **Solutions (Lausnir)**
+  - Temperature effects on solubility with interactive visualization
+  - Real solubility data for 6 compounds (KNO₃, NaCl, sugar, CaSO₄, O₂, CO₂)
+  - Visual stoichiometry components
+
+- **Dimensional Analysis**
+  - 8 new real-world chemistry lab scenarios (portions, molar mass, medication dosage, etc.)
+  - Enhanced unit cancellation animation
+  - DragDropBuilder integration for unit conversion chains
+
+- **Limiting Reactants (Takmarkandi)**
+  - Interactive reaction animation showing molecules combining
+  - Step-by-step visualization of stoichiometry
+  - Visual feedback for limiting vs excess reactants
+
+- **Nomenclature (Nafnakerfið)**
+  - Name Builder bonus mode for learning naming rules from parts
+  - Structural formula display with bonds
+  - Molecular structure visualization on cards
+
+#### Year 2 Game Improvements (2-ar)
+- **Lewis Structures**
+  - Octet rule exception challenges (expanded octets, radicals)
+  - DragDropBuilder integration for building structures
+
+- **VSEPR Geometry**
+  - Visual bond angle indicator with animated measurement
+
+- **Intermolecular Forces**
+  - Boiling point visualization comparing compound strengths
+  - Hydrogen bond non-examples for clearer understanding
+
+#### Year 3 Game Improvements (3-ar)
+- **Equilibrium Shifter**
+  - Q vs K comparison visualization showing reaction direction
+
+- **Buffer Recipe Creator**
+  - Level 3 with stock solution calculations
+
+- **Gas Law Challenge**
+  - "Choose the correct law" step before calculations
+
+#### Shared Infrastructure
+- Internationalization (i18n) support for all games (Icelandic, English, Polish)
+- FeedbackPanel component integrated across all games
+- DragDropBuilder component for interactive building exercises
+- MoleculeViewer3D component with Three.js
+- Comprehensive test suite (achievements, storage, hooks, export utilities)
+
+#### Documentation
 - Documentation cleanup and reorganization
   - Created `docs/` directory with documentation index
   - Archived completed migration documentation

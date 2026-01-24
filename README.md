@@ -90,38 +90,42 @@ See [tools/game-template/README.md](tools/game-template/README.md) for detailed 
 
 ### Year 1 (1-ár) - Foundation Chemistry
 
-#### ✅ Einingagreining (Dimensional Analysis) - **MIGRATED**
+#### ✅ Einingagreining (Dimensional Analysis) - **ENHANCED**
 - **Topics**: Unit conversion, dimensional analysis, factor-label method
 - **Levels**: 3 progressive difficulty levels (lessons, practice, challenges)
-- **Features**: 35 interactive questions, scaffolded practice, complete scoring system
+- **Features**: 35+ interactive questions including 8 real-world chemistry lab scenarios, enhanced unit cancellation animation, drag-and-drop unit chain building
 - **Source**: `games/1-ar/dimensional-analysis/`
 - **Build**: `dimensional-analysis.html` (168KB)
 
-#### ✅ Mólmassi (Molar Mass Challenge) - **MIGRATED**
+#### ✅ Mólmassi (Molar Mass Challenge) - **ENHANCED**
 - **Topics**: Molar mass calculations, chemical formulas, periodic table
-- **Format**: Practice & Competition modes with timer
-- **Features**: 29 compounds, 4 difficulty levels, hint system, streak tracking
+- **Format**: Practice & Competition modes with timer, Mystery Molecule mode
+- **Features**: 29 compounds, 4 difficulty levels, hint system, streak tracking, proper periodic table with grid layout, 2D/3D molecule visualization
+- **New**: Mystery Molecule mode - work backwards from molar mass to identify compounds
 - **Source**: `games/1-ar/molmassi/`
 - **Build**: `molmassi.html` (184KB)
 
-#### ✅ Nafnakerfið (Compound Name Matchmaker) - **MIGRATED**
+#### ✅ Nafnakerfið (Compound Name Matchmaker) - **ENHANCED**
 - **Topics**: Chemical nomenclature, formula-name matching
-- **Format**: Card matching game with 3D animations
-- **Features**: 59 compounds, 3 difficulty levels, configurable pairs, best score tracking
+- **Format**: Card matching game with 3D animations, bonus Name Builder mode
+- **Features**: 59 compounds, 3 difficulty levels, configurable pairs, best score tracking, molecular structure visualization on cards, structural formula display with bonds
+- **New**: Name Builder (Nafnasmiðja) bonus mode - learn naming rules by building names from parts (prefixes, roots, suffixes)
 - **Source**: `games/1-ar/nafnakerfid/`
 - **Build**: `nafnakerfid.html` (172KB)
 
-#### ✅ Lausnir (Solution Lab) - **MIGRATED**
-- **Topics**: Molarity, dilution, solution mixing, concentration calculations
+#### ✅ Lausnir (Solution Lab) - **ENHANCED**
+- **Topics**: Molarity, dilution, solution mixing, concentration calculations, temperature effects on solubility
 - **Format**: Interactive problem-solving with beaker animations
-- **Features**: 5 problem types, 3 difficulty levels, step-by-step solutions, hint system
+- **Features**: 5 problem types, 3 difficulty levels, step-by-step solutions, hint system, visual stoichiometry components
+- **New**: Temperature-solubility visualization with real data for 6 compounds (KNO₃, NaCl, sugar, CaSO₄, O₂, CO₂), interactive temperature explorer
 - **Source**: `games/1-ar/lausnir/`
 - **Build**: `lausnir.html` (201KB)
 
-#### ✅ Takmarkandi (Limiting Reactant Factory) - **MIGRATED**
+#### ✅ Takmarkandi (Limiting Reactant Factory) - **ENHANCED**
 - **Topics**: Limiting reagents, stoichiometry, product formation
 - **Format**: Problem-solving game with molecule visualization
 - **Features**: 20 reactions, 3 difficulty levels, detailed solutions, streak system
+- **New**: Interactive reaction animation showing molecules combining step-by-step, visual feedback for limiting vs excess reactants
 - **Source**: `games/1-ar/takmarkandi/`
 - **Build**: `takmarkandi.html` (188KB)
 
@@ -234,8 +238,9 @@ See [tools/game-template/README.md](tools/game-template/README.md) for detailed 
 - **PostCSS + Autoprefixer** - CSS processing
 
 ### Shared Library
-- **Custom Hooks**: `useI18n`, `useProgress`, `useAccessibility`, `useAchievements`
+- **Custom Hooks**: `useI18n`, `useProgress`, `useAccessibility`, `useAchievements`, `useGameI18n`
 - **Utilities**: Storage, export, scoring algorithms, achievement tracking
+- **Components**: FeedbackPanel, DragDropBuilder, MoleculeViewer3D, LanguageSwitcher
 - **i18n**: Translation system with 3 languages
 - **Achievement System**: Cross-game badges, streaks, and progress tracking
 

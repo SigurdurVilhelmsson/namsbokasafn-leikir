@@ -1,5 +1,6 @@
 import { useState, useCallback, useMemo } from 'react';
 import { shuffleArray } from '@shared/utils';
+import { ConcentrationComparison } from './StoichiometryVisualization';
 
 // Level 2: Application/Reasoning - "What happens when..." questions
 // Students predict outcomes without calculating
@@ -398,8 +399,21 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
               <div className="text-xl font-bold mb-2">
                 {isCorrect ? '✓ Rétt!' : '✗ Ekki alveg rétt'}
               </div>
-              <div className="text-gray-700">
+              <div className="text-gray-700 mb-4">
                 <strong>Lykilhugtak:</strong> {scenario.concept}
+              </div>
+
+              {/* Visual stoichiometry comparison */}
+              <div className="mt-4 p-4 bg-white rounded-xl">
+                <div className="text-sm font-semibold text-gray-600 text-center mb-3">
+                  Samantekt á breytingum:
+                </div>
+                <ConcentrationComparison
+                  before={scenario.visualBefore}
+                  after={scenario.visualAfter}
+                  showParticles={true}
+                  animate={false}
+                />
               </div>
             </div>
           )}

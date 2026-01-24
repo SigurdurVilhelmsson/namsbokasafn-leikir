@@ -3,9 +3,11 @@ import { GasLawQuestion, GameMode, GameStats, QuestionFeedback } from './types';
 import { questions, getRandomQuestion } from './data';
 import { checkAnswer, calculateError, getUnit, getVariableName } from './utils/gas-calculations';
 import { useAchievements } from '@shared/hooks/useAchievements';
+import { useGameI18n } from '@shared/hooks';
 import { AchievementsButton, AchievementsPanel } from '@shared/components/AchievementsPanel';
 import { AchievementNotificationsContainer } from '@shared/components/AchievementNotificationPopup';
-import { ParticleSimulation, PARTICLE_TYPES, PHYSICS_PRESETS } from '@shared/components';
+import { ParticleSimulation, PARTICLE_TYPES, PHYSICS_PRESETS, LanguageSwitcher } from '@shared/components';
+import { gameTranslations } from './i18n';
 
 const STORAGE_KEY = 'gas-law-challenge-progress';
 
@@ -40,6 +42,7 @@ function saveStats(stats: GameStats): void {
 function App() {
   // Game state
   const [screen, setScreen] = useState<'menu' | 'game' | 'feedback'>('menu');
+  const { t, language, setLanguage } = useGameI18n({ gameTranslations });
   const [gameMode, setGameMode] = useState<GameMode>('practice');
   const [currentQuestion, setCurrentQuestion] = useState<GasLawQuestion | null>(null);
   const [userAnswer, setUserAnswer] = useState('');
@@ -244,7 +247,12 @@ function App() {
         <main className="max-w-5xl mx-auto px-4 py-8">
           <div className="bg-white rounded-xl shadow-lg p-8">
             {/* Header with achievements button */}
-            <div className="flex justify-end mb-4">
+            <div className="flex justify-end gap-2 mb-4">
+              <LanguageSwitcher
+                language={language}
+                onLanguageChange={setLanguage}
+                variant="compact"
+              />
               <AchievementsButton
                 achievements={achievements}
                 onClick={() => setShowAchievements(true)}

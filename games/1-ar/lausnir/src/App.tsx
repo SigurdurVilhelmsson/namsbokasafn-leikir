@@ -3,8 +3,11 @@ import { Level1 } from './components/Level1';
 import { Level2 } from './components/Level2';
 import { Level3 } from './components/Level3';
 import { useAchievements } from '@shared/hooks/useAchievements';
+import { useGameI18n } from '@shared/hooks/useGameI18n';
 import { AchievementsButton, AchievementsPanel } from '@shared/components/AchievementsPanel';
 import { AchievementNotificationsContainer } from '@shared/components/AchievementNotificationPopup';
+import { LanguageSwitcher } from '@shared/components';
+import { gameTranslations } from './i18n';
 
 type ActiveLevel = 'menu' | 'level1' | 'level2' | 'level3' | 'complete';
 
@@ -56,6 +59,8 @@ function App() {
   const [activeLevel, setActiveLevel] = useState<ActiveLevel>('menu');
   const [progress, setProgress] = useState<Progress>(loadProgress());
   const [showAchievements, setShowAchievements] = useState(false);
+
+  const { t, language, setLanguage } = useGameI18n({ gameTranslations });
 
   const {
     achievements,
@@ -195,53 +200,53 @@ function App() {
       <div className="min-h-screen bg-gradient-to-br from-yellow-50 to-orange-100 p-4 md:p-8">
         <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-2xl p-6 md:p-8">
           <h1 className="text-3xl md:text-4xl font-bold text-center mb-6 text-orange-600">
-            Til hamingju!
+            {t('completion.title')}
           </h1>
 
           <div className="text-center mb-8">
             <div className="text-6xl mb-4">🎉</div>
             <div className="text-2xl font-bold text-gray-800 mb-2">
-              Þú hefur lokið öllum stigum!
+              {t('completion.completedAll')}
             </div>
           </div>
 
           <div className="space-y-4 mb-8">
             <div className="bg-blue-50 p-4 rounded-xl flex justify-between items-center">
               <div>
-                <div className="font-bold text-blue-800">Stig 1: Hugtök</div>
-                <div className="text-sm text-blue-600">Sjónræn meðhöndlun</div>
+                <div className="font-bold text-blue-800">{t('levels.level1.name')}</div>
+                <div className="text-sm text-blue-600">{t('completion.visualHandling')}</div>
               </div>
               <div className="text-2xl font-bold text-blue-600">{progress.level1Score || 0}</div>
             </div>
 
             <div className="bg-green-50 p-4 rounded-xl flex justify-between items-center">
               <div>
-                <div className="font-bold text-green-800">Stig 2: Rökstuðningur</div>
-                <div className="text-sm text-green-600">Spá fyrir um breytingar</div>
+                <div className="font-bold text-green-800">{t('levels.level2.name')}</div>
+                <div className="text-sm text-green-600">{t('completion.predictChanges')}</div>
               </div>
               <div className="text-2xl font-bold text-green-600">{progress.level2Score || 0}</div>
             </div>
 
             <div className="bg-purple-50 p-4 rounded-xl flex justify-between items-center">
               <div>
-                <div className="font-bold text-purple-800">Stig 3: Útreikningar</div>
-                <div className="text-sm text-purple-600">Nota formúlur</div>
+                <div className="font-bold text-purple-800">{t('levels.level3.name')}</div>
+                <div className="text-sm text-purple-600">{t('completion.useFormulas')}</div>
               </div>
               <div className="text-2xl font-bold text-purple-600">{progress.level3Score || 0}</div>
             </div>
 
             <div className="bg-orange-100 p-4 rounded-xl flex justify-between items-center border-2 border-orange-400">
-              <div className="font-bold text-orange-800 text-lg">Heildarstig</div>
+              <div className="font-bold text-orange-800 text-lg">{t('completion.totalScore')}</div>
               <div className="text-3xl font-bold text-orange-600">{totalScore}</div>
             </div>
           </div>
 
           <div className="bg-yellow-50 p-6 rounded-xl mb-6">
-            <h2 className="font-bold text-yellow-800 mb-3">Hvað lærðir þú?</h2>
+            <h2 className="font-bold text-yellow-800 mb-3">{t('completion.whatYouLearned')}</h2>
             <ul className="space-y-2 text-yellow-900 text-sm">
-              <li>✓ <strong>Stig 1:</strong> Styrkur = sameindir / rúmmál (sjónrænt)</li>
-              <li>✓ <strong>Stig 2:</strong> Spá fyrir um hvernig breytingar hafa áhrif á styrk</li>
-              <li>✓ <strong>Stig 3:</strong> Nota M₁V₁ = M₂V₂ og aðrar formúlur</li>
+              <li>✓ <strong>{t('levels.level1.name')}:</strong> {t('completion.level1Summary')}</li>
+              <li>✓ <strong>{t('levels.level2.name')}:</strong> {t('completion.level2Summary')}</li>
+              <li>✓ <strong>{t('levels.level3.name')}:</strong> {t('completion.level3Summary')}</li>
             </ul>
           </div>
 
@@ -250,13 +255,13 @@ function App() {
               onClick={() => setActiveLevel('menu')}
               className="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-bold py-4 px-6 rounded-xl transition-colors"
             >
-              Til baka
+              {t('completion.back')}
             </button>
             <button
               onClick={resetProgress}
               className="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-6 rounded-xl transition-colors"
             >
-              Byrja upp á nýtt
+              {t('completion.startOver')}
             </button>
           </div>
         </div>
@@ -268,14 +273,19 @@ function App() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-orange-100 p-4 md:p-8">
       <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-2xl p-6 md:p-8">
-        {/* Header with achievements button */}
+        {/* Header with language switcher and achievements button */}
         <div className="flex justify-between items-start mb-4">
+          <LanguageSwitcher
+            language={language}
+            onLanguageChange={setLanguage}
+            variant="compact"
+          />
           <div className="flex-1">
             <h1 className="text-3xl md:text-4xl font-bold text-center text-orange-600">
-              Lausnir
+              {t('game.title')}
             </h1>
             <p className="text-center text-gray-600">
-              Laerdu um molstyrk, utthynningu og lausnir
+              {t('game.subtitle')}
             </p>
           </div>
           <AchievementsButton
@@ -286,15 +296,12 @@ function App() {
 
         {/* Pedagogical explanation */}
         <div className="bg-orange-50 p-6 rounded-xl mb-8">
-          <h2 className="font-bold text-orange-800 mb-3">Hvernig virkar þetta?</h2>
+          <h2 className="font-bold text-orange-800 mb-3">{t('menu.howItWorks')}</h2>
           <p className="text-orange-900 text-sm mb-4">
-            Þessi leikur notar <strong>hugtakamiðaða nálgun</strong> sem byggir á rannsóknum
-            í kennslu raunvísinda. Þú byrjar á að <em>skilja</em> hugtökin sjónrænt,
-            síðan <em>spáir þú</em> fyrir um breytingar, og að lokum <em>reiknar þú</em>
-            með formúlum.
+            {t('menu.howItWorksDesc')}
           </p>
           <div className="text-xs text-orange-700">
-            Innblásið af PhET Interactive Simulations (University of Colorado Boulder)
+            {t('menu.inspiredBy')}
           </div>
         </div>
 
@@ -309,28 +316,27 @@ function App() {
               <div className="text-4xl">🔬</div>
               <div className="flex-1">
                 <div className="flex items-center gap-2">
-                  <span className="text-xl font-bold text-blue-800">Stig 1: Hugtök</span>
+                  <span className="text-xl font-bold text-blue-800">{t('levels.level1.name')}</span>
                   {progress.level1Completed && (
                     <span className="bg-green-500 text-white text-xs px-2 py-1 rounded-full">
-                      ✓ Lokið
+                      ✓ {t('levels.completed')}
                     </span>
                   )}
                   {progress.level1Score !== null && (
                     <span className="bg-blue-500 text-white text-xs px-2 py-1 rounded-full">
-                      {progress.level1Score} stig
+                      {progress.level1Score} {t('levels.points')}
                     </span>
                   )}
                 </div>
                 <div className="text-sm text-blue-600 mt-1">
-                  Sjónræn meðhöndlun - ENGIN útreikningar
+                  {t('levels.level1.description')}
                 </div>
                 <div className="text-xs text-gray-600 mt-2">
-                  Dragðu, smelltu og sjáðu hvernig styrkur breytist í rauntíma.
-                  Byggðu innsæi fyrir M = n/V.
+                  {t('levels.level1.details')}
                 </div>
                 {!progress.level1Completed && progress.level1Score !== null && (
                   <div className="text-xs text-orange-600 mt-2 font-semibold">
-                    Þarft {LEVEL1_MASTERY_SCORE} stig til að opna Stig 2. Reyndu aftur!
+                    {t('levels.level1.needScore').replace('{score}', String(LEVEL1_MASTERY_SCORE))}
                   </div>
                 )}
               </div>
@@ -352,30 +358,30 @@ function App() {
               <div className="flex-1">
                 <div className="flex items-center gap-2">
                   <span className={`text-xl font-bold ${isLevel2Unlocked ? 'text-green-800' : 'text-gray-500'}`}>
-                    Stig 2: Rökstuðningur
+                    {t('levels.level2.name')}
                   </span>
                   {progress.level2Completed && (
                     <span className="bg-green-500 text-white text-xs px-2 py-1 rounded-full">
-                      ✓ Lokið
+                      ✓ {t('levels.completed')}
                     </span>
                   )}
                   {progress.level2Score !== null && (
                     <span className="bg-green-600 text-white text-xs px-2 py-1 rounded-full">
-                      {progress.level2Score} stig
+                      {progress.level2Score} {t('levels.points')}
                     </span>
                   )}
                 </div>
                 <div className={`text-sm mt-1 ${isLevel2Unlocked ? 'text-green-600' : 'text-gray-500'}`}>
-                  Spáðu fyrir um breytingar - fjölval
+                  {t('levels.level2.description')}
                 </div>
                 <div className="text-xs text-gray-600 mt-2">
                   {isLevel2Unlocked
-                    ? '"Hvað gerist ef...?" spurningar. Notaðu hugtökin sem þú lærðir.'
-                    : 'Ljúktu Stig 1 til að opna þetta stig.'}
+                    ? t('levels.level2.details')
+                    : t('levels.level2.locked')}
                 </div>
                 {isLevel2Unlocked && !progress.level2Completed && progress.level2Score !== null && (
                   <div className="text-xs text-orange-600 mt-2 font-semibold">
-                    Þarft {LEVEL2_MASTERY_SCORE} stig til að opna Stig 3. Reyndu aftur!
+                    {t('levels.level2.needScore').replace('{score}', String(LEVEL2_MASTERY_SCORE))}
                   </div>
                 )}
               </div>
@@ -397,26 +403,26 @@ function App() {
               <div className="flex-1">
                 <div className="flex items-center gap-2">
                   <span className={`text-xl font-bold ${isLevel3Unlocked ? 'text-purple-800' : 'text-gray-500'}`}>
-                    Stig 3: Útreikningar
+                    {t('levels.level3.name')}
                   </span>
                   {progress.level3Completed && (
                     <span className="bg-green-500 text-white text-xs px-2 py-1 rounded-full">
-                      ✓ Lokið
+                      ✓ {t('levels.completed')}
                     </span>
                   )}
                   {progress.level3Score !== null && (
                     <span className="bg-purple-600 text-white text-xs px-2 py-1 rounded-full">
-                      {progress.level3Score} stig
+                      {progress.level3Score} {t('levels.points')}
                     </span>
                   )}
                 </div>
                 <div className={`text-sm mt-1 ${isLevel3Unlocked ? 'text-purple-600' : 'text-gray-500'}`}>
-                  Notaðu formúlur til að reikna
+                  {t('levels.level3.description')}
                 </div>
                 <div className="text-xs text-gray-600 mt-2">
                   {isLevel3Unlocked
-                    ? 'M₁V₁ = M₂V₂, mól = massi/mólmassi. Nú skilur þú HVERS VEGNA þær virka!'
-                    : 'Ljúktu Stig 2 til að opna þetta stig.'}
+                    ? t('levels.level3.details')
+                    : t('levels.level3.locked')}
                 </div>
               </div>
             </div>
@@ -427,12 +433,12 @@ function App() {
         {progress.totalGamesPlayed > 0 && (
           <div className="mt-8 bg-gray-50 p-4 rounded-xl">
             <div className="flex justify-between items-center mb-3">
-              <h3 className="font-semibold text-gray-700">Framvinda</h3>
+              <h3 className="font-semibold text-gray-700">{t('menu.progress')}</h3>
               <button
                 onClick={resetProgress}
                 className="text-xs text-gray-500 hover:text-red-500 transition-colors"
               >
-                Endurstilla
+                {t('menu.reset')}
               </button>
             </div>
             <div className="grid grid-cols-3 gap-3 text-center text-sm">
@@ -440,19 +446,19 @@ function App() {
                 <div className="text-lg font-bold text-blue-600">
                   {[progress.level1Completed, progress.level2Completed, progress.level3Completed].filter(Boolean).length}/3
                 </div>
-                <div className="text-xs text-gray-600">Stig lokið</div>
+                <div className="text-xs text-gray-600">{t('menu.levelsCompleted')}</div>
               </div>
               <div className="bg-green-50 rounded-lg p-2">
                 <div className="text-lg font-bold text-green-600">
                   {(progress.level1Score || 0) + (progress.level2Score || 0) + (progress.level3Score || 0)}
                 </div>
-                <div className="text-xs text-gray-600">Heildar stig</div>
+                <div className="text-xs text-gray-600">{t('menu.totalPoints')}</div>
               </div>
               <div className="bg-purple-50 rounded-lg p-2">
                 <div className="text-lg font-bold text-purple-600">
                   {progress.totalGamesPlayed}
                 </div>
-                <div className="text-xs text-gray-600">Leikir</div>
+                <div className="text-xs text-gray-600">{t('menu.games')}</div>
               </div>
             </div>
           </div>
@@ -460,12 +466,12 @@ function App() {
 
         {/* Formula reference */}
         <div className="mt-6 bg-gray-50 p-4 rounded-xl">
-          <h3 className="font-semibold text-gray-700 mb-2">Formúlur (Stig 3)</h3>
+          <h3 className="font-semibold text-gray-700 mb-2">{t('menu.formulas')}</h3>
           <div className="font-mono text-sm space-y-1 text-gray-600">
-            <p>M = mól / L (mólstyrkur)</p>
-            <p>M₁V₁ = M₂V₂ (útþynning)</p>
-            <p>mól = massi(g) / mólmassi(g/mol)</p>
-            <p>M = (M₁V₁ + M₂V₂) / (V₁ + V₂) (blöndun)</p>
+            <p>{t('formulas.molarity')}</p>
+            <p>{t('formulas.dilution')}</p>
+            <p>{t('formulas.moles')}</p>
+            <p>{t('formulas.mixing')}</p>
           </div>
         </div>
 
@@ -475,7 +481,7 @@ function App() {
             href="/games/1-ar/"
             className="text-gray-500 hover:text-gray-700 text-sm transition-colors"
           >
-            ← Til baka i leikjayfirlit
+            ← {t('menu.backToGames')}
           </a>
         </div>
       </div>

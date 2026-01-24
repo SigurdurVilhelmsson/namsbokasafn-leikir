@@ -2,11 +2,13 @@ import { useState, useEffect, useMemo } from 'react';
 import { PROBLEMS } from './data';
 import { EntropyVisualization } from './components/EntropyVisualization';
 import { useAchievements } from '@shared/hooks/useAchievements';
+import { useGameI18n } from '@shared/hooks';
 import { AchievementsButton, AchievementsPanel } from '@shared/components/AchievementsPanel';
 import { AchievementNotificationsContainer } from '@shared/components/AchievementNotificationPopup';
-import { InteractiveGraph } from '@shared/components';
+import { InteractiveGraph, LanguageSwitcher } from '@shared/components';
 import type { DataPoint, DataSeries, MarkerConfig, RegionConfig, VerticalLineConfig } from '@shared/components';
 import type { Difficulty, GameMode, Spontaneity, Problem } from './types';
+import { gameTranslations } from './i18n';
 
 interface ThermoProgress {
   score: number;
@@ -44,6 +46,7 @@ function saveProgress(progress: ThermoProgress): void {
 
 function App() {
   const [mode, setMode] = useState<GameMode>('menu');
+  const { t, language, setLanguage } = useGameI18n({ gameTranslations });
   const [difficulty, setDifficulty] = useState<Difficulty>('beginner');
   const [currentProblem, setCurrentProblem] = useState<Problem | null>(null);
   const [temperature, setTemperature] = useState(298);
@@ -291,10 +294,17 @@ function App() {
                   Lærðu um Gibbs frjálsa orku og sjálfviljugheit efnahvarfa
                 </p>
               </div>
-              <AchievementsButton
-                achievements={achievements}
-                onClick={() => setShowAchievements(true)}
-              />
+              <div className="flex gap-2">
+                <LanguageSwitcher
+                  language={language}
+                  onLanguageChange={setLanguage}
+                  variant="compact"
+                />
+                <AchievementsButton
+                  achievements={achievements}
+                  onClick={() => setShowAchievements(true)}
+                />
+              </div>
             </div>
 
             {/* Progress Stats */}

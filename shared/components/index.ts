@@ -86,3 +86,7 @@ export type {
   MoleculeViewer3DStyle,
   CameraPreset,
 } from './MoleculeViewer3D';
+
+// LanguageSwitcher - language selection UI
+export { LanguageSwitcher } from './LanguageSwitcher';
+export type { LanguageSwitcherProps } from './LanguageSwitcher';

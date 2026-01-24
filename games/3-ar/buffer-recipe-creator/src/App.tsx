@@ -2,8 +2,11 @@ import { useState, useEffect } from 'react';
 import Level1 from './components/Level1';
 import Level2 from './components/Level2';
 import { useAchievements } from '@shared/hooks/useAchievements';
+import { useGameI18n } from '@shared/hooks';
 import { AchievementsButton, AchievementsPanel } from '@shared/components/AchievementsPanel';
 import { AchievementNotificationsContainer } from '@shared/components/AchievementNotificationPopup';
+import { LanguageSwitcher } from '@shared/components';
+import { gameTranslations } from './i18n';
 import './styles.css';
 
 type ActiveLevel = 'menu' | 'level1' | 'level2';
@@ -53,6 +56,7 @@ function saveProgress(progress: Progress): void {
  */
 function App() {
   const [activeLevel, setActiveLevel] = useState<ActiveLevel>('menu');
+  const { t, language, setLanguage } = useGameI18n({ gameTranslations });
   const [progress, setProgress] = useState<Progress>(loadProgress);
   const [showAchievements, setShowAchievements] = useState(false);
 
@@ -194,10 +198,17 @@ function App() {
               Lærðu að búa til stuðpúða með Henderson-Hasselbalch jöfnunni
             </p>
           </div>
-          <AchievementsButton
-            achievements={achievements}
-            onClick={() => setShowAchievements(true)}
-          />
+          <div className="flex gap-2">
+            <LanguageSwitcher
+              language={language}
+              onLanguageChange={setLanguage}
+              variant="compact"
+            />
+            <AchievementsButton
+              achievements={achievements}
+              onClick={() => setShowAchievements(true)}
+            />
+          </div>
         </div>
 
         {/* Pedagogical explanation */}

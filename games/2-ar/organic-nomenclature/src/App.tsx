@@ -5,6 +5,9 @@ import { Level3 } from './components/Level3';
 import { useAchievements } from '@shared/hooks/useAchievements';
 import { AchievementsButton, AchievementsPanel } from '@shared/components/AchievementsPanel';
 import { AchievementNotificationsContainer } from '@shared/components/AchievementNotificationPopup';
+import { useGameI18n } from '@shared/hooks';
+import { LanguageSwitcher } from '@shared/components';
+import { gameTranslations } from './i18n';
 
 type ActiveLevel = 'menu' | 'level1' | 'level2' | 'level3' | 'complete';
 
@@ -50,6 +53,7 @@ function saveProgress(progress: Progress): void {
 
 function App() {
   const [activeLevel, setActiveLevel] = useState<ActiveLevel>('menu');
+  const { t, language, setLanguage } = useGameI18n({ gameTranslations });
   const [progress, setProgress] = useState<Progress>(loadProgress);
   const [showAchievements, setShowAchievements] = useState(false);
 
@@ -228,7 +232,12 @@ function App() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-100 p-4 md:p-8">
       <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-2xl p-6 md:p-8">
-        <div className="flex justify-end mb-4">
+        <div className="flex justify-end mb-4 gap-2">
+          <LanguageSwitcher
+            language={language}
+            onLanguageChange={setLanguage}
+            variant="compact"
+          />
           <AchievementsButton
             achievements={achievements}
             onClick={() => setShowAchievements(true)}

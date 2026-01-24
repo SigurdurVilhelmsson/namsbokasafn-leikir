@@ -1,5 +1,7 @@
 import { useState } from 'react';
-import { useProgress, useAccessibility, useI18n } from '@shared/hooks';
+import { useProgress, useAccessibility, useGameI18n } from '@shared/hooks';
+import { LanguageSwitcher } from '@shared/components';
+import { gameTranslations } from './i18n';
 
 /**
  * GAME_NAME - Main Application Component
@@ -9,6 +11,7 @@ import { useProgress, useAccessibility, useI18n } from '@shared/hooks';
  * 2. Define your game state and logic
  * 3. Create game-specific components in ./components/
  * 4. Implement game screens (menu, gameplay, stats, etc.)
+ * 5. Add game-specific translations in ./i18n.ts
  */
 function App() {
   const { progress } = useProgress({
@@ -23,7 +26,7 @@ function App() {
   });
 
   const { settings, toggleHighContrast, setTextSize } = useAccessibility();
-  const { t, language, setLanguage } = useI18n();
+  const { t, language, setLanguage } = useGameI18n({ gameTranslations });
 
   const [screen, setScreen] = useState<'menu' | 'game' | 'stats'>('menu');
 
@@ -38,8 +41,8 @@ function App() {
       <main id="main-content" className="container mx-auto px-4 py-8">
         {/* Header */}
         <header className="mb-8 text-center">
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">GAME_TITLE</h1>
-          <p className="text-lg text-gray-600">Kvennaskólinn - GAME_SUBTITLE</p>
+          <h1 className="text-4xl font-bold text-gray-800 mb-2">{t('game.title')}</h1>
+          <p className="text-lg text-gray-600">Kvennaskólinn - {t('game.subtitle')}</p>
         </header>
 
         {/* Accessibility Menu */}
@@ -71,18 +74,11 @@ function App() {
               </select>
             </div>
 
-            <div className="flex items-center gap-2">
-              <span className="text-sm">Tungumál:</span>
-              <select
-                value={language}
-                onChange={(e) => setLanguage(e.target.value as any)}
-                className="text-sm border rounded px-2 py-1"
-              >
-                <option value="is">Íslenska</option>
-                <option value="en">English</option>
-                <option value="pl">Polski</option>
-              </select>
-            </div>
+            <LanguageSwitcher
+              language={language}
+              onLanguageChange={setLanguage}
+              variant="dropdown"
+            />
           </div>
         </div>
 
@@ -107,8 +103,8 @@ function App() {
                 className="w-full bg-orange-500 hover:bg-orange-600 text-white rounded-lg p-6 text-left transition-colors mb-4"
                 style={{ backgroundColor: '#f36b22' }}
               >
-                <h3 className="text-xl font-semibold mb-2">{t('common.start', 'Byrja')}</h3>
-                <p className="text-orange-100">GAME_DESCRIPTION</p>
+                <h3 className="text-xl font-semibold mb-2">{t('common.start')}</h3>
+                <p className="text-orange-100">{t('game.description')}</p>
               </button>
 
               {/* Stats Button */}
@@ -126,8 +122,8 @@ function App() {
         {screen === 'game' && (
           <div className="max-w-4xl mx-auto">
             <div className="bg-white rounded-lg shadow-md p-8">
-              <h2 className="text-2xl font-bold text-gray-800 mb-4">GAME_TITLE</h2>
-              <p className="text-gray-600 mb-6">TODO: Implement game logic here</p>
+              <h2 className="text-2xl font-bold text-gray-800 mb-4">{t('game.title')}</h2>
+              <p className="text-gray-600 mb-6">{t('game.instructions')}</p>
               <button
                 onClick={() => setScreen('menu')}
                 className="bg-gray-500 hover:bg-gray-600 text-white rounded-lg px-6 py-2 transition-colors"
@@ -148,9 +144,11 @@ function App() {
 
               <div className="space-y-4">
                 <div className="border-b pb-4">
-                  <h3 className="font-semibold text-gray-700 mb-2">Heildar framvinda</h3>
+                  <h3 className="font-semibold text-gray-700 mb-2">
+                    {t('stats.overallProgress', 'Heildar framvinda')}
+                  </h3>
                   <p className="text-sm text-gray-600">
-                    Verkefni kláruð: {progress.problemsCompleted}
+                    {t('progress.problemsCompleted', 'Verkefni kláruð')}: {progress.problemsCompleted}
                   </p>
                 </div>
               </div>

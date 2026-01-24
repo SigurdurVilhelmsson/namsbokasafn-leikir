@@ -4,8 +4,11 @@ import { Level2 } from './components/Level2';
 import { Level3 } from './components/Level3';
 import { storage } from './utils/storage';
 import { useAchievements } from '@shared/hooks/useAchievements';
+import { useGameI18n } from '@shared/hooks';
 import { AchievementsButton, AchievementsPanel } from '@shared/components/AchievementsPanel';
 import { AchievementNotificationsContainer } from '@shared/components/AchievementNotificationPopup';
+import { LanguageSwitcher } from '@shared/components';
+import { gameTranslations } from './i18n';
 import './styles.css';
 
 type Screen = 'menu' | 'level1' | 'level2' | 'level3';
@@ -40,6 +43,7 @@ function App() {
     storage.get<Progress>(STORAGE_KEY, getDefaultProgress())
   );
   const [showAchievements, setShowAchievements] = useState(false);
+  const { t, language, setLanguage } = useGameI18n({ gameTranslations });
 
   const {
     achievements,
@@ -170,9 +174,14 @@ function App() {
       <div className="max-w-2xl w-full">
         <div className="bg-white rounded-xl shadow-lg p-8 mb-6">
           <div className="flex justify-between items-start mb-4">
+            <LanguageSwitcher
+              language={language}
+              onLanguageChange={setLanguage}
+              variant="compact"
+            />
             <div className="flex-1">
-              <h1 className="text-4xl font-bold text-center mb-2 text-gray-800">Takmarkandi Hvarfefni</h1>
-              <p className="text-center text-gray-600">Lærðu að finna takmarkandi hvarfefni og reikna heimtir</p>
+              <h1 className="text-4xl font-bold text-center mb-2 text-gray-800">{t('game.title', 'Takmarkandi Hvarfefni')}</h1>
+              <p className="text-center text-gray-600">{t('game.description', 'Lærðu að finna takmarkandi hvarfefni og reikna heimtir')}</p>
             </div>
             <AchievementsButton
               achievements={achievements}

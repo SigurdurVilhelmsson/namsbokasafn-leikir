@@ -3,8 +3,11 @@ import { Level1 } from './components/Level1';
 import { Level2 } from './components/Level2';
 import { Level3 } from './components/Level3';
 import { useAchievements } from '@shared/hooks/useAchievements';
+import { useGameI18n } from '@shared/hooks/useGameI18n';
 import { AchievementsButton, AchievementsPanel } from '@shared/components/AchievementsPanel';
 import { AchievementNotificationsContainer } from '@shared/components/AchievementNotificationPopup';
+import { LanguageSwitcher } from '@shared/components';
+import { gameTranslations } from './i18n';
 
 type AppMode = 'menu' | 'level1' | 'level2' | 'level3';
 
@@ -34,6 +37,8 @@ function App() {
   const [mode, setMode] = useState<AppMode>('menu');
   const [progress, setProgress] = useState<Progress>(loadProgress());
   const [showAchievements, setShowAchievements] = useState(false);
+
+  const { t, language, setLanguage } = useGameI18n({ gameTranslations });
 
   const {
     achievements,
@@ -127,8 +132,13 @@ function App() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white flex items-center justify-center p-4">
       <div className="max-w-lg w-full">
-        {/* Header with Achievements Button */}
-        <div className="flex justify-end mb-4 animate-fade-in-up">
+        {/* Header with Language Switcher and Achievements Button */}
+        <div className="flex justify-between items-center mb-4 animate-fade-in-up">
+          <LanguageSwitcher
+            language={language}
+            onLanguageChange={setLanguage}
+            variant="compact"
+          />
           <AchievementsButton
             achievements={achievements}
             onClick={() => setShowAchievements(true)}
@@ -138,8 +148,8 @@ function App() {
         {/* Title */}
         <div className="text-center mb-8 animate-fade-in-up">
           <div className="text-6xl mb-4">⚗️</div>
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">Mólmassi</h1>
-          <p className="text-gray-600">Lærðu að skilja og reikna mólmassa</p>
+          <h1 className="text-4xl font-bold text-gray-800 mb-2">{t('game.title')}</h1>
+          <p className="text-gray-600">{t('game.subtitle')}</p>
         </div>
 
         {/* Level Cards */}
@@ -157,20 +167,20 @@ function App() {
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <h2 className="text-xl font-bold text-gray-800">Stig 1</h2>
+                    <h2 className="text-xl font-bold text-gray-800">{t('menu.level1.title')}</h2>
                     {progress.level1Completed && (
                       <span className="text-green-500 text-lg">✓</span>
                     )}
                   </div>
-                  <p className="text-gray-600 text-sm">Skildu sameindir - án útreikninga</p>
+                  <p className="text-gray-600 text-sm">{t('menu.level1.description')}</p>
                 </div>
               </div>
               <span className="text-gray-400 text-2xl">→</span>
             </div>
             <div className="mt-4 flex flex-wrap gap-2">
-              <span className="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">Telja frumeindir</span>
-              <span className="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">Bera saman</span>
-              <span className="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">Byggja sameindir</span>
+              <span className="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">{t('menu.level1.tags.countAtoms')}</span>
+              <span className="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">{t('menu.level1.tags.compare')}</span>
+              <span className="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">{t('menu.level1.tags.buildMolecules')}</span>
             </div>
           </button>
 
@@ -192,23 +202,23 @@ function App() {
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <h2 className="text-xl font-bold text-gray-800">Stig 2</h2>
+                    <h2 className="text-xl font-bold text-gray-800">{t('menu.level2.title')}</h2>
                     {progress.level2Completed && (
                       <span className="text-green-500 text-lg">✓</span>
                     )}
                     {!progress.level1Completed && (
-                      <span className="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">🔒 Læst</span>
+                      <span className="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">🔒 {t('menu.level2.locked')}</span>
                     )}
                   </div>
-                  <p className="text-gray-600 text-sm">Áætla mólmassa með námundun</p>
+                  <p className="text-gray-600 text-sm">{t('menu.level2.description')}</p>
                 </div>
               </div>
               <span className="text-gray-400 text-2xl">→</span>
             </div>
             <div className="mt-4 flex flex-wrap gap-2">
-              <span className="px-2 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-medium">Áætla massa</span>
-              <span className="px-2 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-medium">Raða sameindum</span>
-              <span className="px-2 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-medium">Heilar tölur</span>
+              <span className="px-2 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-medium">{t('menu.level2.tags.estimateMass')}</span>
+              <span className="px-2 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-medium">{t('menu.level2.tags.sortMolecules')}</span>
+              <span className="px-2 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-medium">{t('menu.level2.tags.wholeNumbers')}</span>
             </div>
           </button>
 
@@ -230,20 +240,20 @@ function App() {
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <h2 className="text-xl font-bold text-gray-800">Stig 3</h2>
+                    <h2 className="text-xl font-bold text-gray-800">{t('menu.level3.title')}</h2>
                     {!progress.level2Completed && (
-                      <span className="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">🔒 Læst</span>
+                      <span className="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">🔒 {t('menu.level2.locked')}</span>
                     )}
                   </div>
-                  <p className="text-gray-600 text-sm">Reikna nákvæman mólmassa</p>
+                  <p className="text-gray-600 text-sm">{t('menu.level3.description')}</p>
                 </div>
               </div>
               <span className="text-gray-400 text-2xl">→</span>
             </div>
             <div className="mt-4 flex flex-wrap gap-2">
-              <span className="px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-medium">Lotukerfið</span>
-              <span className="px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-medium">Nákvæmir útreikningar</span>
-              <span className="px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-medium">Keppni</span>
+              <span className="px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-medium">{t('menu.level3.tags.periodicTable')}</span>
+              <span className="px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-medium">{t('menu.level3.tags.preciseCalculations')}</span>
+              <span className="px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-medium">{t('menu.level3.tags.competition')}</span>
             </div>
           </button>
         </div>
@@ -251,25 +261,25 @@ function App() {
         {/* Learning Path Description */}
         <div className="mt-8 bg-white rounded-2xl shadow-lg p-6 animate-fade-in-up" style={{ animationDelay: '400ms' }}>
           <h3 className="font-bold text-gray-800 mb-3 flex items-center gap-2">
-            <span>📚</span> Námsferillinn
+            <span>📚</span> {t('menu.learningPath.title')}
           </h3>
           <div className="space-y-3 text-sm text-gray-600">
             <div className="flex items-start gap-3">
               <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${progress.level1Completed ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-600'}`}>1</div>
               <div>
-                <span className="font-medium text-gray-800">Skilningur</span> - Lærðu hvað sameindir og frumeindir þýða
+                <span className="font-medium text-gray-800">{t('menu.learningPath.step1.title')}</span> - {t('menu.learningPath.step1.description')}
               </div>
             </div>
             <div className="flex items-start gap-3">
               <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${progress.level2Completed ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-600'}`}>2</div>
               <div>
-                <span className="font-medium text-gray-800">Áætlun</span> - Notaðu námundaðar tölur til að áætla
+                <span className="font-medium text-gray-800">{t('menu.learningPath.step2.title')}</span> - {t('menu.learningPath.step2.description')}
               </div>
             </div>
             <div className="flex items-start gap-3">
               <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-gray-200 text-gray-600">3</div>
               <div>
-                <span className="font-medium text-gray-800">Útreikningur</span> - Reiknaðu með nákvæmum gildum
+                <span className="font-medium text-gray-800">{t('menu.learningPath.step3.title')}</span> - {t('menu.learningPath.step3.description')}
               </div>
             </div>
           </div>
@@ -280,7 +290,7 @@ function App() {
           <div className="mt-6 text-center animate-fade-in-up" style={{ animationDelay: '500ms' }}>
             <button
               onClick={() => {
-                if (confirm('Ertu viss um að þú viljir endurstilla framvinduna?')) {
+                if (confirm(t('menu.resetConfirm'))) {
                   const reset = { level1Completed: false, level2Completed: false, level3HighScore: 0 };
                   setProgress(reset);
                   saveProgress(reset);
@@ -288,7 +298,7 @@ function App() {
               }}
               className="text-xs text-gray-400 hover:text-gray-600 underline"
             >
-              Endurstilla framvindu
+              {t('menu.resetProgress')}
             </button>
           </div>
         )}

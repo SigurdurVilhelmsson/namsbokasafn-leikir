@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
-import { useProgress, useAccessibility, useI18n } from '@shared/hooks';
+import { useProgress, useAccessibility, useI18n, useGameI18n } from '@shared/hooks';
 import { useAchievements } from '@shared/hooks/useAchievements';
 import { AchievementsButton, AchievementsPanel } from '@shared/components/AchievementsPanel';
 import { AchievementNotificationsContainer } from '@shared/components/AchievementNotificationPopup';
-import { HintSystem } from '@shared/components';
+import { HintSystem, LanguageSwitcher } from '@shared/components';
+import { gameTranslations } from './i18n';
 import type { TieredHints } from '@shared/types';
 import { ParticleEquilibrium } from './components/ParticleEquilibrium';
 import {
@@ -33,6 +34,7 @@ function App() {
 
   const { settings, toggleHighContrast, setTextSize } = useAccessibility();
   const { t, language, setLanguage } = useI18n();
+  const { t: tGame } = useGameI18n({ gameTranslations });
 
   // Achievements
   const [showAchievements, setShowAchievements] = useState(false);
@@ -784,7 +786,12 @@ function App() {
       <main id="main-content" className="container mx-auto px-4 py-8">
         {/* Header */}
         <header className="mb-8">
-          <div className="flex justify-end mb-2">
+          <div className="flex justify-end gap-2 mb-2">
+            <LanguageSwitcher
+              language={language}
+              onLanguageChange={setLanguage}
+              variant="compact"
+            />
             <AchievementsButton
               achievements={achievements}
               onClick={() => setShowAchievements(true)}

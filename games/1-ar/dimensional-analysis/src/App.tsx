@@ -1,8 +1,10 @@
 import { useState } from 'react';
-import { useProgress, useAccessibility, useI18n } from '@shared/hooks';
+import { useProgress, useAccessibility, useGameI18n } from '@shared/hooks';
 import { useAchievements } from '@shared/hooks/useAchievements';
 import { AchievementsButton, AchievementsPanel } from '@shared/components/AchievementsPanel';
 import { AchievementNotificationsContainer } from '@shared/components/AchievementNotificationPopup';
+import { LanguageSwitcher } from '@shared/components';
+import { gameTranslations } from './i18n';
 
 // Import Level components
 import { Level1Conceptual } from './components/Level1Conceptual';
@@ -47,7 +49,7 @@ function App() {
   });
 
   const { settings, toggleHighContrast, setTextSize } = useAccessibility();
-  const { t, language, setLanguage } = useI18n();
+  const { t, language, setLanguage } = useGameI18n({ gameTranslations });
 
   const [screen, setScreen] = useState<'menu' | 'level1' | 'level2' | 'level3' | 'stats'>('menu');
   const [showAchievements, setShowAchievements] = useState(false);
@@ -77,12 +79,17 @@ function App() {
         {/* Header */}
         <header className="mb-8">
           <div className="flex justify-between items-start">
+            <LanguageSwitcher
+              language={language}
+              onLanguageChange={setLanguage}
+              variant="compact"
+            />
             <div className="flex-1 text-center">
               <h1 className="text-4xl font-bold text-gray-800 mb-2">
-                Einingagreining
+                {t('game.title')}
               </h1>
               <p className="text-lg text-gray-600">
-                Kvennaskólinn - Efnafræði 1. ár
+                {t('game.subtitle')}
               </p>
             </div>
             <AchievementsButton
@@ -121,18 +128,6 @@ function App() {
               </select>
             </div>
 
-            <div className="flex items-center gap-2">
-              <span className="text-sm">Tungumál:</span>
-              <select
-                value={language}
-                onChange={(e) => setLanguage(e.target.value as any)}
-                className="text-sm border rounded px-2 py-1"
-              >
-                <option value="is">Íslenska</option>
-                <option value="en">English</option>
-                <option value="pl">Polski</option>
-              </select>
-            </div>
           </div>
         </div>
 
@@ -168,7 +163,7 @@ function App() {
                     {t('levels.level1.description', 'Sjónræn lærdómur - engar útreikninga')}
                   </p>
                   <p className="text-sm text-green-200 mt-2">
-                    Áskoranir: {progress.levelProgress?.level1?.questionsAnswered || 0}/6
+                    {t('menu.challenges')}: {progress.levelProgress?.level1?.questionsAnswered || 0}/6
                   </p>
                 </button>
 
@@ -189,7 +184,7 @@ function App() {
                   </p>
                   {progress.levelProgress?.level1?.mastered && (
                     <p className="text-sm text-blue-200 mt-2">
-                      Verkefni: {progress.levelProgress?.level2?.problemsCompleted || 0}/15
+                      {t('menu.problems')}: {progress.levelProgress?.level2?.problemsCompleted || 0}/15
                     </p>
                   )}
                 </button>
@@ -212,7 +207,7 @@ function App() {
                   </p>
                   {progress.levelProgress?.level2?.mastered && (
                     <p className="text-sm text-orange-200 mt-2">
-                      Verkefni: {progress.levelProgress?.level3?.problemsCompleted || 0}/10
+                      {t('menu.problems')}: {progress.levelProgress?.level3?.problemsCompleted || 0}/10
                     </p>
                   )}
                 </button>
@@ -331,46 +326,46 @@ function App() {
 
               <div className="space-y-4">
                 <div className="border-b pb-4">
-                  <h3 className="font-semibold text-gray-700 mb-2">Heildar framvinda</h3>
+                  <h3 className="font-semibold text-gray-700 mb-2">{t('stats.overallProgress')}</h3>
                   <p className="text-sm text-gray-600">
-                    Verkefni kláruð: {progress.problemsCompleted}
+                    {t('stats.problemsCompleted')}: {progress.problemsCompleted}
                   </p>
                   <p className="text-sm text-gray-600">
-                    Núverandi stig: {progress.currentLevel}
+                    {t('stats.currentLevel')}: {progress.currentLevel}
                   </p>
                 </div>
 
                 <div className="border-b pb-4">
-                  <h3 className="font-semibold text-gray-700 mb-2">Stig 1 - Hugtök</h3>
+                  <h3 className="font-semibold text-gray-700 mb-2">{t('stats.level1Stats')}</h3>
                   <p className="text-sm text-gray-600">
-                    Áskoranir: {progress.levelProgress?.level1?.questionsAnswered || 0}/6
+                    {t('menu.challenges')}: {progress.levelProgress?.level1?.questionsAnswered || 0}/6
                   </p>
                   <p className="text-sm text-gray-600">
-                    Nákvæmni: {progress.levelProgress?.level1?.questionsAnswered
+                    {t('stats.accuracy')}: {progress.levelProgress?.level1?.questionsAnswered
                       ? Math.round((progress.levelProgress.level1.questionsCorrect / progress.levelProgress.level1.questionsAnswered) * 100)
                       : 0}%
                   </p>
                 </div>
 
                 <div className="border-b pb-4">
-                  <h3 className="font-semibold text-gray-700 mb-2">Stig 2 - Beiting</h3>
+                  <h3 className="font-semibold text-gray-700 mb-2">{t('stats.level2Stats')}</h3>
                   <p className="text-sm text-gray-600">
-                    Verkefni: {progress.levelProgress?.level2?.problemsCompleted || 0}/15
+                    {t('menu.problems')}: {progress.levelProgress?.level2?.problemsCompleted || 0}/15
                   </p>
                   <p className="text-sm text-gray-600">
-                    Spánákvæmni: {progress.levelProgress?.level2?.predictionsMade
+                    {t('stats.predictionAccuracy')}: {progress.levelProgress?.level2?.predictionsMade
                       ? Math.round((progress.levelProgress.level2.predictionsCorrect / progress.levelProgress.level2.predictionsMade) * 100)
                       : 0}%
                   </p>
                 </div>
 
                 <div className="pb-4">
-                  <h3 className="font-semibold text-gray-700 mb-2">Stig 3 - Útreikningar</h3>
+                  <h3 className="font-semibold text-gray-700 mb-2">{t('stats.level3Stats')}</h3>
                   <p className="text-sm text-gray-600">
-                    Verkefni: {progress.levelProgress?.level3?.problemsCompleted || 0}/10
+                    {t('menu.problems')}: {progress.levelProgress?.level3?.problemsCompleted || 0}/10
                   </p>
                   <p className="text-sm text-gray-600">
-                    Meðaleinkunn: {progress.levelProgress?.level3?.compositeScores?.length
+                    {t('stats.averageScore')}: {progress.levelProgress?.level3?.compositeScores?.length
                       ? Math.round((progress.levelProgress.level3.compositeScores.reduce((a, b) => a + b, 0) / progress.levelProgress.level3.compositeScores.length) * 100)
                       : 0}%
                   </p>

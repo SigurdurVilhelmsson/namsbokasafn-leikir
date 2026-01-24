@@ -1,5 +1,5 @@
 import { Card as CardType } from '../types';
-import { MolecularStructure } from './MolecularStructure';
+import { CompoundVisualization } from './MolecularStructure';
 
 interface CardProps {
   card: CardType;
@@ -32,7 +32,7 @@ export function Card({ card, onClick, disabled, showStructure = true }: CardProp
                 {card.compound.formula}
               </div>
               {showStructure && (
-                <MolecularStructure compound={card.compound} size="small" showLabels={true} />
+                <CompoundVisualization compound={card.compound} size="small" showLabels={true} />
               )}
             </>
           ) : (
@@ -41,7 +41,7 @@ export function Card({ card, onClick, disabled, showStructure = true }: CardProp
                 {card.compound.name}
               </div>
               {showStructure && (
-                <MolecularStructure compound={card.compound} size="small" showLabels={false} />
+                <CompoundVisualization compound={card.compound} size="small" showLabels={false} />
               )}
             </>
           )}

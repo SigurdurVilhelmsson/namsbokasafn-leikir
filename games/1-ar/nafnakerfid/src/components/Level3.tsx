@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getCompoundsByDifficulty, type Compound } from '../data/compounds';
-import { MolecularStructure } from './MolecularStructure';
+import { CompoundVisualization } from './MolecularStructure';
 
 interface Level3Props {
   onComplete: (moves: number, difficulty: string, pairs: number, maxScore: number, hintsUsed: number) => void;
@@ -377,7 +377,7 @@ export function Level3({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
                         <div className="text-base md:text-xl font-mono font-bold text-gray-800">
                           {card.compound.formula}
                         </div>
-                        <MolecularStructure compound={card.compound} size="small" showLabels={true} />
+                        <CompoundVisualization compound={card.compound} size="small" showLabels={true} />
                         <div className={`${typeInfo.bg} ${typeInfo.text} text-[10px] px-2 py-0.5 rounded-full`}>
                           Formúla
                         </div>
@@ -387,7 +387,7 @@ export function Level3({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
                         <div className="text-xs md:text-sm font-bold text-gray-800 text-center leading-tight">
                           {card.compound.name}
                         </div>
-                        <MolecularStructure compound={card.compound} size="small" showLabels={false} />
+                        <CompoundVisualization compound={card.compound} size="small" showLabels={false} />
                         <div className={`${typeInfo.bg} ${typeInfo.text} text-[10px] px-2 py-0.5 rounded-full`}>
                           Nafn
                         </div>
@@ -426,7 +426,7 @@ export function Level3({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
 
                 {/* Molecular structure visualization */}
                 <div className="flex justify-center mb-3 py-2">
-                  <MolecularStructure compound={showMatchInfo} size="medium" showLabels={true} />
+                  <CompoundVisualization compound={showMatchInfo} size="medium" showLabels={true} />
                 </div>
 
                 <div className="flex justify-center mb-3">

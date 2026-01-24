@@ -262,3 +262,468 @@ export function ElementBadges({ compound, size = 'small' }: { compound: Compound
     </div>
   );
 }
+
+// ============== STRUCTURAL FORMULA COMPONENT ==============
+
+// Predefined molecular structures with atom positions and bonds
+interface AtomPosition {
+  symbol: string;
+  x: number;
+  y: number;
+}
+
+interface Bond {
+  from: number; // index of atom
+  to: number;   // index of atom
+  type: 1 | 2 | 3; // single, double, triple
+}
+
+interface MolecularStructureData {
+  atoms: AtomPosition[];
+  bonds: Bond[];
+  width: number;
+  height: number;
+}
+
+// Predefined structures for common molecules
+const STRUCTURAL_FORMULAS: Record<string, MolecularStructureData> = {
+  // Water: H-O-H (bent shape)
+  'H₂O': {
+    atoms: [
+      { symbol: 'H', x: 15, y: 20 },
+      { symbol: 'O', x: 50, y: 35 },
+      { symbol: 'H', x: 85, y: 20 },
+    ],
+    bonds: [
+      { from: 0, to: 1, type: 1 },
+      { from: 1, to: 2, type: 1 },
+    ],
+    width: 100,
+    height: 55,
+  },
+  // Carbon dioxide: O=C=O (linear)
+  'CO₂': {
+    atoms: [
+      { symbol: 'O', x: 15, y: 30 },
+      { symbol: 'C', x: 50, y: 30 },
+      { symbol: 'O', x: 85, y: 30 },
+    ],
+    bonds: [
+      { from: 0, to: 1, type: 2 },
+      { from: 1, to: 2, type: 2 },
+    ],
+    width: 100,
+    height: 60,
+  },
+  // Ammonia: NH₃ (trigonal pyramidal shown as flat)
+  'NH₃': {
+    atoms: [
+      { symbol: 'N', x: 50, y: 25 },
+      { symbol: 'H', x: 20, y: 50 },
+      { symbol: 'H', x: 50, y: 55 },
+      { symbol: 'H', x: 80, y: 50 },
+    ],
+    bonds: [
+      { from: 0, to: 1, type: 1 },
+      { from: 0, to: 2, type: 1 },
+      { from: 0, to: 3, type: 1 },
+    ],
+    width: 100,
+    height: 70,
+  },
+  // Methane: CH₄ (tetrahedral shown as flat)
+  'CH₄': {
+    atoms: [
+      { symbol: 'C', x: 50, y: 35 },
+      { symbol: 'H', x: 50, y: 10 },
+      { symbol: 'H', x: 20, y: 50 },
+      { symbol: 'H', x: 80, y: 50 },
+      { symbol: 'H', x: 50, y: 60 },
+    ],
+    bonds: [
+      { from: 0, to: 1, type: 1 },
+      { from: 0, to: 2, type: 1 },
+      { from: 0, to: 3, type: 1 },
+      { from: 0, to: 4, type: 1 },
+    ],
+    width: 100,
+    height: 70,
+  },
+  // Hydrogen: H-H
+  'H₂': {
+    atoms: [
+      { symbol: 'H', x: 25, y: 30 },
+      { symbol: 'H', x: 75, y: 30 },
+    ],
+    bonds: [
+      { from: 0, to: 1, type: 1 },
+    ],
+    width: 100,
+    height: 60,
+  },
+  // Oxygen: O=O
+  'O₂': {
+    atoms: [
+      { symbol: 'O', x: 25, y: 30 },
+      { symbol: 'O', x: 75, y: 30 },
+    ],
+    bonds: [
+      { from: 0, to: 1, type: 2 },
+    ],
+    width: 100,
+    height: 60,
+  },
+  // Nitrogen: N≡N
+  'N₂': {
+    atoms: [
+      { symbol: 'N', x: 25, y: 30 },
+      { symbol: 'N', x: 75, y: 30 },
+    ],
+    bonds: [
+      { from: 0, to: 1, type: 3 },
+    ],
+    width: 100,
+    height: 60,
+  },
+  // Chlorine: Cl-Cl
+  'Cl₂': {
+    atoms: [
+      { symbol: 'Cl', x: 25, y: 30 },
+      { symbol: 'Cl', x: 75, y: 30 },
+    ],
+    bonds: [
+      { from: 0, to: 1, type: 1 },
+    ],
+    width: 100,
+    height: 60,
+  },
+  // Hydrogen chloride: H-Cl
+  'HCl': {
+    atoms: [
+      { symbol: 'H', x: 25, y: 30 },
+      { symbol: 'Cl', x: 75, y: 30 },
+    ],
+    bonds: [
+      { from: 0, to: 1, type: 1 },
+    ],
+    width: 100,
+    height: 60,
+  },
+  // Sodium chloride (ionic - shown with charges)
+  'NaCl': {
+    atoms: [
+      { symbol: 'Na', x: 30, y: 30 },
+      { symbol: 'Cl', x: 70, y: 30 },
+    ],
+    bonds: [], // Ionic - no covalent bonds
+    width: 100,
+    height: 60,
+  },
+  // Sodium hydroxide
+  'NaOH': {
+    atoms: [
+      { symbol: 'Na', x: 20, y: 30 },
+      { symbol: 'O', x: 55, y: 30 },
+      { symbol: 'H', x: 85, y: 30 },
+    ],
+    bonds: [
+      { from: 1, to: 2, type: 1 },
+    ],
+    width: 100,
+    height: 60,
+  },
+  // Sulfur dioxide: O=S=O
+  'SO₂': {
+    atoms: [
+      { symbol: 'O', x: 15, y: 30 },
+      { symbol: 'S', x: 50, y: 30 },
+      { symbol: 'O', x: 85, y: 30 },
+    ],
+    bonds: [
+      { from: 0, to: 1, type: 2 },
+      { from: 1, to: 2, type: 2 },
+    ],
+    width: 100,
+    height: 60,
+  },
+  // Calcium oxide (ionic)
+  'CaO': {
+    atoms: [
+      { symbol: 'Ca', x: 30, y: 30 },
+      { symbol: 'O', x: 70, y: 30 },
+    ],
+    bonds: [],
+    width: 100,
+    height: 60,
+  },
+  // Magnesium oxide (ionic)
+  'MgO': {
+    atoms: [
+      { symbol: 'Mg', x: 30, y: 30 },
+      { symbol: 'O', x: 70, y: 30 },
+    ],
+    bonds: [],
+    width: 100,
+    height: 60,
+  },
+};
+
+interface StructuralFormulaProps {
+  formula: string;
+  size?: 'small' | 'medium' | 'large';
+  showLabels?: boolean;
+  /** Show charge indicators for ionic compounds */
+  showCharges?: boolean;
+}
+
+/**
+ * Structural formula component showing atoms with bonds
+ * For molecules with predefined structures, shows actual bond arrangement
+ * Falls back to simple display for unknown structures
+ */
+export function StructuralFormula({
+  formula,
+  size = 'medium',
+  showLabels = true,
+  showCharges = true,
+}: StructuralFormulaProps) {
+  const structure = STRUCTURAL_FORMULAS[formula];
+
+  const sizeConfig = {
+    small: { scale: 0.6, atomRadius: 10, fontSize: 8, bondWidth: 2 },
+    medium: { scale: 0.9, atomRadius: 14, fontSize: 10, bondWidth: 2.5 },
+    large: { scale: 1.2, atomRadius: 18, fontSize: 12, bondWidth: 3 },
+  };
+
+  const config = sizeConfig[size];
+
+  // If no predefined structure, return null (use MolecularStructure instead)
+  if (!structure) {
+    return null;
+  }
+
+  const svgWidth = structure.width * config.scale;
+  const svgHeight = structure.height * config.scale;
+
+  // Check if ionic (no bonds)
+  const isIonic = structure.bonds.length === 0 && structure.atoms.length >= 2;
+
+  return (
+    <svg
+      width={svgWidth}
+      height={svgHeight}
+      viewBox={`0 0 ${structure.width} ${structure.height}`}
+      className="mx-auto"
+    >
+      {/* Draw bonds */}
+      {structure.bonds.map((bond, idx) => {
+        const from = structure.atoms[bond.from];
+        const to = structure.atoms[bond.to];
+
+        // Calculate bond line positions
+        const dx = to.x - from.x;
+        const dy = to.y - from.y;
+        const len = Math.sqrt(dx * dx + dy * dy);
+        const nx = dx / len; // normalized
+        const ny = dy / len;
+
+        // Offset to not overlap with atoms
+        const offset = config.atomRadius * 0.8;
+        const x1 = from.x + nx * offset;
+        const y1 = from.y + ny * offset;
+        const x2 = to.x - nx * offset;
+        const y2 = to.y - ny * offset;
+
+        // Perpendicular offset for multiple bonds
+        const perpX = -ny * 3;
+        const perpY = nx * 3;
+
+        if (bond.type === 1) {
+          return (
+            <line
+              key={idx}
+              x1={x1}
+              y1={y1}
+              x2={x2}
+              y2={y2}
+              stroke="#374151"
+              strokeWidth={config.bondWidth}
+              strokeLinecap="round"
+            />
+          );
+        } else if (bond.type === 2) {
+          return (
+            <g key={idx}>
+              <line
+                x1={x1 + perpX}
+                y1={y1 + perpY}
+                x2={x2 + perpX}
+                y2={y2 + perpY}
+                stroke="#374151"
+                strokeWidth={config.bondWidth}
+                strokeLinecap="round"
+              />
+              <line
+                x1={x1 - perpX}
+                y1={y1 - perpY}
+                x2={x2 - perpX}
+                y2={y2 - perpY}
+                stroke="#374151"
+                strokeWidth={config.bondWidth}
+                strokeLinecap="round"
+              />
+            </g>
+          );
+        } else {
+          // Triple bond
+          return (
+            <g key={idx}>
+              <line
+                x1={x1}
+                y1={y1}
+                x2={x2}
+                y2={y2}
+                stroke="#374151"
+                strokeWidth={config.bondWidth}
+                strokeLinecap="round"
+              />
+              <line
+                x1={x1 + perpX * 1.5}
+                y1={y1 + perpY * 1.5}
+                x2={x2 + perpX * 1.5}
+                y2={y2 + perpY * 1.5}
+                stroke="#374151"
+                strokeWidth={config.bondWidth}
+                strokeLinecap="round"
+              />
+              <line
+                x1={x1 - perpX * 1.5}
+                y1={y1 - perpY * 1.5}
+                x2={x2 - perpX * 1.5}
+                y2={y2 - perpY * 1.5}
+                stroke="#374151"
+                strokeWidth={config.bondWidth}
+                strokeLinecap="round"
+              />
+            </g>
+          );
+        }
+      })}
+
+      {/* Draw ionic bond indicator (dashed line) */}
+      {isIonic && structure.atoms.length >= 2 && (
+        <line
+          x1={structure.atoms[0].x + config.atomRadius}
+          y1={structure.atoms[0].y}
+          x2={structure.atoms[1].x - config.atomRadius}
+          y2={structure.atoms[1].y}
+          stroke="#9CA3AF"
+          strokeWidth={config.bondWidth}
+          strokeDasharray="4,3"
+          strokeLinecap="round"
+        />
+      )}
+
+      {/* Draw atoms */}
+      {structure.atoms.map((atom, idx) => {
+        const colors = ATOM_COLORS[atom.symbol] || DEFAULT_COLOR;
+
+        // Determine charge for ionic compounds
+        let charge = '';
+        if (isIonic && showCharges) {
+          const metals = ['Na', 'K', 'Li', 'Ca', 'Mg', 'Ba', 'Al', 'Fe', 'Cu', 'Zn', 'Ag'];
+          if (metals.includes(atom.symbol)) {
+            charge = '+';
+            if (['Ca', 'Mg', 'Ba', 'Zn', 'Fe', 'Cu'].includes(atom.symbol)) charge = '²⁺';
+            if (atom.symbol === 'Al') charge = '³⁺';
+          } else if (['O'].includes(atom.symbol)) {
+            charge = '²⁻';
+          } else if (['Cl', 'F', 'Br', 'I'].includes(atom.symbol)) {
+            charge = '⁻';
+          }
+        }
+
+        return (
+          <g key={idx}>
+            {/* Atom circle */}
+            <circle
+              cx={atom.x}
+              cy={atom.y}
+              r={config.atomRadius}
+              fill={colors.fill}
+              stroke={colors.border}
+              strokeWidth={2}
+            />
+            {/* Atom label */}
+            {showLabels && (
+              <text
+                x={atom.x}
+                y={atom.y}
+                textAnchor="middle"
+                dominantBaseline="central"
+                fill={colors.textColor}
+                fontSize={config.fontSize}
+                fontWeight="bold"
+                fontFamily="sans-serif"
+              >
+                {atom.symbol}
+              </text>
+            )}
+            {/* Charge indicator */}
+            {charge && (
+              <text
+                x={atom.x + config.atomRadius * 0.7}
+                y={atom.y - config.atomRadius * 0.5}
+                textAnchor="start"
+                fill="#374151"
+                fontSize={config.fontSize * 0.8}
+                fontWeight="bold"
+              >
+                {charge}
+              </text>
+            )}
+          </g>
+        );
+      })}
+    </svg>
+  );
+}
+
+interface CompoundVisualizationProps {
+  compound: Compound;
+  size?: 'small' | 'medium' | 'large';
+  /** Prefer structural formula over ball model */
+  preferStructural?: boolean;
+  showLabels?: boolean;
+}
+
+/**
+ * Smart compound visualization that chooses the best representation
+ * Uses structural formula for known molecules, falls back to ball model
+ */
+export function CompoundVisualization({
+  compound,
+  size = 'medium',
+  preferStructural = true,
+  showLabels = true,
+}: CompoundVisualizationProps) {
+  const hasStructuralFormula = STRUCTURAL_FORMULAS[compound.formula] !== undefined;
+
+  if (preferStructural && hasStructuralFormula) {
+    return (
+      <StructuralFormula
+        formula={compound.formula}
+        size={size}
+        showLabels={showLabels}
+      />
+    );
+  }
+
+  return (
+    <MolecularStructure
+      compound={compound}
+      size={size}
+      showLabels={showLabels}
+    />
+  );
+}

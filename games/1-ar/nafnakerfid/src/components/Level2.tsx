@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { MolecularStructure } from './MolecularStructure';
+import { CompoundVisualization } from './MolecularStructure';
 
 interface Level2Props {
   onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
@@ -352,7 +352,7 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
           <div className="text-4xl md:text-6xl font-mono font-bold text-gray-800 mb-4">
             {challenge.formula}
           </div>
-          <MolecularStructure
+          <CompoundVisualization
             compound={{
               formula: challenge.formula,
               name: challenge.correctName,

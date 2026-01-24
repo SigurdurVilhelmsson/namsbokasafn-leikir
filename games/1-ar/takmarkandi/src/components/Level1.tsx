@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Reaction } from '../types';
 import { REACTIONS } from '../data/reactions';
 import { Molecule } from './Molecule';
+import { ReactionAnimation } from './ReactionAnimation';
 import { HintSystem, FeedbackPanel } from '@shared/components';
 import type { TieredHints } from '@shared/types';
 import { shuffleArray } from '@shared/utils';
@@ -90,6 +91,7 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
   const [isCorrect, setIsCorrect] = useState(false);
   const [hintMultiplier, setHintMultiplier] = useState(1.0);
   const [hintsUsedTier, setHintsUsedTier] = useState(0);
+  const [showAnimation, setShowAnimation] = useState(false);
 
   const totalChallenges = 8;
   const masteryThreshold = 6;
@@ -153,6 +155,7 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
       setShowFeedback(false);
       setHintMultiplier(1.0);
       setHintsUsedTier(0);
+      setShowAnimation(false);
     }
   };
 
@@ -531,6 +534,35 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
                 showNextSteps: true,
               }}
             />
+
+            {/* Reaction Animation Toggle */}
+            <div className="mt-4">
+              <button
+                onClick={() => setShowAnimation(!showAnimation)}
+                className={`w-full py-2 px-4 rounded-lg font-medium transition-colors ${
+                  showAnimation
+                    ? 'bg-purple-100 text-purple-700 border-2 border-purple-300'
+                    : 'bg-purple-500 hover:bg-purple-600 text-white'
+                }`}
+              >
+                {showAnimation ? '🎬 Fela hreyfimynd' : '🎬 Sjá hvörfin í hreyfimynd'}
+              </button>
+
+              {showAnimation && (
+                <div className="mt-4">
+                  <ReactionAnimation
+                    reactant1={challenge.reaction.reactant1}
+                    reactant2={challenge.reaction.reactant2}
+                    products={challenge.reaction.products}
+                    r1Count={challenge.r1Count}
+                    r2Count={challenge.r2Count}
+                    showResult={true}
+                    autoPlay={false}
+                  />
+                </div>
+              )}
+            </div>
+
             <button
               onClick={nextChallenge}
               className="mt-3 w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-lg transition-colors"

@@ -1,12 +1,15 @@
 import { Card as CardType } from '../types';
+import { MolecularStructure } from './MolecularStructure';
 
 interface CardProps {
   card: CardType;
   onClick: () => void;
   disabled: boolean;
+  /** Show molecular structure visualization on formula cards */
+  showStructure?: boolean;
 }
 
-export function Card({ card, onClick, disabled }: CardProps) {
+export function Card({ card, onClick, disabled, showStructure = true }: CardProps) {
   return (
     <button
       onClick={onClick}
@@ -22,18 +25,26 @@ export function Card({ card, onClick, disabled }: CardProps) {
         </div>
 
         {/* Back (front of card - shows when flipped) */}
-        <div className="card-face card-back absolute inset-0 bg-white border-2 border-gray-200 rounded-xl shadow-lg flex items-center justify-center p-4">
-          <div className="text-center">
-            {card.type === 'formula' ? (
-              <div className="text-3xl font-bold text-gray-800">
+        <div className="card-face card-back absolute inset-0 bg-white border-2 border-gray-200 rounded-xl shadow-lg flex flex-col items-center justify-center p-3 gap-2">
+          {card.type === 'formula' ? (
+            <>
+              <div className="text-2xl font-bold text-gray-800 font-mono">
                 {card.compound.formula}
               </div>
-            ) : (
-              <div className="text-lg font-semibold text-gray-800 leading-tight">
+              {showStructure && (
+                <MolecularStructure compound={card.compound} size="small" showLabels={true} />
+              )}
+            </>
+          ) : (
+            <>
+              <div className="text-base font-semibold text-gray-800 leading-tight text-center">
                 {card.compound.name}
               </div>
-            )}
-          </div>
+              {showStructure && (
+                <MolecularStructure compound={card.compound} size="small" showLabels={false} />
+              )}
+            </>
+          )}
         </div>
       </div>
     </button>

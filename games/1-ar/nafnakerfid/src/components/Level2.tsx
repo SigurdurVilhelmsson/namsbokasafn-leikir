@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { MolecularStructure } from './MolecularStructure';
 
 interface Level2Props {
   onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
@@ -346,11 +347,24 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
           Fylgdu skrefunum til að nefna efnasambandið rétt
         </p>
 
-        {/* Formula display */}
-        <div className="bg-gray-100 rounded-2xl p-8 mb-6 text-center">
-          <div className="text-5xl md:text-6xl font-mono font-bold text-gray-800">
+        {/* Formula display with molecular structure */}
+        <div className="bg-gray-100 rounded-2xl p-6 md:p-8 mb-6 text-center">
+          <div className="text-4xl md:text-6xl font-mono font-bold text-gray-800 mb-4">
             {challenge.formula}
           </div>
+          <MolecularStructure
+            compound={{
+              formula: challenge.formula,
+              name: challenge.correctName,
+              type: challenge.type === 'molecular' ? 'molecular' : 'ionic',
+              category: challenge.type === 'ionic-variable' ? 'málmar-breytilega-hleðsla' : 'jónefni',
+              difficulty: 'easy',
+              elements: [],
+              info: ''
+            }}
+            size="medium"
+            showLabels={true}
+          />
         </div>
 
         {/* Step indicator */}

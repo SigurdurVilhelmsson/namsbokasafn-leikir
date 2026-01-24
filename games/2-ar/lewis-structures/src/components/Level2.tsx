@@ -28,6 +28,8 @@ interface LewisStructure {
   centralLonePairs: number;
   centralFormalCharge?: number;
   centralUnpairedElectron?: boolean; // For radicals like NO
+  octetException?: 'none' | 'electron-deficient' | 'expanded-octet' | 'odd-electron';
+  centralElectrons?: number; // Actual electrons around central atom (for exceptions)
 }
 
 interface Challenge {
@@ -330,10 +332,160 @@ const challenges: Challenge[] = [
     hint: 'Cl þarf aðeins 1 rafeind til að ná áttureglunni',
     finalExplanation: 'HCl: Einfalt H-Cl tengi. Cl hefur 3 einstæð rafeindarapör. Bæði H og Cl hafa fulla ystu skel.',
   },
+  // === OCTET RULE EXCEPTIONS ===
+  {
+    id: 7,
+    title: 'Bórþríflúoríð (BF₃) - Undantekning',
+    molecule: 'BF₃',
+    totalElectrons: 24,
+    correctStructure: {
+      centralAtom: 'B',
+      surroundingAtoms: [
+        { symbol: 'F', bondType: 'single', lonePairs: 3 },
+        { symbol: 'F', bondType: 'single', lonePairs: 3 },
+        { symbol: 'F', bondType: 'single', lonePairs: 3 },
+      ],
+      centralLonePairs: 0,
+      octetException: 'electron-deficient',
+      centralElectrons: 6,
+    },
+    steps: [
+      {
+        question: 'Bór (B) er í hópi 13 og hefur 3 gildisrafeindir. Hvað gerist þegar B myndar 3 einföld tengsl?',
+        type: 'central_atom',
+        options: [
+          { id: '6e', text: 'Bór hefur aðeins 6 rafeindir í kringum sig', correct: true },
+          { id: '8e', text: 'Bór hefur 8 rafeindir (uppfyllir áttu)', correct: false },
+        ],
+        explanation: 'Bór með 3 einföld tengsl hefur aðeins 6 rafeindir. Þetta er undantekning frá áttureglunni!',
+      },
+      {
+        question: 'Af hverju er BF₃ stöðugt þó það uppfylli ekki átturegluna?',
+        type: 'bond_count',
+        options: [
+          { id: 'small', text: 'Bór er lítið atóm sem getur ekki haldið 8 rafeindum', correct: true },
+          { id: 'special', text: 'Flúor gefur rafeindir til bórs', correct: false },
+        ],
+        explanation: 'Bór er lítið atóm á 2. lotu og hefur ekki d-undirskel. Það getur stöðugt haft færri en 8 rafeindir.',
+      },
+      {
+        question: 'Hvað kallast þessi tegund undantekninga?',
+        type: 'lone_pairs_central',
+        options: [
+          { id: 'deficient', text: 'Rafeindaskort (electron deficient)', correct: true },
+          { id: 'expanded', text: 'Stækkuð átta (expanded octet)', correct: false },
+        ],
+        explanation: 'BF₃ er "electron deficient" - það hefur færri en 8 rafeindir í kringum miðatómið.',
+      },
+    ],
+    hint: 'Bór er í hópi 13 og myndar venjulega 3 tengsl',
+    finalExplanation: 'BF₃ er dæmi um rafeindaskort: Bór hefur aðeins 6 rafeindir í kringum sig, ekki 8. Þetta er stöðugt vegna þess að bór er lítið atóm.',
+  },
+  {
+    id: 8,
+    title: 'Fosfórpentaklóríð (PCl₅) - Undantekning',
+    molecule: 'PCl₅',
+    totalElectrons: 40,
+    correctStructure: {
+      centralAtom: 'P',
+      surroundingAtoms: [
+        { symbol: 'Cl', bondType: 'single', lonePairs: 3 },
+        { symbol: 'Cl', bondType: 'single', lonePairs: 3 },
+        { symbol: 'Cl', bondType: 'single', lonePairs: 3 },
+        { symbol: 'Cl', bondType: 'single', lonePairs: 3 },
+        { symbol: 'Cl', bondType: 'single', lonePairs: 3 },
+      ],
+      centralLonePairs: 0,
+      octetException: 'expanded-octet',
+      centralElectrons: 10,
+    },
+    steps: [
+      {
+        question: 'Fosfór (P) er í hópi 15 á 3. lotu. Hversu mörg tengsl myndar P í PCl₅?',
+        type: 'bond_count',
+        options: [
+          { id: '3', text: '3 tengsl', correct: false },
+          { id: '5', text: '5 tengsl', correct: true },
+        ],
+        explanation: '5 einföld tengsl til 5 klóratóma. Þetta þýðir 10 rafeindir í kringum P!',
+      },
+      {
+        question: 'Hversu margar rafeindir eru í kringum fosfór í PCl₅?',
+        type: 'central_atom',
+        options: [
+          { id: '8', text: '8 rafeindir', correct: false },
+          { id: '10', text: '10 rafeindir', correct: true },
+        ],
+        explanation: 'Fosfór hefur 10 rafeindir í kringum sig - fleiri en áttureglan leyfir!',
+      },
+      {
+        question: 'Hvað kallast þessi tegund undantekninga?',
+        type: 'lone_pairs_central',
+        options: [
+          { id: 'deficient', text: 'Rafeindaskort (electron deficient)', correct: false },
+          { id: 'expanded', text: 'Stækkuð átta (expanded octet)', correct: true },
+        ],
+        explanation: 'PCl₅ hefur "expanded octet" - stækkaða áttu með fleiri en 8 rafeindum.',
+      },
+    ],
+    hint: 'Fosfór er á 3. lotu og hefur d-undirskeljum aðgengilegar',
+    finalExplanation: 'PCl₅ er dæmi um stækkaða áttu: Fosfór hefur 10 rafeindir í kringum sig. Þetta er mögulegt vegna þess að P er á 3. lotu og getur notað d-undirskeljum.',
+  },
+  {
+    id: 9,
+    title: 'Brennisteinshexaflúoríð (SF₆) - Undantekning',
+    molecule: 'SF₆',
+    totalElectrons: 48,
+    correctStructure: {
+      centralAtom: 'S',
+      surroundingAtoms: [
+        { symbol: 'F', bondType: 'single', lonePairs: 3 },
+        { symbol: 'F', bondType: 'single', lonePairs: 3 },
+        { symbol: 'F', bondType: 'single', lonePairs: 3 },
+        { symbol: 'F', bondType: 'single', lonePairs: 3 },
+        { symbol: 'F', bondType: 'single', lonePairs: 3 },
+        { symbol: 'F', bondType: 'single', lonePairs: 3 },
+      ],
+      centralLonePairs: 0,
+      octetException: 'expanded-octet',
+      centralElectrons: 12,
+    },
+    steps: [
+      {
+        question: 'Brennisteinn (S) myndar 6 tengsl í SF₆. Hversu margar rafeindir eru í kringum S?',
+        type: 'central_atom',
+        options: [
+          { id: '8', text: '8 rafeindir', correct: false },
+          { id: '12', text: '12 rafeindir', correct: true },
+        ],
+        explanation: 'Brennisteinn hefur 12 rafeindir í kringum sig - tvöfalt meira en áttureglan!',
+      },
+      {
+        question: 'Hvað gerir atómum á 3. lotu og neðar kleift að hafa fleiri en 8 rafeindir?',
+        type: 'bond_count',
+        options: [
+          { id: 'd-orbitals', text: 'Þau hafa tómar d-undirskeljum', correct: true },
+          { id: 'bigger', text: 'Þau eru bara stærri', correct: false },
+        ],
+        explanation: 'Atóm á 3. lotu og neðar hafa aðgang að d-undirskeljum sem geta haldið viðbótarrafeindum.',
+      },
+      {
+        question: 'SF₆ er mjög stöðug sameind. Hvers vegna er það mikilvægt í iðnaði?',
+        type: 'lone_pairs_central',
+        options: [
+          { id: 'insulator', text: 'Hún er notuð sem einangrunarefni í rafbúnaði', correct: true },
+          { id: 'fuel', text: 'Hún er notuð sem eldsneyti', correct: false },
+        ],
+        explanation: 'SF₆ er mjög stöðug og er notuð sem einangrunarefni í háspennubúnaði.',
+      },
+    ],
+    hint: 'Brennisteinn er á 3. lotu og getur haft meira en 8 rafeindir',
+    finalExplanation: 'SF₆ er dæmi um stækkaða áttu: S hefur 12 rafeindir í kringum sig (6 tengsl). Þetta er mögulegt vegna d-undirskelja.',
+  },
 ];
 
-// Calculate max score: 6 challenges * 3 steps each * 5 points = 90
-const MAX_SCORE = 90;
+// Calculate max score: 9 challenges * 3 steps each * 5 points = 135
+const MAX_SCORE = 135;
 
 export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer }: Level2Props) {
   const [currentChallenge, setCurrentChallenge] = useState(0);
@@ -695,6 +847,27 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
                     </div>
                   )}
                 </div>
+                {/* Octet exception warning */}
+                {challenge.correctStructure.octetException && challenge.correctStructure.octetException !== 'none' && (
+                  <div className="mt-3 pt-3 border-t border-orange-200">
+                    <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium ${
+                      challenge.correctStructure.octetException === 'electron-deficient'
+                        ? 'bg-orange-100 text-orange-800 border border-orange-300'
+                        : 'bg-purple-100 text-purple-800 border border-purple-300'
+                    }`}>
+                      <span className="text-lg">⚠️</span>
+                      {challenge.correctStructure.octetException === 'electron-deficient' && (
+                        <span>Rafeindaskort: {challenge.correctStructure.centralAtom} hefur {challenge.correctStructure.centralElectrons} rafeindir</span>
+                      )}
+                      {challenge.correctStructure.octetException === 'expanded-octet' && (
+                        <span>Stækkuð átta: {challenge.correctStructure.centralAtom} hefur {challenge.correctStructure.centralElectrons} rafeindir</span>
+                      )}
+                      {challenge.correctStructure.octetException === 'odd-electron' && (
+                        <span>Oddatala rafeinda (radical)</span>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -893,6 +1066,33 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
             <li>Breyttu í tvöföld/þreföld tengsl ef þarf til að uppfylla átturegluna</li>
           </ol>
         </div>
+
+        {/* Octet exceptions reference - show when relevant */}
+        {challenge.correctStructure.octetException && challenge.correctStructure.octetException !== 'none' && (
+          <div className="mt-4 bg-gradient-to-r from-orange-50 to-purple-50 rounded-xl p-4 shadow border border-orange-200">
+            <h3 className="font-bold text-gray-700 mb-3 flex items-center gap-2">
+              <span className="text-xl">⚠️</span>
+              Undantekningar frá áttureglunni
+            </h3>
+            <div className="grid gap-3 text-sm">
+              <div className={`p-3 rounded-lg ${challenge.correctStructure.octetException === 'electron-deficient' ? 'bg-orange-100 border-2 border-orange-300' : 'bg-white'}`}>
+                <div className="font-bold text-orange-700">Rafeindaskort (Electron Deficient)</div>
+                <div className="text-gray-600">Atóm eins og B og Al hafa færri en 8 rafeindir</div>
+                <div className="text-xs text-gray-500 mt-1">Dæmi: BF₃ (6 rafeindir), AlCl₃ (6 rafeindir)</div>
+              </div>
+              <div className={`p-3 rounded-lg ${challenge.correctStructure.octetException === 'expanded-octet' ? 'bg-purple-100 border-2 border-purple-300' : 'bg-white'}`}>
+                <div className="font-bold text-purple-700">Stækkuð átta (Expanded Octet)</div>
+                <div className="text-gray-600">Atóm á 3. lotu+ geta haft fleiri en 8 rafeindir (nota d-undirskeljum)</div>
+                <div className="text-xs text-gray-500 mt-1">Dæmi: PCl₅ (10 rafeindir), SF₆ (12 rafeindir)</div>
+              </div>
+              <div className="p-3 rounded-lg bg-white">
+                <div className="font-bold text-red-700">Oddatala rafeinda (Radicals)</div>
+                <div className="text-gray-600">Sameindir með oddatölu rafeinda hafa óparaða rafeind</div>
+                <div className="text-xs text-gray-500 mt-1">Dæmi: NO (11 rafeindir), NO₂ (17 rafeindir)</div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

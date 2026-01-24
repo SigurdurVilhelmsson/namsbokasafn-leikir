@@ -26,6 +26,9 @@ function inferGeometry(
 ): MolecularGeometry | undefined {
   const totalDomains = centralLonePairs + surroundingCount;
 
+  // Diatomic molecules
+  if (surroundingCount === 1) return 'linear';
+
   // Linear geometries
   if (totalDomains === 2 && centralLonePairs === 0) return 'linear';
 
@@ -42,8 +45,20 @@ function inferGeometry(
     if (centralLonePairs === 2) return 'bent';
   }
 
-  // Diatomic molecules
-  if (surroundingCount === 1) return 'linear';
+  // Trigonal bipyramidal arrangements (expanded octet)
+  if (totalDomains === 5) {
+    if (centralLonePairs === 0) return 'trigonal-bipyramidal';
+    if (centralLonePairs === 1) return 'see-saw';
+    if (centralLonePairs === 2) return 't-shaped';
+    if (centralLonePairs === 3) return 'linear';
+  }
+
+  // Octahedral arrangements (expanded octet)
+  if (totalDomains === 6) {
+    if (centralLonePairs === 0) return 'octahedral';
+    if (centralLonePairs === 1) return 'square-pyramidal';
+    if (centralLonePairs === 2) return 'square-planar';
+  }
 
   return undefined;
 }

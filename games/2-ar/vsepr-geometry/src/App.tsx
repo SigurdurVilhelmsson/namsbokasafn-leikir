@@ -53,7 +53,7 @@ function saveProgress(progress: Progress): void {
 
 function App() {
   const [activeLevel, setActiveLevel] = useState<ActiveLevel>('menu');
-  const { t, language, setLanguage } = useGameI18n({ gameTranslations });
+  const { language, setLanguage } = useGameI18n({ gameTranslations });
   const [progress, setProgress] = useState<Progress>(loadProgress);
   const [showAchievements, setShowAchievements] = useState(false);
 

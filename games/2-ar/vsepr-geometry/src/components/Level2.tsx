@@ -548,6 +548,84 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
                       Rétt svar: {molecule.bondAngle}
                     </div>
                   )}
+
+                  {/* Bond angle visual indicator */}
+                  {stepResult !== null && (
+                    <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-200">
+                      <div className="font-bold text-indigo-800 mb-3 flex items-center gap-2">
+                        <span className="text-lg">📐</span> Tengihorn í {molecule.molecularGeometry}
+                      </div>
+                      <div className="flex items-center justify-center py-4">
+                        <svg width="180" height="120" viewBox="0 0 180 120" className="drop-shadow">
+                          {/* Central atom */}
+                          <circle cx="90" cy="80" r="18" fill="#0d9488" stroke="#134e4a" strokeWidth="2" />
+                          <text x="90" y="85" textAnchor="middle" fill="white" fontWeight="bold" fontSize="14">
+                            {molecule.centralAtom}
+                          </text>
+
+                          {/* Bond lines - simplified representation */}
+                          {molecule.correctGeometryId === 'linear' && (
+                            <>
+                              <line x1="20" y1="80" x2="72" y2="80" stroke="#374151" strokeWidth="3" />
+                              <line x1="108" y1="80" x2="160" y2="80" stroke="#374151" strokeWidth="3" />
+                              {/* Angle arc */}
+                              <path d="M 60 80 A 30 30 0 0 1 120 80" fill="none" stroke="#8b5cf6" strokeWidth="2" strokeDasharray="4 2" />
+                              <text x="90" y="60" textAnchor="middle" fill="#8b5cf6" fontWeight="bold" fontSize="12">180°</text>
+                            </>
+                          )}
+
+                          {molecule.correctGeometryId === 'trigonal-planar' && (
+                            <>
+                              <line x1="90" y1="62" x2="90" y2="20" stroke="#374151" strokeWidth="3" />
+                              <line x1="72" y1="80" x2="30" y2="100" stroke="#374151" strokeWidth="3" />
+                              <line x1="108" y1="80" x2="150" y2="100" stroke="#374151" strokeWidth="3" />
+                              <path d="M 70 35 A 25 25 0 0 1 110 35" fill="none" stroke="#8b5cf6" strokeWidth="2" strokeDasharray="4 2" />
+                              <text x="90" y="50" textAnchor="middle" fill="#8b5cf6" fontWeight="bold" fontSize="11">120°</text>
+                            </>
+                          )}
+
+                          {(molecule.correctGeometryId === 'tetrahedral' || molecule.correctGeometryId === 'trigonal-pyramidal' || molecule.correctGeometryId === 'bent') && (
+                            <>
+                              <line x1="72" y1="80" x2="30" y2="55" stroke="#374151" strokeWidth="3" />
+                              <line x1="108" y1="80" x2="150" y2="55" stroke="#374151" strokeWidth="3" />
+                              {molecule.bondingPairs >= 3 && <line x1="90" y1="62" x2="90" y2="20" stroke="#374151" strokeWidth="3" />}
+                              {molecule.bondingPairs >= 4 && <line x1="90" y1="98" x2="90" y2="115" stroke="#374151" strokeWidth="3" />}
+                              <path d="M 50 55 A 35 35 0 0 1 130 55" fill="none" stroke="#8b5cf6" strokeWidth="2" strokeDasharray="4 2" />
+                              <text x="90" y="45" textAnchor="middle" fill="#8b5cf6" fontWeight="bold" fontSize="11">{molecule.bondAngle}</text>
+                            </>
+                          )}
+
+                          {(molecule.correctGeometryId === 'octahedral' || molecule.correctGeometryId === 'square-planar') && (
+                            <>
+                              <line x1="90" y1="62" x2="90" y2="20" stroke="#374151" strokeWidth="3" />
+                              <line x1="72" y1="80" x2="30" y2="80" stroke="#374151" strokeWidth="3" />
+                              <line x1="108" y1="80" x2="150" y2="80" stroke="#374151" strokeWidth="3" />
+                              <line x1="90" y1="98" x2="90" y2="115" stroke="#374151" strokeWidth="3" />
+                              <path d="M 90 50 A 30 30 0 0 1 120 80" fill="none" stroke="#8b5cf6" strokeWidth="2" strokeDasharray="4 2" />
+                              <text x="115" y="60" textAnchor="middle" fill="#8b5cf6" fontWeight="bold" fontSize="11">90°</text>
+                            </>
+                          )}
+
+                          {(molecule.correctGeometryId === 'trigonal-bipyramidal' || molecule.correctGeometryId === 'seesaw' || molecule.correctGeometryId === 't-shaped') && (
+                            <>
+                              <line x1="90" y1="62" x2="90" y2="15" stroke="#374151" strokeWidth="3" />
+                              <line x1="90" y1="98" x2="90" y2="115" stroke="#374151" strokeWidth="3" />
+                              <line x1="72" y1="80" x2="30" y2="80" stroke="#374151" strokeWidth="3" />
+                              <line x1="108" y1="80" x2="150" y2="80" stroke="#374151" strokeWidth="3" />
+                              <path d="M 90 45 A 35 35 0 0 1 125 80" fill="none" stroke="#8b5cf6" strokeWidth="2" strokeDasharray="4 2" />
+                              <text x="130" y="55" textAnchor="start" fill="#8b5cf6" fontWeight="bold" fontSize="10">90°</text>
+                              <text x="50" y="95" textAnchor="middle" fill="#f59e0b" fontWeight="bold" fontSize="10">120°</text>
+                            </>
+                          )}
+                        </svg>
+                      </div>
+                      <div className="text-xs text-indigo-600 text-center">
+                        {molecule.lonePairs > 0 && (
+                          <span>⚠️ Einstæð pör (ekki sýnd) minnka hornið frá fullkominni röðun</span>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -653,6 +731,11 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
                 <tr className="border-t"><td className="p-2">4</td><td>4</td><td>0</td><td>Fjórflötungur</td><td>109.5°</td></tr>
                 <tr className="border-t"><td className="p-2">4</td><td>3</td><td>1</td><td>Þríhyrnd pýramída</td><td>107°</td></tr>
                 <tr className="border-t"><td className="p-2">4</td><td>2</td><td>2</td><td>Beygð</td><td>104.5°</td></tr>
+                <tr className="border-t bg-purple-50"><td className="p-2">5</td><td>5</td><td>0</td><td>Þríhyrnd tvípýramída</td><td>90°, 120°</td></tr>
+                <tr className="border-t bg-purple-50"><td className="p-2">5</td><td>4</td><td>1</td><td>Sjáldruslögun</td><td>~90°, ~120°</td></tr>
+                <tr className="border-t bg-purple-50"><td className="p-2">5</td><td>3</td><td>2</td><td>T-lögun</td><td>90°</td></tr>
+                <tr className="border-t bg-indigo-50"><td className="p-2">6</td><td>6</td><td>0</td><td>Áttflötungur</td><td>90°</td></tr>
+                <tr className="border-t bg-indigo-50"><td className="p-2">6</td><td>4</td><td>2</td><td>Ferningsslétt</td><td>90°</td></tr>
               </tbody>
             </table>
           </div>

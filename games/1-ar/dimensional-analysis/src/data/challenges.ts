@@ -327,5 +327,101 @@ export const level3Challenges: Level3Challenge[] = [
       { steps: ['1000 g / 1 kg'], stepCount: 1, efficient: false }
     ],
     targetAnswer: 0.5
+  },
+  // New real-world chemistry lab scenarios
+  {
+    id: 'L3-11',
+    type: 'real_world',
+    prompt: '🧪 Í tilraun þarftu að mæla út 25 mL skammta af sýru. Þú ert með 500 mL bikar. Hversu marga skammta getur þú útbúið?',
+    startValue: 500,
+    startUnit: 'mL',
+    portionSize: 25,
+    portionUnit: 'mL',
+    expectedAnswer: 20,
+    requireInteger: true,
+    explanation: 'Deila heildarmagni með skammtastærð. 500 mL ÷ 25 mL = 20 skammtar'
+  },
+  {
+    id: 'L3-12',
+    type: 'synthesis',
+    prompt: '🔬 Þú ert að undirbúa tilraun sem krefst 0.5 mol af NaCl. Mólmassi NaCl er 58.5 g/mol. Hversu mörg grömm þarftu?',
+    startValue: 0.5,
+    startUnit: 'mol',
+    density: 58.5,
+    densityUnit: 'g/mol',
+    targetUnit: 'g',
+    expectedAnswer: 29.25,
+    significantFigures: 3,
+    requiredSteps: ['multiply by molar mass']
+  },
+  {
+    id: 'L3-13',
+    type: 'real_world',
+    prompt: '💊 Lyf inniheldur 250 mg af virka efninu per töflu. Sjúklingur þarf 1.5 g á dag. Hversu margar töflur þarf hann?',
+    startValue: 1.5,
+    startUnit: 'g',
+    portionSize: 250,
+    portionUnit: 'mg',
+    expectedAnswer: 6,
+    requireInteger: true,
+    explanation: 'Fyrst breyta g í mg (1.5 g = 1500 mg), síðan deila með 250 mg/töflu = 6 töflur'
+  },
+  {
+    id: 'L3-14',
+    type: 'synthesis',
+    prompt: '⚗️ Þú mælir 75.0 mL af etanóli með eðlismassa 0.789 g/mL. Hvað vegur þetta í grömm?',
+    startValue: 75.0,
+    startUnit: 'mL',
+    density: 0.789,
+    densityUnit: 'g/mL',
+    targetUnit: 'g',
+    expectedAnswer: 59.2,
+    significantFigures: 3,
+    requiredSteps: ['multiply by density']
+  },
+  {
+    id: 'L3-15',
+    type: 'real_world',
+    prompt: '🧫 Þú ert að rækta bakteríur sem tvöfaldast á 20 mínútum. Ef þú byrjar með 100 bakteríur, hversu margar verða eftir 2 klukkustundir?',
+    startValue: 2,
+    startUnit: 'klst',
+    portionSize: 20,
+    portionUnit: 'mín',
+    expectedAnswer: 6400,
+    requireInteger: true,
+    explanation: '2 klst = 120 mín ÷ 20 mín = 6 tvöföldunartímabil. 100 × 2⁶ = 100 × 64 = 6400 bakteríur'
+  },
+  {
+    id: 'L3-16',
+    type: 'derivation',
+    prompt: '🌡️ Vatn suðar við 100°C á sjávarmáli. Breyttu þessu í Kelvin (K = °C + 273.15).',
+    startValue: 100,
+    startUnit: '°C',
+    targetUnit: 'K',
+    expectedAnswer: 373.15,
+    scientificNotation: false,
+    correctMethod: ['bæta við 273.15']
+  },
+  {
+    id: 'L3-17',
+    type: 'error_analysis',
+    prompt: '🔴 Nemandi reyndi að reikna massa úr rúmmáli. Hann hafði 50 mL og eðlismassa 2.7 g/mL en fékk 18.5 g. Hvað fór úrskeiðis?',
+    incorrectWork: '50 mL ÷ 2.7 g/mL = 18.5 g',
+    correctAnswer: 135,
+    correctUnit: 'g',
+    errorExplanation: 'Nemandinn deildi í stað þess að margfalda. Rétt: m = ρ × V = 2.7 g/mL × 50 mL = 135 g',
+    correctMethod: ['2.7 g/mL × 50 mL']
+  },
+  {
+    id: 'L3-18',
+    type: 'real_world',
+    prompt: '💧 Efnafræðitilraun þarf 2.5 L af vatni. Þú hefur 250 mL flöskur. Hversu margar flöskur þarftu?',
+    startValue: 2.5,
+    startUnit: 'L',
+    portionSize: 250,
+    portionUnit: 'mL',
+    expectedAnswer: 10,
+    requireInteger: true,
+    explanation: 'Umbreyta 2.5 L í mL: 2500 mL. Síðan 2500 ÷ 250 = 10 flöskur'
   }
 ];

@@ -28,7 +28,7 @@
 
 | Improvement | Status | Priority | Effort | Notes |
 |-------------|--------|----------|--------|-------|
-| Unit cancellation animation | ⬜ | High | Medium | Show units "crossing out" |
+| Unit cancellation animation | ✅ | High | Medium | Enhanced UnitCancellationVisualizer with auto-animate, strikethrough, connecting lines |
 | Drag-and-drop unit builder | ⬜ | High | High | Build conversions visually |
 | Real-world context scenarios | ⬜ | Medium | Low | Cooking, pharmacy examples |
 | Step-by-step solution display | ✅ | Medium | Low | Shows factor-label method with correctMethod/requiredSteps in feedback |
@@ -46,10 +46,10 @@
 
 | Improvement | Status | Priority | Effort | Notes |
 |-------------|--------|----------|--------|-------|
-| Molecular structure on cards | ⬜ | High | Medium | Visual structure diagrams |
+| Molecular structure on cards | ✅ | High | Medium | CompoundVisualization on Level 3 memory cards with 15+ structural formulas |
 | Audio pronunciation | ⬜ | Medium | Medium | TTS for compound names |
-| Build-the-name mode | ⬜ | Medium | High | Construct systematic names |
-| Structural formula display | ⬜ | High | Medium | Alongside molecular formula |
+| Build-the-name mode | ✅ | Medium | High | Name builder mode in Level 4 for constructing systematic names |
+| Structural formula display | ✅ | High | Medium | SVG-based StructuralFormula component with bonds, ionic charges |
 
 #### Solutions (Lausnir)
 
@@ -64,7 +64,7 @@
 
 | Improvement | Status | Priority | Effort | Notes |
 |-------------|--------|----------|--------|-------|
-| Reaction animation | ⬜ | High | High | Molecules using up reactants |
+| Reaction animation | ✅ | High | High | ReactionAnimation component integrated in Level 2 showing before/reacting/after phases |
 | Visual stoichiometry | ⬜ | High | Medium | Particle count representation |
 | Factory game mode | ⬜ | Medium | Medium | Production optimization |
 | Excess reactant display | ✅ | Medium | Low | Visual display with molecules showing what remains after reaction |
@@ -203,17 +203,17 @@
 
 | Priority | Total | Completed | Percentage |
 |----------|-------|-----------|------------|
-| High | 42 | 12 | 28.6% |
-| Medium | 45 | 10 | 22.2% |
+| High | 42 | 16 | 38.1% |
+| Medium | 45 | 11 | 24.4% |
 | Low | 21 | 1 | 4.8% |
-| **Total** | **108** | **23** | **21.3%** |
+| **Total** | **108** | **28** | **25.9%** |
 
 ### By Year
 
 | Year | Total | Completed | Percentage |
 |------|-------|-----------|------------|
 | Shared | 8 | 8 | 100% |
-| Year 1 | 20 | 3 | 15% |
+| Year 1 | 20 | 8 | 40% |
 | Year 2 | 40 | 5 | 12.5% |
 | Year 3 | 32 | 5 | 15.6% |
 
@@ -303,6 +303,10 @@ Building these once benefits multiple games:
 | 2026-01-21 | **FeedbackPanel COMPLETE** - DetailedFeedback type, expandable "Why?" section, misconception warnings |
 | 2026-01-21 | **DragDropBuilder COMPLETE** - HTML5 drag-drop API with touch support, snap-to-zone, reordering |
 | 2026-01-21 | **MoleculeViewer3D COMPLETE** - Three.js lazy-loaded 3D viewer, ball-stick/space-fill modes, orbital controls |
+| 2026-01-25 | **Takmarkandi Reaction Animation COMPLETE** - ReactionAnimation component with before/reacting/after phases in Level 2 |
+| 2026-01-25 | **Nafnakerfid Molecular Structures ENHANCED** - Added 15+ structural formulas to MolecularStructure.tsx for Level 3 cards |
+| 2026-01-25 | **Dimensional Analysis Unit Cancellation ENHANCED** - Auto-animate unit crossing out with strikethrough, connecting lines |
+| 2026-01-25 | Year 1 progress: 15% → 40% (8/20 improvements completed) |
 
 ---
 

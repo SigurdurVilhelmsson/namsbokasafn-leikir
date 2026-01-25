@@ -466,6 +466,172 @@ const STRUCTURAL_FORMULAS: Record<string, MolecularStructureData> = {
     width: 100,
     height: 60,
   },
+  // Calcium chloride (ionic)
+  'CaCl₂': {
+    atoms: [
+      { symbol: 'Cl', x: 15, y: 30 },
+      { symbol: 'Ca', x: 50, y: 30 },
+      { symbol: 'Cl', x: 85, y: 30 },
+    ],
+    bonds: [],
+    width: 100,
+    height: 60,
+  },
+  // Potassium bromide (ionic)
+  'KBr': {
+    atoms: [
+      { symbol: 'K', x: 30, y: 30 },
+      { symbol: 'Br', x: 70, y: 30 },
+    ],
+    bonds: [],
+    width: 100,
+    height: 60,
+  },
+  // Lithium fluoride (ionic)
+  'LiF': {
+    atoms: [
+      { symbol: 'Li', x: 30, y: 30 },
+      { symbol: 'F', x: 70, y: 30 },
+    ],
+    bonds: [],
+    width: 100,
+    height: 60,
+  },
+  // Potassium chloride (ionic)
+  'KCl': {
+    atoms: [
+      { symbol: 'K', x: 30, y: 30 },
+      { symbol: 'Cl', x: 70, y: 30 },
+    ],
+    bonds: [],
+    width: 100,
+    height: 60,
+  },
+  // Barium oxide (ionic)
+  'BaO': {
+    atoms: [
+      { symbol: 'Ba', x: 30, y: 30 },
+      { symbol: 'O', x: 70, y: 30 },
+    ],
+    bonds: [],
+    width: 100,
+    height: 60,
+  },
+  // Sodium fluoride (ionic)
+  'NaF': {
+    atoms: [
+      { symbol: 'Na', x: 30, y: 30 },
+      { symbol: 'F', x: 70, y: 30 },
+    ],
+    bonds: [],
+    width: 100,
+    height: 60,
+  },
+  // Sodium oxide (ionic)
+  'Na₂O': {
+    atoms: [
+      { symbol: 'Na', x: 15, y: 30 },
+      { symbol: 'O', x: 50, y: 30 },
+      { symbol: 'Na', x: 85, y: 30 },
+    ],
+    bonds: [],
+    width: 100,
+    height: 60,
+  },
+  // Magnesium chloride (ionic)
+  'MgCl₂': {
+    atoms: [
+      { symbol: 'Cl', x: 15, y: 30 },
+      { symbol: 'Mg', x: 50, y: 30 },
+      { symbol: 'Cl', x: 85, y: 30 },
+    ],
+    bonds: [],
+    width: 100,
+    height: 60,
+  },
+  // Aluminum chloride
+  'AlCl₃': {
+    atoms: [
+      { symbol: 'Cl', x: 20, y: 15 },
+      { symbol: 'Al', x: 50, y: 35 },
+      { symbol: 'Cl', x: 20, y: 55 },
+      { symbol: 'Cl', x: 80, y: 35 },
+    ],
+    bonds: [],
+    width: 100,
+    height: 70,
+  },
+  // Lithium oxide (ionic)
+  'Li₂O': {
+    atoms: [
+      { symbol: 'Li', x: 15, y: 30 },
+      { symbol: 'O', x: 50, y: 30 },
+      { symbol: 'Li', x: 85, y: 30 },
+    ],
+    bonds: [],
+    width: 100,
+    height: 60,
+  },
+  // Zinc oxide (ionic)
+  'ZnO': {
+    atoms: [
+      { symbol: 'Zn', x: 30, y: 30 },
+      { symbol: 'O', x: 70, y: 30 },
+    ],
+    bonds: [],
+    width: 100,
+    height: 60,
+  },
+  // Silver chloride (ionic)
+  'AgCl': {
+    atoms: [
+      { symbol: 'Ag', x: 30, y: 30 },
+      { symbol: 'Cl', x: 70, y: 30 },
+    ],
+    bonds: [],
+    width: 100,
+    height: 60,
+  },
+  // Hydrogen bromide: H-Br
+  'HBr': {
+    atoms: [
+      { symbol: 'H', x: 25, y: 30 },
+      { symbol: 'Br', x: 75, y: 30 },
+    ],
+    bonds: [
+      { from: 0, to: 1, type: 1 },
+    ],
+    width: 100,
+    height: 60,
+  },
+  // Hydrogen fluoride: H-F
+  'HF': {
+    atoms: [
+      { symbol: 'H', x: 25, y: 30 },
+      { symbol: 'F', x: 75, y: 30 },
+    ],
+    bonds: [
+      { from: 0, to: 1, type: 1 },
+    ],
+    width: 100,
+    height: 60,
+  },
+  // Sulfur trioxide: O=S=O with third O
+  'SO₃': {
+    atoms: [
+      { symbol: 'S', x: 50, y: 30 },
+      { symbol: 'O', x: 20, y: 50 },
+      { symbol: 'O', x: 80, y: 50 },
+      { symbol: 'O', x: 50, y: 10 },
+    ],
+    bonds: [
+      { from: 0, to: 1, type: 2 },
+      { from: 0, to: 2, type: 1 },
+      { from: 0, to: 3, type: 1 },
+    ],
+    width: 100,
+    height: 60,
+  },
 };
 
 interface StructuralFormulaProps {

@@ -3,6 +3,7 @@ import { Reaction } from '../types';
 import { REACTIONS } from '../data/reactions';
 import { getMolarMass, roundMass } from '../data/molar-masses';
 import { Molecule } from './Molecule';
+import { ReactionAnimation } from './ReactionAnimation';
 
 interface Level2Props {
   onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
@@ -477,98 +478,20 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
               </div>
             </div>
 
-            {/* Visual representation of excess reactant */}
-            <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-4 mb-6 border-2 border-blue-200">
-              <h3 className="font-bold text-blue-800 mb-3 flex items-center gap-2">
-                <span className="text-xl">🔬</span> Eftir hvörf - hvað er afgangur?
+            {/* Animated reaction visualization */}
+            <div className="mb-6">
+              <h3 className="font-bold text-gray-800 mb-3 flex items-center gap-2">
+                <span className="text-xl">🔬</span> Sjáðu hvörfin gerast!
               </h3>
-              <div className="grid grid-cols-2 gap-4">
-                {/* Limiting reactant - all used up */}
-                <div className="bg-white p-3 rounded-lg border border-gray-200">
-                  <div className="text-center">
-                    <span className={`text-sm font-bold ${problem.limitingReactant === problem.reaction.reactant1.formula ? 'text-orange-600' : 'text-gray-600'}`}>
-                      {problem.reaction.reactant1.formula}
-                    </span>
-                    {problem.limitingReactant === problem.reaction.reactant1.formula && (
-                      <span className="ml-1 text-xs bg-orange-100 text-orange-600 px-2 py-0.5 rounded-full">takmarkandi</span>
-                    )}
-                  </div>
-                  <div className="flex flex-wrap justify-center gap-1 mt-2 min-h-[40px]">
-                    {problem.limitingReactant === problem.reaction.reactant1.formula ? (
-                      <span className="text-gray-400 text-sm">✓ Öll notuð</span>
-                    ) : (
-                      <>
-                        {Array.from({ length: Math.min(problem.excessRemaining, 6) }).map((_, i) => (
-                          <Molecule
-                            key={i}
-                            formula={problem.reaction.reactant1.formula}
-                            color={problem.reaction.reactant1.color}
-                            size={22}
-                          />
-                        ))}
-                        {problem.excessRemaining > 6 && <span className="text-blue-600 text-xs">+{problem.excessRemaining - 6}</span>}
-                        <span className="w-full text-center text-blue-600 text-xs font-bold mt-1">
-                          {problem.excessRemaining} afgangur
-                        </span>
-                      </>
-                    )}
-                  </div>
-                </div>
-
-                {/* Excess reactant - some remaining */}
-                <div className="bg-white p-3 rounded-lg border border-gray-200">
-                  <div className="text-center">
-                    <span className={`text-sm font-bold ${problem.limitingReactant === problem.reaction.reactant2.formula ? 'text-orange-600' : 'text-gray-600'}`}>
-                      {problem.reaction.reactant2.formula}
-                    </span>
-                    {problem.limitingReactant === problem.reaction.reactant2.formula && (
-                      <span className="ml-1 text-xs bg-orange-100 text-orange-600 px-2 py-0.5 rounded-full">takmarkandi</span>
-                    )}
-                  </div>
-                  <div className="flex flex-wrap justify-center gap-1 mt-2 min-h-[40px]">
-                    {problem.limitingReactant === problem.reaction.reactant2.formula ? (
-                      <span className="text-gray-400 text-sm">✓ Öll notuð</span>
-                    ) : (
-                      <>
-                        {Array.from({ length: Math.min(problem.excessRemaining, 6) }).map((_, i) => (
-                          <Molecule
-                            key={i}
-                            formula={problem.reaction.reactant2.formula}
-                            color={problem.reaction.reactant2.color}
-                            size={22}
-                          />
-                        ))}
-                        {problem.excessRemaining > 6 && <span className="text-blue-600 text-xs">+{problem.excessRemaining - 6}</span>}
-                        <span className="w-full text-center text-blue-600 text-xs font-bold mt-1">
-                          {problem.excessRemaining} afgangur
-                        </span>
-                      </>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {/* Products formed */}
-              <div className="bg-green-50 p-3 rounded-lg border border-green-200 mt-3">
-                <div className="text-center">
-                  <span className="text-sm font-bold text-green-700">{problem.reaction.products[0].formula}</span>
-                  <span className="ml-1 text-xs bg-green-100 text-green-600 px-2 py-0.5 rounded-full">myndað</span>
-                </div>
-                <div className="flex flex-wrap justify-center gap-1 mt-2">
-                  {Array.from({ length: Math.min(problem.productsFormed, 8) }).map((_, i) => (
-                    <Molecule
-                      key={i}
-                      formula={problem.reaction.products[0].formula}
-                      color={problem.reaction.products[0].color || '#22c55e'}
-                      size={22}
-                    />
-                  ))}
-                  {problem.productsFormed > 8 && <span className="text-green-600 text-xs">+{problem.productsFormed - 8}</span>}
-                </div>
-                <p className="text-xs text-center text-green-700 mt-1 font-bold">
-                  {problem.productsFormed} {problem.reaction.products[0].formula} myndast
-                </p>
-              </div>
+              <ReactionAnimation
+                reactant1={problem.reaction.reactant1}
+                reactant2={problem.reaction.reactant2}
+                products={problem.reaction.products}
+                r1Count={isGramMode ? Math.round(problem.molesR1) : problem.r1Count}
+                r2Count={isGramMode ? Math.round(problem.molesR2) : problem.r2Count}
+                autoPlay={true}
+                showResult={true}
+              />
             </div>
 
             <button

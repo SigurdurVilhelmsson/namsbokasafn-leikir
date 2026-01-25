@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { level2Problems } from '../data/problems';
 import { UnitCancellationVisualizer } from './UnitCancellationVisualizer';
 import { UnitBlock, ConversionFactorBlock } from './UnitBlock';
@@ -95,6 +95,8 @@ export function Level2({ onComplete, onBack, initialProgress, onCorrectAnswer, o
   const [, setRationaleCorrectCount] = useState(0);
   const [zoneState, setZoneState] = useState<ZoneState>({});
   const [useDragDrop, setUseDragDrop] = useState(true);
+  const [animationKey, setAnimationKey] = useState(0);
+  const [showCancellationAnimation, setShowCancellationAnimation] = useState(false);
 
   const problem = level2Problems[currentProblemIndex];
 
@@ -198,6 +200,24 @@ export function Level2({ onComplete, onBack, initialProgress, onCorrectAnswer, o
     }).filter(Boolean);
     setSelectedFactors(factors);
   }, [zoneState, draggableItems]);
+
+  // Trigger cancellation animation when factors change
+  const triggerCancellationAnimation = useCallback(() => {
+    setAnimationKey(prev => prev + 1);
+    setShowCancellationAnimation(true);
+    // Reset animation flag after animation completes
+    const timer = setTimeout(() => {
+      setShowCancellationAnimation(false);
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Auto-trigger animation when a new factor is added
+  useEffect(() => {
+    if (selectedFactors.length > 0) {
+      triggerCancellationAnimation();
+    }
+  }, [selectedFactors.length]);
 
   // Generate feedback for FeedbackPanel
   const getDetailedFeedback = (): DetailedFeedback => {
@@ -439,12 +459,15 @@ export function Level2({ onComplete, onBack, initialProgress, onCorrectAnswer, o
             </div>
           </div>
 
-          {/* Unit visualization */}
+          {/* Unit visualization with animated cancellation */}
           <div className="mb-6">
             <UnitCancellationVisualizer
+              key={animationKey}
               numeratorUnits={numeratorUnits}
               denominatorUnits={denominatorUnits}
-              showCancelButton={false}
+              showCancelButton={showCancellationAnimation}
+              enhancedAnimation={true}
+              autoAnimate={showCancellationAnimation}
             />
           </div>
 

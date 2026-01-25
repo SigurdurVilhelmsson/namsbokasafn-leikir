@@ -65,15 +65,16 @@ export function UnitCancellationVisualizer({
     updateConnectingLines();
   }, [updateConnectingLines]);
 
-  // Auto-animate on mount if enabled
+  // Auto-animate when enabled and there are matching units
   useEffect(() => {
-    if (autoAnimate && hasMatchingUnits && matchingUnits.length > 0) {
+    if (autoAnimate && hasMatchingUnits && matchingUnits.length > 0 && !cancellingUnit) {
       const timer = setTimeout(() => {
         handleCancel(matchingUnits[0]);
-      }, 1000);
+      }, 500);
       return () => clearTimeout(timer);
     }
-  }, [autoAnimate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoAnimate, hasMatchingUnits, matchingUnits.length]);
 
   const handleCancel = (unit: string) => {
     setCancellingUnit(unit);

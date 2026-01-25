@@ -173,7 +173,7 @@
 
 | Improvement | Status | Priority | Effort | Notes |
 |-------------|--------|----------|--------|-------|
-| Q vs K visualization | ⬜ | High | Medium | Direction indicator |
+| Q vs K visualization | ✅ | High | Medium | QKComparison component with visual bars, stress-specific explanations |
 | Dynamic equilibrium animation | ✅ | High | High | ParticleEquilibrium showing reactant/product particles |
 | Industrial process scenarios | ⬜ | Medium | Low | Haber, Contact process |
 | K expression builder | ⬜ | Medium | Medium | Interactive formula |
@@ -184,15 +184,15 @@
 |-------------|--------|----------|--------|-------|
 | Phase diagram integration | ⬜ | Medium | High | Link to phases |
 | Coupled reaction examples | ⬜ | Medium | Medium | ATP hydrolysis |
-| Bio thermodynamics | ⬜ | Low | Low | Life science connections |
+| Bio thermodynamics | ✅ | Low | Low | Photosynthesis (#14), protein denaturation (#26), ATP hydrolysis (#27) |
 | Crossover temp finder | ✅ | Medium | Low | Visual T_cross marker on graph, scenario-specific hints, solution steps |
 
 #### Buffer Recipe Creator
 
 | Improvement | Status | Priority | Effort | Notes |
 |-------------|--------|----------|--------|-------|
-| Buffer capacity visualization | ⬜ | High | Medium | Graph of capacity |
-| Acid/base addition sim | ⬜ | High | Medium | See pH changes |
+| Buffer capacity visualization | ✅ | High | Medium | BufferCapacityVisualization component with β vs pH curve, optimal range shading |
+| Acid/base addition sim | ✅ | High | Medium | Interactive acid/base addition with pH tracking, buffer vs water comparison |
 | Biological buffer examples | ✅ | Medium | Low | Blood pH, cellular phosphate buffer, DNA/RNA TRIS buffer, citrate blood bank |
 | HH equation builder | ⬜ | Medium | Low | Interactive formula |
 
@@ -204,10 +204,10 @@
 
 | Priority | Total | Completed | Percentage |
 |----------|-------|-----------|------------|
-| High | 43 | 21 | 48.8% |
+| High | 43 | 24 | 55.8% |
 | Medium | 45 | 12 | 26.7% |
-| Low | 21 | 1 | 4.8% |
-| **Total** | **109** | **34** | **31.2%** |
+| Low | 21 | 2 | 9.5% |
+| **Total** | **109** | **38** | **34.9%** |
 
 ### By Year
 
@@ -216,7 +216,7 @@
 | Shared | 8 | 8 | 100% |
 | Year 1 | 21 | 11 | 52.4% |
 | Year 2 | 40 | 8 | 20% |
-| Year 3 | 32 | 5 | 15.6% |
+| Year 3 | 32 | 9 | 28.1% |
 
 ### By Category
 
@@ -319,6 +319,13 @@ Building these once benefits multiple games:
 | 2026-01-25 | Year 2 progress: 15% → 17.5% (7/40 improvements completed) |
 | 2026-01-25 | **VSEPR Geometry 3D Viewer VERIFIED** - Already implemented with MoleculeViewer3DLazy and 2D/3D toggle |
 | 2026-01-25 | Year 2 progress: 17.5% → 20% (8/40 improvements completed) |
+| 2026-01-25 | **Equilibrium Shifter Q vs K VERIFIED** - QKComparison component with visual bars, stress explanations |
+| 2026-01-25 | Year 3 progress: 15.6% → 18.8% (6/32 improvements completed) |
+| 2026-01-25 | **Buffer Capacity Visualization COMPLETE** - BufferCapacityVisualization component with β vs pH curve, optimal range |
+| 2026-01-25 | **Acid/Base Addition Simulation COMPLETE** - Interactive addition with pH tracking, buffer vs water comparison |
+| 2026-01-25 | Year 3 progress: 18.8% → 25% (8/32 improvements completed) |
+| 2026-01-25 | **Thermodynamics Bio Examples VERIFIED** - Already has photosynthesis, protein denaturation, ATP hydrolysis |
+| 2026-01-25 | Year 3 progress: 25% → 28.1% (9/32 improvements completed) |
 
 ---
 

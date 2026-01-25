@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { LEVEL1_CHALLENGES, type Level1Challenge } from '../data';
 import { HintSystem, FeedbackPanel } from '@shared/components';
+import { BufferCapacityVisualization } from './BufferCapacityVisualization';
 
 // Misconceptions for buffer concepts
 const BUFFER_MISCONCEPTIONS = {
@@ -443,6 +444,19 @@ export default function Level1({
             )}
           </div>
         </div>
+      </div>
+
+      {/* Buffer Capacity Visualization */}
+      <div className="mt-8">
+        <BufferCapacityVisualization
+          pKa={currentChallenge.pKa}
+          acidConc={acidCount * 0.01} // Convert count to concentration
+          baseConc={baseCount * 0.01}
+          totalConc={(acidCount + baseCount) * 0.01}
+          acidName={currentChallenge.acidName}
+          baseName={currentChallenge.baseName}
+          showAdditionSim={true}
+        />
       </div>
 
       {/* Educational Footer */}

@@ -126,7 +126,7 @@
 | Improvement | Status | Priority | Effort | Notes |
 |-------------|--------|----------|--------|-------|
 | AnimatedMolecule integration | ✅ | High | Medium | Organic mode with chain layout, carbon numbering, colored bonds |
-| Interactive molecule builder | ⬜ | High | High | With auto-naming |
+| Interactive molecule builder | ✅ | High | High | MoleculeBuilder component with auto-naming, bond type cycling |
 | Draw structure from name | ⬜ | High | High | Reverse challenge |
 | Carbon chain numbering | ✅ | Medium | Medium | Visual annotation (integrated with AnimatedMolecule) |
 | Functional group highlighting | ✅ | Medium | Low | Double/triple bonds highlighted with colors |
@@ -204,10 +204,10 @@
 
 | Priority | Total | Completed | Percentage |
 |----------|-------|-----------|------------|
-| High | 43 | 26 | 60.5% |
+| High | 43 | 27 | 62.8% |
 | Medium | 45 | 24 | 53.3% |
 | Low | 21 | 3 | 14.3% |
-| **Total** | **109** | **53** | **48.6%** |
+| **Total** | **109** | **54** | **49.5%** |
 
 ### By Year
 
@@ -215,7 +215,7 @@
 |------|-------|-----------|------------|
 | Shared | 8 | 8 | 100% |
 | Year 1 | 21 | 11 | 52.4% |
-| Year 2 | 40 | 22 | 55% |
+| Year 2 | 40 | 23 | 57.5% |
 | Year 3 | 32 | 10 | 31.3% |
 
 ### By Category
@@ -353,6 +353,8 @@ Building these once benefits multiple games:
 | 2026-01-25 | Year 2 progress: 50% → 52.5% (21/40 improvements completed) |
 | 2026-01-25 | **VSEPR Shape Transition Animation COMPLETE** - ShapeTransitionAnimation with animated domain add/remove, geometry morphing |
 | 2026-01-25 | Year 2 progress: 52.5% → 55% (22/40 improvements completed) |
+| 2026-01-25 | **Organic Interactive Molecule Builder COMPLETE** - MoleculeBuilder component with carbon chain building, bond type cycling, auto-naming |
+| 2026-01-25 | Year 2 progress: 55% → 57.5% (23/40 improvements completed) |
 
 ---
 

@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { FeedbackPanel } from '@shared/components';
 import type { TieredHints } from '@shared/types';
 import { shuffleArray } from '@shared/utils';
+import { MoleculeBuilder } from './MoleculeBuilder';
 
 // Misconceptions for organic nomenclature
 const MISCONCEPTIONS: Record<string, string> = {
@@ -80,7 +81,7 @@ const quizQuestions: QuizQuestion[] = [
 ];
 
 export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer }: Level1Props) {
-  const [phase, setPhase] = useState<'prefixes' | 'suffixes' | 'quiz'>('prefixes');
+  const [phase, setPhase] = useState<'prefixes' | 'suffixes' | 'builder' | 'quiz'>('prefixes');
   const [currentItem, setCurrentItem] = useState(0);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
@@ -101,8 +102,10 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
       if (currentItem < suffixes.length - 1) {
         setCurrentItem(prev => prev + 1);
       } else {
-        setPhase('quiz');
+        setPhase('builder');
       }
+    } else if (phase === 'builder') {
+      setPhase('quiz');
     }
   };
 
@@ -303,7 +306,65 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
               onClick={handleNext}
               className="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-xl"
             >
-              {currentItem === suffixes.length - 1 ? 'Byrja próf →' : 'Næsta →'}
+              {currentItem === suffixes.length - 1 ? 'Sameindasmiður →' : 'Næsta →'}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Builder phase - Interactive molecule exploration
+  if (phase === 'builder') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-teal-50 to-cyan-100 p-4 md:p-8">
+        <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-2xl p-6 md:p-8">
+          <div className="flex justify-between items-center mb-6">
+            <button onClick={onBack} className="text-gray-500 hover:text-gray-700">
+              ← Til baka
+            </button>
+            <div className="text-sm text-gray-500">
+              Sameindasmiður
+            </div>
+          </div>
+
+          <h1 className="text-2xl md:text-3xl font-bold text-center mb-2 text-emerald-600">
+            🔬 Prófaðu sjálf/ur!
+          </h1>
+          <p className="text-center text-gray-600 mb-8">
+            Byggðu sameindir og sjáðu hvernig nafnið breytist
+          </p>
+
+          <MoleculeBuilder
+            compact={false}
+            maxCarbons={8}
+            initialCarbons={4}
+          />
+
+          <div className="mt-6 bg-emerald-50 p-4 rounded-xl border border-emerald-200">
+            <h3 className="font-semibold text-emerald-800 mb-2">📝 Taktu eftir:</h3>
+            <ul className="text-sm text-emerald-700 space-y-1">
+              <li>• <strong>Forskeytið</strong> breytist þegar þú bætir við/fjarlægir kolefni</li>
+              <li>• <strong>Viðskeytið</strong> breytist þegar þú breytir tengingum (ein/tví/þrí)</li>
+              <li>• Fyrir 4+ kolefni birtist <strong>staðsetningartala</strong> fyrir tvítengi/þrítengi</li>
+            </ul>
+          </div>
+
+          <div className="flex gap-4 mt-8">
+            <button
+              onClick={() => {
+                setPhase('suffixes');
+                setCurrentItem(suffixes.length - 1);
+              }}
+              className="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-xl"
+            >
+              ← Til baka
+            </button>
+            <button
+              onClick={handleNext}
+              className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-6 rounded-xl"
+            >
+              Byrja próf →
             </button>
           </div>
         </div>

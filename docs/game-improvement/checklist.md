@@ -98,8 +98,8 @@
 |-------------|--------|----------|--------|-------|
 | Electron animation | ✅ | High | Medium | Bond formation animation |
 | Guided mode for beginners | ⬜ | Medium | Medium | Step-by-step assistance |
-| Octet violation detection | ⬜ | Medium | Low | With explanations |
-| Expanded octet examples | ⬜ | Low | Low | SF6, PCl5 |
+| Octet violation detection | ✅ | Medium | Low | OctetViolationChecker component with expanded octet, incomplete octet, radical detection |
+| Expanded octet examples | ✅ | Low | Low | SF6, PCl5 examples in OctetViolationChecker, d-orbital explanation |
 
 #### VSEPR Geometry
 
@@ -135,8 +135,8 @@
 
 | Improvement | Status | Priority | Effort | Notes |
 |-------------|--------|----------|--------|-------|
-| Electron transfer animation | ⬜ | High | High | Visual electron flow |
-| Oxidation state highlighting | ⬜ | High | Medium | Show changes |
+| Electron transfer animation | ✅ | High | High | OxidationStateDisplay with animated electron transfer, color-coded states |
+| Oxidation state highlighting | ✅ | High | Medium | Color gradient (blue negative, red positive), before/after display, oxidized/reduced labels |
 | Electrochemical cell sim | ⬜ | Medium | High | Galvanic cell animation |
 | Half-reaction balancer | ⬜ | Medium | Medium | Step-by-step tool |
 
@@ -204,10 +204,10 @@
 
 | Priority | Total | Completed | Percentage |
 |----------|-------|-----------|------------|
-| High | 43 | 24 | 55.8% |
-| Medium | 45 | 13 | 28.9% |
-| Low | 21 | 2 | 9.5% |
-| **Total** | **109** | **39** | **35.8%** |
+| High | 43 | 26 | 60.5% |
+| Medium | 45 | 14 | 31.1% |
+| Low | 21 | 3 | 14.3% |
+| **Total** | **109** | **43** | **39.4%** |
 
 ### By Year
 
@@ -215,7 +215,7 @@
 |------|-------|-----------|------------|
 | Shared | 8 | 8 | 100% |
 | Year 1 | 21 | 11 | 52.4% |
-| Year 2 | 40 | 8 | 20% |
+| Year 2 | 40 | 12 | 30% |
 | Year 3 | 32 | 10 | 31.3% |
 
 ### By Category
@@ -328,6 +328,11 @@ Building these once benefits multiple games:
 | 2026-01-25 | Year 3 progress: 25% → 28.1% (9/32 improvements completed) |
 | 2026-01-25 | **Equilibrium Shifter Industrial Scenarios VERIFIED** - Already has Haber, Contact, Ostwald, Water Gas Shift, Steam Reforming |
 | 2026-01-25 | Year 3 progress: 28.1% → 31.3% (10/32 improvements completed) |
+| 2026-01-25 | **Redox Electron Transfer Animation COMPLETE** - OxidationStateDisplay with animated electrons, color-coded states |
+| 2026-01-25 | **Redox Oxidation State Highlighting COMPLETE** - Before/after display, oxidized/reduced labels |
+| 2026-01-25 | **Lewis Octet Violation Detection COMPLETE** - OctetViolationChecker with expanded/incomplete octet, radical detection |
+| 2026-01-25 | **Lewis Expanded Octet Examples COMPLETE** - SF6, PCl5 examples with d-orbital explanation |
+| 2026-01-25 | Year 2 progress: 20% → 30% (12/40 improvements completed) |
 
 ---
 

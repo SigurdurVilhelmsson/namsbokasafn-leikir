@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { FeedbackPanel } from '@shared/components';
-import type { TieredHints } from '@shared/types';
 
 // Misconceptions for oxidation states
 const OXIDATION_MISCONCEPTIONS: Record<string, string> = {
@@ -34,7 +33,7 @@ interface OxidationProblem {
   compoundDisplay: string;
   targetElement: string;
   correctAnswer: number;
-  hints: TieredHints;
+  hint: string;
 }
 
 const oxidationRules: OxidationRule[] = [
@@ -150,19 +149,6 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
     setUserAnswer('');
     setAttempts(prev => prev + 1);
     setShowHint(true);
-  };
-
-  const getOxidationColor = (value: number): string => {
-    if (value < -2) return 'bg-blue-800 text-white';
-    if (value === -2) return 'bg-blue-600 text-white';
-    if (value === -1) return 'bg-blue-400 text-white';
-    if (value === 0) return 'bg-gray-300 text-gray-800';
-    if (value === 1) return 'bg-red-300 text-white';
-    if (value === 2) return 'bg-red-400 text-white';
-    if (value === 3) return 'bg-red-500 text-white';
-    if (value === 4) return 'bg-red-600 text-white';
-    if (value >= 5) return 'bg-red-800 text-white';
-    return 'bg-gray-200';
   };
 
   if (phase === 'learn') {

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { OxidationStateDisplay } from './OxidationStateDisplay';
 
 interface Level2Props {
   onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
@@ -210,17 +211,6 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
     setShowHint(false);
   };
 
-  const getOxidationColor = (value: number): string => {
-    if (value < -1) return 'bg-blue-600 text-white';
-    if (value === -1) return 'bg-blue-400 text-white';
-    if (value === 0) return 'bg-gray-300 text-gray-800';
-    if (value === 1) return 'bg-red-300 text-white';
-    if (value === 2) return 'bg-red-400 text-white';
-    if (value === 3) return 'bg-red-500 text-white';
-    if (value >= 4) return 'bg-red-700 text-white';
-    return 'bg-gray-200';
-  };
-
   const totalQuestions = reactions.length * questionTypes.length;
   const currentProgress = currentReaction * questionTypes.length + currentQuestion + 1;
 
@@ -253,25 +243,17 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
             </div>
           </div>
 
-          <div className="flex justify-center gap-8 flex-wrap">
-            {reaction.species.map((species, idx) => (
-              <div key={idx} className="text-center">
-                <div className="font-bold text-lg mb-2">{species.name}</div>
-                <div className="flex items-center gap-2">
-                  <span className={`ox-badge ${getOxidationColor(species.before)}`}>
-                    {species.before > 0 ? `+${species.before}` : species.before}
-                  </span>
-                  <span className="text-2xl">→</span>
-                  <span className={`ox-badge ${getOxidationColor(species.after)}`}>
-                    {species.after > 0 ? `+${species.after}` : species.after}
-                  </span>
-                </div>
-                <div className="text-xs text-gray-500 mt-1">
-                  {species.after > species.before ? '↑ oxast' : '↓ afoxast'}
-                </div>
-              </div>
-            ))}
-          </div>
+          {/* Enhanced Oxidation State Display with Electron Transfer Animation */}
+          <OxidationStateDisplay
+            changes={reaction.species.map(s => ({
+              element: s.name,
+              before: s.before,
+              after: s.after
+            }))}
+            animate={!showFeedback}
+            showElectrons={true}
+            size="medium"
+          />
         </div>
 
         <div className="bg-green-50 p-4 rounded-xl mb-6 border-2 border-green-200">

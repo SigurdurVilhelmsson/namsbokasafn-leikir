@@ -80,7 +80,7 @@
 |-------------|--------|----------|--------|-------|
 | Energy pathway animation | ✅ | High | Medium | EnergyPathwayDiagram component with animated staircase, cumulative ΔH |
 | Drag-drop equation builder | ⬜ | High | High | Combine equations visually |
-| State function path comparison | ⬜ | Medium | Medium | Show different routes |
+| State function path comparison | ✅ | Medium | Medium | StatePathComparison component showing multiple pathways to same ΔH |
 | Industrial examples | ✅ | Low | Low | Real-world applications (CO, H₂O fuel cells, ethanol, NO₂, Contact Process, Thermite) |
 
 #### Kinetics
@@ -205,9 +205,9 @@
 | Priority | Total | Completed | Percentage |
 |----------|-------|-----------|------------|
 | High | 43 | 26 | 60.5% |
-| Medium | 45 | 22 | 48.9% |
+| Medium | 45 | 23 | 51.1% |
 | Low | 21 | 3 | 14.3% |
-| **Total** | **109** | **51** | **46.8%** |
+| **Total** | **109** | **52** | **47.7%** |
 
 ### By Year
 
@@ -215,7 +215,7 @@
 |------|-------|-----------|------------|
 | Shared | 8 | 8 | 100% |
 | Year 1 | 21 | 11 | 52.4% |
-| Year 2 | 40 | 20 | 50% |
+| Year 2 | 40 | 21 | 52.5% |
 | Year 3 | 32 | 10 | 31.3% |
 
 ### By Category
@@ -349,6 +349,8 @@ Building these once benefits multiple games:
 | 2026-01-25 | Year 2 progress: 45% → 47.5% (19/40 improvements completed) |
 | 2026-01-25 | **VSEPR Electron Repulsion Animation COMPLETE** - ElectronRepulsionAnimation with physics-based domain separation, force arrows, geometry presets |
 | 2026-01-25 | Year 2 progress: 47.5% → 50% (20/40 improvements completed) |
+| 2026-01-25 | **Hess's Law State Path Comparison COMPLETE** - StatePathComparison component showing multiple pathways to same ΔH |
+| 2026-01-25 | Year 2 progress: 50% → 52.5% (21/40 improvements completed) |
 
 ---
 

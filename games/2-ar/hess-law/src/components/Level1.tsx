@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { FeedbackPanel } from '@shared/components';
 import type { TieredHints } from '@shared/types';
 import { shuffleArray } from '@shared/utils';
+import { StatePathComparison } from './StatePathComparison';
 
 // Misconceptions for Hess's Law concepts
 const MISCONCEPTIONS: Record<number, string> = {
@@ -196,7 +197,12 @@ const CHALLENGES: Challenge[] = [
       { text: '+92 kJ', correct: false, explanation: 'Rangt. Þú snúðir við, en gleymdist að margfalda með 2.' },
       { text: '-92 kJ', correct: false, explanation: 'Rangt. Þetta er ΔH fyrir myndun, ekki sundrun.' }
     ],
-    hint: 'Sundrun er öfug við myndun. 4 mól NH₃ þýðir að jafnan þarf að vera tvöföld.'
+    hints: {
+      topic: 'Þetta snýst um að sameina snúa við og margfalda.',
+      strategy: 'Hugsaðu um aðgerðirnar í réttri röð: sundrun (snúa) og magn (margfalda).',
+      method: 'Sundrun er öfug við myndun, svo snúðu formerki. 4 mól NH₃ = 2× jafnan.',
+      solution: 'Snúa við: +92 kJ. Margfalda með 2: +184 kJ.'
+    }
   },
   {
     id: 5,
@@ -218,7 +224,12 @@ const CHALLENGES: Challenge[] = [
       { text: '+111 kJ', correct: false, explanation: 'Rangt. Réttur tölugildið, en rangt formerki.' },
       { text: '-394 kJ', correct: false, explanation: 'Rangt. Þetta er aðeins ΔH fyrir jöfnu (1), en þú þarft að sameina báðar.' }
     ],
-    hint: 'Þú vilt CO sem afurð. Í jöfnu (2) er CO hvarfefni, svo þú þarft að snúa henni við.'
+    hints: {
+      topic: 'Þetta snýst um að nota Hess lögmál til að finna ΔH.',
+      strategy: 'Þú þarft að stilla jöfnur þannig að CO sé afurð og annað strikist út.',
+      method: 'Nota jöfnu (1) eins og hún er. Snúa við jöfnu (2) svo CO verði afurð.',
+      solution: 'Jafna (1): -394 kJ. Öfug jafna (2): +283 kJ. Heildar: -394 + 283 = -111 kJ.'
+    }
   },
   {
     id: 6,
@@ -240,7 +251,12 @@ const CHALLENGES: Challenge[] = [
       { text: '-30 kJ', correct: false, explanation: 'Rangt. Þú þarft að leggja saman öll þrjú ΔH.' },
       { text: '+50 kJ', correct: false, explanation: 'Rangt. Formerkið er rangt.' }
     ],
-    hint: 'Leggðu saman öll ΔH. Gættu að jákvæðum og neikvæðum tölum.'
+    hints: {
+      topic: 'Þetta snýst um orkubraut og summu ΔH.',
+      strategy: 'Leggðu saman öll ΔH á leiðinni. Gættu að formerkjum.',
+      method: 'A→B: -30. B→C: +10. C→D: -30. Leggðu saman: -30 + 10 + (-30).',
+      solution: '-30 + 10 + (-30) = -30 + 10 - 30 = -50 kJ.'
+    }
   }
 ];
 
@@ -662,15 +678,17 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
           </div>
         </div>
 
+        {/* State Path Comparison - Educational visualization */}
+        <div className="mt-6">
+          <StatePathComparison compact={true} />
+        </div>
+
         {/* Challenge navigation */}
         <div className="mt-6 flex justify-center gap-2">
           {CHALLENGES.map((c, i) => (
             <button
               key={c.id}
-              onClick={() => {
-                setCurrentChallenge(i);
-                resetChallenge();
-              }}
+              onClick={() => setCurrentChallenge(i)}
               className={`w-10 h-10 rounded-full font-bold transition-colors ${
                 completed.includes(c.id)
                   ? 'bg-green-500 text-white'

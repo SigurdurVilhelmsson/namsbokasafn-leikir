@@ -1,3 +1,9 @@
+## 2026-01-25 - 7f0f7fb
+feat(intermolecular-forces): add force strength animation
+
+## 2026-01-25 - 52f0bd1
+docs: update auto-generated changelog and game inventory
+
 ## 2026-01-25 - 5a477f9
 feat(redox-reactions): add half-reaction balancing tool
 

@@ -21,7 +21,7 @@
 | kinetics | ✅ | 1207KB |
 | lewis-structures | ✅ | 2829KB |
 | organic-nomenclature | ✅ | 261KB |
-| redox-reactions | ✅ | 223KB |
+| redox-reactions | ✅ | 1185KB |
 | vsepr-geometry | ✅ | 2849KB |
 
 ## Year 3
@@ -38,4 +38,4 @@
 
 *17 games total*
 
-Generated: 2026-01-25T20:06:42.883Z
+Generated: 2026-01-25T20:12:16.275Z

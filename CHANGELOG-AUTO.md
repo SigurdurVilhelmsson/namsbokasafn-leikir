@@ -1,3 +1,9 @@
+## 2026-01-25 - 4f7b8a6
+feat(kinetics): add concentration vs time visualization
+
+## 2026-01-25 - 3e10958
+docs: update auto-generated changelog and game inventory
+
 ## 2026-01-25 - 698f600
 feat(kinetics): add catalyst effect visualization
 

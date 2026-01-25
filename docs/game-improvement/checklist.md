@@ -37,8 +37,8 @@
 
 | Improvement | Status | Priority | Effort | Notes |
 |-------------|--------|----------|--------|-------|
-| Periodic table integration | ⬜ | High | Medium | Look up atomic masses |
-| 3D molecule viewer | ⬜ | Medium | High | For complex compounds |
+| Periodic table integration | ✅ | High | Medium | PeriodicTable component in Level 1 & 2 with search, grid/list views, element highlighting |
+| 3D molecule viewer | ✅ | Medium | High | MoleculeViewer3DLazy integrated in Level 1 with 2D/3D toggle |
 | Mystery molecule mode | ⬜ | Low | Medium | Deduce formula from mass |
 | Animated mass calculation | ⬜ | Medium | Medium | Show addition of atomic masses |
 
@@ -56,6 +56,7 @@
 | Improvement | Status | Priority | Effort | Notes |
 |-------------|--------|----------|--------|-------|
 | Particle animation (Brownian) | ✅ | High | High | ParticleBeaker with animated solute particles |
+| Prediction step in Level 1 | ✅ | High | Medium | "Hugsaðu fyrst!" prediction prompts before slider adjustment |
 | Pipette/dropper tool | ⬜ | Medium | Medium | Lab-realistic interaction |
 | Concentration-based color | ⬜ | Low | Low | Like adding indicator |
 | Temperature effects | ⬜ | Low | Medium | Solubility changes |
@@ -203,17 +204,17 @@
 
 | Priority | Total | Completed | Percentage |
 |----------|-------|-----------|------------|
-| High | 42 | 16 | 38.1% |
-| Medium | 45 | 11 | 24.4% |
+| High | 43 | 18 | 41.9% |
+| Medium | 45 | 12 | 26.7% |
 | Low | 21 | 1 | 4.8% |
-| **Total** | **108** | **28** | **25.9%** |
+| **Total** | **109** | **31** | **28.4%** |
 
 ### By Year
 
 | Year | Total | Completed | Percentage |
 |------|-------|-----------|------------|
 | Shared | 8 | 8 | 100% |
-| Year 1 | 20 | 8 | 40% |
+| Year 1 | 21 | 11 | 52.4% |
 | Year 2 | 40 | 5 | 12.5% |
 | Year 3 | 32 | 5 | 15.6% |
 
@@ -307,6 +308,11 @@ Building these once benefits multiple games:
 | 2026-01-25 | **Nafnakerfid Molecular Structures ENHANCED** - Added 15+ structural formulas to MolecularStructure.tsx for Level 3 cards |
 | 2026-01-25 | **Dimensional Analysis Unit Cancellation ENHANCED** - Auto-animate unit crossing out with strikethrough, connecting lines |
 | 2026-01-25 | Year 1 progress: 15% → 40% (8/20 improvements completed) |
+| 2026-01-25 | **Molmassi Periodic Table COMPLETE** - Added PeriodicTable to Level 1, already in Level 2 |
+| 2026-01-25 | Marked Molmassi 3D molecule viewer as complete (MoleculeViewer3DLazy already integrated) |
+| 2026-01-25 | Year 1 progress: 40% → 50% (10/20 improvements completed) |
+| 2026-01-25 | **Lausnir Prediction Prompts VERIFIED** - Already implemented with "Hugsaðu fyrst!" prediction phase |
+| 2026-01-25 | Year 1 progress: 50% → 52.4% (11/21 improvements completed) |
 
 ---
 

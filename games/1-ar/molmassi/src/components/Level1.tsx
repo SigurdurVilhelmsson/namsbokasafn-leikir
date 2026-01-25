@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { FeedbackPanel, MoleculeViewer3DLazy } from '@shared/components';
 import type { DetailedFeedback } from '@shared/types';
 import { elementsToMolecule } from '../utils/moleculeConverter';
+import { PeriodicTable } from './PeriodicTable';
 
 // Atomic masses for calculations
 const ATOMIC_MASSES: Record<string, number> = {
@@ -255,6 +256,7 @@ export function Level1({ onBack, onComplete, onCorrectAnswer, onIncorrectAnswer 
   const [_totalHintsUsed, setTotalHintsUsed] = useState(0);
   const [showHint, setShowHint] = useState(false);
   const [viewMode, setViewMode] = useState<'2d' | '3d'>('2d');
+  const [showPeriodicTable, setShowPeriodicTable] = useState(false);
 
   // For build_molecule challenge
   const [builtAtoms, setBuiltAtoms] = useState<{ symbol: string; count: number }[]>([]);
@@ -921,27 +923,37 @@ export function Level1({ onBack, onComplete, onCorrectAnswer, onIncorrectAnswer 
           </div>
         </div>
 
-        {/* 2D/3D Toggle */}
-        <div className="flex justify-center gap-2 mb-4">
+        {/* Toolbar: 2D/3D Toggle + Periodic Table */}
+        <div className="flex justify-center items-center gap-4 mb-4">
+          <div className="flex gap-2">
+            <button
+              onClick={() => setViewMode('2d')}
+              className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                viewMode === '2d'
+                  ? 'bg-primary text-white'
+                  : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+              }`}
+            >
+              2D
+            </button>
+            <button
+              onClick={() => setViewMode('3d')}
+              className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                viewMode === '3d'
+                  ? 'bg-primary text-white'
+                  : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+              }`}
+            >
+              3D
+            </button>
+          </div>
+
+          {/* Periodic Table Button */}
           <button
-            onClick={() => setViewMode('2d')}
-            className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-              viewMode === '2d'
-                ? 'bg-primary text-white'
-                : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
-            }`}
+            onClick={() => setShowPeriodicTable(true)}
+            className="px-4 py-1.5 rounded-lg text-sm font-medium bg-purple-100 text-purple-700 hover:bg-purple-200 transition-colors flex items-center gap-1"
           >
-            2D
-          </button>
-          <button
-            onClick={() => setViewMode('3d')}
-            className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-              viewMode === '3d'
-                ? 'bg-primary text-white'
-                : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
-            }`}
-          >
-            3D
+            <span>📊</span> Lotukerfið
           </button>
         </div>
 
@@ -1009,6 +1021,15 @@ export function Level1({ onBack, onComplete, onCorrectAnswer, onIncorrectAnswer 
           ← Til baka í valmynd
         </button>
       </div>
+
+      {/* Periodic Table Modal */}
+      {showPeriodicTable && (
+        <PeriodicTable
+          onClose={() => setShowPeriodicTable(false)}
+          showApproximate={true}
+          highlightElements={challenge.compound.elements.map(e => e.symbol)}
+        />
+      )}
     </div>
   );
 }

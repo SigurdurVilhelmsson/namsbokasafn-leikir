@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { SolubilityPrediction } from './SolubilityPrediction';
 
 interface Level2Props {
   onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
@@ -458,6 +459,11 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
               </button>
             </>
           )}
+        </div>
+
+        {/* Solubility Prediction Tool */}
+        <div className="mt-8">
+          <SolubilityPrediction />
         </div>
       </div>
     </div>

@@ -1,3 +1,9 @@
+## 2026-01-25 - 5a477f9
+feat(redox-reactions): add half-reaction balancing tool
+
+## 2026-01-25 - 2d2f488
+docs: update auto-generated changelog and game inventory
+
 ## 2026-01-25 - 4f7b8a6
 feat(kinetics): add concentration vs time visualization
 

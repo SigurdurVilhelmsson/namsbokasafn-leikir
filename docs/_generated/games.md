@@ -18,7 +18,7 @@
 |------|-------|------|
 | hess-law | ✅ | 233KB |
 | intermolecular-forces | ✅ | 2814KB |
-| kinetics | ✅ | 1198KB |
+| kinetics | ✅ | 1207KB |
 | lewis-structures | ✅ | 2829KB |
 | organic-nomenclature | ✅ | 261KB |
 | redox-reactions | ✅ | 223KB |
@@ -38,4 +38,4 @@
 
 *17 games total*
 
-Generated: 2026-01-25T20:02:33.530Z
+Generated: 2026-01-25T20:06:42.883Z

@@ -108,7 +108,7 @@
 | AnimatedMolecule integration | ✅ | High | Medium | VSEPR mode with depth styling, dipoles, lone pairs |
 | 3D molecule viewer | ✅ | High | High | MoleculeViewer3DLazy in Level1 & Level2 with 2D/3D toggle |
 | Electron repulsion animation | ⬜ | Medium | Medium | Show domains separating |
-| Bond angle measurement | ⬜ | Medium | Low | Interactive tool |
+| Bond angle measurement | ✅ | Medium | Low | BondAngleMeasurement component with SVG visualization, angle arcs, lone pair effects |
 | Shape transition animation | ⬜ | Medium | Medium | Adding/removing domains |
 
 #### Intermolecular Forces
@@ -205,9 +205,9 @@
 | Priority | Total | Completed | Percentage |
 |----------|-------|-----------|------------|
 | High | 43 | 26 | 60.5% |
-| Medium | 45 | 14 | 31.1% |
+| Medium | 45 | 15 | 33.3% |
 | Low | 21 | 3 | 14.3% |
-| **Total** | **109** | **43** | **39.4%** |
+| **Total** | **109** | **44** | **40.4%** |
 
 ### By Year
 
@@ -215,7 +215,7 @@
 |------|-------|-----------|------------|
 | Shared | 8 | 8 | 100% |
 | Year 1 | 21 | 11 | 52.4% |
-| Year 2 | 40 | 12 | 30% |
+| Year 2 | 40 | 13 | 32.5% |
 | Year 3 | 32 | 10 | 31.3% |
 
 ### By Category
@@ -333,6 +333,8 @@ Building these once benefits multiple games:
 | 2026-01-25 | **Lewis Octet Violation Detection COMPLETE** - OctetViolationChecker with expanded/incomplete octet, radical detection |
 | 2026-01-25 | **Lewis Expanded Octet Examples COMPLETE** - SF6, PCl5 examples with d-orbital explanation |
 | 2026-01-25 | Year 2 progress: 20% → 30% (12/40 improvements completed) |
+| 2026-01-25 | **VSEPR Bond Angle Measurement COMPLETE** - BondAngleMeasurement component with SVG visualization, angle arcs, lone pair effects |
+| 2026-01-25 | Year 2 progress: 30% → 32.5% (13/40 improvements completed) |
 
 ---
 

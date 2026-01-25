@@ -3,6 +3,7 @@ import { AnimatedMolecule, FeedbackPanel, MoleculeViewer3DLazy } from '@shared/c
 import type { TieredHints } from '@shared/types';
 import { geometryToMolecule } from '../utils/vseprConverter';
 import { shuffleArray } from '@shared/utils';
+import { BondAngleMeasurement } from './BondAngleMeasurement';
 
 // Misconceptions for VSEPR geometry
 const VSEPR_MISCONCEPTIONS: Record<string, string> = {
@@ -526,6 +527,14 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
                       <div className="font-bold text-teal-600">{selectedGeometry.molecularGeometry}</div>
                     </div>
                   </div>
+                </div>
+
+                {/* Bond Angle Measurement */}
+                <div className="mt-6">
+                  <BondAngleMeasurement
+                    geometryId={selectedGeometry.id}
+                    showComparison={false}
+                  />
                 </div>
               </div>
             )}

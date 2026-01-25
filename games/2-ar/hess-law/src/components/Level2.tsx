@@ -1,4 +1,5 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
+import { EnergyPathwayDiagram } from './EnergyPathwayDiagram';
 
 interface Equation {
   id: string;
@@ -327,6 +328,16 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
   const currentSum = calculateSum();
   const isCorrect = Math.abs(currentSum - puzzle.targetDeltaH) < 0.5;
 
+  // Calculate energy pathway steps for the diagram
+  const energySteps = useMemo(() => {
+    return equations
+      .filter(eq => selectedEquations.includes(eq.id))
+      .map(eq => ({
+        label: eq.isReversed ? `${eq.products} → ${eq.reactants}` : `${eq.reactants} → ${eq.products}`,
+        deltaH: eq.deltaH * eq.multiplier * (eq.isReversed ? -1 : 1)
+      }));
+  }, [equations, selectedEquations]);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-teal-50 to-cyan-100 p-4 md:p-8">
       <div className="max-w-4xl mx-auto">
@@ -410,6 +421,17 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
               ))}
             </div>
           </div>
+
+          {/* Energy Pathway Diagram */}
+          {selectedEquations.length > 0 && (
+            <div className="mb-6">
+              <EnergyPathwayDiagram
+                steps={energySteps}
+                targetDeltaH={puzzle.targetDeltaH}
+                isCorrect={isCorrect && showResult}
+              />
+            </div>
+          )}
 
           {/* Current sum */}
           {selectedEquations.length > 0 && (

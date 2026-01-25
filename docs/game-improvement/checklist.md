@@ -78,7 +78,7 @@
 
 | Improvement | Status | Priority | Effort | Notes |
 |-------------|--------|----------|--------|-------|
-| Energy pathway animation | ⬜ | High | Medium | Animated energy diagram |
+| Energy pathway animation | ✅ | High | Medium | EnergyPathwayDiagram component with animated staircase, cumulative ΔH |
 | Drag-drop equation builder | ⬜ | High | High | Combine equations visually |
 | State function path comparison | ⬜ | Medium | Medium | Show different routes |
 | Industrial examples | ✅ | Low | Low | Real-world applications (CO, H₂O fuel cells, ethanol, NO₂, Contact Process, Thermite) |
@@ -106,7 +106,7 @@
 | Improvement | Status | Priority | Effort | Notes |
 |-------------|--------|----------|--------|-------|
 | AnimatedMolecule integration | ✅ | High | Medium | VSEPR mode with depth styling, dipoles, lone pairs |
-| 3D molecule viewer | ⬜ | High | High | Rotatable molecules (Three.js) |
+| 3D molecule viewer | ✅ | High | High | MoleculeViewer3DLazy in Level1 & Level2 with 2D/3D toggle |
 | Electron repulsion animation | ⬜ | Medium | Medium | Show domains separating |
 | Bond angle measurement | ⬜ | Medium | Low | Interactive tool |
 | Shape transition animation | ⬜ | Medium | Medium | Adding/removing domains |
@@ -116,7 +116,7 @@
 | Improvement | Status | Priority | Effort | Notes |
 |-------------|--------|----------|--------|-------|
 | AnimatedMolecule integration | ✅ | High | Medium | Partial charges, dipole moments, polar bond indicators |
-| Boiling point prediction | ⬜ | High | Medium | Based on IMF analysis |
+| Boiling point prediction | ✅ | High | Medium | Level 2 ranking problems with real BP data, bar chart visualization |
 | Force strength animation | ⬜ | Medium | Medium | Visual comparison |
 | Solubility prediction | ⬜ | Medium | Medium | "Like dissolves like" |
 | Surface tension demo | ⬜ | Low | High | Physical property link |
@@ -204,10 +204,10 @@
 
 | Priority | Total | Completed | Percentage |
 |----------|-------|-----------|------------|
-| High | 43 | 18 | 41.9% |
+| High | 43 | 21 | 48.8% |
 | Medium | 45 | 12 | 26.7% |
 | Low | 21 | 1 | 4.8% |
-| **Total** | **109** | **31** | **28.4%** |
+| **Total** | **109** | **34** | **31.2%** |
 
 ### By Year
 
@@ -215,7 +215,7 @@
 |------|-------|-----------|------------|
 | Shared | 8 | 8 | 100% |
 | Year 1 | 21 | 11 | 52.4% |
-| Year 2 | 40 | 5 | 12.5% |
+| Year 2 | 40 | 8 | 20% |
 | Year 3 | 32 | 5 | 15.6% |
 
 ### By Category
@@ -313,6 +313,12 @@ Building these once benefits multiple games:
 | 2026-01-25 | Year 1 progress: 40% → 50% (10/20 improvements completed) |
 | 2026-01-25 | **Lausnir Prediction Prompts VERIFIED** - Already implemented with "Hugsaðu fyrst!" prediction phase |
 | 2026-01-25 | Year 1 progress: 50% → 52.4% (11/21 improvements completed) |
+| 2026-01-25 | **Hess's Law Energy Pathway COMPLETE** - EnergyPathwayDiagram component with animated staircase showing cumulative ΔH |
+| 2026-01-25 | Year 2 progress: 12.5% → 15% (6/40 improvements completed) |
+| 2026-01-25 | **Intermolecular Forces Boiling Point VERIFIED** - Already implemented with ranking problems and bar chart visualization |
+| 2026-01-25 | Year 2 progress: 15% → 17.5% (7/40 improvements completed) |
+| 2026-01-25 | **VSEPR Geometry 3D Viewer VERIFIED** - Already implemented with MoleculeViewer3DLazy and 2D/3D toggle |
+| 2026-01-25 | Year 2 progress: 17.5% → 20% (8/40 improvements completed) |
 
 ---
 

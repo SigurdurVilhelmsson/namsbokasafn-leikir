@@ -3,6 +3,7 @@ import { FeedbackPanel } from '@shared/components';
 import type { TieredHints } from '@shared/types';
 import { CollisionDemo } from './CollisionDemo';
 import { MaxwellBoltzmann } from './MaxwellBoltzmann';
+import { CatalystEffectDemo } from './CatalystEffectDemo';
 import { shuffleArray } from '@shared/utils';
 
 // Misconceptions for kinetics concepts
@@ -437,6 +438,16 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
           {/* Connection explanation */}
           <div className="mt-3 text-center text-xs text-gray-500 bg-blue-50 p-2 rounded">
             Prófaðu að breyta hitastigi og sjáðu hvernig bæði orkudreifingin og árekstrartíðnin breytast!
+          </div>
+
+          {/* Catalyst Effect Demo */}
+          <div className="mt-4">
+            <CatalystEffectDemo
+              temperature={temperature}
+              baseActivationEnergy={activationEnergy}
+              catalyzedActivationEnergy={Math.max(20, activationEnergy - 25)}
+              interactive={true}
+            />
           </div>
         </div>
 

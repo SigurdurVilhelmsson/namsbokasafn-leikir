@@ -90,7 +90,7 @@
 | Collision simulation | ✅ | High | High | CollisionDemo with activation energy visual |
 | Maxwell-Boltzmann visualization | ✅ | High | Medium | Interactive distribution curve synced with CollisionDemo, shaded Ea region, percentage display |
 | Concentration vs time graph | ⬜ | Medium | Medium | Interactive builder |
-| Catalyst effect demo | ⬜ | Medium | Medium | Before/after comparison |
+| Catalyst effect demo | ✅ | Medium | Medium | CatalystEffectDemo component with energy diagram, before/after Ea comparison, speedup calculation |
 
 #### Lewis Structures
 
@@ -205,9 +205,9 @@
 | Priority | Total | Completed | Percentage |
 |----------|-------|-----------|------------|
 | High | 43 | 26 | 60.5% |
-| Medium | 45 | 15 | 33.3% |
+| Medium | 45 | 16 | 35.6% |
 | Low | 21 | 3 | 14.3% |
-| **Total** | **109** | **44** | **40.4%** |
+| **Total** | **109** | **45** | **41.3%** |
 
 ### By Year
 
@@ -215,7 +215,7 @@
 |------|-------|-----------|------------|
 | Shared | 8 | 8 | 100% |
 | Year 1 | 21 | 11 | 52.4% |
-| Year 2 | 40 | 13 | 32.5% |
+| Year 2 | 40 | 14 | 35% |
 | Year 3 | 32 | 10 | 31.3% |
 
 ### By Category
@@ -335,6 +335,8 @@ Building these once benefits multiple games:
 | 2026-01-25 | Year 2 progress: 20% → 30% (12/40 improvements completed) |
 | 2026-01-25 | **VSEPR Bond Angle Measurement COMPLETE** - BondAngleMeasurement component with SVG visualization, angle arcs, lone pair effects |
 | 2026-01-25 | Year 2 progress: 30% → 32.5% (13/40 improvements completed) |
+| 2026-01-25 | **Kinetics Catalyst Effect Demo COMPLETE** - CatalystEffectDemo with energy diagram, before/after Ea comparison, speedup calculation |
+| 2026-01-25 | Year 2 progress: 32.5% → 35% (14/40 improvements completed) |
 
 ---
 

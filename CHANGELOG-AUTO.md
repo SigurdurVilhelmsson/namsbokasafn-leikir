@@ -1,3 +1,27 @@
+## 2026-01-25 - df0501b
+feat(year-2): add redox and lewis structure visualizations
+
+## 2026-01-25 - fdd3d94
+docs: verify existing Year 3 game improvements
+
+## 2026-01-25 - b7c1921
+feat(buffer-recipe-creator): add buffer capacity visualization
+
+## 2026-01-25 - 65ac56b
+fix(MoleculeViewer3D): correct 3D geometry positioning for VSEPR shapes
+
+## 2026-01-25 - 268c07e
+feat(hess-law): add energy pathway diagram visualization
+
+## 2026-01-25 - fe6ae39
+feat(molmassi): add periodic table reference to Level 1
+
+## 2026-01-25 - 647275a
+feat(year-1): enhance visualizations for takmarkandi, nafnakerfid, dimensional-analysis
+
+## 2026-01-25 - 710be62
+chore: rebuild games and exclude test files from tsconfig
+
 ## 2026-01-24 - fcff5cd
 docs: document Year 1, 2, and 3 game improvements in CHANGELOG and README
 

@@ -5,6 +5,7 @@ import { geometryToMolecule } from '../utils/vseprConverter';
 import { shuffleArray } from '@shared/utils';
 import { BondAngleMeasurement } from './BondAngleMeasurement';
 import { ElectronRepulsionAnimation } from './ElectronRepulsionAnimation';
+import { ShapeTransitionAnimation } from './ShapeTransitionAnimation';
 
 // Misconceptions for VSEPR geometry
 const VSEPR_MISCONCEPTIONS: Record<string, string> = {
@@ -408,6 +409,15 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
               <ElectronRepulsionAnimation
                 geometryId={selectedGeometry?.id || 'tetrahedral'}
                 showForces={true}
+              />
+            </div>
+
+            {/* Shape Transition Animation */}
+            <div className="mb-8">
+              <ShapeTransitionAnimation
+                compact={true}
+                showControls={true}
+                initialDomains={selectedGeometry?.electronDomains || 4}
               />
             </div>
 

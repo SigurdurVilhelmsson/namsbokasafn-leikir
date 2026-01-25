@@ -109,7 +109,7 @@
 | 3D molecule viewer | ✅ | High | High | MoleculeViewer3DLazy in Level1 & Level2 with 2D/3D toggle |
 | Electron repulsion animation | ✅ | Medium | Medium | ElectronRepulsionAnimation component with physics-based domain separation, force arrows, geometry presets |
 | Bond angle measurement | ✅ | Medium | Low | BondAngleMeasurement component with SVG visualization, angle arcs, lone pair effects |
-| Shape transition animation | ⬜ | Medium | Medium | Adding/removing domains |
+| Shape transition animation | ✅ | Medium | Medium | ShapeTransitionAnimation with animated domain add/remove, geometry morphing |
 
 #### Intermolecular Forces
 
@@ -205,9 +205,9 @@
 | Priority | Total | Completed | Percentage |
 |----------|-------|-----------|------------|
 | High | 43 | 26 | 60.5% |
-| Medium | 45 | 23 | 51.1% |
+| Medium | 45 | 24 | 53.3% |
 | Low | 21 | 3 | 14.3% |
-| **Total** | **109** | **52** | **47.7%** |
+| **Total** | **109** | **53** | **48.6%** |
 
 ### By Year
 
@@ -215,7 +215,7 @@
 |------|-------|-----------|------------|
 | Shared | 8 | 8 | 100% |
 | Year 1 | 21 | 11 | 52.4% |
-| Year 2 | 40 | 21 | 52.5% |
+| Year 2 | 40 | 22 | 55% |
 | Year 3 | 32 | 10 | 31.3% |
 
 ### By Category
@@ -351,6 +351,8 @@ Building these once benefits multiple games:
 | 2026-01-25 | Year 2 progress: 47.5% → 50% (20/40 improvements completed) |
 | 2026-01-25 | **Hess's Law State Path Comparison COMPLETE** - StatePathComparison component showing multiple pathways to same ΔH |
 | 2026-01-25 | Year 2 progress: 50% → 52.5% (21/40 improvements completed) |
+| 2026-01-25 | **VSEPR Shape Transition Animation COMPLETE** - ShapeTransitionAnimation with animated domain add/remove, geometry morphing |
+| 2026-01-25 | Year 2 progress: 52.5% → 55% (22/40 improvements completed) |
 
 ---
 

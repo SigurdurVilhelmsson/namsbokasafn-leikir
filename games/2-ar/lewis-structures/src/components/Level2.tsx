@@ -3,6 +3,7 @@ import { AnimatedMolecule, DragDropBuilder, FeedbackPanel, MoleculeViewer3DLazy 
 import type { DraggableItemData, DropZoneData, DropResult, ZoneState } from '@shared/components';
 import { lewisToMolecule } from '../utils/lewisConverter';
 import { shuffleArray } from '@shared/utils';
+import { LewisGuidedMode } from './LewisGuidedMode';
 
 // Misconceptions for Lewis structure building
 const LEWIS_MISCONCEPTIONS: Record<string, string> = {
@@ -501,6 +502,7 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
   const [buildComplete, setBuildComplete] = useState(false);
   const [buildCorrect, setBuildCorrect] = useState(false);
   const [viewMode, setViewMode] = useState<'2d' | '3d'>('2d');
+  const [showTutorial, setShowTutorial] = useState(false);
 
   const challenge = challenges[currentChallenge];
   const step = challenge.steps[currentStep];
@@ -741,7 +743,54 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
           />
         </div>
 
+        {/* Tutorial toggle button */}
+        {!showTutorial && currentChallenge === 0 && currentStep === 0 && !showStepResult && (
+          <div className="bg-gradient-to-r from-blue-50 to-green-50 rounded-xl p-4 mb-6 border border-blue-200">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">📝</span>
+                <div>
+                  <div className="font-bold text-gray-800">Nýr í Lewis-formúlum?</div>
+                  <div className="text-sm text-gray-600">Byrjaðu með leiðsögnina til að læra skref fyrir skref</div>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowTutorial(true)}
+                className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition-all"
+              >
+                Opna leiðsögn
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Tutorial Mode */}
+        {showTutorial && (
+          <div className="mb-6">
+            <LewisGuidedMode
+              molecule="H₂O"
+              atoms={[
+                { symbol: 'O', valenceElectrons: 6, position: 'central' },
+                { symbol: 'H', valenceElectrons: 1, position: 'surrounding' },
+                { symbol: 'H', valenceElectrons: 1, position: 'surrounding' },
+              ]}
+              totalElectrons={8}
+              onComplete={() => {
+                setShowTutorial(false);
+                setScore(prev => prev + 5); // Bonus for completing tutorial
+              }}
+            />
+            <button
+              onClick={() => setShowTutorial(false)}
+              className="mt-4 w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium py-2 px-4 rounded-lg transition-all"
+            >
+              Sleppa leiðsögn
+            </button>
+          </div>
+        )}
+
         {/* Main content */}
+        {!showTutorial && (
         <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-8">
           <h2 className="text-2xl font-bold text-green-800 mb-2">
             {challenge.title}
@@ -1055,6 +1104,7 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
             </>
           )}
         </div>
+        )}
 
         {/* Quick reference */}
         <div className="mt-6 bg-white rounded-xl p-4 shadow">

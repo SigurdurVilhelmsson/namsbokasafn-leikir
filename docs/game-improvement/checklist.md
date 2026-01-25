@@ -97,7 +97,7 @@
 | Improvement | Status | Priority | Effort | Notes |
 |-------------|--------|----------|--------|-------|
 | Electron animation | ✅ | High | Medium | Bond formation animation |
-| Guided mode for beginners | ⬜ | Medium | Medium | Step-by-step assistance |
+| Guided mode for beginners | ✅ | Medium | Medium | LewisGuidedMode component with step-by-step electron counting, bond drawing, and lone pair distribution |
 | Octet violation detection | ✅ | Medium | Low | OctetViolationChecker component with expanded octet, incomplete octet, radical detection |
 | Expanded octet examples | ✅ | Low | Low | SF6, PCl5 examples in OctetViolationChecker, d-orbital explanation |
 
@@ -205,9 +205,9 @@
 | Priority | Total | Completed | Percentage |
 |----------|-------|-----------|------------|
 | High | 43 | 26 | 60.5% |
-| Medium | 45 | 20 | 44.4% |
+| Medium | 45 | 21 | 46.7% |
 | Low | 21 | 3 | 14.3% |
-| **Total** | **109** | **49** | **45%** |
+| **Total** | **109** | **50** | **45.9%** |
 
 ### By Year
 
@@ -215,7 +215,7 @@
 |------|-------|-----------|------------|
 | Shared | 8 | 8 | 100% |
 | Year 1 | 21 | 11 | 52.4% |
-| Year 2 | 40 | 18 | 45% |
+| Year 2 | 40 | 19 | 47.5% |
 | Year 3 | 32 | 10 | 31.3% |
 
 ### By Category
@@ -345,6 +345,8 @@ Building these once benefits multiple games:
 | 2026-01-25 | Year 2 progress: 40% → 42.5% (17/40 improvements completed) |
 | 2026-01-25 | **IMF Solubility Prediction COMPLETE** - SolubilityPrediction component with polar/nonpolar visualization, mixing animation, "like dissolves like" |
 | 2026-01-25 | Year 2 progress: 42.5% → 45% (18/40 improvements completed) |
+| 2026-01-25 | **Lewis Guided Mode COMPLETE** - LewisGuidedMode component with step-by-step electron counting, bond drawing, lone pair distribution |
+| 2026-01-25 | Year 2 progress: 45% → 47.5% (19/40 improvements completed) |
 
 ---
 

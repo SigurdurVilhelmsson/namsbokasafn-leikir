@@ -1,3 +1,6 @@
+## 2026-01-25 - 34b77a7
+docs: document Year 2 game enhancements in README
+
 ## 2026-01-25 - d72ccda
 feat(redox-reactions): add electrochemical cell simulation
 

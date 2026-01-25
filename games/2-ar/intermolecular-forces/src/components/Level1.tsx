@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { AnimatedMolecule, FeedbackPanel, MoleculeViewer3DLazy } from '@shared/components';
 import { imfToMolecule } from '../utils/imfConverter';
+import { ForceStrengthAnimation } from './ForceStrengthAnimation';
 
 // Misconceptions for IMF types
 const MISCONCEPTIONS = {
@@ -483,6 +484,15 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
                 <li>• <strong>H-F, H-O, eða H-N</strong> tengsl gefa vetnistengi</li>
                 <li>• Stærra atóm / mólmassi = sterkari London kraftar</li>
               </ul>
+            </div>
+
+            {/* Force Strength Animation */}
+            <div className="mt-8">
+              <ForceStrengthAnimation
+                interactive={true}
+                animate={true}
+                compact={false}
+              />
             </div>
           </div>
 

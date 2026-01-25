@@ -16,13 +16,13 @@
 
 | Game | Built | Size |
 |------|-------|------|
-| hess-law | ✅ | 233KB |
-| intermolecular-forces | ✅ | 2814KB |
+| hess-law | ✅ | 1197KB |
+| intermolecular-forces | ✅ | 2850KB |
 | kinetics | ✅ | 1207KB |
-| lewis-structures | ✅ | 2829KB |
-| organic-nomenclature | ✅ | 261KB |
-| redox-reactions | ✅ | 1185KB |
-| vsepr-geometry | ✅ | 2849KB |
+| lewis-structures | ✅ | 2867KB |
+| organic-nomenclature | ✅ | 1225KB |
+| redox-reactions | ✅ | 1196KB |
+| vsepr-geometry | ✅ | 2866KB |
 
 ## Year 3
 
@@ -38,4 +38,4 @@
 
 *17 games total*
 
-Generated: 2026-01-25T20:12:16.275Z
+Generated: 2026-01-25T20:55:25.851Z

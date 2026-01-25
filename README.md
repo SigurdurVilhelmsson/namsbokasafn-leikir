@@ -131,12 +131,14 @@ See [tools/game-template/README.md](tools/game-template/README.md) for detailed 
 
 ### Year 2 (2-ár) - Intermediate Chemistry
 
-#### ✅ Hess's Law - **NEW**
+#### ✅ Hess's Law - **ENHANCED**
 - **Topics**: Thermochemistry, enthalpy calculations, Hess's Law
 - **Format**: Puzzle-based learning with energy diagrams
 - **Features**: Multi-step enthalpy problems, reaction pathway visualization
+- **New**: State function path comparison - visualizes how multiple reaction pathways yield the same total ΔH (CO₂, H₂O, NH₃ formation examples)
+- **New**: Industrial examples (CO, H₂O fuel cells, ethanol, NO₂, Contact Process, Thermite)
 - **Source**: `games/2-ar/hess-law/`
-- **Build**: `hess-law.html` (212KB)
+- **Build**: `hess-law.html` (233KB)
 
 #### ✅ Reaction Kinetics - **NEW**
 - **Topics**: Rate laws, reaction mechanisms, kinetic theory
@@ -152,10 +154,11 @@ See [tools/game-template/README.md](tools/game-template/README.md) for detailed 
 - **Source**: `games/2-ar/lewis-structures/`
 - **Build**: `lewis-structures.html` (238KB)
 
-#### ✅ VSEPR Geometry - **NEW**
+#### ✅ VSEPR Geometry - **ENHANCED**
 - **Topics**: Molecular geometry, VSEPR theory, bond angles
 - **Format**: 3D visualization with interactive molecules
 - **Features**: Electron domain geometry, molecular shapes, hybridization
+- **New**: Shape transition animation - interactive visualization showing how electron domains rearrange as they increase from 2 to 6, with trail effects and smooth morphing
 - **Source**: `games/2-ar/vsepr-geometry/`
 - **Build**: `vsepr-geometry.html` (245KB)
 
@@ -166,17 +169,20 @@ See [tools/game-template/README.md](tools/game-template/README.md) for detailed 
 - **Source**: `games/2-ar/intermolecular-forces/`
 - **Build**: `intermolecular-forces.html` (235KB)
 
-#### ✅ Organic Nomenclature - **NEW**
+#### ✅ Organic Nomenclature - **ENHANCED**
 - **Topics**: IUPAC naming, functional groups, organic structures
-- **Format**: Name-structure matching game
+- **Format**: Name-structure matching game with interactive building
 - **Features**: Alkanes, alkenes, alcohols, carboxylic acids, naming rules
+- **New**: Interactive Molecule Builder (Sameindasmiður) - build carbon chains (2-10 carbons), click bonds to cycle single→double→triple, auto-generates IUPAC names
+- **New**: Structure from Name Challenge - 10 reverse challenges where students build structures matching given IUPAC names
 - **Source**: `games/2-ar/organic-nomenclature/`
 - **Build**: `organic-nomenclature.html` (229KB)
 
-#### ✅ Redox Reactions - **NEW**
+#### ✅ Redox Reactions - **ENHANCED**
 - **Topics**: Oxidation-reduction, electron transfer, oxidation states
 - **Format**: Reaction balancing and identification
 - **Features**: Half-reactions, oxidation state changes, electrochemistry basics
+- **New**: Interactive Electrochemical Cell - animated galvanic cell visualization with 4 metal pairs (Zn-Cu, Mg-Cu, Fe-Cu, Zn-Ag), electron flow animation, E°cell calculation
 - **Source**: `games/2-ar/redox-reactions/`
 - **Build**: `redox-reactions.html` (229KB)
 

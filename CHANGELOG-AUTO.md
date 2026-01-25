@@ -1,3 +1,30 @@
+## 2026-01-25 - d72ccda
+feat(redox-reactions): add electrochemical cell simulation
+
+## 2026-01-25 - 100463c
+feat(organic-nomenclature): add draw structure from name challenge
+
+## 2026-01-25 - d344bff
+feat(organic-nomenclature): add interactive molecule builder
+
+## 2026-01-25 - 3f1b054
+feat(vsepr-geometry): add shape transition animation
+
+## 2026-01-25 - 136ee89
+feat(hess-law): add state function path comparison visualization
+
+## 2026-01-25 - 0164453
+feat(vsepr-geometry): add electron repulsion animation
+
+## 2026-01-25 - 8ca1699
+feat(lewis-structures): add guided mode for beginners
+
+## 2026-01-25 - 8eca6c9
+feat(intermolecular-forces): add solubility prediction visualization
+
+## 2026-01-25 - 92d85d7
+docs: update auto-generated changelog and game inventory
+
 ## 2026-01-25 - 7f0f7fb
 feat(intermolecular-forces): add force strength animation
 

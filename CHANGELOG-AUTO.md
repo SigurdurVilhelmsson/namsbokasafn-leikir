@@ -1,3 +1,9 @@
+## 2026-01-25 - fb95324
+feat(vsepr-geometry): add visual bond angle indicator
+
+## 2026-01-25 - 8d7da0c
+chore: update auto-generated changelog and game inventory
+
 ## 2026-01-25 - df0501b
 feat(year-2): add redox and lewis structure visualizations
 

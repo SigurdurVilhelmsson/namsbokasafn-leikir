@@ -89,7 +89,7 @@
 |-------------|--------|----------|--------|-------|
 | Collision simulation | ✅ | High | High | CollisionDemo with activation energy visual |
 | Maxwell-Boltzmann visualization | ✅ | High | Medium | Interactive distribution curve synced with CollisionDemo, shaded Ea region, percentage display |
-| Concentration vs time graph | ⬜ | Medium | Medium | Interactive builder |
+| Concentration vs time graph | ✅ | Medium | Medium | ConcentrationTimeGraph with 0/1/2 order visualization, half-life markers, interactive controls |
 | Catalyst effect demo | ✅ | Medium | Medium | CatalystEffectDemo component with energy diagram, before/after Ea comparison, speedup calculation |
 
 #### Lewis Structures
@@ -205,9 +205,9 @@
 | Priority | Total | Completed | Percentage |
 |----------|-------|-----------|------------|
 | High | 43 | 26 | 60.5% |
-| Medium | 45 | 16 | 35.6% |
+| Medium | 45 | 17 | 37.8% |
 | Low | 21 | 3 | 14.3% |
-| **Total** | **109** | **45** | **41.3%** |
+| **Total** | **109** | **46** | **42.2%** |
 
 ### By Year
 
@@ -215,7 +215,7 @@
 |------|-------|-----------|------------|
 | Shared | 8 | 8 | 100% |
 | Year 1 | 21 | 11 | 52.4% |
-| Year 2 | 40 | 14 | 35% |
+| Year 2 | 40 | 15 | 37.5% |
 | Year 3 | 32 | 10 | 31.3% |
 
 ### By Category
@@ -337,6 +337,8 @@ Building these once benefits multiple games:
 | 2026-01-25 | Year 2 progress: 30% → 32.5% (13/40 improvements completed) |
 | 2026-01-25 | **Kinetics Catalyst Effect Demo COMPLETE** - CatalystEffectDemo with energy diagram, before/after Ea comparison, speedup calculation |
 | 2026-01-25 | Year 2 progress: 32.5% → 35% (14/40 improvements completed) |
+| 2026-01-25 | **Kinetics Concentration vs Time Graph COMPLETE** - ConcentrationTimeGraph with 0/1/2 order visualization, half-life markers |
+| 2026-01-25 | Year 2 progress: 35% → 37.5% (15/40 improvements completed) |
 
 ---
 

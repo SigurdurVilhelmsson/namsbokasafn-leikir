@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { ConcentrationTimeGraph } from './ConcentrationTimeGraph';
 
 interface Level2Props {
   onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
@@ -388,6 +389,17 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
             <li>Ef styrkur tvöfaldast og Rate fjórfaldast → m = 2</li>
             <li>Ef styrkur breytist en Rate helst sama → m = 0</li>
           </ol>
+        </div>
+
+        {/* Concentration vs Time Graph */}
+        <div className="mt-6">
+          <ConcentrationTimeGraph
+            initialConcentration={1.0}
+            rateConstant={0.1}
+            order={challenge.correctOrderA === 0 ? 0 : challenge.correctOrderA === 2 ? 2 : 1}
+            showComparison={showResult}
+            interactive={true}
+          />
         </div>
       </div>
     </div>

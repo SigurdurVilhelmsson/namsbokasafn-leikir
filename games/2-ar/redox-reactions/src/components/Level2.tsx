@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { OxidationStateDisplay } from './OxidationStateDisplay';
+import { HalfReactionBalancer } from './HalfReactionBalancer';
 
 interface Level2Props {
   onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
@@ -364,6 +365,14 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
           <div
             className="bg-green-500 h-2 rounded-full transition-all duration-300"
             style={{ width: `${(currentProgress / totalQuestions) * 100}%` }}
+          />
+        </div>
+
+        {/* Half-Reaction Balancer Tool */}
+        <div className="mt-6">
+          <HalfReactionBalancer
+            interactive={true}
+            compact={false}
           />
         </div>
       </div>

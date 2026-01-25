@@ -107,7 +107,7 @@
 |-------------|--------|----------|--------|-------|
 | AnimatedMolecule integration | ✅ | High | Medium | VSEPR mode with depth styling, dipoles, lone pairs |
 | 3D molecule viewer | ✅ | High | High | MoleculeViewer3DLazy in Level1 & Level2 with 2D/3D toggle |
-| Electron repulsion animation | ⬜ | Medium | Medium | Show domains separating |
+| Electron repulsion animation | ✅ | Medium | Medium | ElectronRepulsionAnimation component with physics-based domain separation, force arrows, geometry presets |
 | Bond angle measurement | ✅ | Medium | Low | BondAngleMeasurement component with SVG visualization, angle arcs, lone pair effects |
 | Shape transition animation | ⬜ | Medium | Medium | Adding/removing domains |
 
@@ -205,9 +205,9 @@
 | Priority | Total | Completed | Percentage |
 |----------|-------|-----------|------------|
 | High | 43 | 26 | 60.5% |
-| Medium | 45 | 21 | 46.7% |
+| Medium | 45 | 22 | 48.9% |
 | Low | 21 | 3 | 14.3% |
-| **Total** | **109** | **50** | **45.9%** |
+| **Total** | **109** | **51** | **46.8%** |
 
 ### By Year
 
@@ -215,7 +215,7 @@
 |------|-------|-----------|------------|
 | Shared | 8 | 8 | 100% |
 | Year 1 | 21 | 11 | 52.4% |
-| Year 2 | 40 | 19 | 47.5% |
+| Year 2 | 40 | 20 | 50% |
 | Year 3 | 32 | 10 | 31.3% |
 
 ### By Category
@@ -347,6 +347,8 @@ Building these once benefits multiple games:
 | 2026-01-25 | Year 2 progress: 42.5% → 45% (18/40 improvements completed) |
 | 2026-01-25 | **Lewis Guided Mode COMPLETE** - LewisGuidedMode component with step-by-step electron counting, bond drawing, lone pair distribution |
 | 2026-01-25 | Year 2 progress: 45% → 47.5% (19/40 improvements completed) |
+| 2026-01-25 | **VSEPR Electron Repulsion Animation COMPLETE** - ElectronRepulsionAnimation with physics-based domain separation, force arrows, geometry presets |
+| 2026-01-25 | Year 2 progress: 47.5% → 50% (20/40 improvements completed) |
 
 ---
 

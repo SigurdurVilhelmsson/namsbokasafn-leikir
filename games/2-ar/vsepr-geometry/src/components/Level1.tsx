@@ -4,6 +4,7 @@ import type { TieredHints } from '@shared/types';
 import { geometryToMolecule } from '../utils/vseprConverter';
 import { shuffleArray } from '@shared/utils';
 import { BondAngleMeasurement } from './BondAngleMeasurement';
+import { ElectronRepulsionAnimation } from './ElectronRepulsionAnimation';
 
 // Misconceptions for VSEPR geometry
 const VSEPR_MISCONCEPTIONS: Record<string, string> = {
@@ -401,6 +402,14 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
             <p className="text-gray-600 mb-6">
               Smelltu á lögun til að sjá dæmi og útskýringu. Þegar þú ert tilbúinn, haltu áfram í spurningar.
             </p>
+
+            {/* Electron Repulsion Animation */}
+            <div className="mb-8">
+              <ElectronRepulsionAnimation
+                geometryId={selectedGeometry?.id || 'tetrahedral'}
+                showForces={true}
+              />
+            </div>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
               {GEOMETRIES.map(geo => (

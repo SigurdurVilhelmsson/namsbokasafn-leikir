@@ -4,6 +4,6 @@
     "outDir": "./dist"
   },
   "include": ["src", "../../../shared/**/*"],
-  "exclude": ["src/archive"],
+  "exclude": ["src/archive", "../../../shared/**/__tests__/**/*", "../../../shared/**/*.test.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

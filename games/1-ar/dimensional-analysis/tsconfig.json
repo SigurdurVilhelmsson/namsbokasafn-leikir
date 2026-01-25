@@ -4,6 +4,6 @@
     "outDir": "./dist"
   },
   "include": ["src", "../../../shared/**/*"],
-  "exclude": ["../../../shared/components/MoleculeViewer3D/**/*"],
+  "exclude": ["../../../shared/components/MoleculeViewer3D/**/*", "../../../shared/**/__tests__/**/*", "../../../shared/**/*.test.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

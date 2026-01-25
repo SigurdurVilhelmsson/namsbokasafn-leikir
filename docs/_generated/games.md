@@ -6,9 +6,9 @@
 
 | Game | Built | Size |
 |------|-------|------|
-| dimensional-analysis | ✅ | 282KB |
+| dimensional-analysis | ✅ | 1235KB |
 | lausnir | ✅ | 265KB |
-| molmassi | ✅ | 252KB |
+| molmassi | ✅ | 2847KB |
 | nafnakerfid | ✅ | 245KB |
 | takmarkandi | ✅ | 255KB |
 
@@ -17,20 +17,20 @@
 | Game | Built | Size |
 |------|-------|------|
 | hess-law | ✅ | 233KB |
-| intermolecular-forces | ✅ | 260KB |
+| intermolecular-forces | ✅ | 2814KB |
 | kinetics | ✅ | 242KB |
-| lewis-structures | ✅ | 264KB |
-| organic-nomenclature | ✅ | 245KB |
+| lewis-structures | ✅ | 2829KB |
+| organic-nomenclature | ✅ | 261KB |
 | redox-reactions | ✅ | 223KB |
-| vsepr-geometry | ✅ | 266KB |
+| vsepr-geometry | ✅ | 2820KB |
 
 ## Year 3
 
 | Game | Built | Size |
 |------|-------|------|
-| buffer-recipe-creator | ✅ | 234KB |
-| equilibrium-shifter | ✅ | 245KB |
-| gas-law-challenge | ✅ | 206KB |
+| buffer-recipe-creator | ✅ | 1202KB |
+| equilibrium-shifter | ✅ | 1193KB |
+| gas-law-challenge | ✅ | 1155KB |
 | ph-titration | ✅ | 266KB |
 | thermodynamics-predictor | ✅ | 212KB |
 
@@ -38,4 +38,4 @@
 
 *17 games total*
 
-Generated: 2026-01-18T13:01:33.260Z
+Generated: 2026-01-24T21:14:49.980Z

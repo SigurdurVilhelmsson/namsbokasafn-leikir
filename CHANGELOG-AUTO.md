@@ -1,3 +1,6 @@
+## 2026-01-24 - fcff5cd
+docs: document Year 1, 2, and 3 game improvements in CHANGELOG and README
+
 ## 2026-01-24 - 33c96a6
 feat(nafnakerfid): add name builder mode for learning naming rules
 

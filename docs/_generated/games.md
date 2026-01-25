@@ -22,7 +22,7 @@
 | lewis-structures | ✅ | 2829KB |
 | organic-nomenclature | ✅ | 261KB |
 | redox-reactions | ✅ | 223KB |
-| vsepr-geometry | ✅ | 2820KB |
+| vsepr-geometry | ✅ | 2849KB |
 
 ## Year 3
 
@@ -38,4 +38,4 @@
 
 *17 games total*
 
-Generated: 2026-01-25T19:52:53.849Z
+Generated: 2026-01-25T19:58:54.649Z

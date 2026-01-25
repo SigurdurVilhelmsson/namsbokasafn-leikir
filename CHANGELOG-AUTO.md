@@ -1,3 +1,9 @@
+## 2026-01-25 - 698f600
+feat(kinetics): add catalyst effect visualization
+
+## 2026-01-25 - 73917da
+docs: update auto-generated changelog and game inventory
+
 ## 2026-01-25 - fb95324
 feat(vsepr-geometry): add visual bond angle indicator
 

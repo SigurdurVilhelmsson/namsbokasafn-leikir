@@ -127,7 +127,7 @@
 |-------------|--------|----------|--------|-------|
 | AnimatedMolecule integration | ✅ | High | Medium | Organic mode with chain layout, carbon numbering, colored bonds |
 | Interactive molecule builder | ✅ | High | High | MoleculeBuilder component with auto-naming, bond type cycling |
-| Draw structure from name | ⬜ | High | High | Reverse challenge |
+| Draw structure from name | ✅ | High | High | StructureFromNameChallenge with 10 challenges, build mode in Level 2 |
 | Carbon chain numbering | ✅ | Medium | Medium | Visual annotation (integrated with AnimatedMolecule) |
 | Functional group highlighting | ✅ | Medium | Low | Double/triple bonds highlighted with colors |
 
@@ -204,10 +204,10 @@
 
 | Priority | Total | Completed | Percentage |
 |----------|-------|-----------|------------|
-| High | 43 | 27 | 62.8% |
+| High | 43 | 28 | 65.1% |
 | Medium | 45 | 24 | 53.3% |
 | Low | 21 | 3 | 14.3% |
-| **Total** | **109** | **54** | **49.5%** |
+| **Total** | **109** | **55** | **50.5%** |
 
 ### By Year
 
@@ -215,7 +215,7 @@
 |------|-------|-----------|------------|
 | Shared | 8 | 8 | 100% |
 | Year 1 | 21 | 11 | 52.4% |
-| Year 2 | 40 | 23 | 57.5% |
+| Year 2 | 40 | 24 | 60% |
 | Year 3 | 32 | 10 | 31.3% |
 
 ### By Category
@@ -355,6 +355,8 @@ Building these once benefits multiple games:
 | 2026-01-25 | Year 2 progress: 52.5% → 55% (22/40 improvements completed) |
 | 2026-01-25 | **Organic Interactive Molecule Builder COMPLETE** - MoleculeBuilder component with carbon chain building, bond type cycling, auto-naming |
 | 2026-01-25 | Year 2 progress: 55% → 57.5% (23/40 improvements completed) |
+| 2026-01-25 | **Organic Draw Structure from Name COMPLETE** - StructureFromNameChallenge with 10 challenges, build mode in Level 2 |
+| 2026-01-25 | Year 2 progress: 57.5% → 60% (24/40 improvements completed) |
 
 ---
 

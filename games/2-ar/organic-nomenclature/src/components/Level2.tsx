@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { AnimatedMolecule, DragDropBuilder, FeedbackPanel } from '@shared/components';
 import type { DraggableItemData, DropZoneData, DropResult, ZoneState } from '@shared/components';
 import { organicToMolecule } from '../utils/organicConverter';
+import { StructureFromNameChallenge } from './StructureFromNameChallenge';
 
 // Misconceptions for organic nomenclature
 const NOMENCLATURE_MISCONCEPTIONS: Record<string, string> = {
@@ -52,6 +53,7 @@ const molecules: Molecule[] = [
 ];
 
 export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer }: Level2Props) {
+  const [mode, setMode] = useState<'select' | 'name' | 'build'>('select');
   const [currentMolecule, setCurrentMolecule] = useState(0);
   const [userAnswer, setUserAnswer] = useState('');
   const [showFeedback, setShowFeedback] = useState(false);
@@ -349,11 +351,87 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
     }
   };
 
+  // Mode selection screen
+  if (mode === 'select') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-teal-50 to-cyan-100 p-4 md:p-8">
+        <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-2xl p-6 md:p-8">
+          <div className="flex justify-between items-center mb-6">
+            <button onClick={onBack} className="text-gray-500 hover:text-gray-700">
+              ← Til baka
+            </button>
+          </div>
+
+          <h1 className="text-2xl md:text-3xl font-bold text-center mb-2 text-green-600">
+            🏷️ Stig 2: Nafna og byggja
+          </h1>
+          <p className="text-center text-gray-600 mb-8">
+            Veldu hvernig þú vilt æfa þig
+          </p>
+
+          <div className="space-y-4">
+            <button
+              onClick={() => setMode('name')}
+              className="w-full p-6 rounded-xl border-4 border-green-400 bg-green-50 hover:bg-green-100 transition-all text-left"
+            >
+              <div className="flex items-center gap-4">
+                <div className="text-4xl">🏷️</div>
+                <div className="flex-1">
+                  <div className="text-xl font-bold text-green-800">Nefna sameindir</div>
+                  <div className="text-sm text-green-600 mt-1">
+                    Sjáðu sameind → Skrifaðu nafnið
+                  </div>
+                </div>
+              </div>
+            </button>
+
+            <button
+              onClick={() => setMode('build')}
+              className="w-full p-6 rounded-xl border-4 border-emerald-400 bg-emerald-50 hover:bg-emerald-100 transition-all text-left"
+            >
+              <div className="flex items-center gap-4">
+                <div className="text-4xl">🔬</div>
+                <div className="flex-1">
+                  <div className="text-xl font-bold text-emerald-800">Byggja sameindir</div>
+                  <div className="text-sm text-emerald-600 mt-1">
+                    Lestu nafnið → Byggðu sameindina
+                  </div>
+                </div>
+              </div>
+            </button>
+          </div>
+
+          <div className="mt-8 bg-gray-50 p-4 rounded-xl">
+            <h3 className="font-semibold text-gray-700 mb-2">💡 Mismunandi æfingar</h3>
+            <p className="text-sm text-gray-600">
+              <strong>Nefna sameindir</strong> æfir þig í að þekkja byggingu og skrifa nafn.
+              <br />
+              <strong>Byggja sameindir</strong> æfir öfuga leið: lesa nafn og búa til rétta byggingu.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Build mode - use StructureFromNameChallenge
+  if (mode === 'build') {
+    return (
+      <StructureFromNameChallenge
+        onComplete={onComplete}
+        onBack={() => setMode('select')}
+        onCorrectAnswer={onCorrectAnswer}
+        onIncorrectAnswer={onIncorrectAnswer}
+      />
+    );
+  }
+
+  // Name mode - existing functionality
   return (
     <div className="min-h-screen bg-gradient-to-br from-teal-50 to-cyan-100 p-4 md:p-8">
       <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-2xl p-6 md:p-8">
         <div className="flex justify-between items-center mb-6">
-          <button onClick={onBack} className="text-gray-500 hover:text-gray-700">
+          <button onClick={() => setMode('select')} className="text-gray-500 hover:text-gray-700">
             ← Til baka
           </button>
           <div className="flex items-center gap-4">

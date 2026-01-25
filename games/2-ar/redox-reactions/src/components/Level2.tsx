@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { OxidationStateDisplay } from './OxidationStateDisplay';
 import { HalfReactionBalancer } from './HalfReactionBalancer';
+import { ElectrochemicalCell } from './ElectrochemicalCell';
 
 interface Level2Props {
   onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
@@ -373,6 +374,14 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
           <HalfReactionBalancer
             interactive={true}
             compact={false}
+          />
+        </div>
+
+        {/* Electrochemical Cell Simulation */}
+        <div className="mt-6">
+          <ElectrochemicalCell
+            compact={false}
+            interactive={true}
           />
         </div>
       </div>

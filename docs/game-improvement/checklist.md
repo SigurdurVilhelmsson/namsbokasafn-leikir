@@ -137,7 +137,7 @@
 |-------------|--------|----------|--------|-------|
 | Electron transfer animation | ✅ | High | High | OxidationStateDisplay with animated electron transfer, color-coded states |
 | Oxidation state highlighting | ✅ | High | Medium | Color gradient (blue negative, red positive), before/after display, oxidized/reduced labels |
-| Electrochemical cell sim | ⬜ | Medium | High | Galvanic cell animation |
+| Electrochemical cell sim | ✅ | Medium | High | ElectrochemicalCell with 4 cell pairs, electron flow animation, E°cell calculation |
 | Half-reaction balancer | ✅ | Medium | Medium | HalfReactionBalancer with 5-step guided process, multiple examples |
 
 ---
@@ -205,9 +205,9 @@
 | Priority | Total | Completed | Percentage |
 |----------|-------|-----------|------------|
 | High | 43 | 28 | 65.1% |
-| Medium | 45 | 24 | 53.3% |
+| Medium | 45 | 25 | 55.6% |
 | Low | 21 | 3 | 14.3% |
-| **Total** | **109** | **55** | **50.5%** |
+| **Total** | **109** | **56** | **51.4%** |
 
 ### By Year
 
@@ -215,7 +215,7 @@
 |------|-------|-----------|------------|
 | Shared | 8 | 8 | 100% |
 | Year 1 | 21 | 11 | 52.4% |
-| Year 2 | 40 | 24 | 60% |
+| Year 2 | 40 | 25 | 62.5% |
 | Year 3 | 32 | 10 | 31.3% |
 
 ### By Category
@@ -357,6 +357,8 @@ Building these once benefits multiple games:
 | 2026-01-25 | Year 2 progress: 55% → 57.5% (23/40 improvements completed) |
 | 2026-01-25 | **Organic Draw Structure from Name COMPLETE** - StructureFromNameChallenge with 10 challenges, build mode in Level 2 |
 | 2026-01-25 | Year 2 progress: 57.5% → 60% (24/40 improvements completed) |
+| 2026-01-25 | **Redox Electrochemical Cell COMPLETE** - ElectrochemicalCell with 4 cell pairs, electron flow animation, E°cell calculation |
+| 2026-01-25 | Year 2 progress: 60% → 62.5% (25/40 improvements completed) |
 
 ---
 

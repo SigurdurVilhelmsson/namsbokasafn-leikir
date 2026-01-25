@@ -21,11 +21,128 @@ function getElementVisual(symbol: string) {
 }
 
 /**
+ * Get 3D positions for specific molecular geometries
+ * Returns positions relative to central atom at origin
+ */
+function getGeometryPositions(
+  geometry: string | undefined,
+  numBondedAtoms: number,
+  bondLength: number
+): [number, number, number][] {
+  // Standard geometric positions based on VSEPR theory
+  const positions: Record<string, [number, number, number][]> = {
+    // Linear: 180° angle
+    'linear': [
+      [bondLength, 0, 0],
+      [-bondLength, 0, 0],
+    ],
+
+    // Trigonal planar: 120° angles in XY plane
+    'trigonal-planar': [
+      [bondLength, 0, 0],
+      [-bondLength * 0.5, bondLength * 0.866, 0],
+      [-bondLength * 0.5, -bondLength * 0.866, 0],
+    ],
+
+    // Bent (from trigonal planar with 1 lone pair): ~117° angle
+    'bent': [
+      [bondLength * 0.9, bondLength * 0.44, 0],
+      [-bondLength * 0.9, bondLength * 0.44, 0],
+    ],
+
+    // Tetrahedral: 109.5° angles
+    'tetrahedral': [
+      [0, bondLength, 0],                                    // top
+      [bondLength * 0.943, -bondLength * 0.333, 0],         // front-right
+      [-bondLength * 0.471, -bondLength * 0.333, bondLength * 0.816],  // back-left
+      [-bondLength * 0.471, -bondLength * 0.333, -bondLength * 0.816], // back-right
+    ],
+
+    // Trigonal pyramidal (from tetrahedral with 1 lone pair): ~107°
+    'trigonal-pyramidal': [
+      [bondLength * 0.943, -bondLength * 0.333, 0],
+      [-bondLength * 0.471, -bondLength * 0.333, bondLength * 0.816],
+      [-bondLength * 0.471, -bondLength * 0.333, -bondLength * 0.816],
+    ],
+
+    // Trigonal bipyramidal: 90° and 120° angles
+    'trigonal-bipyramidal': [
+      [0, bondLength, 0],                    // axial top
+      [0, -bondLength, 0],                   // axial bottom
+      [bondLength, 0, 0],                    // equatorial
+      [-bondLength * 0.5, 0, bondLength * 0.866],
+      [-bondLength * 0.5, 0, -bondLength * 0.866],
+    ],
+
+    // See-saw (from trigonal bipyramidal with 1 equatorial lone pair)
+    'see-saw': [
+      [0, bondLength, 0],                    // axial top
+      [0, -bondLength, 0],                   // axial bottom
+      [bondLength, 0, 0],                    // equatorial
+      [-bondLength, 0, 0],
+    ],
+
+    // T-shaped (from trigonal bipyramidal with 2 equatorial lone pairs)
+    't-shaped': [
+      [0, bondLength, 0],
+      [0, -bondLength, 0],
+      [bondLength, 0, 0],
+    ],
+
+    // Square planar
+    'square-planar': [
+      [bondLength, 0, 0],
+      [-bondLength, 0, 0],
+      [0, 0, bondLength],
+      [0, 0, -bondLength],
+    ],
+
+    // Square pyramidal
+    'square-pyramidal': [
+      [0, bondLength, 0],                    // apex
+      [bondLength * 0.707, -bondLength * 0.3, bondLength * 0.707],
+      [bondLength * 0.707, -bondLength * 0.3, -bondLength * 0.707],
+      [-bondLength * 0.707, -bondLength * 0.3, bondLength * 0.707],
+      [-bondLength * 0.707, -bondLength * 0.3, -bondLength * 0.707],
+    ],
+
+    // Octahedral: 90° angles
+    'octahedral': [
+      [0, bondLength, 0],
+      [0, -bondLength, 0],
+      [bondLength, 0, 0],
+      [-bondLength, 0, 0],
+      [0, 0, bondLength],
+      [0, 0, -bondLength],
+    ],
+  };
+
+  // Return positions for the specified geometry
+  if (geometry && positions[geometry]) {
+    return positions[geometry].slice(0, numBondedAtoms);
+  }
+
+  // Fallback: distribute atoms evenly on a sphere
+  const fallbackPositions: [number, number, number][] = [];
+  for (let i = 0; i < numBondedAtoms; i++) {
+    const phi = Math.acos(1 - (2 * (i + 0.5)) / numBondedAtoms);
+    const theta = Math.PI * (1 + Math.sqrt(5)) * i;
+    fallbackPositions.push([
+      bondLength * Math.sin(phi) * Math.cos(theta),
+      bondLength * Math.cos(phi),
+      bondLength * Math.sin(phi) * Math.sin(theta),
+    ]);
+  }
+  return fallbackPositions;
+}
+
+/**
  * Calculate 3D positions for atoms based on bonds and geometry
  */
 function calculateAtomPositions3D(
   atoms: MoleculeAtom[],
-  bonds: MoleculeBond[]
+  bonds: MoleculeBond[],
+  geometry?: string
 ): Map<string, [number, number, number]> {
   const positions = new Map<string, [number, number, number]>();
 
@@ -61,31 +178,35 @@ function calculateAtomPositions3D(
     }
   }
 
-  // Position bonded atoms using tetrahedral/other geometries
+  // Get geometry-specific positions
   const bondLength = 1.5;
-  const tetrahedralAngle = (109.5 * Math.PI) / 180;
+  const geometryPositions = getGeometryPositions(geometry, bondedAtomIds.length, bondLength);
 
+  // Assign positions to bonded atoms
   bondedAtomIds.forEach((atomId, index) => {
-    const theta = (2 * Math.PI * index) / bondedAtomIds.length;
-    const phi = index === 0 ? 0 : tetrahedralAngle;
-
-    const x = bondLength * Math.sin(phi) * Math.cos(theta);
-    const y = bondLength * Math.cos(phi);
-    const z = bondLength * Math.sin(phi) * Math.sin(theta);
-
-    positions.set(atomId, [x, y, z]);
+    if (index < geometryPositions.length) {
+      positions.set(atomId, geometryPositions[index]);
+    }
   });
 
-  // Handle remaining atoms (simple radial placement)
+  // Handle remaining atoms (atoms not directly bonded to central)
   for (const atom of atoms) {
     if (!positions.has(atom.id)) {
-      const angle = Math.random() * 2 * Math.PI;
-      const phi = Math.acos(2 * Math.random() - 1);
-      const r = bondLength * 2;
+      // Find what this atom is bonded to
+      let parentPos: [number, number, number] = [0, 0, 0];
+      for (const bond of bonds) {
+        const otherId = bond.from === atom.id ? bond.to : (bond.to === atom.id ? bond.from : null);
+        if (otherId && positions.has(otherId)) {
+          parentPos = positions.get(otherId)!;
+          break;
+        }
+      }
+      // Place at an offset from parent
+      const offset = bondLength * 0.8;
       positions.set(atom.id, [
-        r * Math.sin(phi) * Math.cos(angle),
-        r * Math.cos(phi),
-        r * Math.sin(phi) * Math.sin(angle),
+        parentPos[0] + offset,
+        parentPos[1] + offset * 0.5,
+        parentPos[2],
       ]);
     }
   }
@@ -196,10 +317,10 @@ function MoleculeScene({
   showLabels = false,
   onAtomClick,
 }: Pick<MoleculeViewer3DProps, 'molecule' | 'style' | 'showLabels' | 'onAtomClick'>) {
-  // Calculate 3D positions
+  // Calculate 3D positions based on molecular geometry
   const atomPositions = useMemo(
-    () => calculateAtomPositions3D(molecule.atoms, molecule.bonds),
-    [molecule.atoms, molecule.bonds]
+    () => calculateAtomPositions3D(molecule.atoms, molecule.bonds, molecule.geometry),
+    [molecule.atoms, molecule.bonds, molecule.geometry]
   );
 
   // Determine atom radius based on style

@@ -39,8 +39,63 @@ export function Level3({ onBack, onComplete, onCorrectAnswer, onIncorrectAnswer 
   const [selectedMysteryOption, setSelectedMysteryOption] = useState<number | null>(null);
   const [mysteryFeedback, setMysteryFeedback] = useState<string | null>(null);
 
+  // Enhanced mystery mode: reverse deduction with element hints
+  const [mysteryHints, setMysteryHints] = useState<string[]>([]);
+  const [revealedHints, setRevealedHints] = useState<number>(0);
+  const [mysteryMode, setMysteryMode] = useState<'identify' | 'deduce'>('identify');
+
   const inputRef = useRef<HTMLInputElement>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Generate element hints for reverse deduction mode
+  const generateElementHints = (compound: Compound): string[] => {
+    const hints: string[] = [];
+
+    // Hint 1: Number of different elements
+    const elementCount = compound.elements.length;
+    hints.push(`Inniheldur ${elementCount} mismunandi ${elementCount === 1 ? 'frumefni' : 'frumefni'}`);
+
+    // Hint 2: Total atom count
+    const totalAtoms = compound.elements.reduce((sum, el) => sum + el.count, 0);
+    hints.push(`Samtals ${totalAtoms} ${totalAtoms === 1 ? 'frumeind' : 'frumeindir'} í sameind`);
+
+    // Hint 3: Contains specific element (most common non-trivial one)
+    const sortedElements = [...compound.elements].sort((a, b) => b.count - a.count);
+    const mainElement = sortedElements[0];
+    const elementName = getElementName(mainElement.symbol);
+    hints.push(`Inniheldur ${mainElement.count} ${elementName} (${mainElement.symbol})`);
+
+    // Hint 4: Second element if exists
+    if (sortedElements.length > 1) {
+      const secondElement = sortedElements[1];
+      const secondName = getElementName(secondElement.symbol);
+      hints.push(`Inniheldur einnig ${secondElement.count} ${secondName} (${secondElement.symbol})`);
+    }
+
+    // Hint 5: Difficulty category description
+    if (compound.difficulty === 'easy') {
+      hints.push('Einföld sameind - algeng í daglegu lífi');
+    } else if (compound.difficulty === 'medium') {
+      hints.push('Miðlungs flókin sameind - oft notuð í rannsóknarstofum');
+    } else {
+      hints.push('Flókin sameind - gæti innihaldið vatnssameindir (hýdröt)');
+    }
+
+    return hints;
+  };
+
+  // Helper to get Icelandic element names
+  const getElementName = (symbol: string): string => {
+    const names: Record<string, string> = {
+      H: 'vetni', C: 'kolefni', N: 'köfnunarefni', O: 'súrefni',
+      S: 'brennisteinn', Cl: 'klór', Na: 'natríum', Ca: 'kalsíum',
+      Fe: 'járn', K: 'kalíum', Mg: 'magnesíum', P: 'fosfór',
+      Al: 'ál', Cu: 'kopar', Zn: 'sink', Ag: 'silfur',
+      Au: 'gull', Br: 'bróm', I: 'joð', F: 'flúor',
+      Ba: 'baríum', Mn: 'mangan', Cr: 'króm', Pb: 'blý'
+    };
+    return names[symbol] || symbol;
+  };
 
   // Generate mystery options (correct answer + 3 distractors)
   const generateMysteryOptions = (correct: Compound): Compound[] => {
@@ -120,6 +175,10 @@ export function Level3({ onBack, onComplete, onCorrectAnswer, onIncorrectAnswer 
       setMysteryOptions(generateMysteryOptions(newCompound));
       setSelectedMysteryOption(null);
       setMysteryFeedback(null);
+      setMysteryHints(generateElementHints(newCompound));
+      setRevealedHints(0);
+      // Alternate between identify and deduce modes
+      setMysteryMode(Math.random() > 0.5 ? 'identify' : 'deduce');
     }
 
     setMode('playing');
@@ -178,6 +237,10 @@ export function Level3({ onBack, onComplete, onCorrectAnswer, onIncorrectAnswer 
       setMysteryOptions(generateMysteryOptions(newCompound));
       setSelectedMysteryOption(null);
       setMysteryFeedback(null);
+      setMysteryHints(generateElementHints(newCompound));
+      setRevealedHints(0);
+      // Alternate between identify and deduce modes
+      setMysteryMode(mysteryMode === 'identify' ? 'deduce' : 'identify');
     } else {
       setTimeout(() => inputRef.current?.focus(), 100);
     }
@@ -415,11 +478,17 @@ export function Level3({ onBack, onComplete, onCorrectAnswer, onIncorrectAnswer 
           {/* Mystery Question Card */}
           <div className="bg-white rounded-xl shadow-lg p-8 mb-4 card-enter">
             <div className="text-center mb-6">
-              <div className="text-lg text-gray-500 mb-2">🔍 Dularfull sameind</div>
+              <div className="text-lg text-gray-500 mb-2">
+                {mysteryMode === 'identify' ? '🔍 Dularfull sameind' : '🧩 Afturkóðun'}
+              </div>
               <div className="text-5xl font-bold text-purple-600 mb-2">
                 {currentCompound.molarMass.toFixed(2)} g/mol
               </div>
-              <p className="text-gray-600">Hvaða sameind hefur þennan mólmassa?</p>
+              <p className="text-gray-600">
+                {mysteryMode === 'identify'
+                  ? 'Hvaða sameind hefur þennan mólmassa?'
+                  : 'Hvaða sameind passar við vísbendingar og mólmassa?'}
+              </p>
               <div className={`mt-2 inline-block px-3 py-1 rounded-full text-sm font-semibold ${
                 currentCompound.difficulty === 'easy' ? 'bg-green-100 text-green-700' :
                 currentCompound.difficulty === 'medium' ? 'bg-yellow-100 text-yellow-700' :
@@ -430,6 +499,46 @@ export function Level3({ onBack, onComplete, onCorrectAnswer, onIncorrectAnswer 
                  'Erfitt'}
               </div>
             </div>
+
+            {/* Element Hints Panel (for deduce mode or when hints revealed) */}
+            {(mysteryMode === 'deduce' || revealedHints > 0) && mysteryHints.length > 0 && (
+              <div className="bg-purple-50 border-2 border-purple-200 rounded-xl p-4 mb-6 max-w-2xl mx-auto">
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="font-bold text-purple-800">
+                    🔎 Vísbendingar um sameindina
+                  </h4>
+                  {revealedHints < mysteryHints.length && !showFeedback && (
+                    <button
+                      onClick={() => {
+                        setRevealedHints(prev => prev + 1);
+                        setHintsUsed(prev => prev + 1);
+                        setTotalHintsUsed(prev => prev + 1);
+                      }}
+                      className="text-xs bg-purple-500 hover:bg-purple-600 text-white px-3 py-1 rounded-lg transition-colors"
+                    >
+                      Næsta vísbending (-2 stig)
+                    </button>
+                  )}
+                </div>
+                <ul className="space-y-2">
+                  {mysteryHints.slice(0, mysteryMode === 'deduce' ? Math.max(1, revealedHints) : revealedHints).map((hint, idx) => (
+                    <li
+                      key={idx}
+                      className="flex items-start gap-2 text-sm text-purple-900 animate-fade-in-up"
+                      style={{ animationDelay: `${idx * 100}ms` }}
+                    >
+                      <span className="text-purple-500">•</span>
+                      <span>{hint}</span>
+                    </li>
+                  ))}
+                </ul>
+                {mysteryMode === 'deduce' && revealedHints === 0 && (
+                  <p className="text-xs text-purple-600 mt-2 italic">
+                    Byrjar með 1 vísbendingu. Smelltu á „Næsta vísbending" til að fá fleiri.
+                  </p>
+                )}
+              </div>
+            )}
 
             {/* Options */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto mb-6">
@@ -505,6 +614,20 @@ export function Level3({ onBack, onComplete, onCorrectAnswer, onIncorrectAnswer 
             >
               📊 Lotukerfið
             </button>
+
+            {/* Element hints button for identify mode */}
+            {mysteryMode === 'identify' && revealedHints < mysteryHints.length && !showFeedback && (
+              <button
+                onClick={() => {
+                  setRevealedHints(prev => prev + 1);
+                  setHintsUsed(prev => prev + 1);
+                  setTotalHintsUsed(prev => prev + 1);
+                }}
+                className="bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2 px-4 rounded-xl transition-colors btn-press"
+              >
+                🔎 Fá vísbendingu ({revealedHints}/{mysteryHints.length}) (-2 stig)
+              </button>
+            )}
 
             {!showSolution && !showFeedback && (
               <button

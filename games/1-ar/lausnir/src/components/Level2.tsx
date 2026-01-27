@@ -2,6 +2,7 @@ import { useState, useCallback, useMemo } from 'react';
 import { shuffleArray } from '@shared/utils';
 import { ConcentrationComparison } from './StoichiometryVisualization';
 import { TemperatureComparison, TemperatureSolubilityCurve, SOLUBILITY_DATA, SolubilityData } from './TemperatureSolubility';
+import { IndicatorSystem, getIndicatorColor, type IndicatorType } from './IndicatorSystem';
 
 // Level 2: Application/Reasoning - "What happens when..." questions
 // Students predict outcomes without calculating
@@ -18,6 +19,14 @@ interface BaseScenario {
     explanation: string;
   }[];
   concept: string;
+}
+
+interface TitrationScenario extends BaseScenario {
+  type: 'titration';
+  indicator: IndicatorType;
+  startpH: number;
+  endpH: number;
+  drops: number;
 }
 
 interface ConcentrationScenario extends BaseScenario {
@@ -41,7 +50,7 @@ interface TemperatureScenario extends BaseScenario {
   tempAfter: number;
 }
 
-type Scenario = ConcentrationScenario | TemperatureScenario;
+type Scenario = ConcentrationScenario | TemperatureScenario | TitrationScenario;
 
 // Get compound data by formula
 const getCompound = (formula: string): SolubilityData =>
@@ -215,6 +224,43 @@ const SCENARIOS: Scenario[] = [
     compound: getCompound('C₁₂H₂₂O₁₁'),
     tempBefore: 20,
     tempAfter: 80
+  },
+  // Titration preview scenario
+  {
+    id: 11,
+    type: 'titration',
+    title: 'Títrun - Forsýning',
+    setup: 'Þú ert með basa (NaOH) í glasi með fenólftaleín litgjafa. Litgjafinn er bleikur (pH ~10). Þú byrjar að bæta við sýru (HCl) dropa fyrir dropa.',
+    question: 'Hvað gerist þegar nógu mikilli sýru hefur verið bætt við?',
+    options: [
+      { id: 'a', text: 'Lausnin verður litlaus - hlutleysi náðist', isCorrect: true, explanation: 'Rétt! Fenólftaleín er bleikt í basa (pH > 8.2) en litlaust í sýru og hlutlausu. Þegar pH fer niður fyrir ~8.2 hverfur liturinn.' },
+      { id: 'b', text: 'Lausnin verður enn bleikari', isCorrect: false, explanation: 'Nei - að bæta við sýru dregur úr pH-gildi, sem minnkar lit fenólftaleíns.' },
+      { id: 'c', text: 'Lausnin verður blá', isCorrect: false, explanation: 'Nei - fenólftaleín verður ekki blár. Það er annað hvort bleikt (í basa) eða litlaust.' },
+      { id: 'd', text: 'Ekkert gerist', isCorrect: false, explanation: 'Nei - þegar pH breytist við titrun breytist litur litgjafans.' }
+    ],
+    concept: 'Títrun er aðferð til að finna styrk lausnar með því að bæta við þekktri lausn þar til litbreyting verður.',
+    indicator: 'phenolphthalein',
+    startpH: 10,
+    endpH: 7,
+    drops: 12
+  },
+  {
+    id: 12,
+    type: 'titration',
+    title: 'Algildur litgjafi',
+    setup: 'Þú ert með óþekkta lausn og bætir algildri litgjafa (universal indicator) við. Lausnin verður græn.',
+    question: 'Hvað segir þessi litur okkur um pH lausnarinnar?',
+    options: [
+      { id: 'a', text: 'Lausnin er hlutlaus (pH ~7)', isCorrect: true, explanation: 'Rétt! Grænn litur í algildri litgjafa sýnir pH um 7 - hlutlaus lausn.' },
+      { id: 'b', text: 'Lausnin er sterk sýra (pH 1-2)', isCorrect: false, explanation: 'Nei - sterk sýra myndi gefa rauðan lit í algildri litgjafa.' },
+      { id: 'c', text: 'Lausnin er sterkur basi (pH 12-14)', isCorrect: false, explanation: 'Nei - sterkur basi myndi gefa bláan til fjólubláan lit.' },
+      { id: 'd', text: 'Það er ekki hægt að segja', isCorrect: false, explanation: 'Nei - algildur litgjafi gefur mismunandi liti við mismunandi pH.' }
+    ],
+    concept: 'Algildur litgjafi sýnir litalitróf frá rauðu (sýra) til grænu (hlutlaust) til bláu/fjólubláu (basi).',
+    indicator: 'universal',
+    startpH: 7,
+    endpH: 7,
+    drops: 0
   }
 ];
 
@@ -317,6 +363,73 @@ function BeforeAfterVisual({
       {renderBeaker(before, 'Fyrir', 1)}
       <div className="text-2xl text-gray-400">→</div>
       {renderBeaker(after, 'Eftir', showAfter ? 1 : 0.3)}
+    </div>
+  );
+}
+
+// Titration visualization component
+function TitrationVisual({
+  indicator,
+  startpH,
+  endpH,
+  drops,
+  showAfter
+}: {
+  indicator: IndicatorType;
+  startpH: number;
+  endpH: number;
+  drops: number;
+  showAfter: boolean;
+}) {
+  const startColor = getIndicatorColor(indicator, startpH);
+  const endColor = getIndicatorColor(indicator, endpH);
+
+  return (
+    <div className="flex items-center justify-center gap-4 my-4">
+      {/* Before beaker */}
+      <div className="text-center">
+        <div className="text-sm font-semibold mb-2 text-gray-700">Fyrir</div>
+        <div
+          className="w-20 h-28 rounded-b-xl border-4 border-gray-400 transition-all duration-500 relative"
+          style={{ backgroundColor: startColor }}
+        >
+          <div className="absolute top-1 left-1/2 -translate-x-1/2 w-2/3 h-1 rounded-full bg-white opacity-40" />
+          <div className="absolute bottom-2 left-0 right-0 text-center">
+            <span className="text-xs font-bold text-white drop-shadow-lg">pH {startpH}</span>
+          </div>
+        </div>
+        <div className="text-xs text-gray-600 mt-1">Basi</div>
+      </div>
+
+      {/* Drops animation / arrow */}
+      <div className="flex flex-col items-center">
+        <div className="text-2xl mb-1">💧</div>
+        {drops > 0 && (
+          <div className="text-xs text-gray-500">
+            +{drops} dropar
+          </div>
+        )}
+        <div className="text-2xl text-gray-400">→</div>
+      </div>
+
+      {/* After beaker */}
+      <div className="text-center" style={{ opacity: showAfter ? 1 : 0.3 }}>
+        <div className="text-sm font-semibold mb-2 text-gray-700">Eftir</div>
+        <div
+          className="w-20 h-28 rounded-b-xl border-4 border-gray-400 transition-all duration-500 relative"
+          style={{ backgroundColor: showAfter ? endColor : startColor }}
+        >
+          <div className="absolute top-1 left-1/2 -translate-x-1/2 w-2/3 h-1 rounded-full bg-white opacity-40" />
+          <div className="absolute bottom-2 left-0 right-0 text-center">
+            <span className="text-xs font-bold text-white drop-shadow-lg">
+              pH {showAfter ? endpH : '?'}
+            </span>
+          </div>
+        </div>
+        <div className="text-xs text-gray-600 mt-1">
+          {showAfter ? (endpH <= 7 ? 'Hlutlaust/Sýra' : 'Basi') : '???'}
+        </div>
+      </div>
     </div>
   );
 }
@@ -448,11 +561,19 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
                 after={scenario.visualAfter}
                 showAfter={showResult}
               />
-            ) : (
+            ) : scenario.type === 'temperature' ? (
               <TemperatureComparison
                 compound={scenario.compound}
                 tempBefore={scenario.tempBefore}
                 tempAfter={scenario.tempAfter}
+                showAfter={showResult}
+              />
+            ) : (
+              <TitrationVisual
+                indicator={scenario.indicator}
+                startpH={scenario.startpH}
+                endpH={scenario.endpH}
+                drops={scenario.drops}
                 showAfter={showResult}
               />
             )}
@@ -530,7 +651,7 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
                     showParticles={true}
                     animate={false}
                   />
-                ) : (
+                ) : scenario.type === 'temperature' ? (
                   <div className="text-center">
                     <div className="flex justify-center items-center gap-4 text-lg">
                       <span className="font-mono bg-blue-100 px-3 py-1 rounded">
@@ -553,6 +674,22 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
                           {scenario.tempAfter > scenario.tempBefore ? 'hærra' : 'lægra'} hitastig
                         </span>
                       )}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center">
+                    <IndicatorSystem
+                      pH={scenario.endpH}
+                      indicator={scenario.indicator}
+                      showScale={true}
+                      showTooltip={false}
+                      size="medium"
+                    />
+                    <div className="mt-3 text-sm text-gray-700">
+                      <span>
+                        pH breyttist frá {scenario.startpH} í {scenario.endpH}
+                        {scenario.drops > 0 && ` eftir ${scenario.drops} dropa af sýru`}
+                      </span>
                     </div>
                   </div>
                 )}

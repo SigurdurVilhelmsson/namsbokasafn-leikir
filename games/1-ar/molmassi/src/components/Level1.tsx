@@ -256,6 +256,7 @@ export function Level1({ onBack, onComplete, onCorrectAnswer, onIncorrectAnswer 
   const [_totalHintsUsed, setTotalHintsUsed] = useState(0);
   const [showHint, setShowHint] = useState(false);
   const [viewMode, setViewMode] = useState<'2d' | '3d'>('2d');
+  const [rotationSpeed, setRotationSpeed] = useState(1.5);
   const [showPeriodicTable, setShowPeriodicTable] = useState(false);
 
   // For build_molecule challenge
@@ -494,7 +495,7 @@ export function Level1({ onBack, onComplete, onCorrectAnswer, onIncorrectAnswer 
                     style="ball-stick"
                     showLabels={true}
                     autoRotate={true}
-                    autoRotateSpeed={1.5}
+                    autoRotateSpeed={rotationSpeed}
                     height={180}
                     backgroundColor="transparent"
                   />
@@ -573,7 +574,7 @@ export function Level1({ onBack, onComplete, onCorrectAnswer, onIncorrectAnswer 
                       style="ball-stick"
                       showLabels={true}
                       autoRotate={true}
-                      autoRotateSpeed={2}
+                      autoRotateSpeed={rotationSpeed}
                       height={120}
                       backgroundColor="transparent"
                     />
@@ -607,7 +608,7 @@ export function Level1({ onBack, onComplete, onCorrectAnswer, onIncorrectAnswer 
                       style="ball-stick"
                       showLabels={true}
                       autoRotate={true}
-                      autoRotateSpeed={2}
+                      autoRotateSpeed={rotationSpeed}
                       height={120}
                       backgroundColor="transparent"
                     />
@@ -730,7 +731,7 @@ export function Level1({ onBack, onComplete, onCorrectAnswer, onIncorrectAnswer 
                     style="ball-stick"
                     showLabels={true}
                     autoRotate={true}
-                    autoRotateSpeed={1.5}
+                    autoRotateSpeed={rotationSpeed}
                     height={180}
                     backgroundColor="transparent"
                   />
@@ -923,8 +924,8 @@ export function Level1({ onBack, onComplete, onCorrectAnswer, onIncorrectAnswer 
           </div>
         </div>
 
-        {/* Toolbar: 2D/3D Toggle + Periodic Table */}
-        <div className="flex justify-center items-center gap-4 mb-4">
+        {/* Toolbar: 2D/3D Toggle + Rotation Speed + Periodic Table */}
+        <div className="flex justify-center items-center gap-4 mb-4 flex-wrap">
           <div className="flex gap-2">
             <button
               onClick={() => setViewMode('2d')}
@@ -947,6 +948,23 @@ export function Level1({ onBack, onComplete, onCorrectAnswer, onIncorrectAnswer 
               3D
             </button>
           </div>
+
+          {/* Rotation Speed Control (only visible in 3D mode) */}
+          {viewMode === '3d' && (
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-gray-500">Hraði:</span>
+              <input
+                type="range"
+                min="0"
+                max="4"
+                step="0.5"
+                value={rotationSpeed}
+                onChange={(e) => setRotationSpeed(parseFloat(e.target.value))}
+                className="w-20 h-2 accent-primary"
+              />
+              <span className="text-xs text-gray-600 w-6">{rotationSpeed}x</span>
+            </div>
+          )}
 
           {/* Periodic Table Button */}
           <button

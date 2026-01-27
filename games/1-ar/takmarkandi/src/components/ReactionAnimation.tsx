@@ -35,7 +35,25 @@ interface AnimatedMolecule {
   opacity: number;
   scale: number;
   isProduct: boolean;
+  isExcess: boolean;
   reactionIndex: number;
+}
+
+interface Trail {
+  id: number;
+  x: number;
+  y: number;
+  color: string;
+  createdAt: number;
+}
+
+interface BondLine {
+  id: number;
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+  progress: number;
 }
 
 export function ReactionAnimation({
@@ -51,6 +69,10 @@ export function ReactionAnimation({
   const [animationStep, setAnimationStep] = useState<'initial' | 'combining' | 'reacting' | 'products' | 'complete'>('initial');
   const [molecules, setMolecules] = useState<AnimatedMolecule[]>([]);
   const [currentReaction, setCurrentReaction] = useState(0);
+  const [trails, setTrails] = useState<Trail[]>([]);
+  const [bondLines, setBondLines] = useState<BondLine[]>([]);
+  const [soundEnabled, setSoundEnabled] = useState(false);
+  const trailIdRef = { current: 0 };
 
   // Calculate reaction amounts
   const timesR1 = Math.floor(r1Count / reactant1.coeff);
@@ -61,10 +83,48 @@ export function ReactionAnimation({
   const excessR1 = r1Count - (timesReactionRuns * reactant1.coeff);
   const excessR2 = r2Count - (timesReactionRuns * reactant2.coeff);
 
+  // Play sound effect
+  const playSound = useCallback((type: 'combine' | 'react' | 'complete') => {
+    if (!soundEnabled) return;
+
+    // Use Web Audio API for simple sounds
+    try {
+      const audioContext = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+
+      if (type === 'combine') {
+        oscillator.frequency.setValueAtTime(440, audioContext.currentTime);
+        oscillator.frequency.exponentialRampToValueAtTime(880, audioContext.currentTime + 0.1);
+      } else if (type === 'react') {
+        oscillator.frequency.setValueAtTime(220, audioContext.currentTime);
+        oscillator.frequency.exponentialRampToValueAtTime(110, audioContext.currentTime + 0.2);
+      } else {
+        oscillator.frequency.setValueAtTime(523, audioContext.currentTime);
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+      }
+
+      gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.2);
+    } catch (e) {
+      // Audio not supported, ignore
+    }
+  }, [soundEnabled]);
+
   // Initialize molecules
   const initializeMolecules = useCallback(() => {
     const newMolecules: AnimatedMolecule[] = [];
     let id = 0;
+
+    // Determine which molecules will be excess
+    const r1ExcessStart = timesReactionRuns * reactant1.coeff;
+    const r2ExcessStart = timesReactionRuns * reactant2.coeff;
 
     // Reactant 1 molecules (left side)
     for (let i = 0; i < r1Count; i++) {
@@ -79,6 +139,7 @@ export function ReactionAnimation({
         opacity: 1,
         scale: 1,
         isProduct: false,
+        isExcess: i >= r1ExcessStart,
         reactionIndex: Math.floor(i / reactant1.coeff)
       });
     }
@@ -96,6 +157,7 @@ export function ReactionAnimation({
         opacity: 1,
         scale: 1,
         isProduct: false,
+        isExcess: i >= r2ExcessStart,
         reactionIndex: Math.floor(i / reactant2.coeff)
       });
     }
@@ -103,25 +165,130 @@ export function ReactionAnimation({
     setMolecules(newMolecules);
     setAnimationStep('initial');
     setCurrentReaction(0);
-  }, [r1Count, r2Count, reactant1, reactant2]);
+    setTrails([]);
+    setBondLines([]);
+  }, [r1Count, r2Count, reactant1, reactant2, timesReactionRuns]);
 
   useEffect(() => {
     initializeMolecules();
   }, [initializeMolecules]);
 
+  // Clean up old trails
+  useEffect(() => {
+    if (trails.length === 0) return;
+
+    const interval = setInterval(() => {
+      const now = Date.now();
+      setTrails(prev => prev.filter(t => now - t.createdAt < 800));
+    }, 50);
+
+    return () => clearInterval(interval);
+  }, [trails.length]);
+
+  // Animate bond lines during reacting phase
+  useEffect(() => {
+    if (animationStep !== 'reacting') {
+      setBondLines([]);
+      return;
+    }
+
+    // Create bond formation lines at center
+    const newBonds: BondLine[] = [];
+    for (let i = 0; i < 3; i++) {
+      newBonds.push({
+        id: i,
+        x1: 40 + Math.random() * 20,
+        y1: 45 + Math.random() * 10,
+        x2: 40 + Math.random() * 20,
+        y2: 45 + Math.random() * 10,
+        progress: 0
+      });
+    }
+    setBondLines(newBonds);
+
+    // Animate bond progress
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += 0.1;
+      if (progress >= 1) {
+        clearInterval(interval);
+        setBondLines([]);
+        return;
+      }
+      setBondLines(prev => prev.map(b => ({ ...b, progress })));
+    }, 50);
+
+    return () => clearInterval(interval);
+  }, [animationStep]);
+
   // Run animation step
   const runReaction = useCallback(() => {
     if (currentReaction >= timesReactionRuns) {
       setAnimationStep('complete');
+      playSound('complete');
+
+      // Animate excess molecules to the side
+      setMolecules(prev => prev.map(mol => {
+        if (mol.isExcess && !mol.isProduct && mol.opacity > 0) {
+          const isR1 = mol.formula === reactant1.formula;
+          return {
+            ...mol,
+            x: isR1 ? 15 : 85,  // Move to respective sides
+            y: 75 + (mol.id % 3) * 8,  // Stack vertically
+            scale: 0.9  // Slightly smaller to indicate "leftover"
+          };
+        }
+        return mol;
+      }));
+
       onAnimationComplete?.();
       return;
     }
 
     setAnimationStep('combining');
+    playSound('combine');
+
+    // Get molecules that will move and create trails from their starting positions
+    const movingMolecules = molecules.filter(
+      mol => mol.reactionIndex === currentReaction && !mol.isProduct && !mol.isExcess
+    );
+
+    // Generate initial trails at starting positions
+    const newTrails: Trail[] = movingMolecules.map(mol => ({
+      id: trailIdRef.current++,
+      x: mol.x,
+      y: mol.y,
+      color: mol.color,
+      createdAt: Date.now()
+    }));
+    setTrails(prev => [...prev, ...newTrails]);
+
+    // Generate intermediate trails during movement
+    const trailInterval = setInterval(() => {
+      setMolecules(currentMols => {
+        const moving = currentMols.filter(
+          mol => mol.reactionIndex === currentReaction && !mol.isProduct && !mol.isExcess && mol.opacity > 0
+        );
+        if (moving.length > 0) {
+          const intermediateTrails: Trail[] = moving.map(mol => ({
+            id: trailIdRef.current++,
+            x: mol.x + (Math.random() * 4 - 2),
+            y: mol.y + (Math.random() * 4 - 2),
+            color: mol.color,
+            createdAt: Date.now()
+          }));
+          setTrails(prev => [...prev, ...intermediateTrails]);
+        }
+        return currentMols;
+      });
+    }, 100);
+
+    // Clear trail interval after combining phase
+    setTimeout(() => clearInterval(trailInterval), 500);
 
     // Move reactants to center
     setMolecules(prev => prev.map(mol => {
-      if (mol.reactionIndex === currentReaction && !mol.isProduct) {
+      if (mol.reactionIndex === currentReaction && !mol.isProduct && !mol.isExcess) {
         return {
           ...mol,
           targetX: 45 + (Math.random() * 10 - 5),
@@ -136,10 +303,11 @@ export function ReactionAnimation({
     // After combining, create products
     setTimeout(() => {
       setAnimationStep('reacting');
+      playSound('react');
 
       setMolecules(prev => {
         const updated = prev.map(mol => {
-          if (mol.reactionIndex === currentReaction && !mol.isProduct) {
+          if (mol.reactionIndex === currentReaction && !mol.isProduct && !mol.isExcess) {
             return { ...mol, opacity: 0, scale: 0 };
           }
           return mol;
@@ -160,6 +328,7 @@ export function ReactionAnimation({
               opacity: 1,
               scale: 1,
               isProduct: true,
+              isExcess: false,
               reactionIndex: currentReaction
             });
           }
@@ -171,7 +340,7 @@ export function ReactionAnimation({
       setAnimationStep('products');
       setCurrentReaction(prev => prev + 1);
     }, 600);
-  }, [currentReaction, timesReactionRuns, products, onAnimationComplete]);
+  }, [currentReaction, timesReactionRuns, products, onAnimationComplete, playSound, reactant1.formula]);
 
   // Auto-play animation
   useEffect(() => {
@@ -193,8 +362,22 @@ export function ReactionAnimation({
     if (mol.isProduct) {
       return 'animate-bounce-in';
     }
+    if (mol.isExcess && animationStep === 'complete') {
+      return 'transition-all duration-700 ease-out';
+    }
     return 'transition-all duration-300';
   };
+
+  // Get excess styling
+  const getExcessStyle = (mol: AnimatedMolecule) => {
+    if (mol.isExcess && animationStep === 'complete') {
+      return 'ring-2 ring-yellow-400 ring-offset-1 animate-pulse';
+    }
+    return '';
+  };
+
+  // Count excess molecules
+  const excessMolecules = molecules.filter(m => m.isExcess && m.opacity > 0 && !m.isProduct);
 
   // Count visible molecules
   const visibleR1 = molecules.filter(m => m.formula === reactant1.formula && m.opacity > 0).length;
@@ -205,6 +388,59 @@ export function ReactionAnimation({
     <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-4 border border-gray-200">
       {/* Animation area */}
       <div className="relative w-full h-48 bg-white rounded-lg border border-gray-200 overflow-hidden mb-4">
+        {/* Particle trails */}
+        {trails.map(trail => {
+          const age = Date.now() - trail.createdAt;
+          const opacity = Math.max(0, 1 - age / 800);
+          const scale = 0.3 + (1 - age / 800) * 0.4;
+          return (
+            <div
+              key={trail.id}
+              className="absolute rounded-full pointer-events-none"
+              style={{
+                left: `${trail.x}%`,
+                top: `${trail.y}%`,
+                width: 8 * scale,
+                height: 8 * scale,
+                backgroundColor: trail.color,
+                opacity: opacity * 0.6,
+                transform: 'translate(-50%, -50%)',
+                filter: 'blur(2px)'
+              }}
+            />
+          );
+        })}
+
+        {/* Bond formation lines */}
+        {bondLines.length > 0 && (
+          <svg className="absolute inset-0 w-full h-full pointer-events-none">
+            {bondLines.map(bond => (
+              <line
+                key={bond.id}
+                x1={`${bond.x1}%`}
+                y1={`${bond.y1}%`}
+                x2={`${bond.x1 + (bond.x2 - bond.x1) * bond.progress}%`}
+                y2={`${bond.y1 + (bond.y2 - bond.y1) * bond.progress}%`}
+                stroke="#f97316"
+                strokeWidth="3"
+                strokeLinecap="round"
+                opacity={0.8 - bond.progress * 0.3}
+                className="animate-pulse"
+              />
+            ))}
+            {/* Energy burst at center */}
+            <circle
+              cx="50%"
+              cy="50%"
+              r={bondLines[0]?.progress ? bondLines[0].progress * 30 : 0}
+              fill="none"
+              stroke="#fbbf24"
+              strokeWidth="2"
+              opacity={bondLines[0]?.progress ? 1 - bondLines[0].progress : 0}
+            />
+          </svg>
+        )}
+
         {/* Reaction zone indicator */}
         <div className="absolute inset-0 flex items-center justify-center">
           <div className={`w-24 h-24 rounded-full border-4 border-dashed transition-all duration-500 ${
@@ -236,10 +472,28 @@ export function ReactionAnimation({
               formula={mol.formula}
               color={mol.color}
               size={mol.isProduct ? 35 : 30}
-              className={mol.isProduct ? 'ring-2 ring-green-400 ring-offset-1' : ''}
+              className={mol.isProduct ? 'ring-2 ring-green-400 ring-offset-1' : getExcessStyle(mol)}
             />
           </div>
         ))}
+
+        {/* Excess/Leftover labels */}
+        {animationStep === 'complete' && excessMolecules.length > 0 && (
+          <>
+            {excessR1 > 0 && (
+              <div className="absolute left-2 bottom-8 bg-yellow-100 border border-yellow-400 rounded-lg px-2 py-1 text-xs font-bold text-yellow-800 animate-fade-in">
+                <span className="block text-center">Afgangur</span>
+                <span className="block text-center">{excessR1} {reactant1.formula}</span>
+              </div>
+            )}
+            {excessR2 > 0 && (
+              <div className="absolute right-2 bottom-8 bg-yellow-100 border border-yellow-400 rounded-lg px-2 py-1 text-xs font-bold text-yellow-800 animate-fade-in">
+                <span className="block text-center">Afgangur</span>
+                <span className="block text-center">{excessR2} {reactant2.formula}</span>
+              </div>
+            )}
+          </>
+        )}
 
         {/* Labels */}
         <div className="absolute top-1 left-2 text-xs text-gray-500 font-medium">
@@ -285,6 +539,17 @@ export function ReactionAnimation({
           {currentReaction >= timesReactionRuns ? '✓ Búið' : `🔬 Hvarf ${currentReaction + 1}/${timesReactionRuns}`}
         </button>
         <button
+          onClick={() => setSoundEnabled(prev => !prev)}
+          className={`py-2 px-4 rounded-lg font-medium transition-colors ${
+            soundEnabled
+              ? 'bg-blue-500 text-white'
+              : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+          }`}
+          title={soundEnabled ? 'Slökkva á hljóði' : 'Kveikja á hljóði'}
+        >
+          {soundEnabled ? '🔊' : '🔇'}
+        </button>
+        <button
           onClick={initializeMolecules}
           className="py-2 px-4 rounded-lg font-medium bg-gray-200 hover:bg-gray-300 text-gray-700 transition-colors"
         >
@@ -315,7 +580,7 @@ export function ReactionAnimation({
         </div>
       )}
 
-      {/* CSS for bounce animation */}
+      {/* CSS for animations */}
       <style>{`
         @keyframes bounce-in {
           0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
@@ -324,6 +589,20 @@ export function ReactionAnimation({
         }
         .animate-bounce-in {
           animation: bounce-in 0.4s ease-out forwards;
+        }
+        @keyframes fade-in {
+          0% { opacity: 0; transform: translateY(10px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+          animation: fade-in 0.5s ease-out forwards;
+        }
+        @keyframes glow-pulse {
+          0%, 100% { box-shadow: 0 0 5px rgba(250, 204, 21, 0.5); }
+          50% { box-shadow: 0 0 15px rgba(250, 204, 21, 0.8); }
+        }
+        .excess-glow {
+          animation: glow-pulse 1.5s ease-in-out infinite;
         }
       `}</style>
     </div>

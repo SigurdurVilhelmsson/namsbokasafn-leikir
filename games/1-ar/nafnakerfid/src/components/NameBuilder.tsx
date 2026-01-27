@@ -1,5 +1,6 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, DragEvent } from 'react';
 import { Compound, COMPOUNDS } from '../data/compounds';
+import { AudioButton } from './AudioButton';
 
 /**
  * Name Builder Component
@@ -8,55 +9,55 @@ import { Compound, COMPOUNDS } from '../data/compounds';
 
 // Prefixes for molecular compounds (Greek)
 const PREFIXES: { [key: number]: string } = {
-  1: 'Mónó',
-  2: 'Dí',
-  3: 'Trí',
-  4: 'Tetra',
-  5: 'Penta',
-  6: 'Hexa',
-  7: 'Hepta',
-  8: 'Okta',
-  9: 'Nóna',
-  10: 'Deka'
+  1: 'mónó',
+  2: 'dí',
+  3: 'trí',
+  4: 'tetra',
+  5: 'penta',
+  6: 'hexa',
+  7: 'hepta',
+  8: 'okta',
+  9: 'nóna',
+  10: 'deka'
+};
+
+// Common polyatomic ions
+const POLYATOMIC_IONS: { [key: string]: string } = {
+  'SO₄': 'súlfat',
+  'NO₃': 'nítrat',
+  'CO₃': 'karbónat',
+  'PO₄': 'fosfat',
+  'OH': 'hýdroxíð',
+  'NH₄': 'ammóníum',
+  'Cr₂O₇': 'díkrómat',
+  'HCO₃': 'vetniskarbónat',
 };
 
 // Element names in Icelandic (roots for building names)
-const ELEMENT_ROOTS: { [key: string]: { root: string; full: string } } = {
-  'H': { root: 'vetni', full: 'Vetni' },
-  'C': { root: 'kol', full: 'Kolefni' },
-  'N': { root: 'nitur', full: 'Köfnunarefni' },
-  'O': { root: 'oxíð', full: 'Súrefni' },
-  'F': { root: 'flúoríð', full: 'Flúor' },
-  'Cl': { root: 'klóríð', full: 'Klór' },
-  'Br': { root: 'brómíð', full: 'Bróm' },
-  'I': { root: 'joðíð', full: 'Joð' },
-  'S': { root: 'brennisteinið', full: 'Brennisteinn' },
-  'P': { root: 'fosfór', full: 'Fosfór' },
-  'Na': { root: 'natríum', full: 'Natríum' },
-  'K': { root: 'kalíum', full: 'Kalíum' },
-  'Ca': { root: 'kalsíum', full: 'Kalsíum' },
-  'Mg': { root: 'magnesíum', full: 'Magnesíum' },
-  'Al': { root: 'ál', full: 'Ál' },
-  'Fe': { root: 'járn', full: 'Járn' },
-  'Cu': { root: 'kopar', full: 'Kopar' },
-  'Zn': { root: 'sink', full: 'Sink' },
-  'Ag': { root: 'silfur', full: 'Silfur' },
-  'Li': { root: 'litíum', full: 'Litíum' },
-  'Ba': { root: 'baríum', full: 'Baríum' },
-  'Xe': { root: 'xenon', full: 'Xenon' },
+const ELEMENT_ROOTS: { [key: string]: { root: string; suffix: string; full: string } } = {
+  'H': { root: 'vetni', suffix: 'vetni', full: 'Vetni' },
+  'C': { root: 'kol', suffix: 'kol', full: 'Kolefni' },
+  'N': { root: 'nitur', suffix: 'nitur', full: 'Köfnunarefni' },
+  'O': { root: 'súr', suffix: 'oxíð', full: 'Súrefni' },
+  'F': { root: 'flúor', suffix: 'flúoríð', full: 'Flúor' },
+  'Cl': { root: 'klór', suffix: 'klóríð', full: 'Klór' },
+  'Br': { root: 'bróm', suffix: 'brómíð', full: 'Bróm' },
+  'I': { root: 'joð', suffix: 'joðíð', full: 'Joð' },
+  'S': { root: 'brennisteins', suffix: 'súlfíð', full: 'Brennisteinn' },
+  'P': { root: 'fosfor', suffix: 'fosfíð', full: 'Fosfór' },
+  'Na': { root: 'natríum', suffix: 'natríum', full: 'Natríum' },
+  'K': { root: 'kalíum', suffix: 'kalíum', full: 'Kalíum' },
+  'Ca': { root: 'kalsíum', suffix: 'kalsíum', full: 'Kalsíum' },
+  'Mg': { root: 'magnesíum', suffix: 'magnesíum', full: 'Magnesíum' },
+  'Al': { root: 'ál', suffix: 'ál', full: 'Ál' },
+  'Fe': { root: 'járn', suffix: 'járn', full: 'Járn' },
+  'Cu': { root: 'kopar', suffix: 'kopar', full: 'Kopar' },
+  'Zn': { root: 'sink', suffix: 'sink', full: 'Sink' },
+  'Ag': { root: 'silfur', suffix: 'silfur', full: 'Silfur' },
+  'Li': { root: 'litíum', suffix: 'litíum', full: 'Litíum' },
+  'Ba': { root: 'baríum', suffix: 'baríum', full: 'Baríum' },
+  'Xe': { root: 'xenon', suffix: 'xenon', full: 'Xenon' },
 };
-
-// Polyatomic ions (for future expansion)
-// const POLYATOMIC_IONS: { [key: string]: string } = {
-//   'SO₄': 'súlfat',
-//   'NO₃': 'nítrat',
-//   'CO₃': 'karbónat',
-//   'PO₄': 'fosfat',
-//   'OH': 'hýdroxíð',
-//   'NH₄': 'ammóníum',
-//   'Cr₂O₇': 'díkrómat',
-//   'HCO₃': 'vetniskarbónat',
-// };
 
 interface NamePart {
   id: string;
@@ -73,39 +74,66 @@ interface NameBuilderProps {
   onIncorrectAnswer?: () => void;
 }
 
-// Get compounds suitable for name building (molecular compounds work best)
+// Get compounds suitable for name building
 function getNameBuildingCompounds(): Compound[] {
+  // Include both ionic and molecular compounds, excluding special names and very complex ones
   return COMPOUNDS.filter(c =>
-    c.type === 'molecular' &&
     c.difficulty !== 'hard' &&
-    c.name !== 'Vatn' && // Skip special names
+    c.name !== 'Vatn' &&
     c.name !== 'Ammóníak' &&
-    !c.name.includes('(') // Skip oxidation state compounds for now
-  ).slice(0, 15);
+    !c.name.includes('vetniskarbónat') && // Too complex
+    c.elements.length <= 3
+  ).slice(0, 20);
 }
 
-// Parse a compound name into expected parts (for future expansion)
-// function parseCompoundName(compound: Compound): string[] {
-//   const name = compound.name;
-//   const parts: string[] = [];
-//   // Check for common patterns
-//   if (name.startsWith('Dí')) parts.push('Dí');
-//   else if (name.startsWith('Trí')) parts.push('Trí');
-//   // etc.
-//   return parts;
-// }
+// Parse compound name into its parts for validation
+function _parseCompoundName(name: string): string[] {
+  const lowerName = name.toLowerCase();
+  const parts: string[] = [];
 
-// Generate available parts for a compound
+  // Check for Greek prefixes at the start
+  const prefixOrder = ['dí', 'trí', 'tetra', 'penta', 'hexa', 'hepta', 'okta'];
+  let remaining = lowerName;
+
+  for (const prefix of prefixOrder) {
+    if (remaining.startsWith(prefix)) {
+      parts.push(prefix);
+      remaining = remaining.slice(prefix.length);
+      break;
+    }
+  }
+
+  // The rest is element roots and suffixes combined
+  if (remaining.length > 0) {
+    parts.push(remaining);
+  }
+
+  return parts;
+}
+// Reserved for future validation - suppress unused warning
+void _parseCompoundName;
+
+// Generate available parts for a compound based on its name
 function generateParts(compound: Compound): NamePart[] {
   const parts: NamePart[] = [];
   let id = 0;
+  const lowerName = compound.name.toLowerCase();
 
-  // Add relevant prefixes
-  Object.entries(PREFIXES).forEach(([num, prefix]) => {
-    if (parseInt(num) <= 4 || compound.name.toLowerCase().includes(prefix.toLowerCase())) {
+  // Find which prefixes are actually used in the name
+  const usedPrefixes: string[] = [];
+  Object.values(PREFIXES).forEach(prefix => {
+    if (lowerName.includes(prefix)) {
+      usedPrefixes.push(prefix);
+    }
+  });
+
+  // Add used prefixes plus some distractors
+  const allPrefixes = ['dí', 'trí', 'tetra', 'penta', 'hexa'];
+  allPrefixes.forEach(prefix => {
+    if (usedPrefixes.includes(prefix) || Math.random() > 0.6) {
       parts.push({
         id: `prefix-${id++}`,
-        text: prefix.toLowerCase(),
+        text: prefix,
         type: 'prefix',
         isSelected: false,
         order: -1
@@ -113,35 +141,95 @@ function generateParts(compound: Compound): NamePart[] {
     }
   });
 
-  // Add element roots based on elements in the compound
-  compound.elements.forEach(el => {
-    const rootInfo = ELEMENT_ROOTS[el];
-    if (rootInfo) {
+  // For ionic compounds (metal + nonmetal)
+  if (compound.type === 'ionic') {
+    // Add metal name (first element is usually the metal)
+    const metal = compound.elements[0];
+    const metalRoot = ELEMENT_ROOTS[metal];
+    if (metalRoot) {
       parts.push({
-        id: `element-${id++}`,
-        text: rootInfo.root.toLowerCase(),
+        id: `metal-${id++}`,
+        text: metalRoot.root,
         type: 'element',
         isSelected: false,
         order: -1
       });
     }
-  });
 
-  // Add some distractors
-  const distractors = ['sulfat', 'nítrat', 'karbon', 'amid'];
-  distractors.slice(0, 2).forEach(d => {
-    if (!compound.name.toLowerCase().includes(d)) {
+    // Add nonmetal suffix
+    if (compound.elements.length > 1) {
+      const nonmetal = compound.elements[compound.elements.length - 1];
+      const nonmetalRoot = ELEMENT_ROOTS[nonmetal];
+      if (nonmetalRoot) {
+        parts.push({
+          id: `suffix-${id++}`,
+          text: nonmetalRoot.suffix,
+          type: 'suffix',
+          isSelected: false,
+          order: -1
+        });
+      }
+    }
+
+    // Check for polyatomic ions
+    Object.entries(POLYATOMIC_IONS).forEach(([formula, ionName]) => {
+      if (compound.formula.includes(formula.replace('₄', '4').replace('₃', '3').replace('₂', '2')) ||
+          lowerName.includes(ionName)) {
+        parts.push({
+          id: `ion-${id++}`,
+          text: ionName,
+          type: 'ion',
+          isSelected: false,
+          order: -1
+        });
+      }
+    });
+  }
+
+  // For molecular compounds
+  if (compound.type === 'molecular') {
+    compound.elements.forEach((el, idx) => {
+      const elRoot = ELEMENT_ROOTS[el];
+      if (elRoot) {
+        // First element uses root, second uses suffix (-íð form)
+        if (idx === 0) {
+          parts.push({
+            id: `element-${id++}`,
+            text: elRoot.root,
+            type: 'element',
+            isSelected: false,
+            order: -1
+          });
+        } else {
+          parts.push({
+            id: `suffix-${id++}`,
+            text: elRoot.suffix,
+            type: 'suffix',
+            isSelected: false,
+            order: -1
+          });
+        }
+      }
+    });
+  }
+
+  // Add distractors
+  const distractors = ['súlfat', 'nítrat', 'karbónat', 'amid', 'hýdroxíð'];
+  const usedTexts = parts.map(p => p.text);
+  distractors.forEach(d => {
+    if (!usedTexts.includes(d) && !lowerName.includes(d) && Math.random() > 0.7) {
       parts.push({
         id: `distractor-${id++}`,
         text: d,
-        type: 'element',
+        type: 'ion',
         isSelected: false,
         order: -1
       });
     }
   });
 
-  return parts;
+  // Shuffle parts
+  return parts.sort(() => Math.random() - 0.5);
 }
 
 export function NameBuilder({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer }: NameBuilderProps) {
@@ -155,6 +243,8 @@ export function NameBuilder({ onComplete, onBack, onCorrectAnswer, onIncorrectAn
   const [showFeedback, setShowFeedback] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
   const [attempts, setAttempts] = useState(0);
+  const [draggedPart, setDraggedPart] = useState<string | null>(null);
+  const [isDragOver, setIsDragOver] = useState(false);
 
   const compound = compounds[currentIndex];
   const totalCompounds = Math.min(compounds.length, 10);
@@ -186,6 +276,38 @@ export function NameBuilder({ onComplete, onBack, onCorrectAnswer, onIncorrectAn
     setSelectedParts(prev => prev.filter(p => p.id !== part.id));
     setAvailableParts(prev => [...prev, { ...part, isSelected: false, order: -1 }]);
   }, [showFeedback]);
+
+  // Drag and drop handlers
+  const handleDragStart = useCallback((e: DragEvent<HTMLButtonElement>, part: NamePart) => {
+    setDraggedPart(part.id);
+    e.dataTransfer.setData('text/plain', part.id);
+    e.dataTransfer.effectAllowed = 'move';
+  }, []);
+
+  const handleDragEnd = useCallback(() => {
+    setDraggedPart(null);
+    setIsDragOver(false);
+  }, []);
+
+  const handleDragOver = useCallback((e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    setIsDragOver(true);
+  }, []);
+
+  const handleDragLeave = useCallback(() => {
+    setIsDragOver(false);
+  }, []);
+
+  const handleDrop = useCallback((e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragOver(false);
+    const partId = e.dataTransfer.getData('text/plain');
+    const part = availableParts.find(p => p.id === partId);
+    if (part) {
+      selectPart(part);
+    }
+  }, [availableParts, selectPart]);
 
   // Check the answer
   const checkAnswer = useCallback(() => {
@@ -308,34 +430,59 @@ export function NameBuilder({ onComplete, onBack, onCorrectAnswer, onIncorrectAn
             <div className="text-sm text-gray-500 mt-2">{compound.info}</div>
           </div>
 
-          {/* Building area */}
+          {/* Building area - Drop zone */}
           <div className="mb-6">
-            <div className="text-sm text-gray-600 mb-2">Þitt nafn:</div>
-            <div className={`min-h-16 p-4 rounded-xl border-2 border-dashed flex flex-wrap gap-2 items-center justify-center ${
-              showFeedback
-                ? isCorrect ? 'border-green-400 bg-green-50' : 'border-red-400 bg-red-50'
-                : 'border-purple-300 bg-purple-50'
-            }`}>
+            <div className="text-sm text-gray-600 mb-2 flex items-center gap-2">
+              <span>Þitt nafn:</span>
+              <span className="text-xs text-gray-400">(dragðu eða smelltu á parta)</span>
+            </div>
+            <div
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+              className={`min-h-20 p-4 rounded-xl border-3 border-dashed flex flex-wrap gap-2 items-center justify-center transition-all ${
+                showFeedback
+                  ? isCorrect ? 'border-green-400 bg-green-50' : 'border-red-400 bg-red-50'
+                  : isDragOver
+                    ? 'border-purple-500 bg-purple-100 scale-[1.02]'
+                    : 'border-purple-300 bg-purple-50'
+              }`}
+            >
               {selectedParts.length === 0 ? (
-                <span className="text-gray-400 text-sm">Veldu parta hér að neðan...</span>
+                <div className="text-center">
+                  <div className="text-3xl mb-1 opacity-50">📥</div>
+                  <span className="text-gray-400 text-sm">Dragðu parta hingað eða smelltu á þá</span>
+                </div>
               ) : (
-                selectedParts.sort((a, b) => a.order - b.order).map(part => (
+                selectedParts.sort((a, b) => a.order - b.order).map((part, idx) => (
                   <button
                     key={part.id}
                     onClick={() => removePart(part)}
                     disabled={showFeedback}
-                    className="px-4 py-2 bg-purple-500 text-white rounded-lg font-medium hover:bg-purple-600 transition-colors disabled:opacity-50"
+                    className={`px-4 py-2 rounded-lg font-medium transition-all disabled:opacity-50 transform hover:scale-105 ${
+                      part.type === 'prefix'
+                        ? 'bg-blue-500 text-white hover:bg-blue-600'
+                        : part.type === 'suffix'
+                          ? 'bg-green-500 text-white hover:bg-green-600'
+                          : part.type === 'ion'
+                            ? 'bg-amber-500 text-white hover:bg-amber-600'
+                            : 'bg-purple-500 text-white hover:bg-purple-600'
+                    }`}
                   >
+                    <span className="text-xs opacity-70 mr-1">{idx + 1}.</span>
                     {part.text}
-                    {!showFeedback && <span className="ml-2 text-purple-200">×</span>}
+                    {!showFeedback && <span className="ml-2 opacity-70">×</span>}
                   </button>
                 ))
               )}
             </div>
-            <div className="text-center mt-2">
-              <span className="text-2xl font-bold text-gray-800">
+            <div className="text-center mt-3 flex items-center justify-center gap-2">
+              <span className="text-3xl font-bold text-gray-800">
                 {displayName || '???'}
               </span>
+              {displayName && !showFeedback && (
+                <AudioButton text={displayName} size="small" />
+              )}
             </div>
           </div>
 
@@ -344,13 +491,19 @@ export function NameBuilder({ onComplete, onBack, onCorrectAnswer, onIncorrectAn
             <div className={`p-4 rounded-xl mb-4 ${isCorrect ? 'bg-green-100' : 'bg-yellow-100'}`}>
               <div className="flex items-center gap-3">
                 <span className="text-3xl">{isCorrect ? '🎉' : '💡'}</span>
-                <div>
+                <div className="flex-1">
                   <div className="font-bold text-gray-800">
                     {isCorrect ? 'Rétt!' : 'Ekki alveg...'}
                   </div>
-                  <div className="text-sm text-gray-700">
+                  <div className="text-sm text-gray-700 flex items-center gap-2">
                     Rétt nafn: <strong>{compound.name}</strong>
+                    <AudioButton text={compound.name} size="small" />
                   </div>
+                  {!isCorrect && (
+                    <div className="text-xs text-gray-600 mt-1">
+                      Þú skrifaðir: {displayName}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -359,20 +512,73 @@ export function NameBuilder({ onComplete, onBack, onCorrectAnswer, onIncorrectAn
           {/* Available parts */}
           <div>
             <div className="text-sm text-gray-600 mb-2">Tiltækir partar:</div>
-            <div className="flex flex-wrap gap-2">
-              {availableParts.map(part => (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+              {/* Group parts by type */}
+              {/* Prefixes first */}
+              {availableParts.filter(p => p.type === 'prefix').map(part => (
                 <button
                   key={part.id}
+                  draggable={!showFeedback}
+                  onDragStart={(e) => handleDragStart(e, part)}
+                  onDragEnd={handleDragEnd}
                   onClick={() => selectPart(part)}
                   disabled={showFeedback}
-                  className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                    part.type === 'prefix'
-                      ? 'bg-blue-100 text-blue-700 hover:bg-blue-200'
-                      : part.type === 'suffix'
-                        ? 'bg-green-100 text-green-700 hover:bg-green-200'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  } disabled:opacity-50 disabled:cursor-not-allowed`}
+                  className={`px-4 py-2 rounded-lg font-medium transition-all cursor-grab active:cursor-grabbing ${
+                    draggedPart === part.id ? 'opacity-50 scale-95' : ''
+                  } bg-blue-100 text-blue-700 hover:bg-blue-200 border-2 border-blue-200 hover:border-blue-400 disabled:opacity-50 disabled:cursor-not-allowed`}
                 >
+                  <span className="text-xs text-blue-500 block">forskeyti</span>
+                  {part.text}
+                </button>
+              ))}
+              {/* Elements */}
+              {availableParts.filter(p => p.type === 'element').map(part => (
+                <button
+                  key={part.id}
+                  draggable={!showFeedback}
+                  onDragStart={(e) => handleDragStart(e, part)}
+                  onDragEnd={handleDragEnd}
+                  onClick={() => selectPart(part)}
+                  disabled={showFeedback}
+                  className={`px-4 py-2 rounded-lg font-medium transition-all cursor-grab active:cursor-grabbing ${
+                    draggedPart === part.id ? 'opacity-50 scale-95' : ''
+                  } bg-purple-100 text-purple-700 hover:bg-purple-200 border-2 border-purple-200 hover:border-purple-400 disabled:opacity-50 disabled:cursor-not-allowed`}
+                >
+                  <span className="text-xs text-purple-500 block">frumefni</span>
+                  {part.text}
+                </button>
+              ))}
+              {/* Suffixes */}
+              {availableParts.filter(p => p.type === 'suffix').map(part => (
+                <button
+                  key={part.id}
+                  draggable={!showFeedback}
+                  onDragStart={(e) => handleDragStart(e, part)}
+                  onDragEnd={handleDragEnd}
+                  onClick={() => selectPart(part)}
+                  disabled={showFeedback}
+                  className={`px-4 py-2 rounded-lg font-medium transition-all cursor-grab active:cursor-grabbing ${
+                    draggedPart === part.id ? 'opacity-50 scale-95' : ''
+                  } bg-green-100 text-green-700 hover:bg-green-200 border-2 border-green-200 hover:border-green-400 disabled:opacity-50 disabled:cursor-not-allowed`}
+                >
+                  <span className="text-xs text-green-500 block">endi</span>
+                  {part.text}
+                </button>
+              ))}
+              {/* Polyatomic ions */}
+              {availableParts.filter(p => p.type === 'ion').map(part => (
+                <button
+                  key={part.id}
+                  draggable={!showFeedback}
+                  onDragStart={(e) => handleDragStart(e, part)}
+                  onDragEnd={handleDragEnd}
+                  onClick={() => selectPart(part)}
+                  disabled={showFeedback}
+                  className={`px-4 py-2 rounded-lg font-medium transition-all cursor-grab active:cursor-grabbing ${
+                    draggedPart === part.id ? 'opacity-50 scale-95' : ''
+                  } bg-amber-100 text-amber-700 hover:bg-amber-200 border-2 border-amber-200 hover:border-amber-400 disabled:opacity-50 disabled:cursor-not-allowed`}
+                >
+                  <span className="text-xs text-amber-500 block">jón</span>
                   {part.text}
                 </button>
               ))}

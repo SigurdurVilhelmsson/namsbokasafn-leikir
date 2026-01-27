@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getCompoundsByDifficulty, type Compound } from '../data/compounds';
 import { CompoundVisualization } from './MolecularStructure';
+import { AudioButton } from './AudioButton';
 
 interface Level3Props {
   onComplete: (moves: number, difficulty: string, pairs: number, maxScore: number, hintsUsed: number) => void;
@@ -41,11 +42,43 @@ const difficultyConfig = {
   hard: { pairs: 10, label: 'Erfitt', description: 'Allar tegundir', color: 'red' }
 };
 
-const typeColors: Record<string, { bg: string; text: string; label: string }> = {
-  'jónefni': { bg: 'bg-blue-100', text: 'text-blue-700', label: 'Jónefni' },
-  'sameind': { bg: 'bg-orange-100', text: 'text-orange-700', label: 'Sameind' },
-  'sameindaefni': { bg: 'bg-orange-100', text: 'text-orange-700', label: 'Sameind' },
-  'málmar-breytilega-hleðsla': { bg: 'bg-purple-100', text: 'text-purple-700', label: 'Breytileg hleðsla' }
+const typeColors: Record<string, { bg: string; text: string; label: string; cardBack: string }> = {
+  'jónefni': { bg: 'bg-blue-100', text: 'text-blue-700', label: 'Jónefni', cardBack: 'from-blue-500 to-blue-600' },
+  'sameind': { bg: 'bg-orange-100', text: 'text-orange-700', label: 'Sameind', cardBack: 'from-orange-400 to-orange-500' },
+  'sameindaefni': { bg: 'bg-orange-100', text: 'text-orange-700', label: 'Sameind', cardBack: 'from-orange-400 to-orange-500' },
+  'málmar-breytilega-hleðsla': { bg: 'bg-purple-100', text: 'text-purple-700', label: 'Breytileg hleðsla', cardBack: 'from-purple-500 to-purple-600' }
+};
+
+// Element color map for composition badges
+const elementColors: Record<string, string> = {
+  H: 'bg-gray-200 text-gray-700',
+  C: 'bg-gray-700 text-white',
+  N: 'bg-blue-500 text-white',
+  O: 'bg-red-500 text-white',
+  S: 'bg-yellow-400 text-gray-800',
+  Cl: 'bg-green-500 text-white',
+  Na: 'bg-purple-400 text-white',
+  K: 'bg-pink-400 text-white',
+  Ca: 'bg-orange-400 text-white',
+  Mg: 'bg-teal-400 text-white',
+  Fe: 'bg-amber-700 text-white',
+  Cu: 'bg-orange-600 text-white',
+  Al: 'bg-gray-400 text-gray-800',
+  Zn: 'bg-slate-400 text-white',
+  Ag: 'bg-slate-300 text-gray-800',
+  Pb: 'bg-slate-600 text-white',
+  Ba: 'bg-lime-500 text-white',
+  Li: 'bg-pink-300 text-gray-800',
+  F: 'bg-emerald-400 text-white',
+  Br: 'bg-red-700 text-white',
+  I: 'bg-violet-600 text-white',
+  P: 'bg-amber-500 text-white',
+  Mn: 'bg-pink-600 text-white',
+  Cr: 'bg-emerald-600 text-white',
+  Co: 'bg-blue-700 text-white',
+  Sn: 'bg-gray-500 text-white',
+  Hg: 'bg-slate-500 text-white',
+  Xe: 'bg-cyan-400 text-white',
 };
 
 export function Level3({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer }: Level3Props) {
@@ -367,7 +400,7 @@ export function Level3({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
                     ? 'bg-green-100 border-2 border-green-400 scale-95 opacity-75'
                     : card.isFlipped
                       ? 'bg-white border-2 border-purple-400 shadow-lg'
-                      : 'bg-gradient-to-br from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 shadow-md hover:shadow-lg hover:scale-105'
+                      : `bg-gradient-to-br ${typeInfo.cardBack} hover:brightness-110 shadow-md hover:shadow-lg hover:scale-105`
                 }`}
               >
                 {(card.isFlipped || card.isMatched) ? (
@@ -378,6 +411,20 @@ export function Level3({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
                           {card.compound.formula}
                         </div>
                         <CompoundVisualization compound={card.compound} size="small" showLabels={true} />
+                        {/* Element composition badges */}
+                        <div className="flex flex-wrap justify-center gap-0.5 mt-1">
+                          {card.compound.elements.slice(0, 3).map((el, idx) => (
+                            <span
+                              key={idx}
+                              className={`text-[8px] px-1.5 py-0.5 rounded-full font-bold ${elementColors[el] || 'bg-gray-300 text-gray-700'}`}
+                            >
+                              {el}
+                            </span>
+                          ))}
+                          {card.compound.elements.length > 3 && (
+                            <span className="text-[8px] px-1 text-gray-500">+{card.compound.elements.length - 3}</span>
+                          )}
+                        </div>
                         <div className={`${typeInfo.bg} ${typeInfo.text} text-[10px] px-2 py-0.5 rounded-full`}>
                           Formúla
                         </div>
@@ -388,6 +435,20 @@ export function Level3({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
                           {card.compound.name}
                         </div>
                         <CompoundVisualization compound={card.compound} size="small" showLabels={false} />
+                        {/* Element composition badges */}
+                        <div className="flex flex-wrap justify-center gap-0.5 mt-1">
+                          {card.compound.elements.slice(0, 3).map((el, idx) => (
+                            <span
+                              key={idx}
+                              className={`text-[8px] px-1.5 py-0.5 rounded-full font-bold ${elementColors[el] || 'bg-gray-300 text-gray-700'}`}
+                            >
+                              {el}
+                            </span>
+                          ))}
+                          {card.compound.elements.length > 3 && (
+                            <span className="text-[8px] px-1 text-gray-500">+{card.compound.elements.length - 3}</span>
+                          )}
+                        </div>
                         <div className={`${typeInfo.bg} ${typeInfo.text} text-[10px] px-2 py-0.5 rounded-full`}>
                           Nafn
                         </div>
@@ -395,8 +456,12 @@ export function Level3({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
                     )}
                   </div>
                 ) : (
-                  <div className="h-full flex items-center justify-center text-white text-3xl">
-                    🧪
+                  <div className="h-full flex flex-col items-center justify-center text-white">
+                    <div className="text-3xl">🧪</div>
+                    {/* Category indicator on card back */}
+                    <div className="text-[10px] mt-1 opacity-80 font-medium">
+                      {typeInfo.label}
+                    </div>
                   </div>
                 )}
               </button>
@@ -419,8 +484,9 @@ export function Level3({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
                     {showMatchInfo.formula}
                   </div>
                   <div className="text-2xl text-gray-400">=</div>
-                  <div className="text-xl font-bold text-gray-800">
+                  <div className="text-xl font-bold text-gray-800 flex items-center gap-2">
                     {showMatchInfo.name}
+                    <AudioButton text={showMatchInfo.name} size="small" />
                   </div>
                 </div>
 

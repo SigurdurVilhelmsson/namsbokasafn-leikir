@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { FeedbackPanel } from '@shared/components';
 import type { TieredHints, DetailedFeedback } from '@shared/types';
 import { shuffleArray } from '@shared/utils';
+import { AudioButton } from './AudioButton';
 
 // Rule IDs for categorizing questions
 type RuleId = 'ionic-simple' | 'ionic-variable' | 'ionic-polyatomic' | 'molecular';
@@ -474,7 +475,10 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
                     </div>
                     <div className="text-2xl text-gray-400">→</div>
                     <div className="flex-1">
-                      <div className={`font-bold ${colors.text}`}>{ex.name}</div>
+                      <div className={`font-bold ${colors.text} flex items-center gap-2`}>
+                        {ex.name}
+                        <AudioButton text={ex.name} size="small" />
+                      </div>
                       <div className="text-sm text-gray-600">{ex.explanation}</div>
                     </div>
                   </div>

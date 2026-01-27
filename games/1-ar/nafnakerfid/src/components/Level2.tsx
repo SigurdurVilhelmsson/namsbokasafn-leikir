@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { CompoundVisualization } from './MolecularStructure';
+import { AudioButton } from './AudioButton';
 
 interface Level2Props {
   onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
@@ -557,8 +558,9 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
                 </div>
               )}
               {isAnswerCorrect && (
-                <div className="mt-2 text-green-700 text-2xl font-bold">
+                <div className="mt-2 text-green-700 text-2xl font-bold flex items-center justify-center gap-2">
                   {challenge.correctName}
+                  <AudioButton text={challenge.correctName} size="medium" />
                 </div>
               )}
             </div>

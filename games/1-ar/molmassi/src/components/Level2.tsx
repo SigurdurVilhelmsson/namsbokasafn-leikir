@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import { MoleculeViewer3DLazy } from '@shared/components';
+import { elementsToMolecule } from '../utils/moleculeConverter';
 import { PeriodicTable } from './PeriodicTable';
 
 // Fisher-Yates shuffle for reliable randomization
@@ -152,18 +154,47 @@ function AtomCircle({ symbol, showMass = false }: { symbol: string; showMass?: b
 }
 
 // Molecule with calculation breakdown
-function MoleculeWithBreakdown({ elements }: { elements: { symbol: string; count: number }[] }) {
+function MoleculeWithBreakdown({
+  elements,
+  formula,
+  name,
+  viewMode = '2d',
+  rotationSpeed = 1.5
+}: {
+  elements: { symbol: string; count: number }[];
+  formula?: string;
+  name?: string;
+  viewMode?: '2d' | '3d';
+  rotationSpeed?: number;
+}) {
   return (
     <div className="bg-gray-50 rounded-xl p-4">
-      <div className="flex flex-wrap items-center justify-center gap-3 mb-4">
-        {elements.map((el, i) => (
-          <div key={i} className="flex items-center gap-1">
-            {Array.from({ length: el.count }).map((_, j) => (
-              <AtomCircle key={j} symbol={el.symbol} showMass={true} />
-            ))}
+      {viewMode === '2d' ? (
+        <div className="flex flex-wrap items-center justify-center gap-3 mb-4">
+          {elements.map((el, i) => (
+            <div key={i} className="flex items-center gap-1">
+              {Array.from({ length: el.count }).map((_, j) => (
+                <AtomCircle key={j} symbol={el.symbol} showMass={true} />
+              ))}
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="bg-gray-900 rounded-lg p-2 mb-4">
+          <MoleculeViewer3DLazy
+            molecule={elementsToMolecule(elements, formula || '', name)}
+            style="ball-stick"
+            showLabels={true}
+            autoRotate={true}
+            autoRotateSpeed={rotationSpeed}
+            height={150}
+            backgroundColor="transparent"
+          />
+          <div className="text-xs text-gray-400 mt-2 text-center">
+            Dragðu til að snúa, skrollaðu til að stækka
           </div>
-        ))}
-      </div>
+        </div>
+      )}
 
       <div className="border-t pt-3 mt-3">
         <div className="text-sm text-gray-600 mb-2 text-center">Útreikningur:</div>
@@ -250,6 +281,10 @@ export function Level2({ onBack, onComplete, onCorrectAnswer, onIncorrectAnswer 
 
   // Periodic table modal
   const [showPeriodicTable, setShowPeriodicTable] = useState(false);
+
+  // 2D/3D view mode and rotation speed
+  const [viewMode, setViewMode] = useState<'2d' | '3d'>('2d');
+  const [rotationSpeed, setRotationSpeed] = useState(1.5);
 
   const totalChallenges = 8;
   const isComplete = challengeNumber >= totalChallenges;
@@ -476,7 +511,13 @@ export function Level2({ onBack, onComplete, onCorrectAnswer, onIncorrectAnswer 
               </div>
             </div>
 
-            <MoleculeWithBreakdown elements={challenge.compound.elements} />
+            <MoleculeWithBreakdown
+              elements={challenge.compound.elements}
+              formula={challenge.compound.formula}
+              name={challenge.compound.name}
+              viewMode={viewMode}
+              rotationSpeed={rotationSpeed}
+            />
 
             {/* Answer options */}
             {!showReasoningPrompt && (
@@ -690,7 +731,13 @@ export function Level2({ onBack, onComplete, onCorrectAnswer, onIncorrectAnswer 
 
             {showHint && !showFeedback && (
               <div className="bg-yellow-50 border-2 border-yellow-200 rounded-xl p-4">
-                <MoleculeWithBreakdown elements={challenge.compound.elements} />
+                <MoleculeWithBreakdown
+                  elements={challenge.compound.elements}
+                  formula={challenge.compound.formula}
+                  name={challenge.compound.name}
+                  viewMode={viewMode}
+                  rotationSpeed={rotationSpeed}
+                />
               </div>
             )}
           </div>
@@ -791,6 +838,57 @@ export function Level2({ onBack, onComplete, onCorrectAnswer, onIncorrectAnswer 
               />
             </div>
           </div>
+        </div>
+
+        {/* Toolbar: 2D/3D Toggle + Rotation Speed + Periodic Table */}
+        <div className="flex justify-center items-center gap-4 mb-4 flex-wrap">
+          <div className="flex gap-2">
+            <button
+              onClick={() => setViewMode('2d')}
+              className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                viewMode === '2d'
+                  ? 'bg-purple-500 text-white'
+                  : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+              }`}
+            >
+              2D
+            </button>
+            <button
+              onClick={() => setViewMode('3d')}
+              className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                viewMode === '3d'
+                  ? 'bg-purple-500 text-white'
+                  : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+              }`}
+            >
+              3D
+            </button>
+          </div>
+
+          {/* Rotation Speed Control (only visible in 3D mode) */}
+          {viewMode === '3d' && (
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-gray-500">Hraði:</span>
+              <input
+                type="range"
+                min="0"
+                max="4"
+                step="0.5"
+                value={rotationSpeed}
+                onChange={(e) => setRotationSpeed(parseFloat(e.target.value))}
+                className="w-20 h-2 accent-purple-500"
+              />
+              <span className="text-xs text-gray-600 w-6">{rotationSpeed}x</span>
+            </div>
+          )}
+
+          {/* Periodic Table Button */}
+          <button
+            onClick={() => setShowPeriodicTable(true)}
+            className="px-4 py-1.5 rounded-lg text-sm font-medium bg-purple-100 text-purple-700 hover:bg-purple-200 transition-colors flex items-center gap-1"
+          >
+            <span>📊</span> Lotukerfið
+          </button>
         </div>
 
         {/* Challenge Card */}

@@ -4,8 +4,10 @@ import { REACTIONS } from '../data/reactions';
 import { getMolarMass, roundMass } from '../data/molar-masses';
 import { calculateCorrectAnswer, generateReactantCounts, calculatePoints } from '../utils/calculations';
 import { Molecule } from './Molecule';
+import { FactoryMode } from './FactoryMode';
 
 type UnitMode = 'molecules' | 'grams';
+type GameMode = 'quiz' | 'factory';
 
 interface Level3Props {
   onComplete: (score: number, correctAnswers: number, totalQuestions: number, maxScore: number, hintsUsed: number) => void;
@@ -33,10 +35,23 @@ interface GameState {
 
 export function Level3({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer }: Level3Props) {
   const [screen, setScreen] = useState<'setup' | 'game' | 'results'>('setup');
+  const [gameMode, setGameMode] = useState<GameMode>('quiz');
   const [difficulty, setDifficulty] = useState<Difficulty>('medium');
   const [unitMode, setUnitMode] = useState<UnitMode>('molecules');
   const [timerMode, setTimerMode] = useState(false);
   const isGramMode = unitMode === 'grams';
+
+  // Factory mode
+  if (gameMode === 'factory') {
+    return (
+      <FactoryMode
+        onComplete={(score, profit) => {
+          onComplete(score, profit > 0 ? 1 : 0, 5, score, 0);
+        }}
+        onBack={() => setGameMode('quiz')}
+      />
+    );
+  }
   const [timeRemaining, setTimeRemaining] = useState(120);
   const [score, setScore] = useState(0);
   const [streak, setStreak] = useState(0);
@@ -300,9 +315,17 @@ export function Level3({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
 
             <button
               onClick={startGame}
-              className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-6 rounded-xl transition-colors mb-4"
+              className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-6 rounded-xl transition-colors mb-3"
             >
               Byrja leik
+            </button>
+
+            <button
+              onClick={() => setGameMode('factory')}
+              className="w-full bg-slate-700 hover:bg-slate-800 text-white font-bold py-4 px-6 rounded-xl transition-colors mb-4 flex items-center justify-center gap-2"
+            >
+              🏭 Verksmiðjuhamur
+              <span className="bg-emerald-500 text-xs px-2 py-0.5 rounded-full">Nýtt!</span>
             </button>
 
             <button

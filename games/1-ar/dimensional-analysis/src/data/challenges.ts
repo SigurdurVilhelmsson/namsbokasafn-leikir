@@ -423,5 +423,317 @@ export const level3Challenges: Level3Challenge[] = [
     expectedAnswer: 10,
     requireInteger: true,
     explanation: 'Umbreyta 2.5 L í mL: 2500 mL. Síðan 2500 ÷ 250 = 10 flöskur'
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // REAL-WORLD CONTEXT SCENARIOS
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  // ─── COOKING / RECIPE SCENARIOS ────────────────────────────────────────────
+  {
+    id: 'L3-COOK-1',
+    type: 'real_world',
+    prompt: '👨‍🍳 Uppskrift krefst 2 bolla af mjólk. Þú vilt nota mL mælikúlu. Hversu mörg mL þarftu? (1 bolli = 240 mL)',
+    startValue: 2,
+    startUnit: 'bollar',
+    portionSize: 1,
+    portionUnit: 'bolli',
+    expectedAnswer: 480,
+    requireInteger: true,
+    explanation: '2 bollar × 240 mL/bolli = 480 mL'
+  },
+  {
+    id: 'L3-COOK-2',
+    type: 'synthesis',
+    prompt: '🥧 Uppskrift þarf 4 oz af smjöri. Þú átt pakkninguna merkt í grömmum. Hversu mörg g þarftu? (1 oz = 28.35 g)',
+    startValue: 4,
+    startUnit: 'oz',
+    density: 28.35,
+    densityUnit: 'g/oz',
+    targetUnit: 'g',
+    expectedAnswer: 113.4,
+    significantFigures: 4,
+    requiredSteps: ['multiply by conversion factor']
+  },
+  {
+    id: 'L3-COOK-3',
+    type: 'real_world',
+    prompt: '🍰 Þú ert að þrefalda uppskrift sem þarf 1.5 dl af sykri. Hversu mörg mL þarftu? (1 dl = 100 mL)',
+    startValue: 4.5,
+    startUnit: 'dl',
+    portionSize: 1,
+    portionUnit: 'dl',
+    expectedAnswer: 450,
+    requireInteger: true,
+    explanation: '1.5 dl × 3 = 4.5 dl. 4.5 dl × 100 mL/dl = 450 mL'
+  },
+  {
+    id: 'L3-COOK-4',
+    type: 'efficiency',
+    prompt: '🥄 Breyttu 3 matskeið (tbsp) í teskeið (tsp). (1 tbsp = 3 tsp)',
+    startValue: 3,
+    startUnit: 'tbsp',
+    targetUnit: 'tsp',
+    possiblePaths: [
+      { steps: ['3 tsp / 1 tbsp'], stepCount: 1, efficient: true },
+      { steps: ['15 mL / 1 tbsp', '1 tsp / 5 mL'], stepCount: 2, efficient: false }
+    ],
+    targetAnswer: 9
+  },
+  {
+    id: 'L3-COOK-5',
+    type: 'real_world',
+    prompt: '🍕 Pizza deig krefst 500 g af hveiti. Þú átt 2 kg poka. Hversu mörg deig geturðu útbúið?',
+    startValue: 2,
+    startUnit: 'kg',
+    portionSize: 500,
+    portionUnit: 'g',
+    expectedAnswer: 4,
+    requireInteger: true,
+    explanation: '2 kg = 2000 g. 2000 g ÷ 500 g/deig = 4 deig'
+  },
+
+  // ─── PHARMACY / MEDICAL SCENARIOS ──────────────────────────────────────────
+  {
+    id: 'L3-PHARM-1',
+    type: 'synthesis',
+    prompt: '💊 Barn sem vegur 25 kg þarf lyf í skammti 15 mg/kg líkamsþyngdar. Hversu mörg mg þarf barnið?',
+    startValue: 25,
+    startUnit: 'kg',
+    density: 15,
+    densityUnit: 'mg/kg',
+    targetUnit: 'mg',
+    expectedAnswer: 375,
+    significantFigures: 3,
+    requiredSteps: ['multiply weight by dosage rate']
+  },
+  {
+    id: 'L3-PHARM-2',
+    type: 'real_world',
+    prompt: '💉 Lyfjaskammtur er 0.5 mL/kg. Sjúklingur vegur 70 kg. Hversu marga mL þarf hann?',
+    startValue: 70,
+    startUnit: 'kg',
+    portionSize: 1,
+    portionUnit: 'kg',
+    expectedAnswer: 35,
+    requireInteger: false,
+    explanation: '70 kg × 0.5 mL/kg = 35 mL'
+  },
+  {
+    id: 'L3-PHARM-3',
+    type: 'synthesis',
+    prompt: '🩺 Lyfjalausn inniheldur 125 mg/5 mL. Skammtur er 250 mg. Hversu marga mL þarf sjúklingur?',
+    startValue: 250,
+    startUnit: 'mg',
+    density: 5,
+    densityUnit: 'mL/125mg',
+    targetUnit: 'mL',
+    expectedAnswer: 10,
+    significantFigures: 2,
+    requiredSteps: ['calculate mL from concentration']
+  },
+  {
+    id: 'L3-PHARM-4',
+    type: 'real_world',
+    prompt: '💊 Hvert hylki inniheldur 200 mg. Daglegt lágmark er 0.6 g. Hversu mörg hylki þarf að lágmarki?',
+    startValue: 0.6,
+    startUnit: 'g',
+    portionSize: 200,
+    portionUnit: 'mg',
+    expectedAnswer: 3,
+    requireInteger: true,
+    explanation: '0.6 g = 600 mg. 600 mg ÷ 200 mg/hylki = 3 hylki'
+  },
+  {
+    id: 'L3-PHARM-5',
+    type: 'derivation',
+    prompt: '🏥 Innrennslishraði er 2 mL/mín. Hversu mörg mL á klukkustund?',
+    startValue: 2,
+    startUnit: 'mL/mín',
+    targetUnit: 'mL/klst',
+    expectedAnswer: 120,
+    scientificNotation: false,
+    correctMethod: ['60 mín / 1 klst']
+  },
+
+  // ─── ENGINEERING / CONSTRUCTION SCENARIOS ──────────────────────────────────
+  {
+    id: 'L3-ENG-1',
+    type: 'synthesis',
+    prompt: '🏗️ Steypa hefur eðlismassa 2400 kg/m³. Þú þarft 0.5 m³. Hversu mörg kg verður steypan?',
+    startValue: 0.5,
+    startUnit: 'm³',
+    density: 2400,
+    densityUnit: 'kg/m³',
+    targetUnit: 'kg',
+    expectedAnswer: 1200,
+    significantFigures: 4,
+    requiredSteps: ['multiply by density']
+  },
+  {
+    id: 'L3-ENG-2',
+    type: 'real_world',
+    prompt: '🔩 Skrúfupakki inniheldur 50 skrúfur. Verkefni þarf 325 skrúfur. Hversu marga pakka þarf?',
+    startValue: 325,
+    startUnit: 'skrúfur',
+    portionSize: 50,
+    portionUnit: 'skrúfur',
+    expectedAnswer: 7,
+    requireInteger: true,
+    explanation: '325 ÷ 50 = 6.5, en þú þarft að kaupa heilan pakka, þannig 7 pakkar'
+  },
+  {
+    id: 'L3-ENG-3',
+    type: 'synthesis',
+    prompt: '🪨 Sandur hefur eðlismassa 1.6 g/cm³. Breyttu í kg/m³.',
+    startValue: 1.6,
+    startUnit: 'g/cm³',
+    targetUnit: 'kg/m³',
+    expectedAnswer: 1600,
+    significantFigures: 2,
+    requiredSteps: ['convert g to kg', 'convert cm³ to m³']
+  },
+  {
+    id: 'L3-ENG-4',
+    type: 'real_world',
+    prompt: '🧱 Múrsteinn vegur 2.5 kg. Flutningabíll getur borið 2 tonn. Hversu marga steina getur hann flutt?',
+    startValue: 2,
+    startUnit: 'tonn',
+    portionSize: 2.5,
+    portionUnit: 'kg',
+    expectedAnswer: 800,
+    requireInteger: true,
+    explanation: '2 tonn = 2000 kg. 2000 kg ÷ 2.5 kg/steinn = 800 steinar'
+  },
+  {
+    id: 'L3-ENG-5',
+    type: 'derivation',
+    prompt: '⚡ Rafmagnsnotkun er 1500 W. Hversu mörg kW er þetta?',
+    startValue: 1500,
+    startUnit: 'W',
+    targetUnit: 'kW',
+    expectedAnswer: 1.5,
+    scientificNotation: false,
+    correctMethod: ['1 kW / 1000 W']
+  },
+
+  // ─── SPORTS / FITNESS SCENARIOS ────────────────────────────────────────────
+  {
+    id: 'L3-SPORT-1',
+    type: 'derivation',
+    prompt: '🏃 Hlaupari hleypur 10 km á 50 mínútum. Hver er meðalhraðinn í km/klst?',
+    startValue: 10,
+    startUnit: 'km/50mín',
+    targetUnit: 'km/klst',
+    expectedAnswer: 12,
+    scientificNotation: false,
+    correctMethod: ['60 mín / 50 mín']
+  },
+  {
+    id: 'L3-SPORT-2',
+    type: 'synthesis',
+    prompt: '🚴 Hjólreiðamaður keyrir með 25 km/klst. Breyttu í m/s.',
+    startValue: 25,
+    startUnit: 'km/klst',
+    targetUnit: 'm/s',
+    expectedAnswer: 6.94,
+    significantFigures: 3,
+    requiredSteps: ['1000 m / 1 km', '1 klst / 3600 s']
+  },
+  {
+    id: 'L3-SPORT-3',
+    type: 'real_world',
+    prompt: '🏊 Sundlaugar lengd er 25 m. Sundþjálfari vill að nemendur syndi 1 km. Hversu margar langar þurfa þeir?',
+    startValue: 1,
+    startUnit: 'km',
+    portionSize: 25,
+    portionUnit: 'm',
+    expectedAnswer: 40,
+    requireInteger: true,
+    explanation: '1 km = 1000 m. 1000 m ÷ 25 m/langa = 40 langur'
+  },
+  {
+    id: 'L3-SPORT-4',
+    type: 'efficiency',
+    prompt: '⏱️ Hlaupari hleypur mílu (1609 m) á 4:30 mín. Breyttu tímann í sekúndur.',
+    startValue: 4.5,
+    startUnit: 'mín',
+    targetUnit: 's',
+    possiblePaths: [
+      { steps: ['60 s / 1 mín'], stepCount: 1, efficient: true }
+    ],
+    targetAnswer: 270
+  },
+  {
+    id: 'L3-SPORT-5',
+    type: 'synthesis',
+    prompt: '🎿 Skíðamaður fer 45 km/klst. Hvað er það í mín/km (hraði)?',
+    startValue: 45,
+    startUnit: 'km/klst',
+    targetUnit: 'mín/km',
+    expectedAnswer: 1.33,
+    significantFigures: 3,
+    requiredSteps: ['invert speed', 'convert hours to minutes']
+  },
+
+  // ─── TRAVEL / CURRENCY-LIKE SCENARIOS ──────────────────────────────────────
+  {
+    id: 'L3-TRAVEL-1',
+    type: 'synthesis',
+    prompt: '✈️ Flug varir 8.5 klst. Hversu margar mínútur er þetta?',
+    startValue: 8.5,
+    startUnit: 'klst',
+    targetUnit: 'mín',
+    expectedAnswer: 510,
+    significantFigures: 3,
+    requiredSteps: ['60 mín / 1 klst']
+  },
+  {
+    id: 'L3-TRAVEL-2',
+    type: 'real_world',
+    prompt: '⛽ Bíll notar 7 L/100 km. Ferð er 350 km. Hversu marga lítra þarftu?',
+    startValue: 350,
+    startUnit: 'km',
+    portionSize: 100,
+    portionUnit: 'km',
+    expectedAnswer: 24.5,
+    requireInteger: false,
+    explanation: '350 km ÷ 100 km × 7 L = 24.5 L'
+  },
+  {
+    id: 'L3-TRAVEL-3',
+    type: 'efficiency',
+    prompt: '🌍 Breyttu 100 km í mílur (1 míla = 1.609 km).',
+    startValue: 100,
+    startUnit: 'km',
+    targetUnit: 'mílu',
+    possiblePaths: [
+      { steps: ['1 míla / 1.609 km'], stepCount: 1, efficient: true },
+      { steps: ['1000 m / 1 km', '1 míla / 1609 m'], stepCount: 2, efficient: false }
+    ],
+    targetAnswer: 62.15
+  },
+  {
+    id: 'L3-TRAVEL-4',
+    type: 'derivation',
+    prompt: '🚂 Lest keyrir 200 km/klst. Hversu langt fer hún á 45 mínútum?',
+    startValue: 200,
+    startUnit: 'km/klst',
+    targetUnit: 'km',
+    expectedAnswer: 150,
+    scientificNotation: false,
+    correctMethod: ['200 km/klst × 0.75 klst']
+  },
+  {
+    id: 'L3-TRAVEL-5',
+    type: 'real_world',
+    prompt: '🛫 Lengd flugvélarinnar er 73 m. Flugbraut er 3.5 km. Hversu margar flugvélar rúmast á brautinni?',
+    startValue: 3.5,
+    startUnit: 'km',
+    portionSize: 73,
+    portionUnit: 'm',
+    expectedAnswer: 47,
+    requireInteger: true,
+    explanation: '3.5 km = 3500 m. 3500 m ÷ 73 m = 47.9, námundað niður í 47'
   }
 ];

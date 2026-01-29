@@ -4,6 +4,7 @@ import { REACTIONS } from '../data/reactions';
 import { getMolarMass, roundMass } from '../data/molar-masses';
 import { Molecule } from './Molecule';
 import { ReactionAnimation } from './ReactionAnimation';
+import { StoichiometryVisualization } from './StoichiometryVisualization';
 
 interface Level2Props {
   onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
@@ -476,6 +477,24 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
                   <span className="font-bold text-blue-600">{problem.excessRemaining}</span>
                 </div>
               </div>
+            </div>
+
+            {/* Stoichiometry Visualization */}
+            <div className="mb-6">
+              <h3 className="font-bold text-gray-800 mb-3 flex items-center gap-2">
+                <span className="text-xl">📊</span> Sjónræn stökefnafræði
+              </h3>
+              <StoichiometryVisualization
+                reactant1={problem.reaction.reactant1}
+                reactant2={problem.reaction.reactant2}
+                products={problem.reaction.products}
+                r1Count={isGramMode ? Math.round(problem.molesR1) : problem.r1Count}
+                r2Count={isGramMode ? Math.round(problem.molesR2) : problem.r2Count}
+                showCalculations={true}
+                highlightLimiting={true}
+                animated={true}
+                compact={false}
+              />
             </div>
 
             {/* Animated reaction visualization */}

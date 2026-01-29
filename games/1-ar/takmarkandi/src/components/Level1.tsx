@@ -3,6 +3,7 @@ import { Reaction } from '../types';
 import { REACTIONS } from '../data/reactions';
 import { Molecule } from './Molecule';
 import { ReactionAnimation } from './ReactionAnimation';
+import { StoichiometryVisualization } from './StoichiometryVisualization';
 import { HintSystem, FeedbackPanel } from '@shared/components';
 import type { TieredHints } from '@shared/types';
 import { shuffleArray } from '@shared/utils';
@@ -92,6 +93,7 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
   const [hintMultiplier, setHintMultiplier] = useState(1.0);
   const [hintsUsedTier, setHintsUsedTier] = useState(0);
   const [showAnimation, setShowAnimation] = useState(false);
+  const [showStoichiometry, setShowStoichiometry] = useState(false);
 
   const totalChallenges = 8;
   const masteryThreshold = 6;
@@ -156,6 +158,7 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
       setHintMultiplier(1.0);
       setHintsUsedTier(0);
       setShowAnimation(false);
+      setShowStoichiometry(false);
     }
   };
 
@@ -504,6 +507,37 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
           {renderOptions()}
         </div>
 
+        {/* Visual Stoichiometry Toggle - shown before answering */}
+        {!showFeedback && (
+          <div className="mb-4">
+            <button
+              onClick={() => setShowStoichiometry(!showStoichiometry)}
+              className={`w-full py-2 px-4 rounded-lg font-medium transition-colors ${
+                showStoichiometry
+                  ? 'bg-indigo-100 text-indigo-700 border-2 border-indigo-300'
+                  : 'bg-indigo-500 hover:bg-indigo-600 text-white'
+              }`}
+            >
+              {showStoichiometry ? '📊 Fela sjónræna greiningu' : '📊 Sjá sjónræna stökefnafræði'}
+            </button>
+
+            {showStoichiometry && (
+              <div className="mt-4">
+                <StoichiometryVisualization
+                  reactant1={challenge.reaction.reactant1}
+                  reactant2={challenge.reaction.reactant2}
+                  products={challenge.reaction.products}
+                  r1Count={challenge.r1Count}
+                  r2Count={challenge.r2Count}
+                  showCalculations={true}
+                  highlightLimiting={true}
+                  animated={true}
+                />
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Feedback */}
         {showFeedback && (
           <div className="mb-4">
@@ -535,8 +569,36 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
               }}
             />
 
-            {/* Reaction Animation Toggle */}
-            <div className="mt-4">
+            {/* Visualization Options */}
+            <div className="mt-4 space-y-3">
+              {/* Stoichiometry Visualization */}
+              <button
+                onClick={() => setShowStoichiometry(!showStoichiometry)}
+                className={`w-full py-2 px-4 rounded-lg font-medium transition-colors ${
+                  showStoichiometry
+                    ? 'bg-indigo-100 text-indigo-700 border-2 border-indigo-300'
+                    : 'bg-indigo-500 hover:bg-indigo-600 text-white'
+                }`}
+              >
+                {showStoichiometry ? '📊 Fela sjónræna greiningu' : '📊 Sjá sjónræna stökefnafræði'}
+              </button>
+
+              {showStoichiometry && (
+                <div className="mt-3">
+                  <StoichiometryVisualization
+                    reactant1={challenge.reaction.reactant1}
+                    reactant2={challenge.reaction.reactant2}
+                    products={challenge.reaction.products}
+                    r1Count={challenge.r1Count}
+                    r2Count={challenge.r2Count}
+                    showCalculations={true}
+                    highlightLimiting={true}
+                    animated={true}
+                  />
+                </div>
+              )}
+
+              {/* Reaction Animation */}
               <button
                 onClick={() => setShowAnimation(!showAnimation)}
                 className={`w-full py-2 px-4 rounded-lg font-medium transition-colors ${
@@ -549,7 +611,7 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
               </button>
 
               {showAnimation && (
-                <div className="mt-4">
+                <div className="mt-3">
                   <ReactionAnimation
                     reactant1={challenge.reaction.reactant1}
                     reactant2={challenge.reaction.reactant2}

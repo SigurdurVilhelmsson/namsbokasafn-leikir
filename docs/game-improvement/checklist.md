@@ -29,7 +29,7 @@
 | Improvement | Status | Priority | Effort | Notes |
 |-------------|--------|----------|--------|-------|
 | Unit cancellation animation | ✅ | High | Medium | Enhanced UnitCancellationVisualizer with auto-animate, strikethrough, connecting lines |
-| Drag-and-drop unit builder | ⬜ | High | High | Build conversions visually |
+| Drag-and-drop unit builder | ✅ | High | High | UnitConversionBuilder with visual numerator/denominator drop zones, real-time cancellation feedback, 3 build modes (drag/click/visual) |
 | Real-world context scenarios | ⬜ | Medium | Low | Cooking, pharmacy examples |
 | Step-by-step solution display | ✅ | Medium | Low | Shows factor-label method with correctMethod/requiredSteps in feedback |
 
@@ -66,7 +66,7 @@
 | Improvement | Status | Priority | Effort | Notes |
 |-------------|--------|----------|--------|-------|
 | Reaction animation | ✅ | High | High | ReactionAnimation component integrated in Level 2 showing before/reacting/after phases |
-| Visual stoichiometry | ⬜ | High | Medium | Particle count representation |
+| Visual stoichiometry | ✅ | High | Medium | StoichiometryVisualization component with particle grouping, step-by-step reactions, calculations display |
 | Factory game mode | ⬜ | Medium | Medium | Production optimization |
 | Excess reactant display | ✅ | Medium | Low | Visual display with molecules showing what remains after reaction |
 
@@ -79,7 +79,7 @@
 | Improvement | Status | Priority | Effort | Notes |
 |-------------|--------|----------|--------|-------|
 | Energy pathway animation | ✅ | High | Medium | EnergyPathwayDiagram component with animated staircase, cumulative ΔH |
-| Drag-drop equation builder | ⬜ | High | High | Combine equations visually |
+| Drag-drop equation builder | ✅ | High | High | EquationBuilder component with drag-drop combination, real-time ΔH calculation, cancellation analysis |
 | State function path comparison | ✅ | Medium | Medium | StatePathComparison component showing multiple pathways to same ΔH |
 | Industrial examples | ✅ | Low | Low | Real-world applications (CO, H₂O fuel cells, ethanol, NO₂, Contact Process, Thermite) |
 
@@ -359,6 +359,12 @@ Building these once benefits multiple games:
 | 2026-01-25 | Year 2 progress: 57.5% → 60% (24/40 improvements completed) |
 | 2026-01-25 | **Redox Electrochemical Cell COMPLETE** - ElectrochemicalCell with 4 cell pairs, electron flow animation, E°cell calculation |
 | 2026-01-25 | Year 2 progress: 60% → 62.5% (25/40 improvements completed) |
+| 2026-01-29 | **Takmarkandi Visual Stoichiometry COMPLETE** - StoichiometryVisualization component with particle grouping by coefficients, step-by-step reaction visualization, interactive calculations display |
+| 2026-01-29 | Year 1 progress: 52.4% → 57.1% (12/21 improvements completed) |
+| 2026-01-29 | **Dimensional Analysis Drag-Drop Unit Builder COMPLETE** - UnitConversionBuilder component with visual numerator/denominator zones, real-time unit cancellation feedback |
+| 2026-01-29 | Year 1 progress: 57.1% → 61.9% (13/21 improvements completed) |
+| 2026-01-29 | **Hess's Law Drag-Drop Equation Builder COMPLETE** - EquationBuilder with drag-drop combination zone, real-time ΔH calculation, species cancellation analysis |
+| 2026-01-29 | Year 2 progress: 62.5% → 65% (26/40 improvements completed) |
 
 ---
 

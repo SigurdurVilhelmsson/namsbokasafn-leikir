@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import { level2Problems } from '../data/problems';
 import { UnitCancellationVisualizer } from './UnitCancellationVisualizer';
 import { UnitBlock, ConversionFactorBlock } from './UnitBlock';
+import { UnitConversionBuilder } from './UnitConversionBuilder';
 import { DragDropBuilder, FeedbackPanel } from '@shared/components';
 import type { DraggableItemData, DropZoneData, DropResult, ZoneState, DetailedFeedback } from '@shared/components';
 
@@ -94,7 +95,7 @@ export function Level2({ onComplete, onBack, initialProgress, onCorrectAnswer, o
   const [totalHintsUsed] = useState(0); // Level 2 doesn't have hints, but we track for consistency
   const [, setRationaleCorrectCount] = useState(0);
   const [zoneState, setZoneState] = useState<ZoneState>({});
-  const [useDragDrop, setUseDragDrop] = useState(true);
+  const [buildMode, setBuildMode] = useState<'drag' | 'click' | 'visual'>('drag');
   const [animationKey, setAnimationKey] = useState(0);
   const [showCancellationAnimation, setShowCancellationAnimation] = useState(false);
 
@@ -503,17 +504,41 @@ export function Level2({ onComplete, onBack, initialProgress, onCorrectAnswer, o
           {!showFeedback && (
             <>
               {/* Mode toggle */}
-              <div className="mb-4 flex justify-end">
+              <div className="mb-4 flex justify-center gap-2">
                 <button
-                  onClick={() => setUseDragDrop(!useDragDrop)}
-                  className="text-xs px-3 py-1 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600"
+                  onClick={() => setBuildMode('drag')}
+                  className={`text-xs px-3 py-1.5 rounded-full transition-colors ${
+                    buildMode === 'drag'
+                      ? 'bg-blue-500 text-white'
+                      : 'bg-gray-100 hover:bg-gray-200 text-gray-600'
+                  }`}
                 >
-                  {useDragDrop ? '🖱️ Skipta í smella-ham' : '✋ Skipta í draga-ham'}
+                  ✋ Draga stuðla
+                </button>
+                <button
+                  onClick={() => setBuildMode('click')}
+                  className={`text-xs px-3 py-1.5 rounded-full transition-colors ${
+                    buildMode === 'click'
+                      ? 'bg-blue-500 text-white'
+                      : 'bg-gray-100 hover:bg-gray-200 text-gray-600'
+                  }`}
+                >
+                  🖱️ Smella á stuðla
+                </button>
+                <button
+                  onClick={() => setBuildMode('visual')}
+                  className={`text-xs px-3 py-1.5 rounded-full transition-colors ${
+                    buildMode === 'visual'
+                      ? 'bg-purple-500 text-white'
+                      : 'bg-gray-100 hover:bg-gray-200 text-gray-600'
+                  }`}
+                >
+                  🧱 Byggja sjónrænt
                 </button>
               </div>
 
-              {/* Drag-and-drop factor selection */}
-              {useDragDrop ? (
+              {/* Factor selection based on mode */}
+              {buildMode === 'drag' && (
                 <div className="mb-6">
                   <p className="text-sm font-semibold mb-3">Dragðu umbreytingarstuðla til að byggja keðju:</p>
                   <DragDropBuilder
@@ -525,7 +550,9 @@ export function Level2({ onComplete, onBack, initialProgress, onCorrectAnswer, o
                     orientation="horizontal"
                   />
                 </div>
-              ) : (
+              )}
+
+              {buildMode === 'click' && (
                 /* Classic button-based factor selection */
                 <div className="mb-6">
                   <p className="text-sm font-semibold mb-3">Veldu umbreytingarstuðul:</p>
@@ -553,6 +580,48 @@ export function Level2({ onComplete, onBack, initialProgress, onCorrectAnswer, o
                       );
                     })}
                   </div>
+                </div>
+              )}
+
+              {buildMode === 'visual' && (
+                /* Visual unit builder mode */
+                <div className="mb-6">
+                  <UnitConversionBuilder
+                    startValue={problem.startValue}
+                    startUnit={problem.startUnit}
+                    targetUnit={problem.targetUnit}
+                    availableUnits={[
+                      // Mass units
+                      { id: 'kg', symbol: 'kg', name: 'kílógramm', category: 'mass', baseValue: 1000 },
+                      { id: 'g', symbol: 'g', name: 'gramm', category: 'mass', baseValue: 1 },
+                      { id: 'mg', symbol: 'mg', name: 'milligramm', category: 'mass', baseValue: 0.001 },
+                      // Length units
+                      { id: 'km', symbol: 'km', name: 'kílómetri', category: 'length', baseValue: 1000 },
+                      { id: 'm', symbol: 'm', name: 'metri', category: 'length', baseValue: 1 },
+                      { id: 'cm', symbol: 'cm', name: 'sentimetri', category: 'length', baseValue: 0.01 },
+                      { id: 'mm', symbol: 'mm', name: 'millimetri', category: 'length', baseValue: 0.001 },
+                      // Volume units
+                      { id: 'L', symbol: 'L', name: 'lítri', category: 'volume', baseValue: 1 },
+                      { id: 'mL', symbol: 'mL', name: 'millilítri', category: 'volume', baseValue: 0.001 },
+                      // Time units
+                      { id: 'klst', symbol: 'klst', name: 'klukkustund', category: 'time', baseValue: 3600 },
+                      { id: 'min', symbol: 'mín', name: 'mínúta', category: 'time', baseValue: 60 },
+                      { id: 's', symbol: 's', name: 'sekúnda', category: 'time', baseValue: 1 },
+                    ]}
+                    onComplete={(path, finalValue) => {
+                      // Convert path to factor strings and set
+                      const factors = path.map(step =>
+                        `${step.numerator.value} ${step.numerator.unit} / ${step.denominator.value} ${step.denominator.unit}`
+                      );
+                      setSelectedFactors(factors);
+                      setUserAnswer(finalValue.toString());
+                    }}
+                    onStepAdded={(step) => {
+                      const factor = `${step.numerator.value} ${step.numerator.unit} / ${step.denominator.value} ${step.denominator.unit}`;
+                      setSelectedFactors(prev => [...prev, factor]);
+                    }}
+                    showHints={true}
+                  />
                 </div>
               )}
 

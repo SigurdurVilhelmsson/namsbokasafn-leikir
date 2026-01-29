@@ -1,5 +1,6 @@
 import { useState, useCallback, useMemo } from 'react';
 import { EnergyPathwayDiagram } from './EnergyPathwayDiagram';
+import { EquationBuilder } from './EquationBuilder';
 
 interface Equation {
   id: string;
@@ -247,6 +248,7 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
   const [completed, setCompleted] = useState<number[]>([]);
   const [explanation, setExplanation] = useState('');
   const [totalHintsUsed, setTotalHintsUsed] = useState(0);
+  const [buildMode, setBuildMode] = useState<'click' | 'drag'>('click');
 
   const puzzle = PUZZLES[currentPuzzle];
 
@@ -286,6 +288,13 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
       prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
     );
   };
+
+  // Handler for EquationBuilder changes
+  const handleEquationChange = useCallback((id: string, changes: Partial<Equation>) => {
+    setEquations(prev => prev.map(eq =>
+      eq.id === id ? { ...eq, ...changes } : eq
+    ));
+  }, []);
 
   // Check solution
   const checkSolution = () => {
@@ -405,22 +414,62 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
             </div>
           </div>
 
-          {/* Available equations */}
-          <div className="mb-6">
-            <h3 className="text-sm font-semibold text-gray-700 mb-3">📦 Tiltækar jöfnur (smelltu til að velja):</h3>
-            <div className="grid md:grid-cols-2 gap-4">
-              {equations.map(eq => (
-                <EquationBlock
-                  key={eq.id}
-                  equation={eq}
-                  isSelected={selectedEquations.includes(eq.id)}
-                  onSelect={() => toggleSelect(eq.id)}
-                  onReverse={() => handleReverse(eq.id)}
-                  onMultiply={(n) => handleMultiply(eq.id, n)}
-                />
-              ))}
-            </div>
+          {/* Build mode toggle */}
+          <div className="mb-4 flex justify-center gap-2">
+            <button
+              onClick={() => setBuildMode('click')}
+              className={`text-xs px-4 py-1.5 rounded-full font-medium transition-colors ${
+                buildMode === 'click'
+                  ? 'bg-green-500 text-white'
+                  : 'bg-gray-100 hover:bg-gray-200 text-gray-600'
+              }`}
+            >
+              🖱️ Smella til að velja
+            </button>
+            <button
+              onClick={() => setBuildMode('drag')}
+              className={`text-xs px-4 py-1.5 rounded-full font-medium transition-colors ${
+                buildMode === 'drag'
+                  ? 'bg-purple-500 text-white'
+                  : 'bg-gray-100 hover:bg-gray-200 text-gray-600'
+              }`}
+            >
+              ✋ Draga og sameina
+            </button>
           </div>
+
+          {/* Available equations - Click mode */}
+          {buildMode === 'click' && (
+            <div className="mb-6">
+              <h3 className="text-sm font-semibold text-gray-700 mb-3">📦 Tiltækar jöfnur (smelltu til að velja):</h3>
+              <div className="grid md:grid-cols-2 gap-4">
+                {equations.map(eq => (
+                  <EquationBlock
+                    key={eq.id}
+                    equation={eq}
+                    isSelected={selectedEquations.includes(eq.id)}
+                    onSelect={() => toggleSelect(eq.id)}
+                    onReverse={() => handleReverse(eq.id)}
+                    onMultiply={(n) => handleMultiply(eq.id, n)}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Equation Builder - Drag mode */}
+          {buildMode === 'drag' && (
+            <div className="mb-6">
+              <EquationBuilder
+                equations={equations}
+                targetDeltaH={puzzle.targetDeltaH}
+                targetEquation={puzzle.targetEquation}
+                onEquationChange={handleEquationChange}
+                onSelectionChange={setSelectedEquations}
+                selectedIds={selectedEquations}
+              />
+            </div>
+          )}
 
           {/* Energy Pathway Diagram */}
           {selectedEquations.length > 0 && (

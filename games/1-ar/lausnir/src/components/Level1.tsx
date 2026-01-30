@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { FeedbackPanel } from '@shared/components';
 import type { TieredHints } from '@shared/types';
 import { ParticleBeaker } from './ParticleBeaker';
+import { Pipette } from './Pipette';
 
 // Challenge types for categorizing feedback
 type ChallengeType = 'dilution' | 'mixing' | 'buildSolution' | 'concentrationMatch';
@@ -323,6 +324,10 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
   const [predictionFeedback, setPredictionFeedback] = useState<string | null>(null);
   const [predictionComplete, setPredictionComplete] = useState(false);
 
+  // Pipette state for dilution mode
+  const [usePipette, setUsePipette] = useState(false);
+  const [pipetteVolume, setPipetteVolume] = useState(50); // mL of water in pipette
+
   const challenge = CHALLENGES[currentChallenge];
   const predictionQuestion = getPredictionQuestion(challenge);
 
@@ -346,6 +351,9 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
       setPredictionAnswer(null);
       setPredictionFeedback(null);
       setPredictionComplete(false);
+      // Reset pipette state
+      setUsePipette(false);
+      setPipetteVolume(50);
     }
   }, [currentChallenge, challenge]);
 
@@ -389,6 +397,15 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
       Math.min(challenge.constraints.maxVolume, newVolume)
     ));
   }, [challenge]);
+
+  // Handle pipette dispense (adds water = increases volume)
+  const handlePipetteDispense = useCallback((drops: number, dropVolume: number) => {
+    if (!challenge.constraints.canChangeVolume) return;
+    const volumeAdded = drops * dropVolume * 100; // Convert mL drops to volume scale
+    const newVolume = Math.min(challenge.constraints.maxVolume, volumeML + volumeAdded);
+    setVolumeML(newVolume);
+    setPipetteVolume(prev => Math.max(0, prev - drops * dropVolume));
+  }, [challenge, volumeML]);
 
   // Submit answer
   const checkAnswer = useCallback(() => {
@@ -688,22 +705,74 @@ export function Level1({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
               {/* Volume controls */}
               {challenge.constraints.canChangeVolume && (
                 <div className="bg-blue-50 p-4 rounded-xl">
-                  <div className="text-sm font-semibold text-gray-700 mb-2">
-                    Rúmmál (mL)
+                  <div className="flex justify-between items-center mb-2">
+                    <div className="text-sm font-semibold text-gray-700">
+                      Rúmmál (mL)
+                    </div>
+                    {/* Toggle between slider and pipette for dilution */}
+                    {challenge.type === 'dilution' && (
+                      <button
+                        onClick={() => {
+                          setUsePipette(!usePipette);
+                          if (!usePipette) setPipetteVolume(50); // Reset pipette
+                        }}
+                        className={`text-xs px-2 py-1 rounded transition-colors ${
+                          usePipette
+                            ? 'bg-orange-500 text-white'
+                            : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                        }`}
+                      >
+                        {usePipette ? '📐 Sleða' : '💧 Pipetta'}
+                      </button>
+                    )}
                   </div>
-                  <input
-                    type="range"
-                    min={challenge.constraints.minVolume}
-                    max={challenge.constraints.maxVolume}
-                    value={volumeML}
-                    onChange={(e) => changeVolume(parseInt(e.target.value))}
-                    className="w-full h-3 bg-blue-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
-                  />
-                  <div className="flex justify-between text-sm text-gray-600 mt-1">
-                    <span>{challenge.constraints.minVolume} mL</span>
-                    <span className="font-bold text-blue-600">{volumeML} mL</span>
-                    <span>{challenge.constraints.maxVolume} mL</span>
-                  </div>
+
+                  {/* Pipette mode for dilution */}
+                  {usePipette && challenge.type === 'dilution' ? (
+                    <div className="flex flex-col items-center gap-4">
+                      <div className="text-sm text-gray-600 text-center mb-2">
+                        Haltu músarhnappinum til að bæta vatni við lausnina
+                      </div>
+                      <div className="flex items-end gap-6">
+                        <Pipette
+                          volume={pipetteVolume}
+                          maxVolume={50}
+                          dropVolume={0.5}
+                          solutionColor="#60a5fa"
+                          onDispense={handlePipetteDispense}
+                          enabled={volumeML < challenge.constraints.maxVolume}
+                          label="Vatn"
+                        />
+                        <div className="text-center pb-8">
+                          <div className="text-3xl font-bold text-blue-600">{volumeML}</div>
+                          <div className="text-sm text-gray-600">mL í bolla</div>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => setPipetteVolume(50)}
+                        className="text-xs bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-1 rounded transition-colors"
+                      >
+                        🔄 Fylla pipettu aftur
+                      </button>
+                    </div>
+                  ) : (
+                    /* Standard slider mode */
+                    <>
+                      <input
+                        type="range"
+                        min={challenge.constraints.minVolume}
+                        max={challenge.constraints.maxVolume}
+                        value={volumeML}
+                        onChange={(e) => changeVolume(parseInt(e.target.value))}
+                        className="w-full h-3 bg-blue-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                      />
+                      <div className="flex justify-between text-sm text-gray-600 mt-1">
+                        <span>{challenge.constraints.minVolume} mL</span>
+                        <span className="font-bold text-blue-600">{volumeML} mL</span>
+                        <span>{challenge.constraints.maxVolume} mL</span>
+                      </div>
+                    </>
+                  )}
                 </div>
               )}
 

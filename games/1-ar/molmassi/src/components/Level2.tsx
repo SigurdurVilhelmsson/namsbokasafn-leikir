@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { MoleculeViewer3DLazy } from '@shared/components';
 import { elementsToMolecule } from '../utils/moleculeConverter';
 import { PeriodicTable } from './PeriodicTable';
+import { AnimatedMassCalculation } from './AnimatedMassCalculation';
 
 // Fisher-Yates shuffle for reliable randomization
 function shuffle<T>(array: T[]): T[] {
@@ -286,6 +287,9 @@ export function Level2({ onBack, onComplete, onCorrectAnswer, onIncorrectAnswer 
   const [viewMode, setViewMode] = useState<'2d' | '3d'>('2d');
   const [rotationSpeed, setRotationSpeed] = useState(1.5);
 
+  // Animated calculation display
+  const [showAnimatedCalc, setShowAnimatedCalc] = useState(false);
+
   const totalChallenges = 8;
   const isComplete = challengeNumber >= totalChallenges;
 
@@ -300,6 +304,7 @@ export function Level2({ onBack, onComplete, onCorrectAnswer, onIncorrectAnswer 
     setSelectedReasoning(null);
     setReasoningOptions([]);
     setReasoningFeedback(null);
+    setShowAnimatedCalc(false);
     if (challenge.compounds) {
       setOrderedCompounds([...challenge.compounds]);
     }
@@ -726,6 +731,27 @@ export function Level2({ onBack, onComplete, onCorrectAnswer, onIncorrectAnswer 
                 <p className="text-gray-500 text-sm">
                   Nákvæmt: {challenge.compound.molarMass.toFixed(3)} g/mol
                 </p>
+              </div>
+            )}
+
+            {/* Animated calculation - available after feedback */}
+            {showFeedback && (
+              <div className="mt-4">
+                {!showAnimatedCalc ? (
+                  <button
+                    onClick={() => setShowAnimatedCalc(true)}
+                    className="w-full bg-purple-100 hover:bg-purple-200 text-purple-700 font-semibold py-3 px-4 rounded-xl transition-colors"
+                  >
+                    📊 Sjá útreikninginn hreyfimynd
+                  </button>
+                ) : (
+                  <AnimatedMassCalculation
+                    elements={challenge.compound.elements}
+                    useApproximate={true}
+                    autoPlay={true}
+                    stepDelay={600}
+                  />
+                )}
               </div>
             )}
 

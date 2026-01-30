@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Level1 } from './components/Level1';
 import { Level2 } from './components/Level2';
 import { Level3 } from './components/Level3';
+import { FactoryMode } from './components/FactoryMode';
 import { storage } from './utils/storage';
 import { useAchievements } from '@shared/hooks/useAchievements';
 import { useGameI18n } from '@shared/hooks';
@@ -11,7 +12,7 @@ import { LanguageSwitcher } from '@shared/components';
 import { gameTranslations } from './i18n';
 import './styles.css';
 
-type Screen = 'menu' | 'level1' | 'level2' | 'level3';
+type Screen = 'menu' | 'level1' | 'level2' | 'level3' | 'factory';
 
 interface Progress {
   level1Completed: boolean;
@@ -21,6 +22,8 @@ interface Progress {
   level3BestScore: number;
   level3BestAccuracy: number;
   totalGamesPlayed: number;
+  factoryBestScore: number;
+  factoryBestProfit: number;
 }
 
 const STORAGE_KEY = 'takmarkandi-levels-progress';
@@ -33,7 +36,9 @@ function getDefaultProgress(): Progress {
     level2Score: 0,
     level3BestScore: 0,
     level3BestAccuracy: 0,
-    totalGamesPlayed: 0
+    totalGamesPlayed: 0,
+    factoryBestScore: 0,
+    factoryBestProfit: 0
   };
 }
 
@@ -110,6 +115,16 @@ function App() {
     setScreen('menu');
   };
 
+  const handleFactoryComplete = (score: number, profit: number) => {
+    setProgress(prev => ({
+      ...prev,
+      factoryBestScore: Math.max(prev.factoryBestScore, score),
+      factoryBestProfit: Math.max(prev.factoryBestProfit, profit),
+      totalGamesPlayed: prev.totalGamesPlayed + 1
+    }));
+    setScreen('menu');
+  };
+
   const resetProgress = () => {
     const newProgress = getDefaultProgress();
     setProgress(newProgress);
@@ -159,6 +174,21 @@ function App() {
           onBack={() => setScreen('menu')}
           onCorrectAnswer={trackCorrectAnswer}
           onIncorrectAnswer={trackIncorrectAnswer}
+        />
+        <AchievementNotificationsContainer
+          notifications={notifications}
+          onDismiss={dismissNotification}
+        />
+      </>
+    );
+  }
+
+  if (screen === 'factory') {
+    return (
+      <>
+        <FactoryMode
+          onComplete={handleFactoryComplete}
+          onBack={() => setScreen('menu')}
         />
         <AchievementNotificationsContainer
           notifications={notifications}
@@ -293,6 +323,47 @@ function App() {
                     </div>
                   ) : (
                     <div className="text-gray-400 text-3xl">→</div>
+                  )}
+                </div>
+              </div>
+            </button>
+
+            {/* Factory Mode - Bonus game */}
+            <button
+              onClick={() => progress.level1Completed && setScreen('factory')}
+              className={`w-full bg-gradient-to-r from-slate-700 to-slate-800 border-2 rounded-xl p-6 text-left transition-all ${
+                progress.level1Completed
+                  ? 'border-emerald-400 hover:border-emerald-300 hover:from-slate-600 hover:to-slate-700'
+                  : 'border-gray-600 opacity-60 cursor-not-allowed'
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className={`text-white text-sm font-bold px-3 py-1 rounded-full ${
+                      progress.level1Completed ? 'bg-emerald-500' : 'bg-gray-500'
+                    }`}>
+                      🏭 Bónus
+                    </span>
+                    <h3 className="text-xl font-bold text-white">Verksmiðjuhamur</h3>
+                    {!progress.level1Completed && (
+                      <span className="text-xs text-gray-400">(Ljúktu stigi 1 fyrst)</span>
+                    )}
+                  </div>
+                  <p className="text-gray-300 text-sm">
+                    Stjórnaðu efnaverksmiðju - kauptu hráefni, framleiddu afurðir, hámarka hagnað!
+                  </p>
+                </div>
+                <div className="text-right">
+                  {progress.factoryBestScore > 0 ? (
+                    <div className="text-emerald-400">
+                      <div className="text-2xl font-bold">{progress.factoryBestScore}</div>
+                      <div className="text-xs">
+                        {progress.factoryBestProfit >= 0 ? '+' : ''}{progress.factoryBestProfit} kr
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-emerald-400 text-3xl">🏭</div>
                   )}
                 </div>
               </div>

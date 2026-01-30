@@ -6,11 +6,11 @@
 
 ---
 
-## Current Status (Updated 2026-01-29)
+## Current Status (Updated 2026-01-30)
 
 | Year | Completed | Remaining | Progress |
 |------|-----------|-----------|----------|
-| **Year 1** | 13 | 8 | 61.9% |
+| **Year 1** | 17 | 4 | 81% |
 | **Year 2** | 26 | 14 | 65% |
 
 ---
@@ -76,7 +76,7 @@
 
 | # | Feature | Game | Status |
 |---|---------|------|--------|
-| 4 | Real-world context scenarios | Dimensional Analysis | ⬜ |
+| 4 | Real-world context scenarios | Dimensional Analysis | ✅ |
 
 - Add cooking, pharmacy, engineering examples
 - Content addition only, no new components needed
@@ -85,9 +85,9 @@
 
 | # | Feature | Game | Status |
 |---|---------|------|--------|
-| 5 | Pipette/Dropper Tool | Solutions | ⬜ |
-| 6 | Animated Mass Calculation | Molar Mass | ⬜ |
-| 7 | Factory Game Mode | Limiting Reactants | ⬜ |
+| 5 | Pipette/Dropper Tool | Solutions | ✅ |
+| 6 | Animated Mass Calculation | Molar Mass | ✅ |
+| 7 | Factory Game Mode | Limiting Reactants | ✅ |
 
 ### Phase 4: Audio Support
 

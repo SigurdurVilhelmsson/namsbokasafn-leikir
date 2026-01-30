@@ -10,6 +10,45 @@ interface ParticleBeakerProps {
   color?: string;
   label?: string;
   running?: boolean;
+  /** Enable concentration-based color intensity */
+  showConcentrationColor?: boolean;
+}
+
+/**
+ * Calculate color intensity based on concentration
+ * Higher concentration = darker, more saturated color
+ */
+function getConcentrationColor(baseColor: string, concentration: number, maxConcentration: number = 5): {
+  fillColor: string;
+  fillOpacity: number;
+  particleColor: string;
+} {
+  // Normalize concentration to 0-1 range (assuming max ~5M for most solutions)
+  const intensity = Math.min(Math.max(concentration / maxConcentration, 0.1), 1);
+
+  // Parse hex color
+  const r = parseInt(baseColor.slice(1, 3), 16);
+  const g = parseInt(baseColor.slice(3, 5), 16);
+  const b = parseInt(baseColor.slice(5, 7), 16);
+
+  // Darken color based on concentration (more concentrated = darker)
+  const darkenFactor = 1 - intensity * 0.5;
+  const darkR = Math.round(r * darkenFactor);
+  const darkG = Math.round(g * darkenFactor);
+  const darkB = Math.round(b * darkenFactor);
+
+  // Increase saturation for higher concentrations
+  const saturationBoost = 1 + intensity * 0.3;
+  const maxComponent = Math.max(darkR, darkG, darkB);
+  const satR = Math.min(255, Math.round(darkR + (darkR - maxComponent * 0.3) * (saturationBoost - 1)));
+  const satG = Math.min(255, Math.round(darkG + (darkG - maxComponent * 0.3) * (saturationBoost - 1)));
+  const satB = Math.min(255, Math.round(darkB + (darkB - maxComponent * 0.3) * (saturationBoost - 1)));
+
+  return {
+    fillColor: `rgb(${satR}, ${satG}, ${satB})`,
+    fillOpacity: 0.1 + intensity * 0.4, // Range from 0.1 to 0.5
+    particleColor: `rgb(${darkR}, ${darkG}, ${darkB})`
+  };
 }
 
 /**
@@ -25,9 +64,18 @@ export function ParticleBeaker({
   molecules,
   color = '#f97316',
   label,
-  running = true
+  running = true,
+  showConcentrationColor = true
 }: ParticleBeakerProps) {
   const fillPercent = Math.min(100, (volume / maxVolume) * 100);
+
+  // Calculate concentration-based colors
+  const colorSettings = useMemo(() => {
+    if (!showConcentrationColor || concentration === undefined) {
+      return { fillColor: color, fillOpacity: 0.15, particleColor: color };
+    }
+    return getConcentrationColor(color, concentration);
+  }, [color, concentration, showConcentrationColor]);
 
   // Calculate display dimensions
   const beakerWidth = 200;
@@ -44,11 +92,11 @@ export function ParticleBeaker({
 
   const particleType: ParticleType = useMemo(() => ({
     id: 'solute',
-    color: color,
+    color: colorSettings.particleColor,
     radius: 4,
     label: '',
     mass: 1
-  }), [color]);
+  }), [colorSettings.particleColor]);
 
   // Calculate particle speed based on concentration (denser = slower due to more collisions)
   const effectiveTemp = 300 - Math.min(200, (concentration || 1) * 30);
@@ -90,15 +138,15 @@ export function ParticleBeaker({
           </g>
         ))}
 
-        {/* Solution fill background (semi-transparent) */}
+        {/* Solution fill background (concentration-dependent opacity) */}
         <rect
           x="16"
           y={120 - (fillPercent * 1.1)}
           width="68"
           height={fillPercent * 1.1}
-          fill={color}
-          opacity={0.15}
-          className="transition-all duration-300"
+          fill={colorSettings.fillColor}
+          opacity={colorSettings.fillOpacity}
+          className="transition-all duration-500"
         />
 
         {/* Meniscus */}
@@ -106,9 +154,9 @@ export function ParticleBeaker({
           <path
             d={`M 16 ${120 - fillPercent * 1.1} Q 35 ${120 - fillPercent * 1.1 - 2} 50 ${120 - fillPercent * 1.1} T 84 ${120 - fillPercent * 1.1}`}
             fill="none"
-            stroke={color}
+            stroke={colorSettings.fillColor}
             strokeWidth="1.5"
-            opacity="0.4"
+            opacity={Math.min(0.8, colorSettings.fillOpacity + 0.3)}
           />
         )}
       </svg>

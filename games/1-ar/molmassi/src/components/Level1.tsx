@@ -3,6 +3,7 @@ import { FeedbackPanel, MoleculeViewer3DLazy } from '@shared/components';
 import type { DetailedFeedback } from '@shared/types';
 import { elementsToMolecule } from '../utils/moleculeConverter';
 import { PeriodicTable } from './PeriodicTable';
+import { AnimatedMassCalculation } from './AnimatedMassCalculation';
 
 // Atomic masses for calculations
 const ATOMIC_MASSES: Record<string, number> = {
@@ -258,6 +259,7 @@ export function Level1({ onBack, onComplete, onCorrectAnswer, onIncorrectAnswer 
   const [viewMode, setViewMode] = useState<'2d' | '3d'>('2d');
   const [rotationSpeed, setRotationSpeed] = useState(1.5);
   const [showPeriodicTable, setShowPeriodicTable] = useState(false);
+  const [showAnimatedCalc, setShowAnimatedCalc] = useState(false);
 
   // For build_molecule challenge
   const [builtAtoms, setBuiltAtoms] = useState<{ symbol: string; count: number }[]>([]);
@@ -275,6 +277,7 @@ export function Level1({ onBack, onComplete, onCorrectAnswer, onIncorrectAnswer 
     setHintMultiplier(1.0);
     setHintsUsedTier(0);
     setShowHint(false);
+    setShowAnimatedCalc(false);
   }, [challenge]);
 
   const checkAnswer = (answer: number | string) => {
@@ -769,6 +772,28 @@ export function Level1({ onBack, onComplete, onCorrectAnswer, onIncorrectAnswer 
                   💡 <strong>Vísbending:</strong> Hugsaðu um stærðina á frumeindunum og hversu margar eru.
                   H er um 1 g/mol, O er um 16 g/mol, C er um 12 g/mol.
                 </p>
+              </div>
+            )}
+
+            {/* Animated calculation after answering */}
+            {showFeedback && (
+              <div className="mt-4">
+                {!showAnimatedCalc ? (
+                  <button
+                    onClick={() => setShowAnimatedCalc(true)}
+                    className="w-full bg-purple-100 hover:bg-purple-200 text-purple-700 font-semibold py-3 px-4 rounded-xl transition-colors"
+                  >
+                    📊 Sýna útreikninginn skref fyrir skref
+                  </button>
+                ) : (
+                  <AnimatedMassCalculation
+                    elements={challenge.compound.elements}
+                    useApproximate={true}
+                    autoPlay={true}
+                    stepDelay={700}
+                    compact={true}
+                  />
+                )}
               </div>
             )}
           </div>

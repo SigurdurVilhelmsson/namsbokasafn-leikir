@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Level1 } from './components/Level1';
 import { Level2 } from './components/Level2';
 import { Level3 } from './components/Level3';
+import { MysteryMolecule } from './components/MysteryMolecule';
 import { useAchievements } from '@shared/hooks/useAchievements';
 import { useGameI18n } from '@shared/hooks/useGameI18n';
 import { AchievementsButton, AchievementsPanel } from '@shared/components/AchievementsPanel';
@@ -9,12 +10,13 @@ import { AchievementNotificationsContainer } from '@shared/components/Achievemen
 import { LanguageSwitcher } from '@shared/components';
 import { gameTranslations } from './i18n';
 
-type AppMode = 'menu' | 'level1' | 'level2' | 'level3';
+type AppMode = 'menu' | 'level1' | 'level2' | 'level3' | 'mystery';
 
 interface Progress {
   level1Completed: boolean;
   level2Completed: boolean;
   level3HighScore: number;
+  mysteryBestScore: number;
 }
 
 function loadProgress(): Progress {
@@ -23,10 +25,10 @@ function loadProgress(): Progress {
     try {
       return JSON.parse(saved);
     } catch {
-      return { level1Completed: false, level2Completed: false, level3HighScore: 0 };
+      return { level1Completed: false, level2Completed: false, level3HighScore: 0, mysteryBestScore: 0 };
     }
   }
-  return { level1Completed: false, level2Completed: false, level3HighScore: 0 };
+  return { level1Completed: false, level2Completed: false, level3HighScore: 0, mysteryBestScore: 0 };
 }
 
 function saveProgress(progress: Progress): void {
@@ -76,6 +78,13 @@ function App() {
     }
   };
 
+  const completeMystery = (score: number, _maxScore: number) => {
+    const newProgress = { ...progress, mysteryBestScore: Math.max(progress.mysteryBestScore, score) };
+    setProgress(newProgress);
+    saveProgress(newProgress);
+    setMode('menu');
+  };
+
   // Render current mode
   if (mode === 'level1') {
     return (
@@ -119,6 +128,21 @@ function App() {
           onComplete={completeLevel3}
           onCorrectAnswer={trackCorrectAnswer}
           onIncorrectAnswer={trackIncorrectAnswer}
+        />
+        <AchievementNotificationsContainer
+          notifications={notifications}
+          onDismiss={dismissNotification}
+        />
+      </>
+    );
+  }
+
+  if (mode === 'mystery') {
+    return (
+      <>
+        <MysteryMolecule
+          onBack={() => setMode('menu')}
+          onComplete={completeMystery}
         />
         <AchievementNotificationsContainer
           notifications={notifications}
@@ -256,6 +280,48 @@ function App() {
               <span className="px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-medium">{t('menu.level3.tags.competition')}</span>
             </div>
           </button>
+
+          {/* Mystery Molecule Mode - Bonus */}
+          <button
+            onClick={() => progress.level1Completed && setMode('mystery')}
+            className={`w-full bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl shadow-lg p-6 text-left transition-all transform animate-fade-in-up ${
+              !progress.level1Completed
+                ? 'opacity-60 cursor-not-allowed'
+                : 'hover:shadow-xl hover:scale-[1.02]'
+            }`}
+            style={{ animationDelay: '350ms' }}
+            disabled={!progress.level1Completed}
+          >
+            <div className="flex items-start justify-between">
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 rounded-xl bg-white/20 flex items-center justify-center text-2xl">
+                  🔮
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-xl font-bold text-white">Leyndardómssameind</h2>
+                    {!progress.level1Completed && (
+                      <span className="text-xs text-white/70 bg-white/20 px-2 py-0.5 rounded-full">🔒</span>
+                    )}
+                  </div>
+                  <p className="text-white/80 text-sm">Greindu sameindina út frá mólmassanum</p>
+                </div>
+              </div>
+              {progress.mysteryBestScore > 0 ? (
+                <div className="text-right">
+                  <div className="text-2xl font-bold text-white">{progress.mysteryBestScore}</div>
+                  <div className="text-xs text-white/70">Besta</div>
+                </div>
+              ) : (
+                <span className="text-white/60 text-2xl">🔮</span>
+              )}
+            </div>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <span className="px-2 py-1 bg-white/20 text-white rounded-full text-xs font-medium">Þekkja sameindir</span>
+              <span className="px-2 py-1 bg-white/20 text-white rounded-full text-xs font-medium">Byggja formúlur</span>
+              <span className="px-2 py-1 bg-white/20 text-white rounded-full text-xs font-medium">Leysa gátur</span>
+            </div>
+          </button>
         </div>
 
         {/* Learning Path Description */}
@@ -291,7 +357,7 @@ function App() {
             <button
               onClick={() => {
                 if (confirm(t('menu.resetConfirm'))) {
-                  const reset = { level1Completed: false, level2Completed: false, level3HighScore: 0 };
+                  const reset = { level1Completed: false, level2Completed: false, level3HighScore: 0, mysteryBestScore: 0 };
                   setProgress(reset);
                   saveProgress(reset);
                 }

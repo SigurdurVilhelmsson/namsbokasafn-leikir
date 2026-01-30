@@ -30,7 +30,7 @@
 |-------------|--------|----------|--------|-------|
 | Unit cancellation animation | ✅ | High | Medium | Enhanced UnitCancellationVisualizer with auto-animate, strikethrough, connecting lines |
 | Drag-and-drop unit builder | ✅ | High | High | UnitConversionBuilder with visual numerator/denominator drop zones, real-time cancellation feedback, 3 build modes (drag/click/visual) |
-| Real-world context scenarios | ⬜ | Medium | Low | Cooking, pharmacy examples |
+| Real-world context scenarios | ✅ | Medium | Low | 25 problems with pharmacy, cooking, engineering, sports, science, everyday contexts |
 | Step-by-step solution display | ✅ | Medium | Low | Shows factor-label method with correctMethod/requiredSteps in feedback |
 
 #### Molar Mass (Mólmassi)
@@ -39,8 +39,8 @@
 |-------------|--------|----------|--------|-------|
 | Periodic table integration | ✅ | High | Medium | PeriodicTable component in Level 1 & 2 with search, grid/list views, element highlighting |
 | 3D molecule viewer | ✅ | Medium | High | MoleculeViewer3DLazy integrated in Level 1 with 2D/3D toggle |
-| Mystery molecule mode | ⬜ | Low | Medium | Deduce formula from mass |
-| Animated mass calculation | ⬜ | Medium | Medium | Show addition of atomic masses |
+| Mystery molecule mode | ✅ | Low | Medium | MysteryMolecule component with identify, build, and complete challenges |
+| Animated mass calculation | ✅ | Medium | Medium | AnimatedMassCalculation component with step-by-step visualization, auto-play |
 
 #### Nomenclature (Nafnakerfið)
 
@@ -57,9 +57,9 @@
 |-------------|--------|----------|--------|-------|
 | Particle animation (Brownian) | ✅ | High | High | ParticleBeaker with animated solute particles |
 | Prediction step in Level 1 | ✅ | High | Medium | "Hugsaðu fyrst!" prediction prompts before slider adjustment |
-| Pipette/dropper tool | ⬜ | Medium | Medium | Lab-realistic interaction |
-| Concentration-based color | ⬜ | Low | Low | Like adding indicator |
-| Temperature effects | ⬜ | Low | Medium | Solubility changes |
+| Pipette/dropper tool | ✅ | Medium | Medium | Pipette component with interactive dispensing for dilution challenges |
+| Concentration-based color | ✅ | Low | Low | ParticleBeaker with getConcentrationColor for intensity-based fill |
+| Temperature effects | ✅ | Low | Medium | TemperatureSolubilityCurve, TemperatureBeaker components in Level 2 |
 
 #### Limiting Reactants (Takmarkandi)
 
@@ -67,7 +67,7 @@
 |-------------|--------|----------|--------|-------|
 | Reaction animation | ✅ | High | High | ReactionAnimation component integrated in Level 2 showing before/reacting/after phases |
 | Visual stoichiometry | ✅ | High | Medium | StoichiometryVisualization component with particle grouping, step-by-step reactions, calculations display |
-| Factory game mode | ⬜ | Medium | Medium | Production optimization |
+| Factory game mode | ✅ | Medium | Medium | FactoryMode component with budget management, production optimization, profit tracking |
 | Excess reactant display | ✅ | Medium | Low | Visual display with molecules showing what remains after reaction |
 
 ---
@@ -214,8 +214,8 @@
 | Year | Total | Completed | Percentage |
 |------|-------|-----------|------------|
 | Shared | 8 | 8 | 100% |
-| Year 1 | 21 | 11 | 52.4% |
-| Year 2 | 40 | 25 | 62.5% |
+| Year 1 | 21 | 20 | 95.2% |
+| Year 2 | 40 | 26 | 65% |
 | Year 3 | 32 | 10 | 31.3% |
 
 ### By Category
@@ -365,6 +365,14 @@ Building these once benefits multiple games:
 | 2026-01-29 | Year 1 progress: 57.1% → 61.9% (13/21 improvements completed) |
 | 2026-01-29 | **Hess's Law Drag-Drop Equation Builder COMPLETE** - EquationBuilder with drag-drop combination zone, real-time ΔH calculation, species cancellation analysis |
 | 2026-01-29 | Year 2 progress: 62.5% → 65% (26/40 improvements completed) |
+| 2026-01-30 | **Dimensional Analysis Real-World Context COMPLETE** - 25 problems with pharmacy, cooking, engineering, sports, science, everyday contexts |
+| 2026-01-30 | **Lausnir Pipette/Dropper COMPLETE** - Pipette component integrated into Level 1 for dilution challenges |
+| 2026-01-30 | **Molmassi Animated Mass Calculation COMPLETE** - AnimatedMassCalculation component with step-by-step visualization, auto-play, manual stepping |
+| 2026-01-30 | **Takmarkandi Factory Game Mode COMPLETE** - FactoryMode component integrated with budget management, production, profit tracking |
+| 2026-01-30 | **Lausnir Concentration-Based Color COMPLETE** - ParticleBeaker with getConcentrationColor for intensity-based fill |
+| 2026-01-30 | **Molmassi Mystery Molecule Mode COMPLETE** - MysteryMolecule component with identify, build, and complete challenges |
+| 2026-01-30 | **Lausnir Temperature Effects VERIFIED** - Already implemented with TemperatureSolubilityCurve in Level 2 |
+| 2026-01-30 | Year 1 progress: 52.4% → 95.2% (20/21 improvements completed) |
 
 ---
 

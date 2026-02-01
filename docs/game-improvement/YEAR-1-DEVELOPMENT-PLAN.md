@@ -388,8 +388,8 @@ const EQUATIONS = [
 8. ✅ Add saturation visualization to Lausnir (B1) → Level 4
 
 ### Phase 4: Additional Games
-9. ⬜ Build Efnaflokkun (Classification of Matter)
-10. ⬜ Build Efnahvarfategundir (Reaction Types)
+9. ✅ Build Flokkun efna (Classification of Matter)
+10. ⬜ Build Gerðir efnahvarfa (Reaction Types)
 11. ⬜ Build Markverðir tölustafir (Significant Figures)
 
 ---
@@ -398,6 +398,6 @@ const EQUATIONS = [
 
 - Phases 1-3 are now complete!
 - Next: Start with **Phase 4** - Additional Games
-- Priority order: Efnaflokkun (Classification of Matter) is foundational
+- Priority order: Flokkun efna (Classification of Matter) is foundational
 - Consider using existing component patterns from completed games
 - Periodic table component from Mólmassi can be reused for element reference

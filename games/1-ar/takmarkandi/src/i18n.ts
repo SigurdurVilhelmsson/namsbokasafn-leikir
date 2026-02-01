@@ -32,6 +32,18 @@ export const gameTranslations = createGameTranslations({
         description: 'Veldu erfiðleikastig og kepptu við tímann!',
         locked: 'Ljúktu stigi 2 fyrst',
       },
+      level4: {
+        name: 'Stig 4',
+        title: 'Prósentuheimta',
+        description: 'Reiknaðu prósentuheimtu efnahvarfa',
+        locked: 'Ljúktu stigi 3 fyrst',
+      },
+    },
+    level4: {
+      title: 'Stig 4: Prósentuheimta',
+      subtitle: 'Reiknaðu prósentuheimtu efnahvarfa',
+      selectDifficulty: 'Veldu erfiðleikastig',
+      whatIsPercentYield: 'Hvað er prósentuheimta?',
     },
     progress: {
       title: 'Framvinda',
@@ -49,6 +61,7 @@ export const gameTranslations = createGameTranslations({
       point2: 'Hvernig á að finna takmarkandi hvarfefni út frá stuðlum',
       point3: 'Reikna magn afurða og afganga eftir hvarf',
       point4: 'Nota stökjómetríu til að leysa raunveruleg vandamál',
+      point5: 'Reikna prósentuheimtu og skilja af hverju heimta er undir 100%',
     },
   },
   en: {
@@ -79,6 +92,18 @@ export const gameTranslations = createGameTranslations({
         description: 'Choose difficulty and race against time!',
         locked: 'Complete level 2 first',
       },
+      level4: {
+        name: 'Level 4',
+        title: 'Percent Yield',
+        description: 'Calculate percent yield of reactions',
+        locked: 'Complete level 3 first',
+      },
+    },
+    level4: {
+      title: 'Level 4: Percent Yield',
+      subtitle: 'Calculate percent yield of reactions',
+      selectDifficulty: 'Select difficulty',
+      whatIsPercentYield: 'What is percent yield?',
     },
     progress: {
       title: 'Progress',
@@ -96,6 +121,7 @@ export const gameTranslations = createGameTranslations({
       point2: 'How to find limiting reagent from coefficients',
       point3: 'Calculate product amounts and excess after reaction',
       point4: 'Use stoichiometry to solve real problems',
+      point5: 'Calculate percent yield and understand why yield is less than 100%',
     },
   },
   pl: {
@@ -126,6 +152,18 @@ export const gameTranslations = createGameTranslations({
         description: 'Wybierz trudnosc i scigaj sie z czasem!',
         locked: 'Najpierw ukoncz poziom 2',
       },
+      level4: {
+        name: 'Poziom 4',
+        title: 'Wydajnosc procentowa',
+        description: 'Oblicz wydajnosc procentowa reakcji',
+        locked: 'Najpierw ukoncz poziom 3',
+      },
+    },
+    level4: {
+      title: 'Poziom 4: Wydajnosc procentowa',
+      subtitle: 'Oblicz wydajnosc procentowa reakcji',
+      selectDifficulty: 'Wybierz trudnosc',
+      whatIsPercentYield: 'Czym jest wydajnosc procentowa?',
     },
     progress: {
       title: 'Postep',
@@ -143,6 +181,7 @@ export const gameTranslations = createGameTranslations({
       point2: 'Jak znalezc substrat ograniczajacy ze wspolczynnikow',
       point3: 'Obliczac ilosci produktow i nadmiaru po reakcji',
       point4: 'Uzywac stechiometrii do rozwiazywania rzeczywistych problemow',
+      point5: 'Obliczac wydajnosc procentowa i rozumiec dlaczego jest ponizej 100%',
     },
   },
 });

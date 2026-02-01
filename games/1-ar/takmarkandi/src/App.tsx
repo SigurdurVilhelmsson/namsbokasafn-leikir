@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Level1 } from './components/Level1';
 import { Level2 } from './components/Level2';
 import { Level3 } from './components/Level3';
+import { Level4 } from './components/Level4';
 import { FactoryMode } from './components/FactoryMode';
 import { storage } from './utils/storage';
 import { useAchievements } from '@shared/hooks/useAchievements';
@@ -12,7 +13,7 @@ import { LanguageSwitcher } from '@shared/components';
 import { gameTranslations } from './i18n';
 import './styles.css';
 
-type Screen = 'menu' | 'level1' | 'level2' | 'level3' | 'factory';
+type Screen = 'menu' | 'level1' | 'level2' | 'level3' | 'level4' | 'factory';
 
 interface Progress {
   level1Completed: boolean;
@@ -21,6 +22,8 @@ interface Progress {
   level2Score: number;
   level3BestScore: number;
   level3BestAccuracy: number;
+  level4Completed: boolean;
+  level4Score: number;
   totalGamesPlayed: number;
   factoryBestScore: number;
   factoryBestProfit: number;
@@ -36,6 +39,8 @@ function getDefaultProgress(): Progress {
     level2Score: 0,
     level3BestScore: 0,
     level3BestAccuracy: 0,
+    level4Completed: false,
+    level4Score: 0,
     totalGamesPlayed: 0,
     factoryBestScore: 0,
     factoryBestProfit: 0
@@ -115,6 +120,23 @@ function App() {
     setScreen('menu');
   };
 
+  const handleLevel4Complete = (score: number, _maxScore: number) => {
+    const wasLevel4Completed = progress.level4Completed;
+    setProgress(prev => ({
+      ...prev,
+      level4Completed: true,
+      level4Score: Math.max(prev.level4Score, score),
+      totalGamesPlayed: prev.totalGamesPlayed + 1
+    }));
+    // Level 4 is a bonus level, track as game stat instead
+    // trackLevelComplete only supports levels 1-3
+    // Check if all levels are now complete
+    if (progress.level1Completed && progress.level2Completed && progress.level3BestScore > 0 && !wasLevel4Completed) {
+      trackGameComplete();
+    }
+    setScreen('menu');
+  };
+
   const handleFactoryComplete = (score: number, profit: number) => {
     setProgress(prev => ({
       ...prev,
@@ -174,6 +196,25 @@ function App() {
           onBack={() => setScreen('menu')}
           onCorrectAnswer={trackCorrectAnswer}
           onIncorrectAnswer={trackIncorrectAnswer}
+        />
+        <AchievementNotificationsContainer
+          notifications={notifications}
+          onDismiss={dismissNotification}
+        />
+      </>
+    );
+  }
+
+  if (screen === 'level4') {
+    return (
+      <>
+        <Level4
+          onComplete={handleLevel4Complete}
+          onBack={() => setScreen('menu')}
+          onCorrectAnswer={trackCorrectAnswer}
+          onIncorrectAnswer={trackIncorrectAnswer}
+          t={t}
+          language={language}
         />
         <AchievementNotificationsContainer
           notifications={notifications}
@@ -328,6 +369,45 @@ function App() {
               </div>
             </button>
 
+            {/* Level 4 - Percent Yield */}
+            <button
+              onClick={() => progress.level3BestScore > 0 && setScreen('level4')}
+              className={`w-full bg-white border-2 rounded-xl p-6 text-left transition-all ${
+                progress.level3BestScore > 0
+                  ? 'border-purple-200 hover:border-purple-400 hover:bg-purple-50'
+                  : 'border-gray-200 opacity-60 cursor-not-allowed'
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className={`text-white text-sm font-bold px-3 py-1 rounded-full ${
+                      progress.level3BestScore > 0 ? 'bg-purple-500' : 'bg-gray-400'
+                    }`}>
+                      Stig 4
+                    </span>
+                    <h3 className="text-xl font-bold text-gray-800">{t('levels.level4.title', 'Prósentuheimta')}</h3>
+                    {progress.level3BestScore === 0 && (
+                      <span className="text-xs text-gray-500">({t('levels.level4.locked', 'Ljúktu stigi 3 fyrst')})</span>
+                    )}
+                  </div>
+                  <p className="text-gray-600 text-sm">
+                    {t('levels.level4.description', 'Reiknaðu prósentuheimtu efnahvarfa')}
+                  </p>
+                </div>
+                <div className="text-right">
+                  {progress.level4Completed ? (
+                    <div className="text-green-600">
+                      <div className="text-2xl font-bold">{progress.level4Score}</div>
+                      <div className="text-xs">stig - Lokið</div>
+                    </div>
+                  ) : (
+                    <div className="text-gray-400 text-3xl">→</div>
+                  )}
+                </div>
+              </div>
+            </button>
+
             {/* Factory Mode - Bonus game */}
             <button
               onClick={() => progress.level1Completed && setScreen('factory')}
@@ -386,13 +466,13 @@ function App() {
             <div className="grid grid-cols-3 gap-4 text-center">
               <div className="bg-blue-50 rounded-lg p-3">
                 <div className="text-2xl font-bold text-blue-600">
-                  {[progress.level1Completed, progress.level2Completed].filter(Boolean).length}/2
+                  {[progress.level1Completed, progress.level2Completed, progress.level3BestScore > 0, progress.level4Completed].filter(Boolean).length}/4
                 </div>
                 <div className="text-xs text-gray-600">Stig lokið</div>
               </div>
               <div className="bg-green-50 rounded-lg p-3">
                 <div className="text-2xl font-bold text-green-600">
-                  {progress.level1Score + progress.level2Score + progress.level3BestScore}
+                  {progress.level1Score + progress.level2Score + progress.level3BestScore + progress.level4Score}
                 </div>
                 <div className="text-xs text-gray-600">Heildar stig</div>
               </div>
@@ -408,23 +488,27 @@ function App() {
 
         {/* What you'll learn */}
         <div className="bg-orange-50 rounded-xl p-6 mt-6">
-          <h3 className="font-bold text-orange-800 mb-3">Hvað lærir þú?</h3>
+          <h3 className="font-bold text-orange-800 mb-3">{t('learn.title', 'Hvað lærir þú?')}</h3>
           <ul className="text-sm text-gray-700 space-y-2">
             <li className="flex items-start gap-2">
               <span className="text-orange-500 mt-0.5">✓</span>
-              <span>Hvað er takmarkandi hvarfefni og hvers vegna það skiptir máli</span>
+              <span>{t('learn.point1', 'Hvað er takmarkandi hvarfefni og hvers vegna það skiptir máli')}</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-orange-500 mt-0.5">✓</span>
-              <span>Hvernig á að finna takmarkandi hvarfefni út frá stuðlum</span>
+              <span>{t('learn.point2', 'Hvernig á að finna takmarkandi hvarfefni út frá stuðlum')}</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-orange-500 mt-0.5">✓</span>
-              <span>Reikna magn afurða og afganga eftir hvarf</span>
+              <span>{t('learn.point3', 'Reikna magn afurða og afganga eftir hvarf')}</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-orange-500 mt-0.5">✓</span>
-              <span>Nota stökjómetríu til að leysa raunveruleg vandamál</span>
+              <span>{t('learn.point4', 'Nota stökjómetríu til að leysa raunveruleg vandamál')}</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-orange-500 mt-0.5">✓</span>
+              <span>{t('learn.point5', 'Reikna prósentuheimtu og skilja af hverju heimta er undir 100%')}</span>
             </li>
           </ul>
         </div>

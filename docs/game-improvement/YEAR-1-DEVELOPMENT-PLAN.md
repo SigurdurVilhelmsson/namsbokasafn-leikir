@@ -389,7 +389,7 @@ const EQUATIONS = [
 
 ### Phase 4: Additional Games
 9. ✅ Build Flokkun efna (Classification of Matter)
-10. ⬜ Build Gerðir efnahvarfa (Reaction Types)
+10. ✅ Build Gerðir efnahvarfa (Reaction Types)
 11. ⬜ Build Markverðir tölustafir (Significant Figures)
 
 ---

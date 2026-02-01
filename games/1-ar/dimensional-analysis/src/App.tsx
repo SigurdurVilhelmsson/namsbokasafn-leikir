@@ -10,6 +10,7 @@ import { gameTranslations } from './i18n';
 import { Level1Conceptual } from './components/Level1Conceptual';
 import { Level2 } from './components/Level2';
 import { Level3 } from './components/Level3';
+import { Level4Chemistry } from './components/Level4Chemistry';
 
 /**
  * Main application component for Dimensional Analysis Game
@@ -51,7 +52,8 @@ function App() {
   const { settings, toggleHighContrast, setTextSize } = useAccessibility();
   const { t, language, setLanguage } = useGameI18n({ gameTranslations });
 
-  const [screen, setScreen] = useState<'menu' | 'level1' | 'level2' | 'level3' | 'stats'>('menu');
+  const [screen, setScreen] = useState<'menu' | 'level1' | 'level2' | 'level3' | 'level4' | 'stats'>('menu');
+  const [level4Score, setLevel4Score] = useState(0);
   const [showAchievements, setShowAchievements] = useState(false);
 
   // Achievement system
@@ -211,6 +213,28 @@ function App() {
                     </p>
                   )}
                 </button>
+
+                {/* Level 4 - Chemistry Conversions */}
+                <button
+                  onClick={() => setScreen('level4')}
+                  className="bg-green-600 hover:bg-green-700 text-white rounded-lg p-6 text-left transition-colors"
+                  disabled={!progress.levelProgress?.level2?.mastered}
+                >
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-2xl">4</span>
+                    <h3 className="text-xl font-semibold">
+                      {t('levels.level4.name', 'Efnafræðilegar umbreytingar')}
+                    </h3>
+                  </div>
+                  <p className="text-green-100">
+                    {t('levels.level4.description', 'Mól, massi, agnir og gas við STP')}
+                  </p>
+                  {progress.levelProgress?.level2?.mastered && level4Score > 0 && (
+                    <p className="text-sm text-green-200 mt-2">
+                      {t('menu.bestScore', 'Besta skor')}: {level4Score}
+                    </p>
+                  )}
+                </button>
               </div>
 
               {/* Stats Button */}
@@ -306,6 +330,24 @@ function App() {
               }}
               onBack={() => setScreen('menu')}
               initialProgress={progress.levelProgress?.level3}
+              onCorrectAnswer={() => trackCorrectAnswer()}
+              onIncorrectAnswer={() => trackIncorrectAnswer()}
+            />
+            <AchievementNotificationsContainer
+              notifications={notifications}
+              onDismiss={dismissNotification}
+            />
+          </>
+        )}
+
+        {screen === 'level4' && (
+          <>
+            <Level4Chemistry
+              onComplete={(score, _maxScore) => {
+                setLevel4Score(prev => Math.max(prev, score));
+                setScreen('menu');
+              }}
+              onBack={() => setScreen('menu')}
               onCorrectAnswer={() => trackCorrectAnswer()}
               onIncorrectAnswer={() => trackIncorrectAnswer()}
             />

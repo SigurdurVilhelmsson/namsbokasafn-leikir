@@ -34,5 +34,33 @@ export const conversionFactors: ConversionFactor[] = [
   { num: '1 klst', den: '60 mín', units: ['klst', 'mín'] },
   { num: '60 mín', den: '1 klst', units: ['mín', 'klst'] },
   { num: '1 mín', den: '60 s', units: ['mín', 's'] },
-  { num: '60 s', den: '1 mín', units: ['s', 'mín'] }
+  { num: '60 s', den: '1 mín', units: ['s', 'mín'] },
+
+  // Chemistry conversions - Moles & Particles (Avogadro)
+  { num: '6.022×10²³ agnir', den: '1 mól', units: ['agnir', 'mól'] },
+  { num: '1 mól', den: '6.022×10²³ agnir', units: ['mól', 'agnir'] },
+
+  // Chemistry conversions - Gas at STP (22.4 L/mol)
+  { num: '22.4 L', den: '1 mól', units: ['L (STP)', 'mól'] },
+  { num: '1 mól', den: '22.4 L', units: ['mól', 'L (STP)'] }
+];
+
+// Chemistry-specific conversion factors with molar mass
+export interface ChemistryConversion {
+  compound: string;
+  formula: string;
+  molarMass: number;
+  conversionType: 'mass_moles' | 'moles_particles' | 'gas_stp';
+}
+
+export const chemistryConversions: ChemistryConversion[] = [
+  // Common compounds for mass-moles conversions
+  { compound: 'Vatn', formula: 'H₂O', molarMass: 18.015, conversionType: 'mass_moles' },
+  { compound: 'Koltvísýringur', formula: 'CO₂', molarMass: 44.01, conversionType: 'mass_moles' },
+  { compound: 'Ammóníak', formula: 'NH₃', molarMass: 17.03, conversionType: 'mass_moles' },
+  { compound: 'Metan', formula: 'CH₄', molarMass: 16.04, conversionType: 'mass_moles' },
+  { compound: 'Súrefni', formula: 'O₂', molarMass: 32.00, conversionType: 'mass_moles' },
+  { compound: 'Köfnunarefni', formula: 'N₂', molarMass: 28.02, conversionType: 'mass_moles' },
+  { compound: 'Borðsalt', formula: 'NaCl', molarMass: 58.44, conversionType: 'mass_moles' },
+  { compound: 'Glúkósi', formula: 'C₆H₁₂O₆', molarMass: 180.16, conversionType: 'mass_moles' },
 ];

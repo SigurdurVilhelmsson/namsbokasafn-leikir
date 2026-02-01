@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Level1 } from './components/Level1';
 import { Level2 } from './components/Level2';
 import { Level3 } from './components/Level3';
+import { Level4 } from './components/Level4';
+import { Level5 } from './components/Level5';
 import { MysteryMolecule } from './components/MysteryMolecule';
 import { useAchievements } from '@shared/hooks/useAchievements';
 import { useGameI18n } from '@shared/hooks/useGameI18n';
@@ -10,12 +12,16 @@ import { AchievementNotificationsContainer } from '@shared/components/Achievemen
 import { LanguageSwitcher } from '@shared/components';
 import { gameTranslations } from './i18n';
 
-type AppMode = 'menu' | 'level1' | 'level2' | 'level3' | 'mystery';
+type AppMode = 'menu' | 'level1' | 'level2' | 'level3' | 'level4' | 'level5' | 'mystery';
 
 interface Progress {
   level1Completed: boolean;
   level2Completed: boolean;
   level3HighScore: number;
+  level4Completed: boolean;
+  level4Score: number;
+  level5Completed: boolean;
+  level5Score: number;
   mysteryBestScore: number;
 }
 
@@ -23,12 +29,24 @@ function loadProgress(): Progress {
   const saved = localStorage.getItem('molmassiLevelProgress');
   if (saved) {
     try {
-      return JSON.parse(saved);
+      const parsed = JSON.parse(saved);
+      // Add defaults for new fields
+      return {
+        level1Completed: false,
+        level2Completed: false,
+        level3HighScore: 0,
+        level4Completed: false,
+        level4Score: 0,
+        level5Completed: false,
+        level5Score: 0,
+        mysteryBestScore: 0,
+        ...parsed,
+      };
     } catch {
-      return { level1Completed: false, level2Completed: false, level3HighScore: 0, mysteryBestScore: 0 };
+      return { level1Completed: false, level2Completed: false, level3HighScore: 0, level4Completed: false, level4Score: 0, level5Completed: false, level5Score: 0, mysteryBestScore: 0 };
     }
   }
-  return { level1Completed: false, level2Completed: false, level3HighScore: 0, mysteryBestScore: 0 };
+  return { level1Completed: false, level2Completed: false, level3HighScore: 0, level4Completed: false, level4Score: 0, level5Completed: false, level5Score: 0, mysteryBestScore: 0 };
 }
 
 function saveProgress(progress: Progress): void {
@@ -76,6 +94,28 @@ function App() {
     if (progress.level1Completed && progress.level2Completed) {
       trackGameComplete();
     }
+  };
+
+  const completeLevel4 = (score: number, _maxScore: number, _hintsUsed: number) => {
+    const newProgress = {
+      ...progress,
+      level4Completed: true,
+      level4Score: Math.max(progress.level4Score, score),
+    };
+    setProgress(newProgress);
+    saveProgress(newProgress);
+    setMode('menu');
+  };
+
+  const completeLevel5 = (score: number, _maxScore: number, _hintsUsed: number) => {
+    const newProgress = {
+      ...progress,
+      level5Completed: true,
+      level5Score: Math.max(progress.level5Score, score),
+    };
+    setProgress(newProgress);
+    saveProgress(newProgress);
+    setMode('menu');
   };
 
   const completeMystery = (score: number, _maxScore: number) => {
@@ -126,6 +166,40 @@ function App() {
         <Level3
           onBack={() => setMode('menu')}
           onComplete={completeLevel3}
+          onCorrectAnswer={trackCorrectAnswer}
+          onIncorrectAnswer={trackIncorrectAnswer}
+        />
+        <AchievementNotificationsContainer
+          notifications={notifications}
+          onDismiss={dismissNotification}
+        />
+      </>
+    );
+  }
+
+  if (mode === 'level4') {
+    return (
+      <>
+        <Level4
+          onBack={() => setMode('menu')}
+          onComplete={completeLevel4}
+          onCorrectAnswer={trackCorrectAnswer}
+          onIncorrectAnswer={trackIncorrectAnswer}
+        />
+        <AchievementNotificationsContainer
+          notifications={notifications}
+          onDismiss={dismissNotification}
+        />
+      </>
+    );
+  }
+
+  if (mode === 'level5') {
+    return (
+      <>
+        <Level5
+          onBack={() => setMode('menu')}
+          onComplete={completeLevel5}
           onCorrectAnswer={trackCorrectAnswer}
           onIncorrectAnswer={trackIncorrectAnswer}
         />
@@ -281,6 +355,96 @@ function App() {
             </div>
           </button>
 
+          {/* Level 4 - Avogadro's Number */}
+          <button
+            onClick={() => progress.level2Completed && setMode('level4')}
+            className={`w-full bg-white rounded-2xl shadow-lg p-6 text-left transition-all transform animate-fade-in-up ${
+              !progress.level2Completed
+                ? 'opacity-60 cursor-not-allowed'
+                : 'hover:shadow-xl hover:scale-[1.02]'
+            }`}
+            style={{ animationDelay: '350ms' }}
+            disabled={!progress.level2Completed}
+          >
+            <div className="flex items-start justify-between">
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 rounded-xl bg-blue-100 flex items-center justify-center text-2xl">
+                  🔢
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-xl font-bold text-gray-800">{t('menu.level4.title', 'Tala Avogadros')}</h2>
+                    {progress.level4Completed && (
+                      <span className="text-green-500 text-lg">✓</span>
+                    )}
+                    {!progress.level2Completed && (
+                      <span className="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">🔒</span>
+                    )}
+                  </div>
+                  <p className="text-gray-600 text-sm">{t('menu.level4.description', 'Umbreyttu milli móla og agna')}</p>
+                </div>
+              </div>
+              {progress.level4Completed ? (
+                <div className="text-right">
+                  <div className="text-2xl font-bold text-blue-600">{progress.level4Score}</div>
+                  <div className="text-xs text-gray-500">stig</div>
+                </div>
+              ) : (
+                <span className="text-gray-400 text-2xl">→</span>
+              )}
+            </div>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">{t('menu.level4.tags.avogadro', 'Avogadro tala')}</span>
+              <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">{t('menu.level4.tags.particles', 'Mól ↔ Agnir')}</span>
+              <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">{t('menu.level4.tags.atoms', 'Fjöldi atóma')}</span>
+            </div>
+          </button>
+
+          {/* Level 5 - Conversion Chains */}
+          <button
+            onClick={() => progress.level4Completed && setMode('level5')}
+            className={`w-full bg-white rounded-2xl shadow-lg p-6 text-left transition-all transform animate-fade-in-up ${
+              !progress.level4Completed
+                ? 'opacity-60 cursor-not-allowed'
+                : 'hover:shadow-xl hover:scale-[1.02]'
+            }`}
+            style={{ animationDelay: '400ms' }}
+            disabled={!progress.level4Completed}
+          >
+            <div className="flex items-start justify-between">
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 rounded-xl bg-indigo-100 flex items-center justify-center text-2xl">
+                  🔗
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-xl font-bold text-gray-800">{t('menu.level5.title', 'Umbreytingakeðjur')}</h2>
+                    {progress.level5Completed && (
+                      <span className="text-green-500 text-lg">✓</span>
+                    )}
+                    {!progress.level4Completed && (
+                      <span className="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">🔒</span>
+                    )}
+                  </div>
+                  <p className="text-gray-600 text-sm">{t('menu.level5.description', 'Byggðu umbreytingaleiðir: massi → mól → sameindir → atóm')}</p>
+                </div>
+              </div>
+              {progress.level5Completed ? (
+                <div className="text-right">
+                  <div className="text-2xl font-bold text-indigo-600">{progress.level5Score}</div>
+                  <div className="text-xs text-gray-500">stig</div>
+                </div>
+              ) : (
+                <span className="text-gray-400 text-2xl">→</span>
+              )}
+            </div>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <span className="px-2 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs font-medium">{t('menu.level5.tags.chains', 'Keðjubyggjari')}</span>
+              <span className="px-2 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs font-medium">{t('menu.level5.tags.multiStep', 'Margra skrefa')}</span>
+              <span className="px-2 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs font-medium">{t('menu.level5.tags.visual', 'Sjónrænt')}</span>
+            </div>
+          </button>
+
           {/* Mystery Molecule Mode - Bonus */}
           <button
             onClick={() => progress.level1Completed && setMode('mystery')}
@@ -289,7 +453,7 @@ function App() {
                 ? 'opacity-60 cursor-not-allowed'
                 : 'hover:shadow-xl hover:scale-[1.02]'
             }`}
-            style={{ animationDelay: '350ms' }}
+            style={{ animationDelay: '450ms' }}
             disabled={!progress.level1Completed}
           >
             <div className="flex items-start justify-between">
@@ -357,7 +521,7 @@ function App() {
             <button
               onClick={() => {
                 if (confirm(t('menu.resetConfirm'))) {
-                  const reset = { level1Completed: false, level2Completed: false, level3HighScore: 0, mysteryBestScore: 0 };
+                  const reset = { level1Completed: false, level2Completed: false, level3HighScore: 0, level4Completed: false, level4Score: 0, level5Completed: false, level5Score: 0, mysteryBestScore: 0 };
                   setProgress(reset);
                   saveProgress(reset);
                 }

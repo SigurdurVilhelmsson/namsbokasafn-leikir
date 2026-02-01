@@ -373,30 +373,30 @@ const EQUATIONS = [
 
 ## Implementation Priority & Timeline
 
-### Phase 1: Critical Enhancements (Immediate)
-1. ⬜ Add percent yield to Takmarkandi (E1)
-2. ⬜ Add Avogadro problems to Mólmassi (C1)
-3. ⬜ Add acids to Nafnakerfið (A1)
+### Phase 1: Critical Enhancements (Immediate) ✅ COMPLETED
+1. ✅ Add percent yield to Takmarkandi (E1)
+2. ✅ Add Avogadro problems to Mólmassi (C1)
+3. ✅ Add acids to Nafnakerfið (A1)
 
-### Phase 2: New Critical Games
-4. ⬜ Build Efnajafnir (Balancing Equations)
-5. ⬜ Build Hlutfallsgreining (Percent Composition)
+### Phase 2: New Critical Games ✅ COMPLETED
+4. ✅ Build Efnajafnir (Balancing Equations) → Stilltu efnajöfnur
+5. ✅ Build Hlutfallsgreining (Percent Composition)
 
-### Phase 3: Remaining Enhancements
-6. ⬜ Add mole conversion chains to Mólmassi (C2)
-7. ⬜ Add chemistry conversions to Dimensional Analysis (D2)
-8. ⬜ Add saturation visualization to Lausnir (B1)
+### Phase 3: Remaining Enhancements ✅ COMPLETED
+6. ✅ Add mole conversion chains to Mólmassi (C2) → Level 5
+7. ✅ Add chemistry conversions to Dimensional Analysis (D2) → Level 4
+8. ✅ Add saturation visualization to Lausnir (B1) → Level 4
 
-### Phase 4: Additional Games
-9. ⬜ Build Efnaflokkun (Classification of Matter)
-10. ⬜ Build Efnahvarfategundir (Reaction Types)
-11. ⬜ Build Markverðir tölustafir (Significant Figures)
+### Phase 4: Additional Games ✅ COMPLETED
+9. ✅ Build Flokkun efna (Classification of Matter)
+10. ✅ Build Gerðir efnahvarfa (Reaction Types)
+11. ✅ Build Markverðir tölustafir (Significant Figures)
 
 ---
 
 ## Notes for Next Session
 
-- Start with **Efnajafnir** (Balancing Equations) — this is the critical gap
-- The game scaffold already exists in `tools/create-game.sh`
-- Consider reusing `ReactionAnimation` component from Takmarkandi
-- Periodic table component from Mólmassi can be reused for element reference
+- All phases are now complete!
+- Year 1 curriculum coverage is comprehensive
+- Consider: Year 2 development plan or refinement of existing games
+- All new games follow consistent 3-level pattern with localization

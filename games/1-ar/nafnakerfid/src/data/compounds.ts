@@ -1,7 +1,7 @@
 // Chemical compounds for nomenclature matching game
 export type Difficulty = 'easy' | 'medium' | 'hard';
-export type CompoundType = 'ionic' | 'molecular';
-export type Category = 'jónefni' | 'sameind' | 'sameindaefni' | 'málmar-breytilega-hleðsla';
+export type CompoundType = 'ionic' | 'molecular' | 'acid';
+export type Category = 'jónefni' | 'sameind' | 'sameindaefni' | 'málmar-breytilega-hleðsla' | 'sýra-tvíefni' | 'sýra-súrefnis';
 
 export interface Compound {
   formula: string;
@@ -78,6 +78,28 @@ export const COMPOUNDS: Compound[] = [
   { formula: 'NaHCO₃', name: 'Natríumvetniskarbónat', type: 'ionic', category: 'jónefni', difficulty: 'hard', elements: ['Na', 'H', 'C', 'O'], info: 'Matarsódi' },
   { formula: 'K₂Cr₂O₇', name: 'Kalíumdíkrómat', type: 'ionic', category: 'jónefni', difficulty: 'hard', elements: ['K', 'Cr', 'O'], info: 'Appelsínugulur litur' },
   { formula: 'Fe₃O₄', name: 'Járnoxíð (blandað)', type: 'ionic', category: 'málmar-breytilega-hleðsla', difficulty: 'hard', elements: ['Fe', 'O'], info: 'Segulsteinn, blanda Fe²⁺ og Fe³⁺' },
+
+  // ACIDS - Binary acids (tvíefnasýrur) - Medium
+  { formula: 'HCl', name: 'Saltsýra', type: 'acid', category: 'sýra-tvíefni', difficulty: 'medium', elements: ['H', 'Cl'], info: 'Tvíefnasýra: H + hálógen → vetni + -sýra' },
+  { formula: 'HBr', name: 'Vetnisbrómíð', type: 'acid', category: 'sýra-tvíefni', difficulty: 'medium', elements: ['H', 'Br'], info: 'Bróm + vetni → vetnisbrómíð' },
+  { formula: 'HF', name: 'Flúorsýra', type: 'acid', category: 'sýra-tvíefni', difficulty: 'medium', elements: ['H', 'F'], info: 'Tvíefnasýra: vetni + flúoríð' },
+  { formula: 'HI', name: 'Vetnisjoðíð', type: 'acid', category: 'sýra-tvíefni', difficulty: 'medium', elements: ['H', 'I'], info: 'Joð + vetni → vetnisjoðíð' },
+  { formula: 'H₂S', name: 'Vetnissúlfíð', type: 'acid', category: 'sýra-tvíefni', difficulty: 'medium', elements: ['H', 'S'], info: 'Brennisteinn + vetni, lykt eins og rottuð egg' },
+
+  // ACIDS - Oxyacids (súrefnissýrur) - "-at → -sýra" pattern - Medium/Hard
+  { formula: 'HNO₃', name: 'Nítursýra', type: 'acid', category: 'sýra-súrefnis', difficulty: 'medium', elements: ['H', 'N', 'O'], info: 'Nítrat (NO₃⁻) → Nítursýra. -at → -sýra' },
+  { formula: 'H₂SO₄', name: 'Brennisteinssýra', type: 'acid', category: 'sýra-súrefnis', difficulty: 'medium', elements: ['H', 'S', 'O'], info: 'Súlfat (SO₄²⁻) → Brennisteinssýra. Sterk sýra!' },
+  { formula: 'H₃PO₄', name: 'Fosfórsýra', type: 'acid', category: 'sýra-súrefnis', difficulty: 'hard', elements: ['H', 'P', 'O'], info: 'Fosfat (PO₄³⁻) → Fosfórsýra' },
+  { formula: 'HClO₄', name: 'Perklórsýra', type: 'acid', category: 'sýra-súrefnis', difficulty: 'hard', elements: ['H', 'Cl', 'O'], info: 'Perklórat → Perklórsýra. Sterkasta sýran!' },
+  { formula: 'H₂CO₃', name: 'Kolsýra', type: 'acid', category: 'sýra-súrefnis', difficulty: 'medium', elements: ['H', 'C', 'O'], info: 'Karbónat (CO₃²⁻) → Kolsýra. Í gosdrykkjum!' },
+  { formula: 'CH₃COOH', name: 'Ediksýra', type: 'acid', category: 'sýra-súrefnis', difficulty: 'hard', elements: ['C', 'H', 'O'], info: 'Lífræn sýra, í ediki. Acetat → Ediksýra' },
+
+  // ACIDS - "-ít → -sýrlingur" pattern - Hard
+  { formula: 'HNO₂', name: 'Nítursýrlingur', type: 'acid', category: 'sýra-súrefnis', difficulty: 'hard', elements: ['H', 'N', 'O'], info: 'Nítrít (NO₂⁻) → Nítursýrlingur. -ít → -sýrlingur' },
+  { formula: 'H₂SO₃', name: 'Brennisteinssýrlingur', type: 'acid', category: 'sýra-súrefnis', difficulty: 'hard', elements: ['H', 'S', 'O'], info: 'Súlfít (SO₃²⁻) → Brennisteinssýrlingur' },
+  { formula: 'HClO₃', name: 'Klórsýra', type: 'acid', category: 'sýra-súrefnis', difficulty: 'hard', elements: ['H', 'Cl', 'O'], info: 'Klórat (ClO₃⁻) → Klórsýra' },
+  { formula: 'HClO₂', name: 'Klórsýrlingur', type: 'acid', category: 'sýra-súrefnis', difficulty: 'hard', elements: ['H', 'Cl', 'O'], info: 'Klórít (ClO₂⁻) → Klórsýrlingur' },
+  { formula: 'HClO', name: 'Undirklórsýra', type: 'acid', category: 'sýra-súrefnis', difficulty: 'hard', elements: ['H', 'Cl', 'O'], info: 'Hýpóklórít (ClO⁻) → Undirklórsýra' },
 ];
 
 // Fisher-Yates shuffle for reliable randomization

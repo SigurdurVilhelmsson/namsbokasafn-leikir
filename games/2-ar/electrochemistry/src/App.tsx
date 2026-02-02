@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { Level1 } from './components/Level1';
 import { Level2 } from './components/Level2';
 import { Level3 } from './components/Level3';
-import { Level4 } from './components/Level4';
 import { useAchievements } from '@shared/hooks/useAchievements';
 import { AchievementsButton, AchievementsPanel } from '@shared/components/AchievementsPanel';
 import { AchievementNotificationsContainer } from '@shared/components/AchievementNotificationPopup';
@@ -10,7 +9,7 @@ import { useGameI18n } from '@shared/hooks';
 import { LanguageSwitcher } from '@shared/components';
 import { gameTranslations } from './i18n';
 
-type ActiveLevel = 'menu' | 'level1' | 'level2' | 'level3' | 'level4' | 'complete';
+type ActiveLevel = 'menu' | 'level1' | 'level2' | 'level3' | 'complete';
 
 interface Progress {
   level1Completed: boolean;
@@ -19,12 +18,10 @@ interface Progress {
   level2Score: number;
   level3Completed: boolean;
   level3Score: number;
-  level4Completed: boolean;
-  level4Score: number;
   totalGamesPlayed: number;
 }
 
-const STORAGE_KEY = 'kinetics-progress';
+const STORAGE_KEY = 'electrochemistry-progress';
 
 function loadProgress(): Progress {
   const saved = localStorage.getItem(STORAGE_KEY);
@@ -46,8 +43,6 @@ function getDefaultProgress(): Progress {
     level2Score: 0,
     level3Completed: false,
     level3Score: 0,
-    level4Completed: false,
-    level4Score: 0,
     totalGamesPlayed: 0
   };
 }
@@ -72,7 +67,7 @@ function App() {
     trackLevelComplete,
     trackGameComplete,
     resetAll: resetAchievements,
-  } = useAchievements({ gameId: 'kinetics' });
+  } = useAchievements({ gameId: 'electrochemistry' });
 
   useEffect(() => {
     saveProgress(progress);
@@ -108,17 +103,6 @@ function App() {
       totalGamesPlayed: prev.totalGamesPlayed + 1
     }));
     trackLevelComplete(3, score, maxScore, { hintsUsed });
-    setActiveLevel('menu');
-  };
-
-  const handleLevel4Complete = (score: number, maxScore: number, hintsUsed: number) => {
-    setProgress(prev => ({
-      ...prev,
-      level4Completed: true,
-      level4Score: Math.max(prev.level4Score, score),
-      totalGamesPlayed: prev.totalGamesPlayed + 1
-    }));
-    trackLevelComplete(4, score, maxScore, { hintsUsed });
     trackGameComplete();
     setActiveLevel('complete');
   };
@@ -129,7 +113,6 @@ function App() {
     saveProgress(newProgress);
   };
 
-  // Render active level
   if (activeLevel === 'level1') {
     return (
       <>
@@ -146,7 +129,6 @@ function App() {
       </>
     );
   }
-
   if (activeLevel === 'level2') {
     return (
       <>
@@ -163,7 +145,6 @@ function App() {
       </>
     );
   }
-
   if (activeLevel === 'level3') {
     return (
       <>
@@ -181,95 +162,62 @@ function App() {
     );
   }
 
-  if (activeLevel === 'level4') {
-    return (
-      <>
-        <Level4
-          onComplete={handleLevel4Complete}
-          onBack={() => setActiveLevel('menu')}
-          onCorrectAnswer={trackCorrectAnswer}
-          onIncorrectAnswer={trackIncorrectAnswer}
-        />
-        <AchievementNotificationsContainer
-          notifications={notifications}
-          onDismiss={dismissNotification}
-        />
-      </>
-    );
-  }
-
-  // Complete screen
   if (activeLevel === 'complete') {
-    const totalScore = progress.level1Score + progress.level2Score + progress.level3Score + progress.level4Score;
+    const totalScore = progress.level1Score + progress.level2Score + progress.level3Score;
 
     return (
-      <div className="min-h-screen bg-gradient-to-br from-teal-50 to-cyan-100 p-4 md:p-8">
+      <div className="min-h-screen bg-gradient-to-br from-yellow-50 to-amber-100 p-4 md:p-8">
         <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-2xl p-6 md:p-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-center mb-6 text-teal-600">
+          <h1 className="text-3xl md:text-4xl font-bold text-center mb-6 text-amber-600">
             Til hamingju!
           </h1>
-
           <div className="text-center mb-8">
             <div className="text-6xl mb-4">🏆</div>
-            <div className="text-2xl font-bold text-gray-800 mb-2">
-              Þú hefur lokið öllum stigum!
-            </div>
+            <div className="text-2xl font-bold text-gray-800">Þú hefur lokið öllum stigum!</div>
           </div>
 
           <div className="space-y-4 mb-8">
-            <div className="bg-blue-50 p-4 rounded-xl flex justify-between items-center">
+            <div className="bg-yellow-50 p-4 rounded-xl flex justify-between items-center">
               <div>
-                <div className="font-bold text-blue-800">Stig 1: Hraðahugtök</div>
-                <div className="text-sm text-blue-600">Hvað hefur áhrif á hraða?</div>
+                <div className="font-bold text-yellow-800">Stig 1: Rafhlöður</div>
+                <div className="text-sm text-yellow-600">Galvanísk hlaup og hlutverk</div>
               </div>
-              <div className="text-2xl font-bold text-blue-600">{progress.level1Score}</div>
+              <div className="text-2xl font-bold text-yellow-600">{progress.level1Score}</div>
             </div>
-
             <div className="bg-green-50 p-4 rounded-xl flex justify-between items-center">
               <div>
-                <div className="font-bold text-green-800">Stig 2: Hraðalögmál</div>
-                <div className="text-sm text-green-600">Byggja hraðajöfnur</div>
+                <div className="font-bold text-green-800">Stig 2: Staðalmætti</div>
+                <div className="text-sm text-green-600">E° og sjálfvirkni</div>
               </div>
               <div className="text-2xl font-bold text-green-600">{progress.level2Score}</div>
             </div>
-
             <div className="bg-purple-50 p-4 rounded-xl flex justify-between items-center">
               <div>
-                <div className="font-bold text-purple-800">Stig 3: Hvarfgangsháttur</div>
-                <div className="text-sm text-purple-600">Frumskref og millistig</div>
+                <div className="font-bold text-purple-800">Stig 3: Útreikningar</div>
+                <div className="text-sm text-purple-600">Faraday og magnreikningar</div>
               </div>
               <div className="text-2xl font-bold text-purple-600">{progress.level3Score}</div>
             </div>
-
-            <div className="bg-orange-50 p-4 rounded-xl flex justify-between items-center">
-              <div>
-                <div className="font-bold text-orange-800">Stig 4: Arrhenius jafnan</div>
-                <div className="text-sm text-orange-600">Hitaáhrif og virkjunarorka</div>
-              </div>
-              <div className="text-2xl font-bold text-orange-600">{progress.level4Score}</div>
-            </div>
-
-            <div className="bg-teal-100 p-4 rounded-xl flex justify-between items-center border-2 border-teal-400">
-              <div className="font-bold text-teal-800 text-lg">Heildarstig</div>
-              <div className="text-3xl font-bold text-teal-600">{totalScore}</div>
+            <div className="bg-amber-100 p-4 rounded-xl flex justify-between items-center border-2 border-amber-400">
+              <div className="font-bold text-amber-800 text-lg">Heildarstig</div>
+              <div className="text-3xl font-bold text-amber-600">{totalScore}</div>
             </div>
           </div>
 
-          <div className="bg-teal-50 p-6 rounded-xl mb-6">
-            <h2 className="font-bold text-teal-800 mb-3">Hvað lærðir þú?</h2>
-            <ul className="space-y-2 text-teal-900 text-sm">
-              <li>✓ <strong>Hraði:</strong> Rate = Δ[efni]/Δt — hversu hratt efnahvörf gerast</li>
-              <li>✓ <strong>Hraðalögmál:</strong> Rate = k[A]<sup>m</sup>[B]<sup>n</sup> — tengsl við styrk</li>
-              <li>✓ <strong>Röð hvörfunar:</strong> Veldisvísir segir hversu mikið styrkur hefur áhrif</li>
-              <li>✓ <strong>Hvarfgangsháttur:</strong> Röð frumskref sem mynda heildarhvörf</li>
-              <li>✓ <strong>Hraðaákvarðandi skref:</strong> Hægasta skrefið ræður heildarhraða</li>
-              <li>✓ <strong>Arrhenius:</strong> k = Ae<sup>-Eₐ/RT</sup> — tengsl hita og hraðafasta</li>
+          <div className="bg-amber-50 p-6 rounded-xl mb-6">
+            <h2 className="font-bold text-amber-800 mb-3">Hvað lærðir þú?</h2>
+            <ul className="space-y-2 text-amber-900 text-sm">
+              <li>✓ <strong>Galvanísk hlaup:</strong> Sjálfvirk hvörf sem framleiða rafstraum</li>
+              <li>✓ <strong>Anode og cathode:</strong> Oxun við anode, afoxun við cathode</li>
+              <li>✓ <strong>Staðalmætti (E°):</strong> Mælikvarði á afoxunargetu málma</li>
+              <li>✓ <strong>E°cell = E°cathode - E°anode:</strong> Reikna spennumun hlaups</li>
+              <li>✓ <strong>Faradays lög:</strong> Tengsl straums, tíma og efnamagns</li>
             </ul>
           </div>
 
           <button
             onClick={() => setActiveLevel('menu')}
-            className="w-full bg-teal-500 hover:bg-teal-600 text-white font-bold py-4 px-6 rounded-xl transition-colors"
+            className="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-4 px-6 rounded-xl transition-colors"
           >
             Til baka í valmynd
           </button>
@@ -279,14 +227,12 @@ function App() {
   }
 
   // Main menu
-  const totalScore = progress.level1Score + progress.level2Score + progress.level3Score + progress.level4Score;
-  const levelsCompleted = [progress.level1Completed, progress.level2Completed, progress.level3Completed, progress.level4Completed].filter(Boolean).length;
+  const totalScore = progress.level1Score + progress.level2Score + progress.level3Score;
+  const levelsCompleted = [progress.level1Completed, progress.level2Completed, progress.level3Completed].filter(Boolean).length;
 
-  // Year 2: Teal/Cyan theme
   return (
-    <div className="min-h-screen bg-gradient-to-br from-teal-50 to-cyan-100 p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-yellow-50 to-orange-100 p-4 md:p-8">
       <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-2xl p-6 md:p-8">
-        {/* Header with achievements button */}
         <div className="flex justify-end mb-4 gap-2">
           <LanguageSwitcher
             language={language}
@@ -298,60 +244,50 @@ function App() {
             onClick={() => setShowAchievements(true)}
           />
         </div>
-
-        <h1 className="text-3xl md:text-4xl font-bold text-center mb-2 text-teal-600">
-          ⏱️ Hvarfhraði
+        <h1 className="text-3xl md:text-4xl font-bold text-center mb-2 text-amber-600">
+          ⚡ Rafefnafræði
         </h1>
         <p className="text-center text-gray-600 mb-8">
-          Lærðu um hraða efnahvarfa, hraðalögmál og hvarfgangshátt
+          Lærðu um rafhlöður, rafgreiningu og rafefnafræðilega útreikninga
         </p>
 
-        {/* Pedagogical explanation */}
-        <div className="bg-teal-50 p-6 rounded-xl mb-8">
-          <h2 className="font-bold text-teal-800 mb-3">Hvað er hvarfhraði?</h2>
-          <p className="text-teal-900 text-sm mb-4">
-            <strong>Hvarfhraði (reaction rate)</strong> lýsir því hversu hratt hvarfefni breytast í afurðir.
-            Hraðinn ákvarðast af mörgum þáttum: styrk hvarfefna, hitastigi, hvata og yfirborðsflatarmáli.
+        <div className="bg-amber-50 p-6 rounded-xl mb-8">
+          <h2 className="font-bold text-amber-800 mb-3">Hvað er rafefnafræði?</h2>
+          <p className="text-amber-900 text-sm mb-4">
+            <strong>Rafefnafræði</strong> fjallar um tengsl milli rafmagns og efnahvarfa.
+            Rafhlöður breyta efnaorku í raforku, en rafgreining notar raforku til að knýja fram efnahvörf.
           </p>
-          <div className="bg-white p-3 rounded-lg border border-teal-200">
-            <p className="text-sm text-teal-800 font-mono text-center">
-              Rate = k[A]<sup>m</sup>[B]<sup>n</sup>
-            </p>
-            <p className="text-xs text-gray-600 text-center mt-1">
-              þar sem k = hraðafasti, m og n = veldisvísir (röð hvörfunar)
-            </p>
+          <div className="grid grid-cols-2 gap-4 text-sm">
+            <div className="bg-yellow-100 p-3 rounded-lg text-center">
+              <div className="font-bold text-yellow-800">Galvanísk hlaup</div>
+              <div className="text-yellow-600">Sjálfvirkt → Rafstraum</div>
+            </div>
+            <div className="bg-blue-100 p-3 rounded-lg text-center">
+              <div className="font-bold text-blue-800">Rafgreining</div>
+              <div className="text-blue-600">Rafstraum → Hvörf</div>
+            </div>
           </div>
         </div>
 
-        {/* Level selection */}
         <div className="space-y-4">
-          {/* Level 1 */}
           <button
             onClick={() => setActiveLevel('level1')}
-            className="w-full p-6 rounded-xl border-4 border-blue-400 bg-blue-50 hover:bg-blue-100 transition-all text-left"
+            className="w-full p-6 rounded-xl border-4 border-yellow-400 bg-yellow-50 hover:bg-yellow-100 transition-all text-left"
           >
             <div className="flex items-center gap-4">
-              <div className="text-4xl">🔬</div>
+              <div className="text-4xl">🔋</div>
               <div className="flex-1">
                 <div className="flex items-center gap-2">
-                  <span className="text-xl font-bold text-blue-800">Stig 1: Hraðahugtök</span>
+                  <span className="text-xl font-bold text-yellow-800">Stig 1: Galvanísk hlaup</span>
                   {progress.level1Completed && (
-                    <span className="bg-green-500 text-white text-xs px-2 py-1 rounded-full">
-                      ✓ {progress.level1Score} stig
-                    </span>
+                    <span className="bg-green-500 text-white text-xs px-2 py-1 rounded-full">✓ {progress.level1Score} stig</span>
                   )}
                 </div>
-                <div className="text-sm text-blue-600 mt-1">
-                  Hvað hefur áhrif á hvarfhraða?
-                </div>
-                <div className="text-xs text-gray-600 mt-2">
-                  Styrk, hitastig, hvatar, yfirborð — sjáðu hvernig þessir þættir breyta hraðanum.
-                </div>
+                <div className="text-sm text-yellow-600 mt-1">Byggðu rafhlöður og lærðu um rafeindarflæði</div>
               </div>
             </div>
           </button>
 
-          {/* Level 2 */}
           <button
             onClick={() => progress.level1Completed && setActiveLevel('level2')}
             className={`w-full p-6 rounded-xl border-4 transition-all text-left ${
@@ -365,28 +301,22 @@ function App() {
               <div className="flex-1">
                 <div className="flex items-center gap-2">
                   <span className={`text-xl font-bold ${progress.level1Completed ? 'text-green-800' : 'text-gray-600'}`}>
-                    Stig 2: Hraðalögmál
+                    Stig 2: Staðalmætti (E°)
                   </span>
                   {progress.level2Completed && (
-                    <span className="bg-green-500 text-white text-xs px-2 py-1 rounded-full">
-                      ✓ {progress.level2Score} stig
-                    </span>
+                    <span className="bg-green-500 text-white text-xs px-2 py-1 rounded-full">✓ {progress.level2Score} stig</span>
                   )}
                   {!progress.level1Completed && (
                     <span className="text-xs text-gray-500">(Ljúktu stigi 1 fyrst)</span>
                   )}
                 </div>
                 <div className={`text-sm mt-1 ${progress.level1Completed ? 'text-green-600' : 'text-gray-500'}`}>
-                  Byggja og túlka hraðalögmál
-                </div>
-                <div className="text-xs text-gray-600 mt-2">
-                  Notaðu gögn til að finna röð hvörfunar og hraðafast.
+                  Notaðu E° töflu til að spá fyrir um sjálfvirkni
                 </div>
               </div>
             </div>
           </button>
 
-          {/* Level 3 */}
           <button
             onClick={() => progress.level2Completed && setActiveLevel('level3')}
             className={`w-full p-6 rounded-xl border-4 transition-all text-left ${
@@ -396,61 +326,21 @@ function App() {
             }`}
           >
             <div className="flex items-center gap-4">
-              <div className="text-4xl">⚙️</div>
+              <div className="text-4xl">🧮</div>
               <div className="flex-1">
                 <div className="flex items-center gap-2">
                   <span className={`text-xl font-bold ${progress.level2Completed ? 'text-purple-800' : 'text-gray-600'}`}>
-                    Stig 3: Hvarfgangsháttur
+                    Stig 3: Magnreikningar
                   </span>
                   {progress.level3Completed && (
-                    <span className="bg-green-500 text-white text-xs px-2 py-1 rounded-full">
-                      ✓ {progress.level3Score} stig
-                    </span>
+                    <span className="bg-green-500 text-white text-xs px-2 py-1 rounded-full">✓ {progress.level3Score} stig</span>
                   )}
                   {!progress.level2Completed && (
                     <span className="text-xs text-gray-500">(Ljúktu stigi 2 fyrst)</span>
                   )}
                 </div>
                 <div className={`text-sm mt-1 ${progress.level2Completed ? 'text-purple-600' : 'text-gray-500'}`}>
-                  Frumskref og hraðaákvarðandi skref
-                </div>
-                <div className="text-xs text-gray-600 mt-2">
-                  Greindu hvarfgangshætti og finndu millistig.
-                </div>
-              </div>
-            </div>
-          </button>
-
-          {/* Level 4 */}
-          <button
-            onClick={() => progress.level3Completed && setActiveLevel('level4')}
-            className={`w-full p-6 rounded-xl border-4 transition-all text-left ${
-              progress.level3Completed
-                ? 'border-orange-400 bg-orange-50 hover:bg-orange-100 cursor-pointer'
-                : 'border-gray-200 bg-gray-50 opacity-60 cursor-not-allowed'
-            }`}
-          >
-            <div className="flex items-center gap-4">
-              <div className="text-4xl">🌡️</div>
-              <div className="flex-1">
-                <div className="flex items-center gap-2">
-                  <span className={`text-xl font-bold ${progress.level3Completed ? 'text-orange-800' : 'text-gray-600'}`}>
-                    Stig 4: Arrhenius jafnan
-                  </span>
-                  {progress.level4Completed && (
-                    <span className="bg-green-500 text-white text-xs px-2 py-1 rounded-full">
-                      ✓ {progress.level4Score} stig
-                    </span>
-                  )}
-                  {!progress.level3Completed && (
-                    <span className="text-xs text-gray-500">(Ljúktu stigi 3 fyrst)</span>
-                  )}
-                </div>
-                <div className={`text-sm mt-1 ${progress.level3Completed ? 'text-orange-600' : 'text-gray-500'}`}>
-                  Hitaáhrif og virkjunarorka
-                </div>
-                <div className="text-xs text-gray-600 mt-2">
-                  Notaðu Arrhenius jöfnuna til að reikna Eₐ og spá fyrir um k við mismunandi hita.
+                  Lærðu Faradays lög og reiknaðu efnamagn
                 </div>
               </div>
             </div>
@@ -470,40 +360,37 @@ function App() {
               </button>
             </div>
             <div className="grid grid-cols-3 gap-4 text-center">
-              <div className="bg-blue-50 rounded-lg p-3">
-                <div className="text-2xl font-bold text-blue-600">{levelsCompleted}/4</div>
+              <div className="bg-amber-50 rounded-lg p-3">
+                <div className="text-2xl font-bold text-amber-600">{levelsCompleted}/3</div>
                 <div className="text-xs text-gray-600">Stig lokið</div>
               </div>
               <div className="bg-green-50 rounded-lg p-3">
                 <div className="text-2xl font-bold text-green-600">{totalScore}</div>
                 <div className="text-xs text-gray-600">Heildar stig</div>
               </div>
-              <div className="bg-purple-50 rounded-lg p-3">
-                <div className="text-2xl font-bold text-purple-600">{progress.totalGamesPlayed}</div>
+              <div className="bg-blue-50 rounded-lg p-3">
+                <div className="text-2xl font-bold text-blue-600">{progress.totalGamesPlayed}</div>
                 <div className="text-xs text-gray-600">Leikir spilaðir</div>
               </div>
             </div>
           </div>
         )}
 
-        {/* Formula reference */}
         <div className="mt-6 bg-gray-50 p-4 rounded-xl">
-          <h3 className="font-semibold text-gray-700 mb-2">📐 Lykilformúlur</h3>
-          <div className="font-mono text-sm space-y-2 text-gray-600">
-            <p><strong>Meðalhraði:</strong> Rate = -Δ[hvarfefni]/Δt = +Δ[afurð]/Δt</p>
-            <p><strong>Hraðalögmál:</strong> Rate = k[A]<sup>m</sup>[B]<sup>n</sup></p>
-            <p><strong>Röð hvörfunar:</strong> m + n = heildarröð</p>
-            <p><strong>Arrhenius:</strong> k = Ae<sup>-E<sub>a</sub>/RT</sup></p>
+          <h3 className="font-semibold text-gray-700 mb-2">📋 Lykilhugtök</h3>
+          <div className="grid grid-cols-2 gap-2 text-sm">
+            <div className="bg-white p-2 rounded border">Anode = Oxun</div>
+            <div className="bg-white p-2 rounded border">Cathode = Afoxun</div>
+            <div className="bg-white p-2 rounded border">E° &gt; 0 = Sjálfvirkt</div>
+            <div className="bg-white p-2 rounded border">Saltbrú = Jafnvægi</div>
           </div>
         </div>
 
-        {/* Credits */}
         <div className="mt-6 text-center text-xs text-gray-500">
-          Kafli 14 — Chemistry: The Central Science (Brown et al.)
+          Sérsniðið námsefni — Rafefnafræði
         </div>
       </div>
 
-      {/* Achievements Panel Modal */}
       {showAchievements && (
         <AchievementsPanel
           achievements={achievements}
@@ -513,7 +400,6 @@ function App() {
         />
       )}
 
-      {/* Achievement Notifications */}
       <AchievementNotificationsContainer
         notifications={notifications}
         onDismiss={dismissNotification}

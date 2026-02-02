@@ -49,7 +49,12 @@ interface UseAchievementsReturn {
   /** Track an incorrect answer */
   trackIncorrectAnswer: () => void;
   /** Track level completion */
-  trackLevelComplete: (level: 1 | 2 | 3, score: number, maxScore: number, options?: { timeTaken?: number; hintsUsed?: number }) => void;
+  trackLevelComplete: (
+    level: number,
+    score: number,
+    maxScore: number,
+    options?: { timeTaken?: number; hintsUsed?: number }
+  ) => void;
   /** Track game completion */
   trackGameComplete: () => void;
   /** Dismiss a notification */
@@ -145,7 +150,7 @@ export function useAchievements({
 
   const trackLevelComplete = useCallback(
     (
-      level: 1 | 2 | 3,
+      level: number,
       score: number,
       maxScore: number,
       options?: { timeTaken?: number; hintsUsed?: number }

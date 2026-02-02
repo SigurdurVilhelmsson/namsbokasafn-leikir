@@ -157,6 +157,7 @@
 | Polyprotic acid problems | ✅ | Medium | Medium | H₂SO₃, H₃PO₄ in Level 3 |
 | Henderson-Hasselbalch | ✅ | Medium | Medium | Buffer calculations in Level 3 |
 | Worked solutions | ✅ | Medium | Medium | Step-by-step solutions in Level 3 |
+| Ka determination from titration curve | ✅ | High | Medium | Level 4: Identify half-eq point, read pKa, calculate Ka (6 problems) |
 | Virtual pH paper | ⬜ | Low | Medium | Alternative measurement (future) |
 | Derivative curve display | ⬜ | Low | Medium | dPH/dV analysis (future) |
 
@@ -166,6 +167,7 @@
 |-------------|--------|----------|--------|-------|
 | Interactive PVT simulation | ⬜ | High | High | Slider-controlled |
 | Particle KE visualization | ⬜ | High | High | Temperature-speed link |
+| Dalton's Law of Partial Pressures | ✅ | High | Medium | 8 problems with mole fractions, partial pressures, real-world scenarios (scuba, atmosphere) |
 | Real gas deviation | ⬜ | Low | Medium | Van der Waals comparison |
 | Atmospheric applications | ✅ | Medium | Low | Mt. Everest, aircraft, weather balloons, spacecraft, ski resorts |
 
@@ -183,6 +185,9 @@
 
 | Improvement | Status | Priority | Effort | Notes |
 |-------------|--------|----------|--------|-------|
+| Entropy calculations (ΔS°) | ✅ | High | Medium | Standard entropy values for 45+ species, ΔS° = Σ S°(products) - Σ S°(reactants) |
+| ΔG-K equilibrium connection | ✅ | High | Medium | ΔG° = -RT ln K calculations, K from ΔG° and vice versa |
+| Calculation challenge modes | ✅ | High | Medium | Three modes: entropy, delta-g-k, mixed (10 total problems) |
 | Phase diagram integration | ⬜ | Medium | High | Link to phases |
 | Coupled reaction examples | ⬜ | Medium | Medium | ATP hydrolysis |
 | Bio thermodynamics | ✅ | Low | Low | Photosynthesis (#14), protein denaturation (#26), ATP hydrolysis (#27) |
@@ -196,6 +201,17 @@
 | Acid/base addition sim | ✅ | High | Medium | Interactive acid/base addition with pH tracking, buffer vs water comparison |
 | Biological buffer examples | ✅ | Medium | Low | Blood pH, cellular phosphate buffer, DNA/RNA TRIS buffer, citrate blood bank |
 | HH equation builder | ⬜ | Medium | Low | Interactive formula |
+
+#### Leysnisjafnvægi (Ksp/Solubility Equilibrium) - **NEW GAME**
+
+**Note:** New game built (2026-02-02) to address major curriculum gap in solubility equilibrium.
+
+| Improvement | Status | Priority | Effort | Notes |
+|-------------|--------|----------|--------|-------|
+| Level 1: Ksp Concepts | ✅ | High | High | Write Ksp expressions, saturated vs unsaturated, qualitative comparisons |
+| Level 2: Solubility Calculations | ✅ | High | High | Molar solubility from Ksp, Ksp from solubility, common ion effect |
+| Level 3: Precipitation Predictions | ✅ | High | High | Q vs Ksp comparison, predict precipitate formation, selective precipitation |
+| Real-world applications | ✅ | Medium | Low | Water hardness, kidney stones, antacids, cave formations |
 
 ---
 
@@ -216,8 +232,8 @@
 |------|-------|-----------|------------|
 | Shared | 8 | 8 | 100% |
 | Year 1 | 21 | 20 | 95.2% |
-| Year 2 | 40 | 26 | 65% |
-| Year 3 | 32 | 10 | 31.3% |
+| Year 2 | 40 | 27 | 67.5% |
+| Year 3 | 40 | 19 | 47.5% |
 
 ### By Category
 
@@ -377,7 +393,12 @@ Building these once benefits multiple games:
 | 2026-02-02 | **IMF Surface Tension Demo COMPLETE** - SurfaceTensionDemo component with molecular visualization, droplet shape comparison, water strider floating demo |
 | 2026-02-02 | Year 2 progress: 65% → 67.5% (27/40 improvements completed) |
 | 2026-02-02 | **Equilibrium Shifter ICE Table COMPLETE** - New game mode with 10 ICE table problems, Q vs K comparison, step-by-step solving |
-| 2026-02-02 | Year 3 progress: 31.3% → 34.4% (11/32 improvements completed) |
+| 2026-02-02 | **Leysnisjafnvægi (Ksp Game) COMPLETE** - New 3-level game for solubility equilibrium, Ksp expressions, calculations, precipitation predictions |
+| 2026-02-02 | **pH Titration Ka Determination COMPLETE** - Level 4 with 6 problems for Ka from titration curves, half-equivalence point identification |
+| 2026-02-02 | **Thermodynamics Entropy Calculations COMPLETE** - Standard entropy (S°) values for 45+ species, ΔS° calculations |
+| 2026-02-02 | **Thermodynamics ΔG-K Connection COMPLETE** - ΔG° = -RT ln K calculations, equilibrium constant from Gibbs energy |
+| 2026-02-02 | **Gas Law Dalton's Law COMPLETE** - 8 partial pressure problems with mole fractions, real-world scenarios |
+| 2026-02-02 | Year 3 progress: 31.3% → 47.5% (19/40 improvements completed) |
 
 ---
 

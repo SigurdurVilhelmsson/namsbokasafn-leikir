@@ -6,12 +6,12 @@
 
 ---
 
-## Current Status (Updated 2026-01-30)
+## Current Status (Updated 2026-02-02)
 
 | Year | Completed | Remaining | Progress |
 |------|-----------|-----------|----------|
 | **Year 1** | 20 | 1 | 95.2% |
-| **Year 2** | 26 | 14 | 65% |
+| **Year 2** | 27 | 13 | 67.5% |
 
 ---
 
@@ -36,14 +36,14 @@
 | 1 | Limiting Reactants | Factory game mode | Medium |
 | Shared | Audio utilities | TTS for pronunciations | Medium |
 
-### 🟢 LOW PRIORITY (4 items)
+### 🟢 LOW PRIORITY (3 items remaining)
 
-| Year | Game | Feature | Effort |
-|------|------|---------|--------|
-| 1 | Molar Mass | Mystery molecule mode | Medium |
-| 1 | Solutions | Concentration-based color | Low |
-| 1 | Solutions | Temperature effects | Medium |
-| 2 | IMF | Surface tension demo | High |
+| Year | Game | Feature | Effort | Status |
+|------|------|---------|--------|--------|
+| 1 | Molar Mass | Mystery molecule mode | Medium | ✅ |
+| 1 | Solutions | Concentration-based color | Low | ✅ |
+| 1 | Solutions | Temperature effects | Medium | ✅ |
+| 2 | IMF | Surface tension demo | High | ✅ |
 
 ---
 

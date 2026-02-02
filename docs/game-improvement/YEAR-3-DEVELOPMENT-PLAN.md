@@ -1,14 +1,14 @@
 # Year 3 Chemistry Games — Development Plan
 
-**Date:** 2026-01-30
+**Date:** 2026-01-30 | **Updated:** 2026-02-02
 **Curriculum Reference:** Brown et al, *Chemistry: The Central Science*, Chapters 10, 15-17, 19
-**Status:** Planning Phase
+**Status:** Phases 1-3 Complete
 
 ---
 
 ## Executive Summary
 
-Year 3 games cover advanced equilibrium, acid-base chemistry, thermodynamics, and gas laws. The 5 existing games are conceptually sophisticated with strong interactive visualizations. **Buffer Recipe Creator** is incomplete (only Level 1 implemented). Key gaps include **quantitative equilibrium calculations (ICE tables)**, **Ksp and solubility equilibria**, and **entropy calculations**. Priority should be completing incomplete games and adding quantitative depth.
+Year 3 games cover advanced equilibrium, acid-base chemistry, thermodynamics, and gas laws. The 6 existing games are conceptually sophisticated with strong interactive visualizations. **Major sprint completed (2026-02-02):** ICE tables added to Equilibrium Shifter, new Ksp/Solubility game built, Ka determination added to pH Titration, entropy and ΔG-K calculations added to Thermodynamics Predictor, and Dalton's Law added to Gas Law Challenge.
 
 ---
 
@@ -17,18 +17,19 @@ Year 3 games cover advanced equilibrium, acid-base chemistry, thermodynamics, an
 | Chapter | Topic | Coverage | Game(s) | Priority |
 |---------|-------|----------|---------|----------|
 | Ch. 10 | Ideal Gas Law | ✅ Strong | Gas Law Challenge | — |
+| Ch. 10 | Dalton's Law (Partial Pressures) | ✅ Complete | Gas Law Challenge | — |
 | Ch. 10 | Real Gases/Deviations | ❌ Missing | None | Low |
 | Ch. 15 | Le Chatelier's Principle | ✅ Excellent | Equilibrium Shifter | — |
-| Ch. 15 | Equilibrium Constants (K) | ⚠️ Qualitative only | Equilibrium Shifter | **High** |
-| Ch. 15 | ICE Table Calculations | ❌ Missing | None | **High** |
-| Ch. 15 | Ksp (Solubility Equilibrium) | ❌ Missing | None | **High** |
-| Ch. 16 | Acid-Base Equilibrium | ⚠️ Partial | pH Titration | Medium |
-| Ch. 16 | Ka/Kb Calculations | ❌ Missing | None | Medium |
-| Ch. 17 | Buffers | ⚠️ Incomplete | Buffer Recipe Creator | **Critical** |
+| Ch. 15 | Equilibrium Constants (K) | ✅ Complete | Equilibrium Shifter (ICE mode) | — |
+| Ch. 15 | ICE Table Calculations | ✅ Complete | Equilibrium Shifter (ICE mode) | — |
+| Ch. 15 | Ksp (Solubility Equilibrium) | ✅ Complete | Leysnisjafnvægi | — |
+| Ch. 16 | Acid-Base Equilibrium | ✅ Strong | pH Titration | — |
+| Ch. 16 | Ka/Kb Calculations | ✅ Complete | pH Titration (Level 4) | — |
+| Ch. 17 | Buffers | ✅ Complete | Buffer Recipe Creator | — |
 | Ch. 17 | Titration Curves | ✅ Strong | pH Titration | — |
-| Ch. 19 | Entropy (ΔS) | ⚠️ Qualitative only | Thermodynamics Predictor | Medium |
+| Ch. 19 | Entropy (ΔS) | ✅ Complete | Thermodynamics Predictor | — |
 | Ch. 19 | Gibbs Free Energy | ✅ Strong | Thermodynamics Predictor | — |
-| Ch. 19 | Equilibrium & ΔG | ❌ Missing | None | Medium |
+| Ch. 19 | Equilibrium & ΔG | ✅ Complete | Thermodynamics Predictor | — |
 
 ---
 
@@ -53,9 +54,7 @@ Year 3 games cover advanced equilibrium, acid-base chemistry, thermodynamics, an
 - Q vs K shown visually but not calculated numerically
 
 #### Enhancement E1: ICE Table Integration
-**Effort:** High | **Impact:** Critical
-
-**This is the highest-priority enhancement for Year 3.**
+**Effort:** High | **Impact:** Critical | **Status:** ✅ Complete (2026-02-02)
 
 Add quantitative equilibrium module:
 - Given initial concentrations and K, calculate equilibrium concentrations
@@ -123,9 +122,9 @@ Add problem set where students:
 - No reverse task (given curve, identify the acid)
 
 #### Enhancement T1: Ka Determination from Titration Curve
-**Effort:** Medium | **Impact:** High
+**Effort:** Medium | **Impact:** High | **Status:** ✅ Complete (2026-02-02)
 
-Add analysis mode:
+Added Level 4 with Ka analysis mode:
 - At half-equivalence point, pH = pKa
 - Students identify this point on curve
 - Calculate Ka from pH reading
@@ -194,9 +193,9 @@ Reverse the typical problem:
 - No non-standard conditions treatment
 
 #### Enhancement D1: Entropy Calculation Problems
-**Effort:** Medium | **Impact:** High
+**Effort:** Medium | **Impact:** High | **Status:** ✅ Complete (2026-02-02)
 
-Add quantitative entropy:
+Added quantitative entropy via CalculationChallenges component:
 - Calculate ΔS° from standard molar entropies (S°)
 - ΔS° = Σ S°(products) - Σ S°(reactants)
 - Predict sign of ΔS from molecular changes (phase, moles of gas)
@@ -214,9 +213,9 @@ const standardEntropies: Record<string, number> = {
 ```
 
 #### Enhancement D2: ΔG and Equilibrium Connection
-**Effort:** Medium | **Impact:** High
+**Effort:** Medium | **Impact:** High | **Status:** ✅ Complete (2026-02-02)
 
-Add module connecting thermodynamics to equilibrium:
+Added module connecting thermodynamics to equilibrium via CalculationChallenges:
 - ΔG° = -RT ln K
 - Calculate K from ΔG° (and vice versa)
 - Explain why large negative ΔG° means large K
@@ -258,9 +257,9 @@ Add problems where multiple variables change:
 - Multi-step reasoning required
 
 #### Enhancement G2: Dalton's Law of Partial Pressures
-**Effort:** Medium | **Impact:** High
+**Effort:** Medium | **Impact:** High | **Status:** ✅ Complete (2026-02-02)
 
-Add gas mixture module:
+Added gas mixture module with 8 Dalton's Law problems:
 - Total pressure = sum of partial pressures
 - Mole fraction and partial pressure relationship
 - Vapor pressure of water in gas collection
@@ -291,9 +290,9 @@ Add dedicated section on:
 ### Priority 1: Leysnisjafnvægi (Solubility Equilibrium / Ksp)
 
 **Curriculum:** Brown Chapter 17.4-17.5
-**Effort:** High | **Impact:** Critical
+**Effort:** High | **Impact:** Critical | **Status:** ✅ Complete (2026-02-02)
 
-This is a major gap in Year 3 coverage.
+New game built with 3 levels covering Ksp concepts, solubility calculations, and precipitation predictions.
 
 #### Game Specification
 
@@ -427,18 +426,18 @@ Link Gas Law Challenge to Equilibrium Shifter:
 
 ## Implementation Priority & Timeline
 
-### Phase 1: Critical Completion (Immediate)
+### Phase 1: Critical Completion ✅ COMPLETE
 1. ✅ **Complete Buffer Recipe Creator Levels 2-3** (B1, B2) — COMPLETE (verified 2026-02-02)
-2. ⬜ Add ICE table integration to Equilibrium Shifter (E1) — **NOW HIGHEST PRIORITY**
+2. ✅ **Add ICE table integration to Equilibrium Shifter** (E1) — COMPLETE (2026-02-02)
 
-### Phase 2: New Critical Game
-3. ⬜ Build Leysnisjafnvægi (Ksp/Solubility Equilibrium) — major gap
+### Phase 2: New Critical Game ✅ COMPLETE
+3. ✅ **Build Leysnisjafnvægi (Ksp/Solubility Equilibrium)** — COMPLETE (2026-02-02)
 
-### Phase 3: High-Priority Enhancements
-4. ⬜ Add Ka determination to pH Titration (T1)
-5. ⬜ Add entropy calculations to Thermodynamics Predictor (D1)
-6. ⬜ Add ΔG-K connection to Thermodynamics Predictor (D2)
-7. ⬜ Add Dalton's Law to Gas Law Challenge (G2)
+### Phase 3: High-Priority Enhancements ✅ COMPLETE
+4. ✅ **Add Ka determination to pH Titration** (T1) — COMPLETE (2026-02-02)
+5. ✅ **Add entropy calculations to Thermodynamics Predictor** (D1) — COMPLETE (2026-02-02)
+6. ✅ **Add ΔG-K connection to Thermodynamics Predictor** (D2) — COMPLETE (2026-02-02)
+7. ✅ **Add Dalton's Law to Gas Law Challenge** (G2) — COMPLETE (2026-02-02)
 
 ### Phase 4: Additional Game
 8. ⬜ Build Ka/Kb Jafnvægisreikningar (Acid-Base Equilibrium)
@@ -456,9 +455,14 @@ Link Gas Law Challenge to Equilibrium Shifter:
 
 ## Notes for Next Session
 
-- ~~Buffer Recipe Creator completion is the single most important task~~ — **COMPLETE as of 2026-02-02**
-- ICE tables are fundamental to all equilibrium calculations — this methodology gap affects multiple topics
-- Ksp game would complete the equilibrium coverage (homogeneous + heterogeneous equilibria)
-- Consider whether to add Ka/Kb as standalone game or as enhancement to pH Titration
-- The Thermodynamics ↔ Equilibrium connection (ΔG° = -RT ln K) is crucial for Year 3 integration
-- Year 3 games are more calculation-heavy than Years 1-2 — ensure calculator-friendly interfaces
+**Sprint Summary (2026-02-02):** Phases 1-3 complete! Major accomplishments:
+- ✅ ICE tables added to Equilibrium Shifter (10 problems across 3 difficulties)
+- ✅ New Ksp/Solubility game built (Leysnisjafnvægi) with 3 complete levels
+- ✅ Ka determination added to pH Titration as Level 4 (6 problems with titration curve analysis)
+- ✅ Entropy calculations (S°) and ΔG-K connection added to Thermodynamics Predictor
+- ✅ Dalton's Law of Partial Pressures added to Gas Law Challenge (8 problems)
+
+**Remaining work:**
+- Phase 4: Build Ka/Kb Jafnvægisreikningar (Acid-Base Equilibrium standalone game)
+- Phase 5: Medium-priority enhancements (numerical Q vs K, polyprotic titrations, curve interpretation)
+- Phase 6: Cross-game integration (Equilibrium ↔ Thermodynamics, Buffer ↔ Titration)

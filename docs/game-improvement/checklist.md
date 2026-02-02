@@ -119,7 +119,7 @@
 | Boiling point prediction | ✅ | High | Medium | Level 2 ranking problems with real BP data, bar chart visualization |
 | Force strength animation | ✅ | Medium | Medium | ForceStrengthAnimation with animated molecule pairs, spring visualization, energy comparison |
 | Solubility prediction | ✅ | Medium | Medium | SolubilityPrediction component with polar/nonpolar visualization, mixing animation, "like dissolves like" explanation |
-| Surface tension demo | ⬜ | Low | High | Physical property link |
+| Surface tension demo | ✅ | Low | High | SurfaceTensionDemo component with molecular visualization, droplet shape comparison, water strider floating demo |
 
 #### Organic Nomenclature
 
@@ -373,6 +373,8 @@ Building these once benefits multiple games:
 | 2026-01-30 | **Molmassi Mystery Molecule Mode COMPLETE** - MysteryMolecule component with identify, build, and complete challenges |
 | 2026-01-30 | **Lausnir Temperature Effects VERIFIED** - Already implemented with TemperatureSolubilityCurve in Level 2 |
 | 2026-01-30 | Year 1 progress: 52.4% → 95.2% (20/21 improvements completed) |
+| 2026-02-02 | **IMF Surface Tension Demo COMPLETE** - SurfaceTensionDemo component with molecular visualization, droplet shape comparison, water strider floating demo |
+| 2026-02-02 | Year 2 progress: 65% → 67.5% (27/40 improvements completed) |
 
 ---
 

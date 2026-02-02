@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { SolubilityPrediction } from './SolubilityPrediction';
+import { SurfaceTensionDemo } from './SurfaceTensionDemo';
 
 interface Level2Props {
   onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
@@ -464,6 +465,11 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
         {/* Solubility Prediction Tool */}
         <div className="mt-8">
           <SolubilityPrediction />
+        </div>
+
+        {/* Surface Tension Demo */}
+        <div className="mt-8">
+          <SurfaceTensionDemo />
         </div>
       </div>
     </div>

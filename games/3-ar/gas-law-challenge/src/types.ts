@@ -15,8 +15,9 @@ export type DifficultyLevel = 'Auðvelt' | 'Miðlungs' | 'Erfitt';
  * - gay-lussac: P₁/T₁ = P₂/T₂ (constant V, n)
  * - combined: P₁V₁/T₁ = P₂V₂/T₂ (constant n)
  * - avogadro: V₁/n₁ = V₂/n₂ (constant P, T)
+ * - dalton: P_total = P₁ + P₂ + ... (partial pressures)
  */
-export type GasLaw = 'ideal' | 'boyles' | 'charles' | 'gay-lussac' | 'combined' | 'avogadro';
+export type GasLaw = 'ideal' | 'boyles' | 'charles' | 'gay-lussac' | 'combined' | 'avogadro' | 'dalton';
 
 export interface GasLawInfo {
   id: GasLaw;
@@ -75,6 +76,14 @@ export const GAS_LAW_INFO: Record<GasLaw, GasLawInfo> = {
     formula: 'V₁/n₁ = V₂/n₂',
     description: 'Rúmmál og mólfjöldi eru í beinu hlutfalli',
     constants: 'P og T eru fastar'
+  },
+  dalton: {
+    id: 'dalton',
+    nameIs: 'Lögmál Daltons',
+    nameEn: "Dalton's Law",
+    formula: 'P_heildar = P₁ + P₂ + ...',
+    description: 'Heildarþrýstingur er summa hlutþrýstinga',
+    constants: 'Pᵢ = Xᵢ × P_heildar (Xᵢ = nᵢ/n_heildar)'
   }
 };
 
@@ -98,7 +107,7 @@ export interface GasLawQuestion {
     T?: GasValue; // Temperature (K)
     n?: GasValue; // Moles (mol)
   };
-  find: Variable; // Which variable to solve for
+  find: Variable | 'P_partial'; // Which variable to solve for (P_partial for Dalton's Law)
   answer: number; // Correct answer
   tolerance: number; // ±tolerance for correct answer
   hints: string[]; // Progressive hints
@@ -107,6 +116,20 @@ export interface GasLawQuestion {
     substitution: string;
     calculation: string;
     steps: string[];
+  };
+  // Additional fields for Dalton's Law problems
+  daltonData?: {
+    gases: Array<{
+      name: string;
+      formula: string;
+      moles?: number;
+      partialPressure?: number;
+      moleFraction?: number;
+    }>;
+    totalPressure?: number;
+    totalMoles?: number;
+    findGas?: string; // Which gas to find partial pressure for
+    findWhat?: 'partial_pressure' | 'mole_fraction' | 'total_pressure' | 'moles';
   };
 }
 

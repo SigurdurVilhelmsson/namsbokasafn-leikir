@@ -60,12 +60,13 @@ export function getFormula(find: Variable): string {
 /**
  * Get unit label for variable
  */
-export function getUnit(variable: Variable): string {
-  const units = {
+export function getUnit(variable: Variable | 'P_partial'): string {
+  const units: Record<Variable | 'P_partial', string> = {
     P: 'atm',
     V: 'L',
     T: 'K',
-    n: 'mol'
+    n: 'mol',
+    P_partial: 'atm'
   };
   return units[variable];
 }
@@ -73,12 +74,13 @@ export function getUnit(variable: Variable): string {
 /**
  * Get variable name in Icelandic
  */
-export function getVariableName(variable: Variable): string {
-  const names = {
+export function getVariableName(variable: Variable | 'P_partial'): string {
+  const names: Record<Variable | 'P_partial', string> = {
     P: 'Þrýstingur',
     V: 'Rúmmál',
     T: 'Hiti',
-    n: 'Mólfjöldi'
+    n: 'Mólfjöldi',
+    P_partial: 'Hlutþrýstingur'
   };
   return names[variable];
 }

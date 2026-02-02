@@ -153,63 +153,26 @@ Reverse the typical problem:
 
 ### 3. Buffer Recipe Creator (Stuðpúðasmíði)
 
-**Current Rating:** ★★☆☆☆ (Incomplete)
+**Current Rating:** ★★★★★ (Complete)
 
 **Strengths:**
 - Excellent Level 1 visualization of acid/base ratio effects
 - Real-time pH calculation from Henderson-Hasselbalch
 - Intuitive molecular manipulation interface
 - Good conceptual foundation
+- **Level 2 fully implemented**: Henderson-Hasselbalch 3-step calculations (direction → ratio → mass)
+- **Level 3 fully implemented**: Stock solution preparation with dilution calculations
+- Buffer capacity visualization with β vs pH curve
+- Acid/base addition simulation showing buffering effect
 
-**Critical Gap:**
-- **Levels 2 and 3 are not implemented** — this must be completed
-
-#### Enhancement B1: Complete Level 2 (Calculations)
-**Effort:** High | **Impact:** Critical
-
-**This is the most critical task for Year 3.**
-
-Implement full Henderson-Hasselbalch calculation level:
-1. Given target pH and pKa, calculate required [A⁻]/[HA] ratio
-2. Given volumes and concentrations, calculate amounts to mix
-3. Given mass of weak acid, calculate mass of conjugate base needed
-
-**Problem types:**
-```typescript
-interface Level2Problem {
-  type: 'ratio' | 'mass' | 'volume';
-  acidName: string;
-  pKa: number;
-  targetPH: number;
-  // Additional parameters based on type
-  totalVolume?: number; // mL
-  acidConcentration?: number; // M
-  baseConcentration?: number; // M
-}
-```
-
-#### Enhancement B2: Complete Level 3 (Design Constraints)
-**Effort:** High | **Impact:** High
-
-Implement practical buffer preparation:
-- Work with stock solutions of known concentration
-- Calculate volumes to pipette
-- Consider buffer capacity requirements
-- Work within tolerance bands (±0.1 pH)
-
-**Real-world scenarios:**
-- Biological buffers (phosphate, TRIS, HEPES)
-- Laboratory preparation from solid reagents
-- Buffer dilution calculations
+**Status:**
+- ✅ All 3 levels implemented and functional
+- ✅ 6 puzzles in Level 2 with real-world buffer systems
+- ✅ 4+ puzzles in Level 3 with stock solutions
+- ✅ Biological buffer examples (blood, phosphate, TRIS, citrate)
 
 #### Enhancement B3: Buffer Capacity Visualization
-**Effort:** Medium | **Impact:** Medium
-
-Add interactive demonstration:
-- Add acid to buffer, watch pH change (small)
-- Add same acid to unbuffered solution, watch pH change (large)
-- Quantify buffer capacity β = Δn/ΔpH
-- Show how capacity depends on concentration and ratio
+**Status:** ✅ Complete
 
 ---
 
@@ -465,8 +428,8 @@ Link Gas Law Challenge to Equilibrium Shifter:
 ## Implementation Priority & Timeline
 
 ### Phase 1: Critical Completion (Immediate)
-1. ⬜ **Complete Buffer Recipe Creator Levels 2-3** (B1, B2) — HIGHEST PRIORITY
-2. ⬜ Add ICE table integration to Equilibrium Shifter (E1)
+1. ✅ **Complete Buffer Recipe Creator Levels 2-3** (B1, B2) — COMPLETE (verified 2026-02-02)
+2. ⬜ Add ICE table integration to Equilibrium Shifter (E1) — **NOW HIGHEST PRIORITY**
 
 ### Phase 2: New Critical Game
 3. ⬜ Build Leysnisjafnvægi (Ksp/Solubility Equilibrium) — major gap
@@ -493,7 +456,7 @@ Link Gas Law Challenge to Equilibrium Shifter:
 
 ## Notes for Next Session
 
-- **Buffer Recipe Creator completion is the single most important task** — it's the only Year 3 game with unimplemented levels
+- ~~Buffer Recipe Creator completion is the single most important task~~ — **COMPLETE as of 2026-02-02**
 - ICE tables are fundamental to all equilibrium calculations — this methodology gap affects multiple topics
 - Ksp game would complete the equilibrium coverage (homogeneous + heterogeneous equilibria)
 - Consider whether to add Ka/Kb as standalone game or as enhancement to pH Titration

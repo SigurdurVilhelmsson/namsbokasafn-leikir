@@ -5,7 +5,7 @@
 
 export type DifficultyLevel = 'beginner' | 'intermediate' | 'advanced';
 
-export type GameMode = 'learning' | 'challenge';
+export type GameMode = 'learning' | 'challenge' | 'ice';
 
 export type ShiftDirection = 'left' | 'right' | 'none';
 
@@ -110,6 +110,54 @@ export interface QuestionFeedback {
   streakBonus: number;
   timeBonus: number;
   totalPoints: number;
+}
+
+// ICE Table types
+export interface ICETableRow {
+  species: string;
+  coefficient: number;
+  phase: Phase;
+  initial: number;
+  change: number; // Will be ±coefficient * x
+  equilibrium: number;
+}
+
+export interface ICETableProblem {
+  id: number;
+  equilibrium: Equilibrium;
+  K: number; // Equilibrium constant
+  Ktype: 'Kc' | 'Kp'; // Concentration or pressure based
+  initialConcentrations: Record<string, number>; // species formula -> concentration (M) or partial pressure (atm)
+  temperature: number; // Kelvin
+  difficulty: DifficultyLevel;
+  descriptionIs: string; // Problem description in Icelandic
+  description: string; // Problem description in English
+  targetSpecies?: string; // Which species to solve for (optional)
+  hints: {
+    topic: string;
+    strategy: string;
+    method: string;
+    solution: string;
+  };
+}
+
+export interface ICETableState {
+  rows: ICETableRow[];
+  x: number | null; // The variable solved for
+  Q: number | null; // Reaction quotient
+  shiftDirection: ShiftDirection | null;
+  equilibriumConcentrations: Record<string, number>;
+  isValid: boolean;
+  validationMessage: string;
+}
+
+export interface ICESolveResult {
+  x: number;
+  equilibriumConcentrations: Record<string, number>;
+  Q: number;
+  shiftDirection: ShiftDirection;
+  steps: string[];
+  stepsIs: string[];
 }
 
 // Translation keys

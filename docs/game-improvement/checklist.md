@@ -177,6 +177,7 @@
 | Dynamic equilibrium animation | ✅ | High | High | ParticleEquilibrium showing reactant/product particles |
 | Industrial process scenarios | ✅ | Medium | Low | Haber, Contact, Ostwald, Water Gas Shift, Steam Reforming, Industrial Optimization |
 | K expression builder | ⬜ | Medium | Medium | Interactive formula |
+| ICE table integration | ✅ | High | High | ICETable component with Q vs K comparison, step-by-step solving, 10 problems across 3 difficulties |
 
 #### Thermodynamics Predictor
 
@@ -375,6 +376,8 @@ Building these once benefits multiple games:
 | 2026-01-30 | Year 1 progress: 52.4% → 95.2% (20/21 improvements completed) |
 | 2026-02-02 | **IMF Surface Tension Demo COMPLETE** - SurfaceTensionDemo component with molecular visualization, droplet shape comparison, water strider floating demo |
 | 2026-02-02 | Year 2 progress: 65% → 67.5% (27/40 improvements completed) |
+| 2026-02-02 | **Equilibrium Shifter ICE Table COMPLETE** - New game mode with 10 ICE table problems, Q vs K comparison, step-by-step solving |
+| 2026-02-02 | Year 3 progress: 31.3% → 34.4% (11/32 improvements completed) |
 
 ---
 

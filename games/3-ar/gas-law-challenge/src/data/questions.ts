@@ -461,23 +461,367 @@ export const questions: GasLawQuestion[] = [
   }
 ];
 
+// ===== DALTON'S LAW QUESTIONS =====
+const daltonQuestions: GasLawQuestion[] = [
+  {
+    id: 101,
+    emoji: '🌊',
+    scenario_is: 'Köfunaröndunarloft inniheldur súrefni og köfnunarefni. Heildarþrýstingur er 2.0 atm. Súrefnið hefur 0.4 mólhlutfall.',
+    scenario_en: "Scuba diving air contains oxygen and nitrogen. Total pressure is 2.0 atm. Oxygen has a mole fraction of 0.4.",
+    difficulty: 'Miðlungs',
+    gasLaw: 'dalton',
+    given: {
+      P: { value: 2.0, unit: 'atm' }
+    },
+    find: 'P_partial',
+    answer: 0.8,
+    tolerance: 0.016,
+    hints: [
+      'Notaðu lögmál Daltons: Pᵢ = Xᵢ × P_heildar',
+      'Xᵢ er mólhlutfall (0.4 fyrir O₂)',
+      'P_O₂ = 0.4 × 2.0 atm',
+      'P_O₂ = 0.8 atm'
+    ],
+    solution: {
+      formula: 'Pᵢ = Xᵢ × P_heildar',
+      substitution: 'P_O₂ = 0.4 × 2.0 atm',
+      calculation: 'P_O₂ = 0.8 atm',
+      steps: [
+        'Lögmál Daltons: Pᵢ = Xᵢ × P_heildar',
+        'Mólhlutfall súrefnis: X_O₂ = 0.4',
+        'Setjum inn gildi: P_O₂ = 0.4 × 2.0',
+        'Reiknum: P_O₂ = 0.8 atm'
+      ]
+    },
+    daltonData: {
+      gases: [
+        { name: 'Súrefni', formula: 'O₂', moleFraction: 0.4 },
+        { name: 'Köfnunarefni', formula: 'N₂', moleFraction: 0.6 }
+      ],
+      totalPressure: 2.0,
+      findGas: 'O₂',
+      findWhat: 'partial_pressure'
+    }
+  },
+  {
+    id: 102,
+    emoji: '🎈',
+    scenario_is: 'Loftblaðra inniheldur 0.5 mól helíum og 1.5 mól köfnunarefni við 1.0 atm heildarþrýsting. Hver er hlutþrýstingur helíums?',
+    scenario_en: 'A balloon contains 0.5 mol helium and 1.5 mol nitrogen at 1.0 atm total pressure. What is the partial pressure of helium?',
+    difficulty: 'Auðvelt',
+    gasLaw: 'dalton',
+    given: {
+      P: { value: 1.0, unit: 'atm' }
+    },
+    find: 'P_partial',
+    answer: 0.25,
+    tolerance: 0.01,
+    hints: [
+      'Fyrst, finndu mólhlutfall: Xᵢ = nᵢ/n_heildar',
+      'n_heildar = 0.5 + 1.5 = 2.0 mól',
+      'X_He = 0.5/2.0 = 0.25',
+      'P_He = 0.25 × 1.0 = 0.25 atm'
+    ],
+    solution: {
+      formula: 'Pᵢ = Xᵢ × P_heildar = (nᵢ/n_heildar) × P_heildar',
+      substitution: 'P_He = (0.5/2.0) × 1.0 atm',
+      calculation: 'P_He = 0.25 atm',
+      steps: [
+        'Heildar mólfjöldi: n = 0.5 + 1.5 = 2.0 mól',
+        'Mólhlutfall He: X_He = 0.5/2.0 = 0.25',
+        'Hlutþrýstingur: P_He = X_He × P_heildar',
+        'P_He = 0.25 × 1.0 = 0.25 atm'
+      ]
+    },
+    daltonData: {
+      gases: [
+        { name: 'Helíum', formula: 'He', moles: 0.5 },
+        { name: 'Köfnunarefni', formula: 'N₂', moles: 1.5 }
+      ],
+      totalPressure: 1.0,
+      totalMoles: 2.0,
+      findGas: 'He',
+      findWhat: 'partial_pressure'
+    }
+  },
+  {
+    id: 103,
+    emoji: '🏥',
+    scenario_is: 'Sjúkrahúsloft: Íláti inniheldur 20% O₂, 78% N₂, og 2% Ar við heildarþrýsting 3.0 atm. Hver er hlutþrýstingur súrefnis?',
+    scenario_en: 'Hospital air: A tank contains 20% O₂, 78% N₂, and 2% Ar at 3.0 atm total pressure. What is the partial pressure of oxygen?',
+    difficulty: 'Auðvelt',
+    gasLaw: 'dalton',
+    given: {
+      P: { value: 3.0, unit: 'atm' }
+    },
+    find: 'P_partial',
+    answer: 0.6,
+    tolerance: 0.012,
+    hints: [
+      'Prósentur eru mólhlutföll: 20% = 0.20',
+      'P_O₂ = X_O₂ × P_heildar',
+      'P_O₂ = 0.20 × 3.0',
+      'P_O₂ = 0.6 atm'
+    ],
+    solution: {
+      formula: 'Pᵢ = Xᵢ × P_heildar',
+      substitution: 'P_O₂ = 0.20 × 3.0 atm',
+      calculation: 'P_O₂ = 0.6 atm',
+      steps: [
+        'Mólhlutfall súrefnis: 20% = 0.20',
+        'Hlutþrýstingur: P_O₂ = X_O₂ × P_heildar',
+        'Setjum inn: P_O₂ = 0.20 × 3.0',
+        'P_O₂ = 0.6 atm'
+      ]
+    },
+    daltonData: {
+      gases: [
+        { name: 'Súrefni', formula: 'O₂', moleFraction: 0.20 },
+        { name: 'Köfnunarefni', formula: 'N₂', moleFraction: 0.78 },
+        { name: 'Argon', formula: 'Ar', moleFraction: 0.02 }
+      ],
+      totalPressure: 3.0,
+      findGas: 'O₂',
+      findWhat: 'partial_pressure'
+    }
+  },
+  {
+    id: 104,
+    emoji: '🔬',
+    scenario_is: 'Í rannsóknarstofu er gasblöndu hlutþrýstingur CO₂ 0.3 atm og hlutþrýstingur O₂ 0.5 atm. Hver er heildarþrýstingur?',
+    scenario_en: 'In a lab, a gas mixture has CO₂ partial pressure of 0.3 atm and O₂ partial pressure of 0.5 atm. What is the total pressure?',
+    difficulty: 'Auðvelt',
+    gasLaw: 'dalton',
+    given: {},
+    find: 'P',
+    answer: 0.8,
+    tolerance: 0.016,
+    hints: [
+      'Lögmál Daltons: P_heildar = P₁ + P₂ + ...',
+      'P_heildar = P_CO₂ + P_O₂',
+      'P_heildar = 0.3 + 0.5',
+      'P_heildar = 0.8 atm'
+    ],
+    solution: {
+      formula: 'P_heildar = P₁ + P₂',
+      substitution: 'P_heildar = 0.3 atm + 0.5 atm',
+      calculation: 'P_heildar = 0.8 atm',
+      steps: [
+        'Lögmál Daltons: Heildarþrýstingur = summa hlutþrýstinga',
+        'P_heildar = P_CO₂ + P_O₂',
+        'P_heildar = 0.3 + 0.5',
+        'P_heildar = 0.8 atm'
+      ]
+    },
+    daltonData: {
+      gases: [
+        { name: 'Koldíoxíð', formula: 'CO₂', partialPressure: 0.3 },
+        { name: 'Súrefni', formula: 'O₂', partialPressure: 0.5 }
+      ],
+      findWhat: 'total_pressure'
+    }
+  },
+  {
+    id: 105,
+    emoji: '🧪',
+    scenario_is: 'Gasblöndu inniheldur N₂, O₂, og CO₂. Heildarþrýstingur er 1.2 atm. Hlutþrýstingur N₂ er 0.6 atm og O₂ er 0.4 atm. Hver er hlutþrýstingur CO₂?',
+    scenario_en: 'A gas mixture contains N₂, O₂, and CO₂. Total pressure is 1.2 atm. Partial pressures: N₂ = 0.6 atm, O₂ = 0.4 atm. What is CO₂ partial pressure?',
+    difficulty: 'Miðlungs',
+    gasLaw: 'dalton',
+    given: {
+      P: { value: 1.2, unit: 'atm' }
+    },
+    find: 'P_partial',
+    answer: 0.2,
+    tolerance: 0.01,
+    hints: [
+      'P_heildar = P_N₂ + P_O₂ + P_CO₂',
+      'Einangraðu P_CO₂: P_CO₂ = P_heildar - P_N₂ - P_O₂',
+      'P_CO₂ = 1.2 - 0.6 - 0.4',
+      'P_CO₂ = 0.2 atm'
+    ],
+    solution: {
+      formula: 'P_CO₂ = P_heildar - P_N₂ - P_O₂',
+      substitution: 'P_CO₂ = 1.2 - 0.6 - 0.4',
+      calculation: 'P_CO₂ = 0.2 atm',
+      steps: [
+        'Lögmál Daltons: P_heildar = P_N₂ + P_O₂ + P_CO₂',
+        'Einangraðu óþekkta: P_CO₂ = P_heildar - P_N₂ - P_O₂',
+        'Setjum inn: P_CO₂ = 1.2 - 0.6 - 0.4',
+        'P_CO₂ = 0.2 atm'
+      ]
+    },
+    daltonData: {
+      gases: [
+        { name: 'Köfnunarefni', formula: 'N₂', partialPressure: 0.6 },
+        { name: 'Súrefni', formula: 'O₂', partialPressure: 0.4 },
+        { name: 'Koldíoxíð', formula: 'CO₂' }
+      ],
+      totalPressure: 1.2,
+      findGas: 'CO₂',
+      findWhat: 'partial_pressure'
+    }
+  },
+  {
+    id: 106,
+    emoji: '⛽',
+    scenario_is: 'Bensíngufa og loft. Íláti inniheldur 2 mól C₈H₁₈ gufu og 8 mól lofts. Ef heildarþrýstingur er 1.5 atm, hver er hlutþrýstingur bensíngufunnar?',
+    scenario_en: 'Gasoline vapor and air. A container has 2 mol C₈H₁₈ vapor and 8 mol air. If total pressure is 1.5 atm, what is the partial pressure of gasoline vapor?',
+    difficulty: 'Miðlungs',
+    gasLaw: 'dalton',
+    given: {
+      P: { value: 1.5, unit: 'atm' }
+    },
+    find: 'P_partial',
+    answer: 0.3,
+    tolerance: 0.01,
+    hints: [
+      'Fyrst, reiknaðu mólhlutfall',
+      'X_bensín = n_bensín/n_heildar = 2/(2+8) = 0.2',
+      'P_bensín = X × P_heildar = 0.2 × 1.5',
+      'P_bensín = 0.3 atm'
+    ],
+    solution: {
+      formula: 'P_bensín = (n_bensín/n_heildar) × P_heildar',
+      substitution: 'P_bensín = (2/10) × 1.5 atm',
+      calculation: 'P_bensín = 0.3 atm',
+      steps: [
+        'Heildar mólfjöldi: n = 2 + 8 = 10 mól',
+        'Mólhlutfall: X = 2/10 = 0.2',
+        'Hlutþrýstingur: P = X × P_heildar',
+        'P_bensín = 0.2 × 1.5 = 0.3 atm'
+      ]
+    },
+    daltonData: {
+      gases: [
+        { name: 'Bensíngufa', formula: 'C₈H₁₈', moles: 2 },
+        { name: 'Loft', formula: 'loft', moles: 8 }
+      ],
+      totalPressure: 1.5,
+      totalMoles: 10,
+      findGas: 'C₈H₁₈',
+      findWhat: 'partial_pressure'
+    }
+  },
+  {
+    id: 107,
+    emoji: '🌡️',
+    scenario_is: 'Andrúmsloftið: 78% N₂, 21% O₂, 1% Ar. Við sjávarmál er loftþrýstingur 1.0 atm. Hver er hlutþrýstingur köfnunarefnis?',
+    scenario_en: 'Atmosphere: 78% N₂, 21% O₂, 1% Ar. At sea level, air pressure is 1.0 atm. What is the partial pressure of nitrogen?',
+    difficulty: 'Auðvelt',
+    gasLaw: 'dalton',
+    given: {
+      P: { value: 1.0, unit: 'atm' }
+    },
+    find: 'P_partial',
+    answer: 0.78,
+    tolerance: 0.016,
+    hints: [
+      '78% þýðir mólhlutfall 0.78',
+      'P_N₂ = X_N₂ × P_heildar',
+      'P_N₂ = 0.78 × 1.0',
+      'P_N₂ = 0.78 atm'
+    ],
+    solution: {
+      formula: 'P_N₂ = X_N₂ × P_heildar',
+      substitution: 'P_N₂ = 0.78 × 1.0 atm',
+      calculation: 'P_N₂ = 0.78 atm',
+      steps: [
+        'Mólhlutfall köfnunarefnis: 78% = 0.78',
+        'Hlutþrýstingur: P = X × P_heildar',
+        'P_N₂ = 0.78 × 1.0',
+        'P_N₂ = 0.78 atm (mestur hluti loftþrýstings!)'
+      ]
+    },
+    daltonData: {
+      gases: [
+        { name: 'Köfnunarefni', formula: 'N₂', moleFraction: 0.78 },
+        { name: 'Súrefni', formula: 'O₂', moleFraction: 0.21 },
+        { name: 'Argon', formula: 'Ar', moleFraction: 0.01 }
+      ],
+      totalPressure: 1.0,
+      findGas: 'N₂',
+      findWhat: 'partial_pressure'
+    }
+  },
+  {
+    id: 108,
+    emoji: '🏔️',
+    scenario_is: 'Á 5000m hæð er heildarþrýstingur 0.5 atm. Súrefni er 21% af loftinu. Hver er hlutþrýstingur súrefnis? (Útskýrir hví fólk þreytist á hásléttu!)',
+    scenario_en: 'At 5000m altitude, total pressure is 0.5 atm. Oxygen is 21% of air. What is the partial pressure of oxygen? (Explains altitude sickness!)',
+    difficulty: 'Miðlungs',
+    gasLaw: 'dalton',
+    given: {
+      P: { value: 0.5, unit: 'atm' }
+    },
+    find: 'P_partial',
+    answer: 0.105,
+    tolerance: 0.003,
+    hints: [
+      'Þó prósentan sé sú sama, er heildarþrýstingur lægri',
+      'P_O₂ = 0.21 × 0.5 atm',
+      'P_O₂ = 0.105 atm',
+      'Þetta er helmingur af sjávarmálsgildi!'
+    ],
+    solution: {
+      formula: 'P_O₂ = X_O₂ × P_heildar',
+      substitution: 'P_O₂ = 0.21 × 0.5 atm',
+      calculation: 'P_O₂ = 0.105 atm',
+      steps: [
+        'Mólhlutfall súrefnis: 21% = 0.21 (sama og við sjávarmál)',
+        'En heildarþrýstingur er aðeins 0.5 atm',
+        'P_O₂ = 0.21 × 0.5 = 0.105 atm',
+        'Við sjávarmál: P_O₂ = 0.21 × 1.0 = 0.21 atm',
+        'Þess vegna fær fólk hásléttuveiki - minna súrefni!'
+      ]
+    },
+    daltonData: {
+      gases: [
+        { name: 'Súrefni', formula: 'O₂', moleFraction: 0.21 },
+        { name: 'Köfnunarefni', formula: 'N₂', moleFraction: 0.78 },
+        { name: 'Annað', formula: 'Ar', moleFraction: 0.01 }
+      ],
+      totalPressure: 0.5,
+      findGas: 'O₂',
+      findWhat: 'partial_pressure'
+    }
+  }
+];
+
+// Combine all questions
+export const allQuestions: GasLawQuestion[] = [...questions, ...daltonQuestions];
+
 /**
  * Get questions filtered by difficulty
  */
 export function getQuestionsByDifficulty(difficulty: string): GasLawQuestion[] {
-  return questions.filter(q => q.difficulty === difficulty);
+  return allQuestions.filter(q => q.difficulty === difficulty);
 }
 
 /**
  * Get a random question
  */
 export function getRandomQuestion(): GasLawQuestion {
-  return questions[Math.floor(Math.random() * questions.length)];
+  return allQuestions[Math.floor(Math.random() * allQuestions.length)];
 }
 
 /**
  * Get question by ID
  */
 export function getQuestionById(id: number): GasLawQuestion | undefined {
-  return questions.find(q => q.id === id);
+  return allQuestions.find(q => q.id === id);
+}
+
+/**
+ * Get questions by gas law type
+ */
+export function getQuestionsByGasLaw(gasLaw: string): GasLawQuestion[] {
+  return allQuestions.filter(q => q.gasLaw === gasLaw);
+}
+
+/**
+ * Get Dalton's Law questions only
+ */
+export function getDaltonQuestions(): GasLawQuestion[] {
+  return daltonQuestions;
 }

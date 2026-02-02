@@ -8,6 +8,7 @@ import { gameTranslations } from './i18n';
 import type { TieredHints } from '@shared/types';
 import { ParticleEquilibrium } from './components/ParticleEquilibrium';
 import { QKComparison } from './components/QKComparison';
+import { ICETable } from './components/ICETable';
 import {
   Equilibrium,
   Stress,
@@ -15,9 +16,11 @@ import {
   GameMode,
   GameStats,
   ShiftResult,
-  DifficultyLevel
+  DifficultyLevel,
+  ICETableProblem,
 } from './types';
 import { getRandomEquilibrium } from './data';
+import { iceProblems } from './data/ice-problems';
 import { calculateShift, getStressDescriptionIs } from './utils/le-chatelier';
 import './styles.css';
 
@@ -52,7 +55,7 @@ function App() {
   } = useAchievements({ gameId: 'equilibrium-shifter' });
 
   // Game state
-  const [screen, setScreen] = useState<'menu' | 'mode-select' | 'game' | 'feedback' | 'results'>('menu');
+  const [screen, setScreen] = useState<'menu' | 'mode-select' | 'game' | 'feedback' | 'results' | 'ice'>('menu');
   const [gameMode, setGameMode] = useState<GameMode>('learning');
   const [currentEquilibrium, setCurrentEquilibrium] = useState<Equilibrium | null>(null);
   const [appliedStress, setAppliedStress] = useState<Stress | null>(null);
@@ -85,6 +88,12 @@ function App() {
   const [totalQuestions] = useState(10);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
 
+  // ICE Table mode state
+  const [currentICEProblem, setCurrentICEProblem] = useState<ICETableProblem | null>(null);
+  const [iceProblemIndex, setIceProblemIndex] = useState(0);
+  const [iceScore, setIceScore] = useState(0);
+  const [iceProblemsCompleted, setIceProblemsCompleted] = useState(0);
+
   // Ref to track if timeout has been handled for current question
   const timeoutHandledRef = useRef(false);
 
@@ -115,6 +124,10 @@ function App() {
 
   // Start game flow
   const startGame = (mode: GameMode) => {
+    if (mode === 'ice') {
+      startICEMode();
+      return;
+    }
     setGameMode(mode);
     setScreen('game');
     setStats({
@@ -133,6 +146,40 @@ function App() {
     });
     setQuestionNumber(1);
     loadNewQuestion(mode);
+  };
+
+  // Start ICE Table mode
+  const startICEMode = () => {
+    setGameMode('ice');
+    setScreen('ice');
+    setIceScore(0);
+    setIceProblemsCompleted(0);
+    setIceProblemIndex(0);
+    setCurrentICEProblem(iceProblems[0]);
+  };
+
+  const handleICEProblemComplete = (score: number, _hintsUsed: number) => {
+    setIceScore(prev => prev + score);
+    setIceProblemsCompleted(prev => prev + 1);
+    trackCorrectAnswer();
+
+    // Update progress
+    updateProgress({
+      problemsCompleted: progress.problemsCompleted + 1,
+      lastPlayedDate: new Date().toISOString(),
+    });
+  };
+
+  const loadNextICEProblem = () => {
+    const nextIndex = iceProblemIndex + 1;
+    if (nextIndex < iceProblems.length) {
+      setIceProblemIndex(nextIndex);
+      setCurrentICEProblem(iceProblems[nextIndex]);
+    } else {
+      // All problems completed
+      trackGameComplete();
+      setScreen('menu');
+    }
   };
 
   const loadNewQuestion = (mode: GameMode) => {
@@ -410,6 +457,38 @@ function App() {
               <li>✓ Stigagjöf og raðir</li>
               <li>✓ Hraðbónus</li>
             </ul>
+          </button>
+        </div>
+
+        {/* ICE Table Mode */}
+        <div className="mb-6">
+          <button
+            onClick={() => startGame('ice')}
+            className="w-full mode-card bg-white border-2 border-green-200 hover:border-green-400 rounded-lg p-6 text-left transition-all"
+          >
+            <div className="flex items-start gap-4">
+              <div className="text-3xl">📊</div>
+              <div className="flex-1">
+                <h3 className="text-xl font-bold text-gray-800 mb-2">
+                  ICE Tafla - Magnbundnir útreikningar
+                </h3>
+                <p className="text-gray-600 text-sm mb-3">
+                  Lærðu að setja upp og leysa jafnvægisútreikningar með ICE töflum
+                </p>
+                <div className="grid grid-cols-2 gap-4">
+                  <ul className="text-sm text-gray-500 space-y-1">
+                    <li>✓ Q vs K samanburður</li>
+                    <li>✓ ICE tafla uppsetning</li>
+                    <li>✓ Leysa fyrir x</li>
+                  </ul>
+                  <ul className="text-sm text-gray-500 space-y-1">
+                    <li>✓ {iceProblems.length} verkefni</li>
+                    <li>✓ 5% nálgun</li>
+                    <li>✓ Skref-fyrir-skref lausnir</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
           </button>
         </div>
 
@@ -788,6 +867,60 @@ function App() {
     </div>
   );
 
+  const renderICEMode = () => {
+    if (!currentICEProblem) return null;
+
+    return (
+      <div className="max-w-4xl mx-auto">
+        {/* Progress header */}
+        <div className="bg-white rounded-lg shadow-md p-4 mb-4">
+          <div className="flex justify-between items-center">
+            <div>
+              <span className="text-sm text-gray-600">
+                Verkefni {iceProblemIndex + 1} af {iceProblems.length}
+              </span>
+              <div className="w-48 bg-gray-200 rounded-full h-2 mt-1">
+                <div
+                  className="bg-green-500 h-2 rounded-full transition-all"
+                  style={{ width: `${((iceProblemIndex + 1) / iceProblems.length) * 100}%` }}
+                />
+              </div>
+            </div>
+            <div className="text-right">
+              <div className="text-2xl font-bold text-green-600">{iceScore}</div>
+              <div className="text-xs text-gray-500">stig</div>
+            </div>
+          </div>
+        </div>
+
+        {/* ICE Table Component */}
+        <ICETable
+          problem={currentICEProblem}
+          mode="interactive"
+          language={language as 'is' | 'en'}
+          onComplete={(score, hintsUsed) => {
+            handleICEProblemComplete(score, hintsUsed);
+          }}
+          onBack={() => setScreen('menu')}
+        />
+
+        {/* Next problem button (shown after completion) */}
+        {iceProblemsCompleted > iceProblemIndex && (
+          <div className="mt-4 text-center">
+            <button
+              onClick={loadNextICEProblem}
+              className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-xl transition-colors"
+            >
+              {iceProblemIndex + 1 < iceProblems.length
+                ? 'Næsta verkefni →'
+                : 'Ljúka og sjá niðurstöður'}
+            </button>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className={`min-h-screen bg-gradient-to-br from-purple-50 to-indigo-100 ${settings.highContrast ? 'high-contrast' : ''} ${settings.reducedMotion ? 'reduced-motion' : ''}`}>
       {/* Accessibility Skip Link */}
@@ -868,6 +1001,7 @@ function App() {
         {screen === 'menu' && renderMenu()}
         {screen === 'game' && renderGame()}
         {screen === 'results' && renderResults()}
+        {screen === 'ice' && renderICEMode()}
       </main>
 
       {/* Footer */}

@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { PROBLEMS } from './data';
 import { EntropyVisualization } from './components/EntropyVisualization';
+import { CalculationChallenges } from './components/CalculationChallenges';
 import { useAchievements } from '@shared/hooks/useAchievements';
 import { useGameI18n } from '@shared/hooks';
 import { AchievementsButton, AchievementsPanel } from '@shared/components/AchievementsPanel';
@@ -9,6 +10,8 @@ import { InteractiveGraph, LanguageSwitcher } from '@shared/components';
 import type { DataPoint, DataSeries, MarkerConfig, RegionConfig, VerticalLineConfig } from '@shared/components';
 import type { Difficulty, GameMode, Spontaneity, Problem } from './types';
 import { gameTranslations } from './i18n';
+
+type CalculationMode = 'entropy' | 'delta-g-k' | 'mixed';
 
 interface ThermoProgress {
   score: number;
@@ -46,7 +49,8 @@ function saveProgress(progress: ThermoProgress): void {
 
 function App() {
   const [mode, setMode] = useState<GameMode>('menu');
-  const { t, language, setLanguage } = useGameI18n({ gameTranslations });
+  const [calculationMode, setCalculationMode] = useState<CalculationMode | null>(null);
+  const { language, setLanguage } = useGameI18n({ gameTranslations });
   const [difficulty, setDifficulty] = useState<Difficulty>('beginner');
   const [currentProblem, setCurrentProblem] = useState<Problem | null>(null);
   const [temperature, setTemperature] = useState(298);
@@ -278,6 +282,36 @@ function App() {
     }
   }, [mode, timeLeft, showSolution]);
 
+  // Calculation Challenges Mode
+  if (calculationMode) {
+    const handleCalcComplete = (score: number, maxScore: number) => {
+      setProgress(prev => ({
+        ...prev,
+        score: prev.score + score,
+        highScore: Math.max(prev.highScore, prev.score + score),
+        problemsCompleted: prev.problemsCompleted + Math.round(score / 20)
+      }));
+      trackLevelComplete(2, score, maxScore, { hintsUsed: 0 });
+      setCalculationMode(null);
+    };
+
+    return (
+      <>
+        <CalculationChallenges
+          challengeType={calculationMode}
+          onComplete={handleCalcComplete}
+          onBack={() => setCalculationMode(null)}
+          onCorrectAnswer={() => trackCorrectAnswer()}
+          onIncorrectAnswer={() => trackIncorrectAnswer()}
+        />
+        <AchievementNotificationsContainer
+          notifications={notifications}
+          onDismiss={dismissNotification}
+        />
+      </>
+    );
+  }
+
   // Menu Screen
   if (mode === 'menu') {
     return (
@@ -387,7 +421,7 @@ function App() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
               <button
                 onClick={() => {
                   setMode('learning');
@@ -411,6 +445,37 @@ function App() {
                 ⚡ Keppnishamur
                 <div className="text-sm font-normal mt-1">90 sek tími, stigagjöf</div>
               </button>
+            </div>
+
+            {/* Calculation Challenges */}
+            <div className="border-t pt-6">
+              <h3 className="text-lg font-bold mb-4">📐 Útreikningsverkefni</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <button
+                  onClick={() => setCalculationMode('entropy')}
+                  className="p-4 rounded-lg border-2 border-purple-400 bg-purple-50 hover:bg-purple-100 transition text-left"
+                >
+                  <div className="text-lg font-bold text-purple-800">🎲 Óreiðuútreikningar</div>
+                  <div className="text-sm text-purple-600 mt-1">ΔS° úr stöðluðum gildum</div>
+                  <div className="text-xs text-gray-600 mt-2">Lærðu að reikna ΔS° með formúlunni: ΔS° = Σ S°(myndefni) - Σ S°(hvarfefni)</div>
+                </button>
+                <button
+                  onClick={() => setCalculationMode('delta-g-k')}
+                  className="p-4 rounded-lg border-2 border-green-400 bg-green-50 hover:bg-green-100 transition text-left"
+                >
+                  <div className="text-lg font-bold text-green-800">⚖️ ΔG° og K</div>
+                  <div className="text-sm text-green-600 mt-1">Tenging Gibbs orku og K</div>
+                  <div className="text-xs text-gray-600 mt-2">Notaðu ΔG° = -RT ln K til að reikna jafnvægisfasta og Gibbs orku</div>
+                </button>
+                <button
+                  onClick={() => setCalculationMode('mixed')}
+                  className="p-4 rounded-lg border-2 border-orange-400 bg-orange-50 hover:bg-orange-100 transition text-left"
+                >
+                  <div className="text-lg font-bold text-orange-800">🔥 Blandað</div>
+                  <div className="text-sm text-orange-600 mt-1">Allar tegundir verkefna</div>
+                  <div className="text-xs text-gray-600 mt-2">Æfðu þig í öllum varmafræðilegum útreikningum í einni lotu</div>
+                </button>
+              </div>
             </div>
           </div>
         </div>

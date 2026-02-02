@@ -33,6 +33,12 @@ export const gameTranslations = createGameTranslations({
         details: 'Notaðu ΔH°f töflur til að reikna ΔH°rxn. Leystu öfug verkefni.',
         locked: 'Ljúktu stigi 2 fyrst',
       },
+      level4: {
+        name: 'Stig 4: Bindiorka',
+        description: 'Reikna ΔH með bindiorku',
+        details: 'Notaðu bindiorku (bond enthalpy) töflu til að áætla ΔH. Samanburður við myndunarvarminn.',
+        locked: 'Ljúktu stigi 3 fyrst',
+      },
     },
     complete: {
       title: 'Til hamingju!',
@@ -44,6 +50,7 @@ export const gameTranslations = createGameTranslations({
         reverse: 'Snúa við: Ef þú snýrðu við hvörfum, snýrðu einnig formerki ΔH',
         multiply: 'Margfalda: Ef þú margfaldar jöfnu, margfaldar þú einnig ΔH',
         formation: 'Myndunarvarminn: ΔH°rxn = Σ ΔH°f(afurðir) - Σ ΔH°f(hvarfefni)',
+        bondEnthalpy: 'Bindiorka: ΔH ≈ Σ(bindingar rofnar) - Σ(bindingar myndaðar)',
       },
     },
     progress: {
@@ -60,6 +67,7 @@ export const gameTranslations = createGameTranslations({
       reverse: 'Snúa við hvörfum: ΔH → -ΔH',
       multiply: 'Margfalda jöfnu: n × jafna → n × ΔH',
       formation: 'Myndunarvarminn: ΔH°rxn = Σ ΔH°f(afurðir) - Σ ΔH°f(hvarfefni)',
+      bondEnthalpy: 'Bindiorka: ΔH ≈ Σ(bindingar rofnar) - Σ(bindingar myndaðar)',
     },
     credits: 'Kafli 5 — Chemistry: The Central Science (Brown et al.)',
   },
@@ -92,6 +100,12 @@ export const gameTranslations = createGameTranslations({
         details: 'Use ΔH°f tables to calculate ΔH°rxn. Solve reverse problems.',
         locked: 'Complete level 2 first',
       },
+      level4: {
+        name: 'Level 4: Bond Enthalpy',
+        description: 'Calculate ΔH using bond enthalpies',
+        details: 'Use bond enthalpy tables to estimate ΔH. Compare with formation enthalpy results.',
+        locked: 'Complete level 3 first',
+      },
     },
     complete: {
       title: 'Congratulations!',
@@ -103,6 +117,7 @@ export const gameTranslations = createGameTranslations({
         reverse: 'Reversing: If you reverse a reaction, you also reverse the sign of ΔH',
         multiply: 'Multiplying: If you multiply an equation, you also multiply ΔH',
         formation: 'Formation enthalpy: ΔH°rxn = Σ ΔH°f(products) - Σ ΔH°f(reactants)',
+        bondEnthalpy: 'Bond enthalpy: ΔH ≈ Σ(bonds broken) - Σ(bonds formed)',
       },
     },
     progress: {
@@ -119,6 +134,7 @@ export const gameTranslations = createGameTranslations({
       reverse: 'Reverse reactions: ΔH → -ΔH',
       multiply: 'Multiply equation: n × equation → n × ΔH',
       formation: 'Formation enthalpy: ΔH°rxn = Σ ΔH°f(products) - Σ ΔH°f(reactants)',
+      bondEnthalpy: 'Bond enthalpy: ΔH ≈ Σ(bonds broken) - Σ(bonds formed)',
     },
     credits: 'Chapter 5 — Chemistry: The Central Science (Brown et al.)',
   },
@@ -151,6 +167,12 @@ export const gameTranslations = createGameTranslations({
         details: 'Uzyj tabel ΔH°f do obliczenia ΔH°rxn. Rozwiazuj zadania odwrotne.',
         locked: 'Najpierw ukoncz poziom 2',
       },
+      level4: {
+        name: 'Poziom 4: Energia wiazania',
+        description: 'Oblicz ΔH uzywajac energii wiazan',
+        details: 'Uzyj tabeli energii wiazan do oszacowania ΔH. Porownaj z wynikami entalpii tworzenia.',
+        locked: 'Najpierw ukoncz poziom 3',
+      },
     },
     complete: {
       title: 'Gratulacje!',
@@ -162,6 +184,7 @@ export const gameTranslations = createGameTranslations({
         reverse: 'Odwracanie: Jesli odwrocisz reakcje, odwrocisz tez znak ΔH',
         multiply: 'Mnozenie: Jesli pomnozysz rownanie, pomnozysz tez ΔH',
         formation: 'Entalpia tworzenia: ΔH°rxn = Σ ΔH°f(produkty) - Σ ΔH°f(substraty)',
+        bondEnthalpy: 'Energia wiazania: ΔH ≈ Σ(wiazania zerwane) - Σ(wiazania utworzone)',
       },
     },
     progress: {
@@ -178,6 +201,7 @@ export const gameTranslations = createGameTranslations({
       reverse: 'Odwracanie reakcji: ΔH → -ΔH',
       multiply: 'Mnozenie rownania: n × rownanie → n × ΔH',
       formation: 'Entalpia tworzenia: ΔH°rxn = Σ ΔH°f(produkty) - Σ ΔH°f(substraty)',
+      bondEnthalpy: 'Energia wiazania: ΔH ≈ Σ(wiazania zerwane) - Σ(wiazania utworzone)',
     },
     credits: 'Rozdzial 5 — Chemistry: The Central Science (Brown et al.)',
   },

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Level1 } from './components/Level1';
 import { Level2 } from './components/Level2';
 import { Level3 } from './components/Level3';
+import { Level4 } from './components/Level4';
 import { useAchievements } from '@shared/hooks/useAchievements';
 import { AchievementsButton, AchievementsPanel } from '@shared/components/AchievementsPanel';
 import { AchievementNotificationsContainer } from '@shared/components/AchievementNotificationPopup';
@@ -9,7 +10,7 @@ import { useGameI18n } from '@shared/hooks';
 import { LanguageSwitcher } from '@shared/components';
 import { gameTranslations } from './i18n';
 
-type ActiveLevel = 'menu' | 'level1' | 'level2' | 'level3' | 'complete';
+type ActiveLevel = 'menu' | 'level1' | 'level2' | 'level3' | 'level4' | 'complete';
 
 interface Progress {
   level1Completed: boolean;
@@ -18,6 +19,8 @@ interface Progress {
   level2Score: number;
   level3Completed: boolean;
   level3Score: number;
+  level4Completed: boolean;
+  level4Score: number;
   totalGamesPlayed: number;
 }
 
@@ -43,6 +46,8 @@ function getDefaultProgress(): Progress {
     level2Score: 0,
     level3Completed: false,
     level3Score: 0,
+    level4Completed: false,
+    level4Score: 0,
     totalGamesPlayed: 0
   };
 }
@@ -103,6 +108,17 @@ function App() {
       totalGamesPlayed: prev.totalGamesPlayed + 1
     }));
     trackLevelComplete(3, score, maxScore, { hintsUsed });
+    setActiveLevel('menu');
+  };
+
+  const handleLevel4Complete = (score: number, maxScore: number, hintsUsed: number) => {
+    setProgress(prev => ({
+      ...prev,
+      level4Completed: true,
+      level4Score: Math.max(prev.level4Score, score),
+      totalGamesPlayed: prev.totalGamesPlayed + 1
+    }));
+    trackLevelComplete(4, score, maxScore, { hintsUsed });
     trackGameComplete();
     setActiveLevel('complete');
   };
@@ -165,9 +181,26 @@ function App() {
     );
   }
 
+  if (activeLevel === 'level4') {
+    return (
+      <>
+        <Level4
+          onComplete={handleLevel4Complete}
+          onBack={() => setActiveLevel('menu')}
+          onCorrectAnswer={trackCorrectAnswer}
+          onIncorrectAnswer={trackIncorrectAnswer}
+        />
+        <AchievementNotificationsContainer
+          notifications={notifications}
+          onDismiss={dismissNotification}
+        />
+      </>
+    );
+  }
+
   // Complete screen
   if (activeLevel === 'complete') {
-    const totalScore = progress.level1Score + progress.level2Score + progress.level3Score;
+    const totalScore = progress.level1Score + progress.level2Score + progress.level3Score + progress.level4Score;
 
     return (
       <div className="min-h-screen bg-gradient-to-br from-teal-50 to-cyan-100 p-4 md:p-8">
@@ -208,9 +241,17 @@ function App() {
               <div className="text-2xl font-bold text-purple-600">{progress.level3Score}</div>
             </div>
 
-            <div className="bg-orange-100 p-4 rounded-xl flex justify-between items-center border-2 border-orange-400">
-              <div className="font-bold text-orange-800 text-lg">Heildarstig</div>
-              <div className="text-3xl font-bold text-orange-600">{totalScore}</div>
+            <div className="bg-orange-50 p-4 rounded-xl flex justify-between items-center">
+              <div>
+                <div className="font-bold text-orange-800">Stig 4: Arrhenius jafnan</div>
+                <div className="text-sm text-orange-600">Hitaáhrif og virkjunarorka</div>
+              </div>
+              <div className="text-2xl font-bold text-orange-600">{progress.level4Score}</div>
+            </div>
+
+            <div className="bg-teal-100 p-4 rounded-xl flex justify-between items-center border-2 border-teal-400">
+              <div className="font-bold text-teal-800 text-lg">Heildarstig</div>
+              <div className="text-3xl font-bold text-teal-600">{totalScore}</div>
             </div>
           </div>
 
@@ -222,6 +263,7 @@ function App() {
               <li>✓ <strong>Röð hvörfunar:</strong> Veldisvísir segir hversu mikið styrkur hefur áhrif</li>
               <li>✓ <strong>Hvarfgangsháttur:</strong> Röð frumskref sem mynda heildarhvörf</li>
               <li>✓ <strong>Hraðaákvarðandi skref:</strong> Hægasta skrefið ræður heildarhraða</li>
+              <li>✓ <strong>Arrhenius:</strong> k = Ae<sup>-Eₐ/RT</sup> — tengsl hita og hraðafasta</li>
             </ul>
           </div>
 
@@ -237,8 +279,8 @@ function App() {
   }
 
   // Main menu
-  const totalScore = progress.level1Score + progress.level2Score + progress.level3Score;
-  const levelsCompleted = [progress.level1Completed, progress.level2Completed, progress.level3Completed].filter(Boolean).length;
+  const totalScore = progress.level1Score + progress.level2Score + progress.level3Score + progress.level4Score;
+  const levelsCompleted = [progress.level1Completed, progress.level2Completed, progress.level3Completed, progress.level4Completed].filter(Boolean).length;
 
   // Year 2: Teal/Cyan theme
   return (
@@ -378,6 +420,41 @@ function App() {
               </div>
             </div>
           </button>
+
+          {/* Level 4 */}
+          <button
+            onClick={() => progress.level3Completed && setActiveLevel('level4')}
+            className={`w-full p-6 rounded-xl border-4 transition-all text-left ${
+              progress.level3Completed
+                ? 'border-orange-400 bg-orange-50 hover:bg-orange-100 cursor-pointer'
+                : 'border-gray-200 bg-gray-50 opacity-60 cursor-not-allowed'
+            }`}
+          >
+            <div className="flex items-center gap-4">
+              <div className="text-4xl">🌡️</div>
+              <div className="flex-1">
+                <div className="flex items-center gap-2">
+                  <span className={`text-xl font-bold ${progress.level3Completed ? 'text-orange-800' : 'text-gray-600'}`}>
+                    Stig 4: Arrhenius jafnan
+                  </span>
+                  {progress.level4Completed && (
+                    <span className="bg-green-500 text-white text-xs px-2 py-1 rounded-full">
+                      ✓ {progress.level4Score} stig
+                    </span>
+                  )}
+                  {!progress.level3Completed && (
+                    <span className="text-xs text-gray-500">(Ljúktu stigi 3 fyrst)</span>
+                  )}
+                </div>
+                <div className={`text-sm mt-1 ${progress.level3Completed ? 'text-orange-600' : 'text-gray-500'}`}>
+                  Hitaáhrif og virkjunarorka
+                </div>
+                <div className="text-xs text-gray-600 mt-2">
+                  Notaðu Arrhenius jöfnuna til að reikna Eₐ og spá fyrir um k við mismunandi hita.
+                </div>
+              </div>
+            </div>
+          </button>
         </div>
 
         {/* Progress Summary */}
@@ -394,7 +471,7 @@ function App() {
             </div>
             <div className="grid grid-cols-3 gap-4 text-center">
               <div className="bg-blue-50 rounded-lg p-3">
-                <div className="text-2xl font-bold text-blue-600">{levelsCompleted}/3</div>
+                <div className="text-2xl font-bold text-blue-600">{levelsCompleted}/4</div>
                 <div className="text-xs text-gray-600">Stig lokið</div>
               </div>
               <div className="bg-green-50 rounded-lg p-3">

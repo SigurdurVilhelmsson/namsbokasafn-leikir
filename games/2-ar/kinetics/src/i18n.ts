@@ -27,10 +27,16 @@ export const gameTranslations = createGameTranslations({
         locked: 'Ljúktu stigi 1 fyrst',
       },
       level3: {
-        name: 'Stig 3: Arrhenius',
-        description: 'Virkjunarorka og hitastuðull',
-        details: 'Notaðu Arrhenius jöfnuna til að tengja hita og hraðafasta.',
+        name: 'Stig 3: Hvarfgangsháttur',
+        description: 'Frumskref og hraðaákvarðandi skref',
+        details: 'Greindu hvarfgangshætti og finndu millistig.',
         locked: 'Ljúktu stigi 2 fyrst',
+      },
+      level4: {
+        name: 'Stig 4: Arrhenius jafnan',
+        description: 'Hitaáhrif og virkjunarorka',
+        details: 'Notaðu Arrhenius jöfnuna til að reikna Eₐ og spá fyrir um k við mismunandi hita.',
+        locked: 'Ljúktu stigi 3 fyrst',
       },
     },
     concepts: {
@@ -82,10 +88,16 @@ export const gameTranslations = createGameTranslations({
         locked: 'Complete level 1 first',
       },
       level3: {
-        name: 'Level 3: Arrhenius',
-        description: 'Activation energy and temperature coefficient',
-        details: 'Use the Arrhenius equation to relate temperature and rate constant.',
+        name: 'Level 3: Mechanisms',
+        description: 'Elementary steps and rate-determining step',
+        details: 'Analyze reaction mechanisms and identify intermediates.',
         locked: 'Complete level 2 first',
+      },
+      level4: {
+        name: 'Level 4: Arrhenius Equation',
+        description: 'Temperature effects and activation energy',
+        details: 'Use the Arrhenius equation to calculate Eₐ and predict k at different temperatures.',
+        locked: 'Complete level 3 first',
       },
     },
     concepts: {
@@ -137,10 +149,16 @@ export const gameTranslations = createGameTranslations({
         locked: 'Najpierw ukoncz poziom 1',
       },
       level3: {
-        name: 'Poziom 3: Arrhenius',
-        description: 'Energia aktywacji i wspolczynnik temperaturowy',
-        details: 'Uzyj rownania Arrheniusa do powiazania temperatury ze stala szybkosci.',
+        name: 'Poziom 3: Mechanizmy',
+        description: 'Etapy elementarne i etap determinujacy szybkosc',
+        details: 'Analizuj mechanizmy reakcji i identyfikuj produkty posrednie.',
         locked: 'Najpierw ukoncz poziom 2',
+      },
+      level4: {
+        name: 'Poziom 4: Rownanie Arrheniusa',
+        description: 'Wplyw temperatury i energia aktywacji',
+        details: 'Uzyj rownania Arrheniusa do obliczenia Eₐ i przewidywania k w roznych temperaturach.',
+        locked: 'Najpierw ukoncz poziom 3',
       },
     },
     concepts: {

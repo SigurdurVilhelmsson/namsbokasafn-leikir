@@ -753,6 +753,46 @@ importers:
         specifier: ^2.0.3
         version: 2.3.0(rollup@4.53.3)(vite@6.4.1)
 
+  games/2-ar/organic-reactions:
+    dependencies:
+      '@kvenno/shared':
+        specifier: workspace:*
+        version: link:../../../shared
+      react:
+        specifier: ^18.2.0
+        version: 18.3.1
+      react-dom:
+        specifier: ^18.2.0
+        version: 18.3.1(react@18.3.1)
+    devDependencies:
+      '@types/react':
+        specifier: ^18.2.45
+        version: 18.3.27
+      '@types/react-dom':
+        specifier: ^18.2.18
+        version: 18.3.7(@types/react@18.3.27)
+      '@vitejs/plugin-react':
+        specifier: ^4.2.1
+        version: 4.7.0(vite@6.4.1)
+      autoprefixer:
+        specifier: ^10.4.16
+        version: 10.4.22(postcss@8.5.6)
+      postcss:
+        specifier: ^8.4.32
+        version: 8.5.6
+      tailwindcss:
+        specifier: ^3.4.0
+        version: 3.4.18
+      typescript:
+        specifier: ^5.3.3
+        version: 5.9.3
+      vite:
+        specifier: ^6.4.1
+        version: 6.4.1(@types/node@20.19.25)
+      vite-plugin-singlefile:
+        specifier: ^2.0.1
+        version: 2.3.0(rollup@4.53.3)(vite@6.4.1)
+
   games/2-ar/redox-reactions:
     dependencies:
       react:
@@ -948,6 +988,46 @@ importers:
         version: 2.3.0(rollup@4.53.3)(vite@6.4.1)
 
   games/3-ar/ph-titration:
+    dependencies:
+      '@kvenno/shared':
+        specifier: workspace:*
+        version: link:../../../shared
+      react:
+        specifier: ^18.2.0
+        version: 18.3.1
+      react-dom:
+        specifier: ^18.2.0
+        version: 18.3.1(react@18.3.1)
+    devDependencies:
+      '@types/react':
+        specifier: ^18.2.45
+        version: 18.3.27
+      '@types/react-dom':
+        specifier: ^18.2.18
+        version: 18.3.7(@types/react@18.3.27)
+      '@vitejs/plugin-react':
+        specifier: ^4.2.1
+        version: 4.7.0(vite@6.4.1)
+      autoprefixer:
+        specifier: ^10.4.16
+        version: 10.4.22(postcss@8.5.6)
+      postcss:
+        specifier: ^8.4.32
+        version: 8.5.6
+      tailwindcss:
+        specifier: ^3.4.0
+        version: 3.4.18
+      typescript:
+        specifier: ^5.3.3
+        version: 5.9.3
+      vite:
+        specifier: ^6.4.1
+        version: 6.4.1(@types/node@20.19.25)
+      vite-plugin-singlefile:
+        specifier: ^2.0.1
+        version: 2.3.0(rollup@4.53.3)(vite@6.4.1)
+
+  games/3-ar/solubility-equilibrium:
     dependencies:
       '@kvenno/shared':
         specifier: workspace:*

@@ -9,6 +9,8 @@ import type { TieredHints } from '@shared/types';
 import { ParticleEquilibrium } from './components/ParticleEquilibrium';
 import { QKComparison } from './components/QKComparison';
 import { ICETable } from './components/ICETable';
+import { QKChallenge } from './components/QKChallenge';
+import { ThermodynamicsConnection } from './components/ThermodynamicsConnection';
 import {
   Equilibrium,
   Stress,
@@ -21,6 +23,7 @@ import {
 } from './types';
 import { getRandomEquilibrium } from './data';
 import { iceProblems } from './data/ice-problems';
+import { qkProblems, type QKProblem } from './data/qk-problems';
 import { calculateShift, getStressDescriptionIs } from './utils/le-chatelier';
 import './styles.css';
 
@@ -55,13 +58,14 @@ function App() {
   } = useAchievements({ gameId: 'equilibrium-shifter' });
 
   // Game state
-  const [screen, setScreen] = useState<'menu' | 'mode-select' | 'game' | 'feedback' | 'results' | 'ice'>('menu');
+  const [screen, setScreen] = useState<'menu' | 'mode-select' | 'game' | 'feedback' | 'results' | 'ice' | 'qk'>('menu');
   const [gameMode, setGameMode] = useState<GameMode>('learning');
   const [currentEquilibrium, setCurrentEquilibrium] = useState<Equilibrium | null>(null);
   const [appliedStress, setAppliedStress] = useState<Stress | null>(null);
   const [userPrediction, setUserPrediction] = useState<ShiftDirection | null>(null);
   const [correctShift, setCorrectShift] = useState<ShiftResult | null>(null);
   const [showExplanation, setShowExplanation] = useState(false);
+  const [showThermoConnection, setShowThermoConnection] = useState(false);
   const [hintMultiplier, setHintMultiplier] = useState(1.0);
   const [hintsUsedTier, setHintsUsedTier] = useState(0);
   const [hintResetKey, setHintResetKey] = useState(0);
@@ -94,6 +98,12 @@ function App() {
   const [iceScore, setIceScore] = useState(0);
   const [iceProblemsCompleted, setIceProblemsCompleted] = useState(0);
 
+  // Q vs K mode state
+  const [currentQKProblem, setCurrentQKProblem] = useState<QKProblem | null>(null);
+  const [qkProblemIndex, setQKProblemIndex] = useState(0);
+  const [qkScore, setQKScore] = useState(0);
+  const [_qkProblemsCompleted, setQKProblemsCompleted] = useState(0);
+
   // Ref to track if timeout has been handled for current question
   const timeoutHandledRef = useRef(false);
 
@@ -122,10 +132,50 @@ function App() {
     }
   }, [screen, gameMode, timeRemaining]);
 
+  // Start Q vs K mode
+  const startQKMode = () => {
+    setGameMode('qk');
+    setScreen('qk');
+    setQKScore(0);
+    setQKProblemsCompleted(0);
+    setQKProblemIndex(0);
+    setCurrentQKProblem(qkProblems[0]);
+  };
+
+  const handleQKProblemComplete = (score: number, _hintsUsed: number) => {
+    setQKScore(prev => prev + score);
+    setQKProblemsCompleted(prev => prev + 1);
+    if (score > 0) {
+      trackCorrectAnswer();
+    }
+
+    // Update progress
+    updateProgress({
+      problemsCompleted: progress.problemsCompleted + 1,
+      lastPlayedDate: new Date().toISOString(),
+    });
+  };
+
+  const loadNextQKProblem = () => {
+    const nextIndex = qkProblemIndex + 1;
+    if (nextIndex < qkProblems.length) {
+      setQKProblemIndex(nextIndex);
+      setCurrentQKProblem(qkProblems[nextIndex]);
+    } else {
+      // All problems completed
+      trackGameComplete();
+      setScreen('menu');
+    }
+  };
+
   // Start game flow
   const startGame = (mode: GameMode) => {
     if (mode === 'ice') {
       startICEMode();
+      return;
+    }
+    if (mode === 'qk') {
+      startQKMode();
       return;
     }
     setGameMode(mode);
@@ -205,6 +255,7 @@ function App() {
 
     setUserPrediction(null);
     setShowExplanation(false);
+    setShowThermoConnection(false);
     setHintMultiplier(1.0);
     setHintsUsedTier(0);
     setHintResetKey(prev => prev + 1);
@@ -492,6 +543,38 @@ function App() {
           </button>
         </div>
 
+        {/* Q vs K Mode - Numerical */}
+        <div className="mb-6">
+          <button
+            onClick={() => startGame('qk')}
+            className="w-full mode-card bg-white border-2 border-indigo-200 hover:border-indigo-400 rounded-lg p-6 text-left transition-all"
+          >
+            <div className="flex items-start gap-4">
+              <div className="text-3xl">🔢</div>
+              <div className="flex-1">
+                <h3 className="text-xl font-bold text-gray-800 mb-2">
+                  Q vs K - Magnbundinn samanburður
+                </h3>
+                <p className="text-gray-600 text-sm mb-3">
+                  Reiknaðu hvarfkvóta (Q), berðu saman við jafnvægisstuðul (K) og spáðu fyrir um stefnu
+                </p>
+                <div className="grid grid-cols-2 gap-4">
+                  <ul className="text-sm text-gray-500 space-y-1">
+                    <li>✓ Reikna Q úr þéttnum</li>
+                    <li>✓ Q vs K samanburður</li>
+                    <li>✓ Spá fyrir um hliðrun</li>
+                  </ul>
+                  <ul className="text-sm text-gray-500 space-y-1">
+                    <li>✓ {qkProblems.length} verkefni</li>
+                    <li>✓ Þrjú erfiðleikastig</li>
+                    <li>✓ Vísbendingakerfi</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </button>
+        </div>
+
         {/* Progress Summary */}
         <div className="bg-gray-50 rounded-lg p-4">
           <h3 className="font-semibold text-gray-700 mb-2">Framvinda þín</h3>
@@ -747,6 +830,18 @@ function App() {
                     </p>
                   </div>
 
+                  {/* Thermodynamics Connection (Learning Mode) */}
+                  {gameMode === 'learning' && currentEquilibrium.thermodynamics.K && (
+                    <div className="mb-4">
+                      <ThermodynamicsConnection
+                        equilibrium={currentEquilibrium}
+                        language={language as 'is' | 'en'}
+                        expanded={showThermoConnection}
+                        onToggle={() => setShowThermoConnection(!showThermoConnection)}
+                      />
+                    </div>
+                  )}
+
                   {/* Points Earned */}
                   {isCorrect && (
                     <div className="bg-green-100 rounded-lg p-3 mt-4">
@@ -921,6 +1016,47 @@ function App() {
     );
   };
 
+  const renderQKMode = () => {
+    if (!currentQKProblem) return null;
+
+    return (
+      <div className="max-w-4xl mx-auto">
+        {/* Progress header */}
+        <div className="bg-white rounded-lg shadow-md p-4 mb-4">
+          <div className="flex justify-between items-center">
+            <div>
+              <span className="text-sm text-gray-600">
+                Verkefni {qkProblemIndex + 1} af {qkProblems.length}
+              </span>
+              <div className="w-48 bg-gray-200 rounded-full h-2 mt-1">
+                <div
+                  className="bg-indigo-500 h-2 rounded-full transition-all"
+                  style={{ width: `${((qkProblemIndex + 1) / qkProblems.length) * 100}%` }}
+                />
+              </div>
+            </div>
+            <div className="text-right">
+              <div className="text-2xl font-bold text-indigo-600">{qkScore}</div>
+              <div className="text-xs text-gray-500">stig</div>
+            </div>
+          </div>
+        </div>
+
+        {/* QK Challenge Component */}
+        <QKChallenge
+          problem={currentQKProblem}
+          onComplete={(score, hintsUsed) => {
+            handleQKProblemComplete(score, hintsUsed);
+          }}
+          onNext={loadNextQKProblem}
+          onBack={() => setScreen('menu')}
+          problemNumber={qkProblemIndex + 1}
+          totalProblems={qkProblems.length}
+        />
+      </div>
+    );
+  };
+
   return (
     <div className={`min-h-screen bg-gradient-to-br from-purple-50 to-indigo-100 ${settings.highContrast ? 'high-contrast' : ''} ${settings.reducedMotion ? 'reduced-motion' : ''}`}>
       {/* Accessibility Skip Link */}
@@ -1002,6 +1138,7 @@ function App() {
         {screen === 'game' && renderGame()}
         {screen === 'results' && renderResults()}
         {screen === 'ice' && renderICEMode()}
+        {screen === 'qk' && renderQKMode()}
       </main>
 
       {/* Footer */}

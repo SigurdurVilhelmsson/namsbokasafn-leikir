@@ -5,7 +5,7 @@
 
 export type DifficultyLevel = 'beginner' | 'intermediate' | 'advanced';
 
-export type GameMode = 'learning' | 'challenge' | 'ice';
+export type GameMode = 'learning' | 'challenge' | 'ice' | 'qk';
 
 export type ShiftDirection = 'left' | 'right' | 'none';
 
@@ -32,6 +32,10 @@ export interface Molecule {
 export interface Thermodynamics {
   deltaH: number; // kJ/mol (positive = endothermic, negative = exothermic)
   type: 'endothermic' | 'exothermic';
+  // Cross-game connection data for Thermodynamics Predictor (ΔG° = -RT ln K)
+  K?: number;        // Equilibrium constant at 298K
+  deltaG?: number;   // Gibbs free energy at 298K in kJ/mol
+  deltaS?: number;   // Entropy change in J/(mol·K)
 }
 
 export interface GasMoles {

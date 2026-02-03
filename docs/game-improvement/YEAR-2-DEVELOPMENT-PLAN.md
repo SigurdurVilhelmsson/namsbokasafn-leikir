@@ -1,14 +1,14 @@
 # Year 2 Chemistry Games — Development Plan
 
-**Date:** 2026-01-30
+**Date:** 2026-01-30 | **Updated:** 2026-02-03
 **Curriculum Reference:** Brown et al, *Chemistry: The Central Science*, Chapters 5-14, 20, 24-25
-**Status:** Planning Phase
+**Status:** ✅ All Phases Complete
 
 ---
 
 ## Executive Summary
 
-Year 2 games comprehensively cover bonding, molecular structure, thermochemistry, kinetics, and organic chemistry. The 7 existing games are pedagogically mature with strong visualizations. Key gaps include **electrochemistry applications**, **entropy calculations**, and **deeper organic functional group chemistry**. Enhancements should focus on connecting related concepts across games and adding real-world laboratory contexts.
+Year 2 games comprehensively cover bonding, molecular structure, thermochemistry, kinetics, and organic chemistry. **All 10 games are now fully implemented** with strong visualizations and multi-level progression. Former gaps (electrochemistry, calorimetry, organic reactions) have been filled. Remaining work focuses on cross-game integration and polish enhancements.
 
 ---
 
@@ -17,17 +17,17 @@ Year 2 games comprehensively cover bonding, molecular structure, thermochemistry
 | Chapter | Topic | Coverage | Game(s) | Priority |
 |---------|-------|----------|---------|----------|
 | Ch. 5 | Thermochemistry/Hess's Law | ✅ Strong | Hess's Law | — |
-| Ch. 5 | Calorimetry | ❌ Missing | None | Medium |
+| Ch. 5 | Calorimetry | ✅ Complete | Calorimetry | — |
 | Ch. 8 | Lewis Structures | ✅ Strong | Lewis Structures | — |
 | Ch. 9 | VSEPR/Hybridization | ✅ Strong | VSEPR Geometry | — |
 | Ch. 11 | Intermolecular Forces | ✅ Strong | Intermolecular Forces | — |
 | Ch. 11 | Phase Diagrams | ❌ Missing | None | Low |
 | Ch. 14 | Chemical Kinetics | ✅ Strong | Kinetics | — |
-| Ch. 14 | Arrhenius Equation | ⚠️ Partial | Kinetics (visual only) | Medium |
+| Ch. 14 | Arrhenius Equation | ✅ Complete | Kinetics | — |
 | Ch. 20 | Redox/Ox Numbers | ✅ Strong | Redox Reactions | — |
-| Ch. 20 | Electrochemistry | ❌ Missing | None | High |
-| Ch. 24 | Organic Nomenclature | ✅ Good | Organic Nomenclature | — |
-| Ch. 24-25 | Organic Reactions | ❌ Missing | None | Medium |
+| Ch. 20 | Electrochemistry | ✅ Complete | Electrochemistry | — |
+| Ch. 24 | Organic Nomenclature | ✅ Strong | Organic Nomenclature | — |
+| Ch. 24-25 | Organic Reactions | ✅ Complete | Organic Reactions | — |
 
 ---
 
@@ -423,23 +423,23 @@ Current Redox game should include "preview" problems that set up electrochemistr
 
 ## Implementation Priority & Timeline
 
-### Phase 1: Critical Enhancements (Immediate)
-1. ⬜ Add name-to-structure drawing to Organic Nomenclature (O1)
-2. ⬜ Add Arrhenius equation calculations to Kinetics (K1)
-3. ⬜ Add octet rule exceptions to Lewis Structures (L1)
+### Phase 1: Critical Enhancements ✅ COMPLETE
+1. ✅ Add name-to-structure drawing to Organic Nomenclature (O1)
+2. ✅ Add Arrhenius equation calculations to Kinetics (K1)
+3. ✅ Add octet rule exceptions to Lewis Structures (L1)
 
-### Phase 2: New Critical Game
-4. ⬜ Build Rafefnafræði (Electrochemistry) — addresses major gap
+### Phase 2: New Critical Game ✅ COMPLETE
+4. ✅ Build Rafefnafræði (Electrochemistry) — 3 levels implemented
 
-### Phase 3: Medium Priority Enhancements
-5. ⬜ Add ion-dipole forces to IMF (I1)
-6. ⬜ Add integrated rate law graphing to Kinetics (K2)
-7. ⬜ Add cyclic compounds to Organic Nomenclature (O2)
-8. ⬜ Add bond enthalpy mode to Hess's Law (H1)
+### Phase 3: Medium Priority Enhancements ✅ COMPLETE
+5. ✅ Add ion-dipole forces to IMF (I1)
+6. ✅ Add integrated rate law graphing to Kinetics (K2)
+7. ✅ Add cyclic compounds to Organic Nomenclature (O2)
+8. ✅ Add bond enthalpy mode to Hess's Law (H1)
 
-### Phase 4: Additional Games
-9. ⬜ Build Hitalitun (Calorimetry)
-10. ⬜ Build Lífrænir Hvarfgangar (Organic Reactions)
+### Phase 4: Additional Games ✅ COMPLETE
+9. ✅ Build Hitalitun (Calorimetry) — 3 levels implemented
+10. ✅ Build Lífrænir Hvarfgangar (Organic Reactions) — 3 levels implemented
 
 ### Phase 5: Cross-Game Integration
 11. ⬜ Implement Lewis → VSEPR pipeline
@@ -450,8 +450,13 @@ Current Redox game should include "preview" problems that set up electrochemistr
 
 ## Notes for Next Session
 
-- **Electrochemistry** is the critical gap — Year 2 students need this for complete coverage
-- The existing Redox game provides excellent foundation for electrochemistry extension
-- Consider whether electrochemistry should be a separate game or Level 4 of Redox
-- Organic Nomenclature enhancement (name→structure) is high-impact and directly addresses common student weakness
-- Cross-game integration would significantly improve learning transfer between topics
+**Sprint Summary (2026-02-03):** Phases 1-4 complete! All core games implemented:
+- ✅ 10 games fully implemented with 3-4 levels each
+- ✅ Electrochemistry game built (was critical gap)
+- ✅ Calorimetry game built
+- ✅ Organic Reactions game built
+
+**Remaining work:**
+- Phase 5: Cross-game integration (Lewis → VSEPR, IMF → Organic, Kinetics ↔ Hess's Law)
+- Consider additional enhancements identified in Part A assessments
+- Potential polish: Add more real-world examples and error analysis steps

@@ -23,7 +23,10 @@ export const equilibria: Equilibrium[] = [
     ],
     thermodynamics: {
       deltaH: 58,
-      type: 'endothermic'
+      type: 'endothermic',
+      K: 0.148,
+      deltaG: 4.7,
+      deltaS: 179
     },
     gasMoles: {
       reactants: 1,
@@ -58,7 +61,10 @@ export const equilibria: Equilibrium[] = [
     ],
     thermodynamics: {
       deltaH: 53,
-      type: 'endothermic'
+      type: 'endothermic',
+      K: 50,
+      deltaG: -9.7,
+      deltaS: 21
     },
     gasMoles: {
       reactants: 2,
@@ -94,7 +100,10 @@ export const equilibria: Equilibrium[] = [
     ],
     thermodynamics: {
       deltaH: 88,
-      type: 'endothermic'
+      type: 'endothermic',
+      K: 0.04,
+      deltaG: 8.0,
+      deltaS: 268
     },
     gasMoles: {
       reactants: 1,
@@ -129,7 +138,10 @@ export const equilibria: Equilibrium[] = [
     ],
     thermodynamics: {
       deltaH: -91,
-      type: 'exothermic'
+      type: 'exothermic',
+      K: 2.0e7,
+      deltaG: -41.7,
+      deltaS: -165
     },
     gasMoles: {
       reactants: 3,
@@ -164,7 +176,10 @@ export const equilibria: Equilibrium[] = [
     ],
     thermodynamics: {
       deltaH: 178,
-      type: 'endothermic'
+      type: 'endothermic',
+      K: 1.9e-23,
+      deltaG: 130,
+      deltaS: 161
     },
     gasMoles: {
       reactants: 0,
@@ -197,7 +212,10 @@ export const equilibria: Equilibrium[] = [
     ],
     thermodynamics: {
       deltaH: -20,
-      type: 'exothermic'
+      type: 'exothermic',
+      K: 890,
+      deltaG: -16.8,
+      deltaS: -11
     },
     gasMoles: {
       reactants: 0,
@@ -229,7 +247,10 @@ export const equilibria: Equilibrium[] = [
     ],
     thermodynamics: {
       deltaH: 56,
-      type: 'endothermic'
+      type: 'endothermic',
+      K: 1.0e-14,
+      deltaG: 79.9,
+      deltaS: -80
     },
     gasMoles: {
       reactants: 0,
@@ -261,7 +282,10 @@ export const equilibria: Equilibrium[] = [
     ],
     thermodynamics: {
       deltaH: 5,
-      type: 'endothermic'
+      type: 'endothermic',
+      K: 1.8e-5,
+      deltaG: 27.1,
+      deltaS: -74
     },
     gasMoles: {
       reactants: 0,
@@ -293,7 +317,10 @@ export const equilibria: Equilibrium[] = [
     ],
     thermodynamics: {
       deltaH: -3,
-      type: 'exothermic'
+      type: 'exothermic',
+      K: 1.8e-5,
+      deltaG: 27.1,
+      deltaS: -101
     },
     gasMoles: {
       reactants: 0,
@@ -325,7 +352,10 @@ export const equilibria: Equilibrium[] = [
     ],
     thermodynamics: {
       deltaH: 65,
-      type: 'endothermic'
+      type: 'endothermic',
+      K: 1.8e-10,
+      deltaG: 55.6,
+      deltaS: 32
     },
     gasMoles: {
       reactants: 0,
@@ -359,7 +389,10 @@ export const equilibria: Equilibrium[] = [
     ],
     thermodynamics: {
       deltaH: -92,
-      type: 'exothermic'
+      type: 'exothermic',
+      K: 6.8e5,
+      deltaG: -33.3,
+      deltaS: -199
     },
     gasMoles: {
       reactants: 4,
@@ -394,7 +427,10 @@ export const equilibria: Equilibrium[] = [
     ],
     thermodynamics: {
       deltaH: -198,
-      type: 'exothermic'
+      type: 'exothermic',
+      K: 4.0e24,
+      deltaG: -140,
+      deltaS: -195
     },
     gasMoles: {
       reactants: 3,
@@ -429,7 +465,10 @@ export const equilibria: Equilibrium[] = [
     ],
     thermodynamics: {
       deltaH: -905,
-      type: 'exothermic'
+      type: 'exothermic',
+      K: 2.0e150,
+      deltaG: -856,
+      deltaS: -165
     },
     gasMoles: {
       reactants: 9,
@@ -463,7 +502,10 @@ export const equilibria: Equilibrium[] = [
     ],
     thermodynamics: {
       deltaH: -41,
-      type: 'exothermic'
+      type: 'exothermic',
+      K: 1.0e5,
+      deltaG: -28.5,
+      deltaS: -42
     },
     gasMoles: {
       reactants: 2,
@@ -496,7 +538,10 @@ export const equilibria: Equilibrium[] = [
     ],
     thermodynamics: {
       deltaH: -114,
-      type: 'exothermic'
+      type: 'exothermic',
+      K: 2.2e12,
+      deltaG: -70.4,
+      deltaS: -146
     },
     gasMoles: {
       reactants: 3,
@@ -529,7 +574,10 @@ export const equilibria: Equilibrium[] = [
     ],
     thermodynamics: {
       deltaH: 172,
-      type: 'endothermic'
+      type: 'endothermic',
+      K: 1.0e-15,
+      deltaG: 120,
+      deltaS: 176
     },
     gasMoles: {
       reactants: 1,
@@ -563,7 +611,10 @@ export const equilibria: Equilibrium[] = [
     ],
     thermodynamics: {
       deltaH: 206,
-      type: 'endothermic'
+      type: 'endothermic',
+      K: 1.0e-25,
+      deltaG: 142,
+      deltaS: 215
     },
     gasMoles: {
       reactants: 2,
@@ -598,7 +649,10 @@ export const equilibria: Equilibrium[] = [
     ],
     thermodynamics: {
       deltaH: 41,
-      type: 'endothermic'
+      type: 'endothermic',
+      K: 1.0e-5,
+      deltaG: 28.5,
+      deltaS: 42
     },
     gasMoles: {
       reactants: 2,
@@ -631,7 +685,10 @@ export const equilibria: Equilibrium[] = [
     ],
     thermodynamics: {
       deltaH: 181,
-      type: 'endothermic'
+      type: 'endothermic',
+      K: 4.0e-31,
+      deltaG: 173,
+      deltaS: 25
     },
     gasMoles: {
       reactants: 2,
@@ -664,7 +721,10 @@ export const equilibria: Equilibrium[] = [
     ],
     thermodynamics: {
       deltaH: -1036,
-      type: 'exothermic'
+      type: 'exothermic',
+      K: 1.0e170,
+      deltaG: -970,
+      deltaS: -222
     },
     gasMoles: {
       reactants: 5,
@@ -697,7 +757,10 @@ export const equilibria: Equilibrium[] = [
     ],
     thermodynamics: {
       deltaH: 10,
-      type: 'endothermic'
+      type: 'endothermic',
+      K: 4.3e-7,
+      deltaG: 36.3,
+      deltaS: -88
     },
     gasMoles: {
       reactants: 0,
@@ -728,7 +791,10 @@ export const equilibria: Equilibrium[] = [
     ],
     thermodynamics: {
       deltaH: 42,
-      type: 'endothermic'
+      type: 'endothermic',
+      K: 2.1e-13,
+      deltaG: 72.4,
+      deltaS: -102
     },
     gasMoles: {
       reactants: 0,
@@ -761,7 +827,10 @@ export const equilibria: Equilibrium[] = [
     ],
     thermodynamics: {
       deltaH: -221,
-      type: 'exothermic'
+      type: 'exothermic',
+      K: 1.0e45,
+      deltaG: -257,
+      deltaS: 179
     },
     gasMoles: {
       reactants: 1,
@@ -794,7 +863,10 @@ export const equilibria: Equilibrium[] = [
     ],
     thermodynamics: {
       deltaH: 0,
-      type: 'exothermic'
+      type: 'exothermic',
+      K: 1.8e-5,
+      deltaG: 27.1,
+      deltaS: -91
     },
     gasMoles: {
       reactants: 0,
@@ -824,7 +896,10 @@ export const equilibria: Equilibrium[] = [
     ],
     thermodynamics: {
       deltaH: -92,
-      type: 'exothermic'
+      type: 'exothermic',
+      K: 6.8e5,
+      deltaG: -33.3,
+      deltaS: -199
     },
     gasMoles: {
       reactants: 4,
@@ -856,7 +931,10 @@ export const equilibria: Equilibrium[] = [
     ],
     thermodynamics: {
       deltaH: -92,
-      type: 'exothermic'
+      type: 'exothermic',
+      K: 6.8e5,
+      deltaG: -33.3,
+      deltaS: -199
     },
     gasMoles: {
       reactants: 4,
@@ -888,7 +966,10 @@ export const equilibria: Equilibrium[] = [
     ],
     thermodynamics: {
       deltaH: 5,
-      type: 'endothermic'
+      type: 'endothermic',
+      K: 7.5e-3,
+      deltaG: 12.1,
+      deltaS: -24
     },
     gasMoles: {
       reactants: 0,
@@ -918,7 +999,10 @@ export const equilibria: Equilibrium[] = [
     ],
     thermodynamics: {
       deltaH: -92,
-      type: 'exothermic'
+      type: 'exothermic',
+      K: 6.8e5,
+      deltaG: -33.3,
+      deltaS: -199
     },
     gasMoles: {
       reactants: 4,
@@ -949,7 +1033,10 @@ export const equilibria: Equilibrium[] = [
     ],
     thermodynamics: {
       deltaH: -50,
-      type: 'exothermic'
+      type: 'exothermic',
+      K: 1.0e6,
+      deltaG: -34.3,
+      deltaS: -53
     },
     gasMoles: {
       reactants: 4,
@@ -981,7 +1068,10 @@ export const equilibria: Equilibrium[] = [
     ],
     thermodynamics: {
       deltaH: -198,
-      type: 'exothermic'
+      type: 'exothermic',
+      K: 4.0e24,
+      deltaG: -140,
+      deltaS: -195
     },
     gasMoles: {
       reactants: 3,

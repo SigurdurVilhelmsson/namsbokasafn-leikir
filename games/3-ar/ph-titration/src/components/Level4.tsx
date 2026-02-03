@@ -359,11 +359,20 @@ export function Level4({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
   const handleSubmit = () => {
     if (!userAnswer.trim()) return;
 
-    const numericAnswer = parseAnswer(userAnswer);
-    if (numericAnswer === null) return;
+    let correct = false;
 
-    const relativeError = Math.abs(numericAnswer - challenge.correctAnswer) / Math.abs(challenge.correctAnswer);
-    const correct = relativeError <= challenge.tolerance;
+    // Multiple choice (string comparison)
+    if (challenge.isMultipleChoice) {
+      correct = userAnswer === challenge.correctAnswer;
+    } else {
+      // Numeric answer
+      const numericAnswer = parseAnswer(userAnswer);
+      if (numericAnswer === null) return;
+
+      const correctNum = typeof challenge.correctAnswer === 'number' ? challenge.correctAnswer : parseFloat(challenge.correctAnswer as string);
+      const relativeError = Math.abs(numericAnswer - correctNum) / Math.abs(correctNum);
+      correct = relativeError <= challenge.tolerance;
+    }
 
     setIsCorrect(correct);
     setShowResult(true);
@@ -406,6 +415,7 @@ export function Level4({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
       case 'full-analysis': return 'Heildargreining';
       case 'polyprotic-read-pka': return 'Fjölprótón: Lesa pKa';
       case 'polyprotic-full-analysis': return 'Fjölprótón: Greining';
+      case 'curve-interpretation': return 'Kúrfugreining';
       default: return type;
     }
   };
@@ -418,11 +428,15 @@ export function Level4({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
       case 'full-analysis': return 'bg-purple-500';
       case 'polyprotic-read-pka': return 'bg-teal-500';
       case 'polyprotic-full-analysis': return 'bg-indigo-500';
+      case 'curve-interpretation': return 'bg-rose-500';
       default: return 'bg-gray-500';
     }
   };
 
-  const formatAnswer = (value: number): string => {
+  const formatAnswer = (value: number | string): string => {
+    if (typeof value === 'string') {
+      return value;
+    }
     if (value < 0.001 || value > 1000) {
       return value.toExponential(2);
     }
@@ -484,11 +498,24 @@ export function Level4({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
           <div className="bg-gray-50 rounded-xl p-4 mb-4">
             <h3 className="font-bold text-gray-700 mb-2">Títrunarupplýsingar:</h3>
             <div className="grid grid-cols-2 gap-2 text-sm">
-              <div><span className="font-semibold">Sýra:</span> {challenge.acidFormula} ({challenge.acidNameIs})</div>
-              <div><span className="font-semibold">Rúmmál sýru:</span> {challenge.analyteVolume} mL</div>
-              <div><span className="font-semibold">Styrkur sýru:</span> {challenge.analyteMolarity} M</div>
-              <div><span className="font-semibold">Títrant:</span> {challenge.titrantFormula} ({challenge.titrantMolarity} M)</div>
-              {challenge.isPolyprotic && challenge.equivalenceVolumes ? (
+              {challenge.hideLabels ? (
+                // Curve interpretation - hide acid identity
+                <>
+                  <div><span className="font-semibold">Sýra:</span> <span className="text-gray-500 italic">Óþekkt</span></div>
+                  <div><span className="font-semibold">Rúmmál sýru:</span> {challenge.analyteVolume} mL</div>
+                  <div><span className="font-semibold">Styrkur sýru:</span> {challenge.analyteMolarity} M</div>
+                  <div><span className="font-semibold">Títrant:</span> {challenge.titrantFormula} ({challenge.titrantMolarity} M)</div>
+                </>
+              ) : (
+                // Normal - show acid identity
+                <>
+                  <div><span className="font-semibold">Sýra:</span> {challenge.acidFormula} ({challenge.acidNameIs})</div>
+                  <div><span className="font-semibold">Rúmmál sýru:</span> {challenge.analyteVolume} mL</div>
+                  <div><span className="font-semibold">Styrkur sýru:</span> {challenge.analyteMolarity} M</div>
+                  <div><span className="font-semibold">Títrant:</span> {challenge.titrantFormula} ({challenge.titrantMolarity} M)</div>
+                </>
+              )}
+              {!challenge.hideLabels && challenge.isPolyprotic && challenge.equivalenceVolumes ? (
                 <div className="col-span-2">
                   <span className="font-semibold text-red-600">Jafngildispunktar:</span>{' '}
                   {challenge.equivalenceVolumes.map((vol, i) => (
@@ -499,11 +526,11 @@ export function Level4({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
                     </span>
                   ))}
                 </div>
-              ) : (
+              ) : !challenge.hideLabels && challenge.equivalenceVolume ? (
                 <div><span className="font-semibold text-red-600">Jafngildispunktur:</span> {challenge.equivalenceVolume} mL</div>
-              )}
+              ) : null}
             </div>
-            {challenge.isPolyprotic && (
+            {!challenge.hideLabels && challenge.isPolyprotic && (
               <div className="mt-2 pt-2 border-t border-gray-200 text-sm">
                 <span className="font-semibold text-teal-600">
                   {challenge.equivalenceVolumes?.length === 2 ? 'Tvíprótónsýra' : 'Þríprótónsýra'}
@@ -513,6 +540,13 @@ export function Level4({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
                     Finndu pKa{challenge.targetPKa}
                   </span>
                 )}
+              </div>
+            )}
+            {challenge.hideLabels && (
+              <div className="mt-2 pt-2 border-t border-gray-200 text-sm">
+                <span className="bg-rose-100 text-rose-700 px-2 py-0.5 rounded text-xs font-semibold">
+                  Greindu kúrfuna til að svara spurningunni
+                </span>
               </div>
             )}
           </div>
@@ -583,7 +617,14 @@ export function Level4({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
           {/* Key concept reminder */}
           <div className="bg-purple-50 border border-purple-200 rounded-xl p-4 mb-4">
             <h4 className="font-bold text-purple-800 mb-2">Lykilhugtök:</h4>
-            {challenge.isPolyprotic ? (
+            {challenge.type === 'curve-interpretation' ? (
+              <ul className="text-sm text-purple-900 space-y-1">
+                <li>• <strong>Sterk sýra:</strong> Lágt upphafspH (~1), skörp breyting við jafngildi, pH = 7 við jafngildi</li>
+                <li>• <strong>Veik sýra:</strong> Hærra upphafspH (2-4), stuðpúðasvæði, pH {'>'} 7 við jafngildi</li>
+                <li>• <strong>Fjöldi jafngildispunkta</strong> = fjöldi prótóna (einprótón, tvíprótón, þríprótón)</li>
+                <li>• <strong>pKa = pH</strong> við hálfan jafngildispunkt</li>
+              </ul>
+            ) : challenge.isPolyprotic ? (
               <ul className="text-sm text-purple-900 space-y-1">
                 <li>• <strong>Fjölprótónsýrur</strong> hafa marga jafngildispunkta og marga pKa gildi</li>
                 <li>• <strong>Fyrsti hálfur jafngildispunktur</strong> = Eq₁/2 → pH = pKa₁</li>
@@ -602,41 +643,80 @@ export function Level4({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
           {/* Answer input */}
           <div className="mb-4">
             <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Svar {challenge.answerUnit && `(${challenge.answerUnit})`}:
+              {challenge.isMultipleChoice ? 'Veldu svar:' : `Svar ${challenge.answerUnit ? `(${challenge.answerUnit})` : ''}:`}
             </label>
-            <div className="flex gap-3">
-              <input
-                type="text"
-                value={userAnswer}
-                onChange={(e) => setUserAnswer(e.target.value)}
-                onKeyDown={handleKeyDown}
-                disabled={showResult}
-                placeholder={
-                  challenge.type === 'calculate-ka' || challenge.type === 'full-analysis' || challenge.type === 'polyprotic-full-analysis'
-                    ? 'T.d. 1.8e-5 eða 0.000018'
-                    : challenge.type === 'polyprotic-read-pka'
-                    ? 'T.d. 4.27 fyrir pKa gildi'
-                    : 'Sláðu inn svar...'
-                }
-                className={`flex-1 px-4 py-3 border-2 rounded-xl text-lg font-mono ${
-                  showResult
-                    ? isCorrect
-                      ? 'border-green-500 bg-green-50'
-                      : 'border-red-500 bg-red-50'
-                    : 'border-gray-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-200'
-                }`}
-              />
-              {challenge.answerUnit && (
-                <span className="flex items-center px-4 py-3 bg-gray-100 rounded-xl font-semibold text-gray-700">
-                  {challenge.answerUnit}
-                </span>
-              )}
-            </div>
-            <p className="text-xs text-gray-500 mt-1">
-              {challenge.type === 'calculate-ka' || challenge.type === 'full-analysis' || challenge.type === 'polyprotic-full-analysis'
-                ? 'Notaðu vísindalega rithætti (t.d. 1.8e-5)'
-                : `Skekkjumörk: ±${(challenge.tolerance * 100).toFixed(0)}%`}
-            </p>
+
+            {challenge.isMultipleChoice && challenge.optionsIs ? (
+              // Multiple choice options
+              <div className="space-y-2">
+                {challenge.optionsIs.map((option, index) => {
+                  const isSelected = userAnswer === option;
+                  const isCorrectOption = option === challenge.correctAnswer;
+
+                  let buttonStyle = 'border-gray-300 hover:border-orange-400 hover:bg-orange-50';
+                  if (showResult) {
+                    if (isCorrectOption) {
+                      buttonStyle = 'border-green-500 bg-green-50 text-green-800';
+                    } else if (isSelected && !isCorrectOption) {
+                      buttonStyle = 'border-red-500 bg-red-50 text-red-800';
+                    } else {
+                      buttonStyle = 'border-gray-200 bg-gray-50 text-gray-500';
+                    }
+                  } else if (isSelected) {
+                    buttonStyle = 'border-orange-500 bg-orange-50';
+                  }
+
+                  return (
+                    <button
+                      key={index}
+                      onClick={() => !showResult && setUserAnswer(option)}
+                      disabled={showResult}
+                      className={`w-full px-4 py-3 border-2 rounded-xl text-left transition-colors ${buttonStyle}`}
+                    >
+                      <span className="font-medium">{String.fromCharCode(65 + index)}.</span> {option}
+                    </button>
+                  );
+                })}
+              </div>
+            ) : (
+              // Text input for numeric answers
+              <div className="flex gap-3">
+                <input
+                  type="text"
+                  value={userAnswer}
+                  onChange={(e) => setUserAnswer(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  disabled={showResult}
+                  placeholder={
+                    challenge.type === 'calculate-ka' || challenge.type === 'full-analysis' || challenge.type === 'polyprotic-full-analysis'
+                      ? 'T.d. 1.8e-5 eða 0.000018'
+                      : challenge.type === 'polyprotic-read-pka'
+                      ? 'T.d. 4.27 fyrir pKa gildi'
+                      : 'Sláðu inn svar...'
+                  }
+                  className={`flex-1 px-4 py-3 border-2 rounded-xl text-lg font-mono ${
+                    showResult
+                      ? isCorrect
+                        ? 'border-green-500 bg-green-50'
+                        : 'border-red-500 bg-red-50'
+                      : 'border-gray-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-200'
+                  }`}
+                />
+                {challenge.answerUnit && (
+                  <span className="flex items-center px-4 py-3 bg-gray-100 rounded-xl font-semibold text-gray-700">
+                    {challenge.answerUnit}
+                  </span>
+                )}
+              </div>
+            )}
+
+            {!challenge.isMultipleChoice && (
+              <p className="text-xs text-gray-500 mt-1">
+                {challenge.type === 'calculate-ka' || challenge.type === 'full-analysis' || challenge.type === 'polyprotic-full-analysis'
+                  ? 'Notaðu vísindalega rithætti (t.d. 1.8e-5)'
+                  : `Skekkjumörk: ±${(challenge.tolerance * 100).toFixed(0)}%`}
+              </p>
+            )}
           </div>
 
           {/* Hint */}

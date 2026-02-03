@@ -9,7 +9,7 @@
 
 export interface Level4Challenge {
   id: string;
-  type: 'identify-half-eq' | 'read-pka' | 'calculate-ka' | 'full-analysis' | 'polyprotic-read-pka' | 'polyprotic-full-analysis';
+  type: 'identify-half-eq' | 'read-pka' | 'calculate-ka' | 'full-analysis' | 'polyprotic-read-pka' | 'polyprotic-full-analysis' | 'curve-interpretation';
   titleIs: string;
   title: string;
   descriptionIs: string;
@@ -42,13 +42,21 @@ export interface Level4Challenge {
   actualPKas?: number[];
   actualKas?: number[];
 
-  // Question-specific
-  correctAnswer: number;
+  // Question-specific (for numerical answers)
+  correctAnswer: number | string;  // Can be number for calculations or string for curve interpretation
   answerUnit: string;
   tolerance: number;
 
   // For polyprotic questions asking for specific pKa
   targetPKa?: 1 | 2 | 3;  // Which pKa to find
+
+  // For curve interpretation (multiple choice)
+  isMultipleChoice?: boolean;
+  options?: string[];
+  optionsIs?: string[];
+
+  // For hiding labels in curve interpretation
+  hideLabels?: boolean;
 
   hintIs: string;
   hint: string;
@@ -275,6 +283,54 @@ function generateTriproticAcidCurve(
   return sorted.filter((point, index, arr) =>
     index === 0 || point.volume !== arr[index - 1].volume
   );
+}
+
+// Generate titration curve data for strong acid + strong base
+function generateStrongAcidCurve(
+  analyteVolume: number,
+  analyteMolarity: number,
+  titrantMolarity: number
+): Array<{ volume: number; pH: number }> {
+  const equivalenceVolume = (analyteVolume * analyteMolarity) / titrantMolarity;
+
+  // Initial pH (strong acid)
+  const initialH = analyteMolarity;
+  const initialPH = -Math.log10(initialH);
+
+  const points: Array<{ volume: number; pH: number }> = [];
+
+  // Initial pH
+  points.push({ volume: 0, pH: Math.round(initialPH * 100) / 100 });
+
+  // Before equivalence - gradual increase
+  for (let v = 2; v < equivalenceVolume; v += 2) {
+    const molesAcidLeft = analyteMolarity * analyteVolume - titrantMolarity * v;
+    const totalVolume = analyteVolume + v;
+    const H = molesAcidLeft / totalVolume;
+    if (H > 0) {
+      const pH = -Math.log10(H);
+      points.push({ volume: v, pH: Math.round(pH * 100) / 100 });
+    }
+  }
+
+  // Near equivalence - steep rise
+  points.push({ volume: equivalenceVolume * 0.9, pH: 2.3 });
+  points.push({ volume: equivalenceVolume * 0.95, pH: 3.0 });
+  points.push({ volume: equivalenceVolume * 0.99, pH: 4.3 });
+
+  // Equivalence point (pH = 7 for strong acid + strong base)
+  points.push({ volume: equivalenceVolume, pH: 7.0 });
+
+  // After equivalence - excess base
+  points.push({ volume: equivalenceVolume * 1.01, pH: 9.7 });
+  points.push({ volume: equivalenceVolume * 1.02, pH: 10.0 });
+  points.push({ volume: equivalenceVolume * 1.05, pH: 10.7 });
+  points.push({ volume: equivalenceVolume * 1.10, pH: 11.2 });
+  points.push({ volume: equivalenceVolume * 1.20, pH: 11.5 });
+  points.push({ volume: equivalenceVolume * 1.50, pH: 12.0 });
+
+  // Sort by volume
+  return points.sort((a, b) => a.volume - b.volume);
 }
 
 export const LEVEL4_CHALLENGES: Level4Challenge[] = [
@@ -861,6 +917,313 @@ export const LEVEL4_CHALLENGES: Level4Challenge[] = [
       'At V = 45.0 mL, pH = 6.91',
       'pKa₂ = 6.91',
       'Ka₂ = 10^(-6.91) = 1.23 × 10⁻⁷'
+    ]
+  },
+
+  // ==================== CURVE INTERPRETATION CHALLENGES ====================
+
+  // Challenge 13: Identify acid type (strong vs weak)
+  {
+    id: 'ci-1',
+    type: 'curve-interpretation',
+    titleIs: 'Greining kúrfu: Tegund sýru',
+    title: 'Curve Interpretation: Acid Type',
+    descriptionIs: 'Skoðaðu títrunarkúrfuna. Kúrfan sýnir títrun á óþekktri sýru með NaOH. Hvort er þetta sterk eða veik sýra?',
+    description: 'Examine the titration curve. The curve shows titration of an unknown acid with NaOH. Is this a strong or weak acid?',
+
+    acidName: 'Unknown (Formic acid)',
+    acidNameIs: 'Óþekkt (Maurasýra)',
+    acidFormula: '?',
+    analyteVolume: 20.0,
+    analyteMolarity: 0.100,
+    titrantFormula: 'NaOH',
+    titrantMolarity: 0.100,
+
+    curveData: generateWeakAcidCurve(20.0, 0.100, 0.100, 3.75, 8.35),
+
+    equivalenceVolume: 20.0,
+    halfEquivalenceVolume: 10.0,
+    halfEquivalencePH: 3.75,
+    actualPKa: 3.75,
+    hideLabels: true,
+
+    isMultipleChoice: true,
+    options: ['Strong acid', 'Weak acid'],
+    optionsIs: ['Sterk sýra', 'Veik sýra'],
+    correctAnswer: 'Veik sýra',
+    answerUnit: '',
+    tolerance: 0,
+
+    hintIs: 'Skoðaðu upphafspH og lögun kúrfunnar. Veik sýra hefur hærra upphafspH og breytilegri pH í stuðpúðasvæðinu.',
+    hint: 'Look at the initial pH and curve shape. A weak acid has higher initial pH and gradual pH change in the buffer region.',
+    explanationIs: 'Þetta er veik sýra vegna þess að: 1) UpphafspH (~2.4) er hærra en sterk sýra (væri ~1), 2) Það er greinilegur stuðpúðasvæði með hægri pH breytingu, 3) pH við jafngildispunkt er yfir 7 (um 8.4).',
+    explanation: 'This is a weak acid because: 1) Initial pH (~2.4) is higher than a strong acid (would be ~1), 2) There is a distinct buffer region with gradual pH change, 3) pH at equivalence point is above 7 (around 8.4).',
+    solutionStepsIs: [
+      'Skoðaðu upphafspH: ~2.4 (sterk sýra væri ~1)',
+      'Skoðaðu stuðpúðasvæðið: hægur pH hækkun fyrir jafngildispunkt',
+      'Skoðaðu jafngildispunkt: pH > 7 (um 8.4)',
+      'Niðurstaða: Veik sýra'
+    ],
+    solutionSteps: [
+      'Check initial pH: ~2.4 (strong acid would be ~1)',
+      'Check buffer region: gradual pH rise before equivalence',
+      'Check equivalence point: pH > 7 (around 8.4)',
+      'Conclusion: Weak acid'
+    ]
+  },
+
+  // Challenge 14: Identify strong acid curve
+  {
+    id: 'ci-2',
+    type: 'curve-interpretation',
+    titleIs: 'Greining kúrfu: Þekktu sterku sýruna',
+    title: 'Curve Interpretation: Identify Strong Acid',
+    descriptionIs: 'Skoðaðu títrunarkúrfuna. Er þetta sterk eða veik sýra?',
+    description: 'Examine the titration curve. Is this a strong or weak acid?',
+
+    acidName: 'Unknown (HCl)',
+    acidNameIs: 'Óþekkt (Saltsýra)',
+    acidFormula: '?',
+    analyteVolume: 25.0,
+    analyteMolarity: 0.100,
+    titrantFormula: 'NaOH',
+    titrantMolarity: 0.100,
+
+    curveData: generateStrongAcidCurve(25.0, 0.100, 0.100),
+
+    equivalenceVolume: 25.0,
+    hideLabels: true,
+
+    isMultipleChoice: true,
+    options: ['Strong acid', 'Weak acid'],
+    optionsIs: ['Sterk sýra', 'Veik sýra'],
+    correctAnswer: 'Sterk sýra',
+    answerUnit: '',
+    tolerance: 0,
+
+    hintIs: 'Skoðaðu upphafspH og lögun kúrfunnar. Sterk sýra hefur lágt upphafspH og skarpa breytingu við jafngildispunkt.',
+    hint: 'Look at the initial pH and curve shape. A strong acid has low initial pH and sharp change at equivalence.',
+    explanationIs: 'Þetta er sterk sýra vegna þess að: 1) UpphafspH (~1) er mjög lágt, 2) Engin stuðpúðasvæði - lítil pH breyting fyrr en rétt fyrir jafngildispunkt, 3) pH við jafngildispunkt er nákvæmlega 7.',
+    explanation: 'This is a strong acid because: 1) Initial pH (~1) is very low, 2) No buffer region - little pH change until just before equivalence, 3) pH at equivalence point is exactly 7.',
+    solutionStepsIs: [
+      'Skoðaðu upphafspH: ~1 (mjög lágt)',
+      'Enginn stuðpúðasvæði: lítil pH breyting fyrr en nálægt jafngildispunkti',
+      'Jafngildispunktur: pH = 7 nákvæmlega',
+      'Niðurstaða: Sterk sýra'
+    ],
+    solutionSteps: [
+      'Check initial pH: ~1 (very low)',
+      'No buffer region: little pH change until near equivalence',
+      'Equivalence point: pH = 7 exactly',
+      'Conclusion: Strong acid'
+    ]
+  },
+
+  // Challenge 15: Identify monoprotic vs diprotic
+  {
+    id: 'ci-3',
+    type: 'curve-interpretation',
+    titleIs: 'Greining kúrfu: Einprótón eða tvíprótón?',
+    title: 'Curve Interpretation: Monoprotic or Diprotic?',
+    descriptionIs: 'Skoðaðu títrunarkúrfuna. Er þetta einprótón (monoprotic) eða tvíprótón (diprotic) sýra?',
+    description: 'Examine the titration curve. Is this a monoprotic or diprotic acid?',
+
+    acidName: 'Unknown (Oxalic acid)',
+    acidNameIs: 'Óþekkt (Oxalsýra)',
+    acidFormula: '?',
+    analyteVolume: 25.0,
+    analyteMolarity: 0.100,
+    titrantFormula: 'NaOH',
+    titrantMolarity: 0.100,
+
+    curveData: generateDiproticAcidCurve(25.0, 0.100, 0.100, 1.25, 4.27, 1.2),
+
+    isPolyprotic: true,
+    equivalenceVolumes: [25.0, 50.0],
+    halfEquivalenceVolumes: [12.5, 37.5],
+    halfEquivalencePHs: [1.25, 4.27],
+    hideLabels: true,
+
+    isMultipleChoice: true,
+    options: ['Monoprotic (one equivalence point)', 'Diprotic (two equivalence points)'],
+    optionsIs: ['Einprótón (einn jafngildispunktur)', 'Tvíprótón (tveir jafngildispunktar)'],
+    correctAnswer: 'Tvíprótón (tveir jafngildispunktar)',
+    answerUnit: '',
+    tolerance: 0,
+
+    hintIs: 'Teljið skarpu pH breytingarnar (jafngildispunktana) á kúrfunni. Einprótón sýra hefur einn, tvíprótón hefur tvo.',
+    hint: 'Count the sharp pH changes (equivalence points) on the curve. A monoprotic acid has one, diprotic has two.',
+    explanationIs: 'Þetta er tvíprótón sýra vegna þess að kúrfan sýnir tvo aðskilda jafngildispunkta - tvo skarpa pH stökk við ~25 mL og ~50 mL.',
+    explanation: 'This is a diprotic acid because the curve shows two distinct equivalence points - two sharp pH jumps at ~25 mL and ~50 mL.',
+    solutionStepsIs: [
+      'Skoðaðu kúrfuna eftir skörtum pH breytingum',
+      'Fyrsti jafngildispunktur: við ~25 mL',
+      'Annar jafngildispunktur: við ~50 mL',
+      'Niðurstaða: Tvíprótón sýra (2 jafngildispunktar)'
+    ],
+    solutionSteps: [
+      'Look for sharp pH changes on the curve',
+      'First equivalence point: at ~25 mL',
+      'Second equivalence point: at ~50 mL',
+      'Conclusion: Diprotic acid (2 equivalence points)'
+    ]
+  },
+
+  // Challenge 16: Estimate pKa from curve
+  {
+    id: 'ci-4',
+    type: 'curve-interpretation',
+    titleIs: 'Greining kúrfu: Metið pKa',
+    title: 'Curve Interpretation: Estimate pKa',
+    descriptionIs: 'Skoðaðu títrunarkúrfuna fyrir óþekkta veika sýru. Jafngildispunkturinn er við 30 mL. Hvert er áætlað pKa gildi?',
+    description: 'Examine the titration curve for an unknown weak acid. The equivalence point is at 30 mL. What is the estimated pKa value?',
+
+    acidName: 'Unknown (Acetic acid)',
+    acidNameIs: 'Óþekkt (Ediksýra)',
+    acidFormula: '?',
+    analyteVolume: 30.0,
+    analyteMolarity: 0.100,
+    titrantFormula: 'NaOH',
+    titrantMolarity: 0.100,
+
+    curveData: generateWeakAcidCurve(30.0, 0.100, 0.100, 4.74, 8.72),
+
+    equivalenceVolume: 30.0,
+    halfEquivalenceVolume: 15.0,
+    halfEquivalencePH: 4.74,
+    actualPKa: 4.74,
+    hideLabels: true,
+
+    isMultipleChoice: true,
+    options: ['pKa ≈ 2-3', 'pKa ≈ 4-5', 'pKa ≈ 6-7', 'pKa ≈ 8-9'],
+    optionsIs: ['pKa ≈ 2-3', 'pKa ≈ 4-5', 'pKa ≈ 6-7', 'pKa ≈ 8-9'],
+    correctAnswer: 'pKa ≈ 4-5',
+    answerUnit: '',
+    tolerance: 0,
+
+    hintIs: 'Finndu hálfan jafngildispunkt (15 mL) og lestu pH gildið þar. pH við hálfan jafngildispunkt = pKa.',
+    hint: 'Find the half-equivalence point (15 mL) and read the pH there. pH at half-equivalence = pKa.',
+    explanationIs: 'Hálfur jafngildispunktur er við 30/2 = 15 mL. Við þetta rúmmál er pH um 4.7, sem þýðir pKa ≈ 4-5.',
+    explanation: 'Half-equivalence point is at 30/2 = 15 mL. At this volume, pH is about 4.7, meaning pKa ≈ 4-5.',
+    solutionStepsIs: [
+      'Jafngildispunktur = 30 mL',
+      'Hálfur jafngildispunktur = 30 ÷ 2 = 15 mL',
+      'Við V = 15 mL, pH ≈ 4.7',
+      'Þar sem pH = pKa við hálfan jafngildispunkt: pKa ≈ 4-5'
+    ],
+    solutionSteps: [
+      'Equivalence point = 30 mL',
+      'Half-equivalence point = 30 ÷ 2 = 15 mL',
+      'At V = 15 mL, pH ≈ 4.7',
+      'Since pH = pKa at half-equivalence: pKa ≈ 4-5'
+    ]
+  },
+
+  // Challenge 17: Match to known acid
+  {
+    id: 'ci-5',
+    type: 'curve-interpretation',
+    titleIs: 'Greining kúrfu: Þekktu sýruna',
+    title: 'Curve Interpretation: Identify the Acid',
+    descriptionIs: 'Títrunarkúrfan sýnir veika sýru með pKa um 3.8. Hvaða sýra gæti þetta verið?',
+    description: 'The titration curve shows a weak acid with pKa around 3.8. Which acid could this be?',
+
+    acidName: 'Unknown (Lactic acid)',
+    acidNameIs: 'Óþekkt (Mjólkursýra)',
+    acidFormula: '?',
+    analyteVolume: 20.0,
+    analyteMolarity: 0.100,
+    titrantFormula: 'NaOH',
+    titrantMolarity: 0.100,
+
+    curveData: generateWeakAcidCurve(20.0, 0.100, 0.100, 3.86, 8.25),
+
+    equivalenceVolume: 20.0,
+    halfEquivalenceVolume: 10.0,
+    halfEquivalencePH: 3.86,
+    actualPKa: 3.86,
+    hideLabels: true,
+
+    isMultipleChoice: true,
+    options: ['Acetic acid (pKa = 4.74)', 'Formic acid (pKa = 3.75)', 'Lactic acid (pKa = 3.86)', 'Benzoic acid (pKa = 4.19)'],
+    optionsIs: ['Ediksýra (pKa = 4.74)', 'Maurasýra (pKa = 3.75)', 'Mjólkursýra (pKa = 3.86)', 'Bensoesýra (pKa = 4.19)'],
+    correctAnswer: 'Mjólkursýra (pKa = 3.86)',
+    answerUnit: '',
+    tolerance: 0,
+
+    hintIs: 'Við hálfan jafngildispunkt (10 mL) er pH um 3.9. Þetta pKa gildi passar best við mjólkursýru.',
+    hint: 'At the half-equivalence point (10 mL), pH is around 3.9. This pKa value best matches lactic acid.',
+    explanationIs: 'Við V = 10 mL (hálfur jafngildispunktur), pH ≈ 3.86. Þetta passar best við mjólkursýru (pKa = 3.86).',
+    explanation: 'At V = 10 mL (half-equivalence point), pH ≈ 3.86. This best matches lactic acid (pKa = 3.86).',
+    solutionStepsIs: [
+      'Lestu pH við hálfan jafngildispunkt (10 mL): pH ≈ 3.86',
+      'Berðu saman við gefin pKa gildi:',
+      '- Ediksýra: 4.74 (of hátt)',
+      '- Maurasýra: 3.75 (nálægt)',
+      '- Mjólkursýra: 3.86 (passar best!)',
+      '- Bensoesýra: 4.19 (of hátt)',
+      'Niðurstaða: Mjólkursýra'
+    ],
+    solutionSteps: [
+      'Read pH at half-equivalence point (10 mL): pH ≈ 3.86',
+      'Compare to given pKa values:',
+      '- Acetic acid: 4.74 (too high)',
+      '- Formic acid: 3.75 (close)',
+      '- Lactic acid: 3.86 (best match!)',
+      '- Benzoic acid: 4.19 (too high)',
+      'Conclusion: Lactic acid'
+    ]
+  },
+
+  // Challenge 18: Identify triprotic acid
+  {
+    id: 'ci-6',
+    type: 'curve-interpretation',
+    titleIs: 'Greining kúrfu: Hversu marga prótón?',
+    title: 'Curve Interpretation: How Many Protons?',
+    descriptionIs: 'Skoðaðu títrunarkúrfuna vandlega. Hversu marga jafngildispunkta sérðu? Hvað segir þetta um sýruna?',
+    description: 'Examine the titration curve carefully. How many equivalence points do you see? What does this tell you about the acid?',
+
+    acidName: 'Unknown (Phosphoric acid)',
+    acidNameIs: 'Óþekkt (Fosfórsýra)',
+    acidFormula: '?',
+    analyteVolume: 15.0,
+    analyteMolarity: 0.100,
+    titrantFormula: 'NaOH',
+    titrantMolarity: 0.100,
+
+    curveData: generateTriproticAcidCurve(15.0, 0.100, 0.100, 2.15, 7.20, 12.35, 1.5),
+
+    isPolyprotic: true,
+    equivalenceVolumes: [15.0, 30.0, 45.0],
+    halfEquivalenceVolumes: [7.5, 22.5, 37.5],
+    halfEquivalencePHs: [2.15, 7.20, 12.35],
+    hideLabels: true,
+
+    isMultipleChoice: true,
+    options: ['Monoprotic (1 proton)', 'Diprotic (2 protons)', 'Triprotic (3 protons)'],
+    optionsIs: ['Einprótón (1 prótón)', 'Tvíprótón (2 prótón)', 'Þríprótón (3 prótón)'],
+    correctAnswer: 'Þríprótón (3 prótón)',
+    answerUnit: '',
+    tolerance: 0,
+
+    hintIs: 'Teljið skarpu pH stökkin á kúrfunni. Hver jafngildispunktur táknar eitt prótón.',
+    hint: 'Count the sharp pH jumps on the curve. Each equivalence point represents one proton.',
+    explanationIs: 'Kúrfan sýnir þrjá aðskilda jafngildispunkta við ~15, ~30 og ~45 mL. Þetta þýðir að sýran hefur þrjú prótón (H₃A) - þríprótón sýra eins og H₃PO₄.',
+    explanation: 'The curve shows three distinct equivalence points at ~15, ~30, and ~45 mL. This means the acid has three protons (H₃A) - a triprotic acid like H₃PO₄.',
+    solutionStepsIs: [
+      'Skoðaðu kúrfuna eftir skörtum pH stökkum:',
+      'Fyrsti jafngildispunktur: ~15 mL',
+      'Annar jafngildispunktur: ~30 mL',
+      'Þriðji jafngildispunktur: ~45 mL',
+      '3 jafngildispunktar = 3 prótón = Þríprótón sýra'
+    ],
+    solutionSteps: [
+      'Look for sharp pH jumps on the curve:',
+      'First equivalence point: ~15 mL',
+      'Second equivalence point: ~30 mL',
+      'Third equivalence point: ~45 mL',
+      '3 equivalence points = 3 protons = Triprotic acid'
     ]
   }
 ];

@@ -2,7 +2,7 @@
 
 **Date:** 2026-01-30 | **Updated:** 2026-02-03
 **Curriculum Reference:** Brown et al, *Chemistry: The Central Science*, Chapters 10, 15-17, 19
-**Status:** ✅ Phases 1-3 Complete
+**Status:** ✅ Phases 1-6 Complete
 
 ---
 
@@ -468,15 +468,15 @@ Link Gas Law Challenge to Equilibrium Shifter:
 10. ✅ Add polyprotic titrations to pH Titration (T2) — COMPLETE (2026-02-03)
 11. ✅ Add curve interpretation challenge (T3) — COMPLETE (2026-02-03)
 
-### Phase 6: Cross-Game Integration
-12. ⬜ Implement Equilibrium ↔ Thermodynamics connection
-13. ⬜ Implement Buffer ↔ Titration connection
+### Phase 6: Cross-Game Integration ✅ COMPLETE
+12. ✅ Implement Equilibrium ↔ Thermodynamics connection — COMPLETE (2026-02-03)
+13. ✅ Implement Buffer ↔ Titration connection — COMPLETE (2026-02-03)
 
 ---
 
 ## Notes for Next Session
 
-**Status Update (2026-02-03):** ✅ Phases 1-5 complete!
+**Status Update (2026-02-03):** ✅ ALL PHASES COMPLETE!
 
 **Accomplishments:**
 - ✅ ICE tables added to Equilibrium Shifter (10 problems across 3 difficulties)
@@ -489,6 +489,7 @@ Link Gas Law Challenge to Equilibrium Shifter:
 - ✅ Numerical Q vs K mode added to Equilibrium Shifter (12 problems across 3 difficulties)
 - ✅ Polyprotic acid titrations added to pH Titration Level 4 (6 challenges for diprotic/triprotic)
 - ✅ Curve interpretation challenges added to pH Titration Level 4 (6 multiple choice challenges)
+- ✅ Cross-game Equilibrium ↔ Thermodynamics: Added K, ΔG, ΔS to all 30 equilibria + ThermodynamicsConnection UI
+- ✅ Cross-game Buffer ↔ Titration: Added buffer region highlighting + cross-game connection to Buffer Recipe Creator
 
-**Remaining work:**
-- Phase 6: Cross-game integration (Equilibrium ↔ Thermodynamics, Buffer ↔ Titration)
+**Year 3 Development Complete!** All 6 phases implemented, covering the entire Brown Chemistry curriculum for Year 3.

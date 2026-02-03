@@ -5,7 +5,7 @@
 
 export type DifficultyLevel = 'beginner' | 'intermediate' | 'advanced';
 
-export type GameMode = 'learning' | 'challenge' | 'ice';
+export type GameMode = 'learning' | 'challenge' | 'ice' | 'qk';
 
 export type ShiftDirection = 'left' | 'right' | 'none';
 

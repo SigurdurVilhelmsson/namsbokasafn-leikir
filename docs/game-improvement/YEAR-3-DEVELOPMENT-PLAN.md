@@ -460,13 +460,13 @@ Link Gas Law Challenge to Equilibrium Shifter:
 6. ✅ **Add ΔG-K connection to Thermodynamics Predictor** (D2) — COMPLETE (2026-02-02)
 7. ✅ **Add Dalton's Law to Gas Law Challenge** (G2) — COMPLETE (2026-02-02)
 
-### Phase 4: Additional Game
-8. ⬜ Build Ka/Kb Jafnvægisreikningar (Acid-Base Equilibrium)
+### Phase 4: Additional Game ✅ COMPLETE
+8. ✅ Build Ka/Kb Jafnvægisreikningar (Acid-Base Equilibrium) — COMPLETE (2026-02-03)
 
-### Phase 5: Medium-Priority Enhancements
-9. ⬜ Add numerical Q vs K to Equilibrium Shifter (E2)
-10. ⬜ Add polyprotic titrations to pH Titration (T2)
-11. ⬜ Add curve interpretation challenge (T3)
+### Phase 5: Medium-Priority Enhancements ✅ COMPLETE
+9. ✅ Add numerical Q vs K to Equilibrium Shifter (E2) — COMPLETE (2026-02-03)
+10. ✅ Add polyprotic titrations to pH Titration (T2) — COMPLETE (2026-02-03)
+11. ✅ Add curve interpretation challenge (T3) — COMPLETE (2026-02-03)
 
 ### Phase 6: Cross-Game Integration
 12. ⬜ Implement Equilibrium ↔ Thermodynamics connection
@@ -476,7 +476,7 @@ Link Gas Law Challenge to Equilibrium Shifter:
 
 ## Notes for Next Session
 
-**Status Update (2026-02-03):** ✅ Phases 1-3 complete!
+**Status Update (2026-02-03):** ✅ Phases 1-5 complete!
 
 **Accomplishments:**
 - ✅ ICE tables added to Equilibrium Shifter (10 problems across 3 difficulties)
@@ -485,8 +485,10 @@ Link Gas Law Challenge to Equilibrium Shifter:
 - ✅ Entropy calculations (S°) and ΔG-K connection added to Thermodynamics Predictor
 - ✅ Dalton's Law of Partial Pressures added to Gas Law Challenge (8 problems)
 - ✅ Buffer Recipe Creator all 3 levels implemented (6 puzzles each in Levels 2-3)
+- ✅ Ka/Kb Jafnvægisreikningar game built (3 levels: Ka/Kb expressions, pH calculations, ionization %)
+- ✅ Numerical Q vs K mode added to Equilibrium Shifter (12 problems across 3 difficulties)
+- ✅ Polyprotic acid titrations added to pH Titration Level 4 (6 challenges for diprotic/triprotic)
+- ✅ Curve interpretation challenges added to pH Titration Level 4 (6 multiple choice challenges)
 
 **Remaining work:**
-- Phase 4: Build Ka/Kb Jafnvægisreikningar (Acid-Base Equilibrium standalone game)
-- Phase 5: Medium-priority enhancements (numerical Q vs K, polyprotic titrations, curve interpretation)
 - Phase 6: Cross-game integration (Equilibrium ↔ Thermodynamics, Buffer ↔ Titration)

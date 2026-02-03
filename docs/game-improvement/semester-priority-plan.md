@@ -37,17 +37,17 @@
 
 ## Remaining Work
 
-### Phase 4: New Game (Year 3)
+### Phase 4: New Game (Year 3) ✅ COMPLETE
 | Game | Description | Status |
 |------|-------------|--------|
-| Ka/Kb Jafnvægisreikningar | Acid-base equilibrium calculations | ⬜ Not started |
+| Ka/Kb Jafnvægisreikningar | Acid-base equilibrium calculations | ✅ Complete |
 
-### Phase 5: Medium-Priority Enhancements
+### Phase 5: Medium-Priority Enhancements ✅ COMPLETE
 | Year | Game | Feature | Status |
 |------|------|---------|--------|
-| 3 | Equilibrium Shifter | Numerical Q vs K | ⬜ |
-| 3 | pH Titration | Polyprotic acid titrations | ⬜ |
-| 3 | pH Titration | Curve interpretation challenge | ⬜ |
+| 3 | Equilibrium Shifter | Numerical Q vs K | ✅ |
+| 3 | pH Titration | Polyprotic acid titrations | ✅ |
+| 3 | pH Titration | Curve interpretation challenge | ✅ |
 
 ### Phase 6: Cross-Game Integration
 | Connection | Description | Status |

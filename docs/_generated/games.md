@@ -6,21 +6,29 @@
 
 | Game | Built | Size |
 |------|-------|------|
-| dimensional-analysis | ✅ | 1235KB |
-| lausnir | ✅ | 265KB |
-| molmassi | ✅ | 2847KB |
-| nafnakerfid | ✅ | 245KB |
-| takmarkandi | ✅ | 255KB |
+| dimensional-analysis | ✅ | 1280KB |
+| flokkun-efna | ✅ | 1152KB |
+| gerdir-efnahvarfa | ✅ | 1151KB |
+| hlutfallsgreining | ✅ | 1151KB |
+| lausnir | ✅ | 1270KB |
+| markverdir-tolustafir | ✅ | 1156KB |
+| molmassi | ✅ | 2919KB |
+| nafnakerfid | ✅ | 1219KB |
+| stilltu-efnajofnur | ✅ | 1156KB |
+| takmarkandi | ✅ | 1262KB |
 
 ## Year 2
 
 | Game | Built | Size |
 |------|-------|------|
-| hess-law | ✅ | 1197KB |
-| intermolecular-forces | ✅ | 2850KB |
-| kinetics | ✅ | 1207KB |
-| lewis-structures | ✅ | 2867KB |
-| organic-nomenclature | ✅ | 1225KB |
+| calorimetry | ✅ | 1166KB |
+| electrochemistry | ✅ | 1174KB |
+| hess-law | ✅ | 1234KB |
+| intermolecular-forces | ✅ | 2884KB |
+| kinetics | ✅ | 1226KB |
+| lewis-structures | ✅ | 2886KB |
+| organic-nomenclature | ✅ | 1228KB |
+| organic-reactions | ✅ | 1173KB |
 | redox-reactions | ✅ | 1196KB |
 | vsepr-geometry | ✅ | 2866KB |
 
@@ -28,14 +36,16 @@
 
 | Game | Built | Size |
 |------|-------|------|
-| buffer-recipe-creator | ✅ | 1202KB |
-| equilibrium-shifter | ✅ | 1193KB |
-| gas-law-challenge | ✅ | 1155KB |
-| ph-titration | ✅ | 266KB |
-| thermodynamics-predictor | ✅ | 212KB |
+| buffer-recipe-creator | ✅ | 1214KB |
+| equilibrium-shifter | ✅ | 1250KB |
+| gas-law-challenge | ✅ | 1165KB |
+| ka-kb-jafnvaegi | ✅ | 1156KB |
+| ph-titration | ✅ | 1270KB |
+| solubility-equilibrium | ✅ | 1158KB |
+| thermodynamics-predictor | ✅ | 1184KB |
 
 ---
 
-*17 games total*
+*27 games total (10 Year 1 + 10 Year 2 + 7 Year 3)*
 
-Generated: 2026-01-25T20:58:52.478Z
+Generated: 2026-02-03

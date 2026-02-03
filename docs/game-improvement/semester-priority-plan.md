@@ -1,117 +1,74 @@
-# Semester Priority Plan: Year 1 & Year 2 Focus
+# Semester Priority Plan: All Years Complete
 
 **Created:** 2026-01-29
-**Status:** Active
-**Scope:** Year 1 and Year 2 games only (Year 3 deferred)
+**Updated:** 2026-02-03
+**Status:** ✅ Core Development Complete
 
 ---
 
-## Current Status (Updated 2026-02-02)
+## Current Status
 
-| Year | Completed | Remaining | Progress |
-|------|-----------|-----------|----------|
-| **Year 1** | 20 | 1 | 95.2% |
-| **Year 2** | 27 | 13 | 67.5% |
+| Year | Games | Core Status | Progress |
+|------|-------|-------------|----------|
+| **Year 1** | 10 | ✅ Complete | All 4 phases done |
+| **Year 2** | 10 | ✅ Complete | All 4 phases done |
+| **Year 3** | 6 | ✅ Phases 1-3 Complete | Phases 4-6 remaining |
 
 ---
 
-## Remaining Items by Priority
+## Completed Work Summary
 
-### 🔴 HIGH PRIORITY (3 items)
+### Year 1 (10 games)
+- All games fully implemented with multiple levels
+- Enhanced visualizations (particle simulations, animated calculations)
+- Real-world context scenarios added
 
-| Year | Game | Feature | Effort | Notes |
-|------|------|---------|--------|-------|
-| 1 | Dimensional Analysis | Drag-and-drop unit builder | High | Build conversions visually |
-| 1 | Limiting Reactants | Visual stoichiometry | Medium | Particle count representation |
-| 2 | Hess's Law | Drag-drop equation builder | High | `DragDropBuilder` component ready |
+### Year 2 (10 games)
+- All games including Electrochemistry, Calorimetry, Organic Reactions
+- Rich interactive components (Lewis builder, VSEPR 3D, collision simulations)
+- Cross-topic connections established
 
-### 🟡 MEDIUM PRIORITY (6 items)
+### Year 3 (6 games)
+- Core games complete: Equilibrium Shifter, pH Titration, Buffer Recipe Creator, Thermodynamics Predictor, Gas Law Challenge, Leysnisjafnvægi
+- Major enhancements: ICE tables, Ka determination, entropy calculations, Dalton's Law
+- Buffer Recipe Creator: all 3 levels implemented
 
-| Year | Game | Feature | Effort |
+---
+
+## Remaining Work
+
+### Phase 4: New Game (Year 3)
+| Game | Description | Status |
+|------|-------------|--------|
+| Ka/Kb Jafnvægisreikningar | Acid-base equilibrium calculations | ⬜ Not started |
+
+### Phase 5: Medium-Priority Enhancements
+| Year | Game | Feature | Status |
 |------|------|---------|--------|
-| 1 | Dimensional Analysis | Real-world context scenarios | Low |
-| 1 | Molar Mass | Animated mass calculation | Medium |
-| 1 | Nomenclature | Audio pronunciation | Medium |
-| 1 | Solutions | Pipette/dropper tool | Medium |
-| 1 | Limiting Reactants | Factory game mode | Medium |
-| Shared | Audio utilities | TTS for pronunciations | Medium |
+| 3 | Equilibrium Shifter | Numerical Q vs K | ⬜ |
+| 3 | pH Titration | Polyprotic acid titrations | ⬜ |
+| 3 | pH Titration | Curve interpretation challenge | ⬜ |
 
-### 🟢 LOW PRIORITY (3 items remaining)
+### Phase 6: Cross-Game Integration
+| Connection | Description | Status |
+|------------|-------------|--------|
+| Lewis → VSEPR | Structure to geometry pipeline | ⬜ |
+| IMF → Organic | Functional group property links | ⬜ |
+| Kinetics ↔ Hess's Law | Energy diagram connections | ⬜ |
+| Equilibrium ↔ Thermodynamics | ΔG-K relationship | ⬜ |
+| Buffer ↔ Titration | Buffer region visualization | ⬜ |
 
-| Year | Game | Feature | Effort | Status |
-|------|------|---------|--------|--------|
-| 1 | Molar Mass | Mystery molecule mode | Medium | ✅ |
-| 1 | Solutions | Concentration-based color | Low | ✅ |
-| 1 | Solutions | Temperature effects | Medium | ✅ |
-| 2 | IMF | Surface tension demo | High | ✅ |
-
----
-
-## Implementation Phases
-
-### Phase 1: High-Priority Features
-
-| # | Feature | Game | Status |
-|---|---------|------|--------|
-| 1 | Visual Stoichiometry | Limiting Reactants | ✅ |
-| 2 | Drag-and-Drop Unit Builder | Dimensional Analysis | ✅ |
-| 3 | Drag-Drop Equation Builder | Hess's Law | ✅ |
-
-**1. Limiting Reactants → Visual Stoichiometry** (Medium effort)
-- Particle count representation showing mole ratios visually
-- Builds on existing `ReactionAnimation` component
-- High pedagogical value for understanding stoichiometry
-
-**2. Dimensional Analysis → Drag-and-Drop Unit Builder** (High effort)
-- Visual conversion factor building
-- Leverages existing `DragDropBuilder` component
-- Core skill for Year 1 chemistry
-
-**3. Hess's Law → Drag-Drop Equation Builder** (High effort)
-- Combine thermochemical equations visually
-- `DragDropBuilder` already built and ready
-- Completes the Year 2 high-priority items
-
-### Phase 2: Quick Wins (Low Effort, Medium Priority)
-
-| # | Feature | Game | Status |
-|---|---------|------|--------|
-| 4 | Real-world context scenarios | Dimensional Analysis | ✅ |
-
-- Add cooking, pharmacy, engineering examples
-- Content addition only, no new components needed
-
-### Phase 3: Enhanced Interactivity
-
-| # | Feature | Game | Status |
-|---|---------|------|--------|
-| 5 | Pipette/Dropper Tool | Solutions | ✅ |
-| 6 | Animated Mass Calculation | Molar Mass | ✅ |
-| 7 | Factory Game Mode | Limiting Reactants | ✅ |
-
-### Phase 4: Audio Support
-
-| # | Feature | Game | Status |
-|---|---------|------|--------|
-| 8 | Audio Utilities | Shared | ⬜ |
-| 9 | Audio Pronunciation | Nomenclature | ⬜ |
-
----
-
-## Projected Progress After Each Phase
-
-| Phase | Year 1 | Year 2 |
-|-------|--------|--------|
-| Current | 52.4% | 62.5% |
-| After Phase 1 | 62% | 65% |
-| After Phase 2 | 67% | 65% |
-| After Phase 3 | 81% | 65% |
-| After Phase 4 | 86% | 65% |
+### Optional Polish
+| Category | Items |
+|----------|-------|
+| Audio | TTS pronunciation for nomenclature |
+| Accessibility | Enhanced screen reader support |
+| Performance | Lazy loading optimizations |
 
 ---
 
 ## Notes
 
-- Year 3 games are deferred until next semester
-- Focus on leveraging existing shared components (`DragDropBuilder`, `ReactionAnimation`)
-- Prioritize features with highest pedagogical impact for current curriculum
+- All core curriculum coverage is now complete for Years 1-3
+- Focus shifts to enrichment features and cross-game integration
+- Ka/Kb game would strengthen acid-base foundation before pH Titration

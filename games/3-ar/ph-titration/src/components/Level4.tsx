@@ -27,12 +27,22 @@ function TitrationCurve({
   data,
   equivalenceVolume,
   halfEquivalenceVolume,
-  highlightHalfEq
+  highlightHalfEq,
+  isPolyprotic,
+  equivalenceVolumes,
+  halfEquivalenceVolumes,
+  halfEquivalencePHs,
+  targetPKa
 }: {
   data: CurvePoint[];
-  equivalenceVolume: number;
-  halfEquivalenceVolume: number;
+  equivalenceVolume?: number;
+  halfEquivalenceVolume?: number;
   highlightHalfEq: boolean;
+  isPolyprotic?: boolean;
+  equivalenceVolumes?: number[];
+  halfEquivalenceVolumes?: number[];
+  halfEquivalencePHs?: number[];
+  targetPKa?: 1 | 2 | 3;
 }) {
   const width = 400;
   const height = 300;
@@ -41,8 +51,13 @@ function TitrationCurve({
   const chartWidth = width - padding.left - padding.right;
   const chartHeight = height - padding.top - padding.bottom;
 
+  // Get max equivalence volume for scaling
+  const maxEqVol = isPolyprotic && equivalenceVolumes
+    ? Math.max(...equivalenceVolumes)
+    : equivalenceVolume || 50;
+
   // Scale functions
-  const maxVolume = Math.max(...data.map(d => d.volume), equivalenceVolume * 1.5);
+  const maxVolume = Math.max(...data.map(d => d.volume), maxEqVol * 1.3);
   const scaleX = (v: number) => padding.left + (v / maxVolume) * chartWidth;
   const scaleY = (pH: number) => padding.top + chartHeight - ((pH / 14) * chartHeight);
 
@@ -56,10 +71,29 @@ function TitrationCurve({
     })
     .join(' ');
 
-  // Find half-equivalence point on curve
-  const halfEqPoint = sortedData.find(p => Math.abs(p.volume - halfEquivalenceVolume) < 0.5);
-  const halfEqX = scaleX(halfEquivalenceVolume);
-  const halfEqY = halfEqPoint ? scaleY(halfEqPoint.pH) : scaleY(7);
+  // For monoprotic: single half-equivalence point
+  const monoHalfEqPoint = !isPolyprotic && halfEquivalenceVolume
+    ? sortedData.find(p => Math.abs(p.volume - halfEquivalenceVolume) < 0.5)
+    : null;
+  const monoHalfEqX = halfEquivalenceVolume ? scaleX(halfEquivalenceVolume) : 0;
+  const monoHalfEqY = monoHalfEqPoint ? scaleY(monoHalfEqPoint.pH) : scaleY(7);
+
+  // For polyprotic: multiple half-equivalence points
+  const polyHalfEqPoints = isPolyprotic && halfEquivalenceVolumes && halfEquivalencePHs
+    ? halfEquivalenceVolumes.map((vol, i) => ({
+        volume: vol,
+        pH: halfEquivalencePHs[i],
+        x: scaleX(vol),
+        y: scaleY(halfEquivalencePHs[i]),
+        pKaIndex: i + 1
+      }))
+    : [];
+
+  // Determine which half-eq point to highlight (for polyprotic)
+  const highlightedPKaIndex = targetPKa || 1;
+
+  // Colors for multiple equivalence points
+  const eqColors = ['#ef4444', '#f97316', '#eab308'];
 
   return (
     <svg viewBox={`0 0 ${width} ${height}`} className="w-full max-w-md mx-auto">
@@ -111,47 +145,98 @@ function TitrationCurve({
         </g>
       ))}
 
-      {/* Equivalence point marker */}
-      <line
-        x1={scaleX(equivalenceVolume)}
-        y1={padding.top}
-        x2={scaleX(equivalenceVolume)}
-        y2={height - padding.bottom}
-        stroke="#ef4444"
-        strokeWidth="2"
-        strokeDasharray="4,4"
-      />
+      {/* Equivalence point marker(s) */}
+      {isPolyprotic && equivalenceVolumes ? (
+        // Multiple equivalence points for polyprotic
+        equivalenceVolumes.map((vol, i) => (
+          <line
+            key={`eq-${i}`}
+            x1={scaleX(vol)}
+            y1={padding.top}
+            x2={scaleX(vol)}
+            y2={height - padding.bottom}
+            stroke={eqColors[i] || '#ef4444'}
+            strokeWidth="2"
+            strokeDasharray="4,4"
+          />
+        ))
+      ) : equivalenceVolume ? (
+        // Single equivalence point for monoprotic
+        <line
+          x1={scaleX(equivalenceVolume)}
+          y1={padding.top}
+          x2={scaleX(equivalenceVolume)}
+          y2={height - padding.bottom}
+          stroke="#ef4444"
+          strokeWidth="2"
+          strokeDasharray="4,4"
+        />
+      ) : null}
 
-      {/* Half-equivalence point marker (if highlighted) */}
-      {highlightHalfEq && (
+      {/* Half-equivalence point marker(s) (if highlighted) */}
+      {highlightHalfEq && isPolyprotic && polyHalfEqPoints.length > 0 ? (
+        // Multiple half-eq points for polyprotic
+        polyHalfEqPoints.map((point) => (
+          <g key={`half-eq-${point.pKaIndex}`}>
+            <line
+              x1={point.x}
+              y1={padding.top}
+              x2={point.x}
+              y2={height - padding.bottom}
+              stroke={point.pKaIndex === highlightedPKaIndex ? '#3b82f6' : '#93c5fd'}
+              strokeWidth={point.pKaIndex === highlightedPKaIndex ? 2 : 1}
+              strokeDasharray="4,4"
+            />
+            <circle
+              cx={point.x}
+              cy={point.y}
+              r={point.pKaIndex === highlightedPKaIndex ? 6 : 4}
+              fill={point.pKaIndex === highlightedPKaIndex ? '#3b82f6' : '#93c5fd'}
+              stroke="white"
+              strokeWidth="2"
+            />
+            {point.pKaIndex === highlightedPKaIndex && (
+              <text
+                x={point.x}
+                y={point.y - 15}
+                textAnchor="middle"
+                className="text-xs font-bold fill-blue-600"
+              >
+                pH = pKa{point.pKaIndex}
+              </text>
+            )}
+          </g>
+        ))
+      ) : highlightHalfEq && !isPolyprotic && halfEquivalenceVolume ? (
+        // Single half-eq point for monoprotic
         <>
           <line
-            x1={halfEqX}
+            x1={monoHalfEqX}
             y1={padding.top}
-            x2={halfEqX}
+            x2={monoHalfEqX}
             y2={height - padding.bottom}
             stroke="#3b82f6"
             strokeWidth="2"
             strokeDasharray="4,4"
           />
           <circle
-            cx={halfEqX}
-            cy={halfEqY}
+            cx={monoHalfEqX}
+            cy={monoHalfEqY}
             r="6"
             fill="#3b82f6"
             stroke="white"
             strokeWidth="2"
           />
           <text
-            x={halfEqX}
-            y={halfEqY - 15}
+            x={monoHalfEqX}
+            y={monoHalfEqY - 15}
             textAnchor="middle"
             className="text-xs font-bold fill-blue-600"
           >
             pH = pKa
           </text>
         </>
-      )}
+      ) : null}
 
       {/* Titration curve */}
       <path
@@ -183,13 +268,34 @@ function TitrationCurve({
       </text>
 
       {/* Legend */}
-      <g transform={`translate(${width - padding.right - 80}, ${padding.top + 10})`}>
-        <line x1="0" y1="0" x2="20" y2="0" stroke="#ef4444" strokeWidth="2" strokeDasharray="4,4" />
-        <text x="25" y="4" className="text-xs fill-gray-600">Jafngildi</text>
-        {highlightHalfEq && (
+      <g transform={`translate(${width - padding.right - 90}, ${padding.top + 10})`}>
+        {isPolyprotic && equivalenceVolumes ? (
+          // Legend for polyprotic
           <>
-            <line x1="0" y1="15" x2="20" y2="15" stroke="#3b82f6" strokeWidth="2" strokeDasharray="4,4" />
-            <text x="25" y="19" className="text-xs fill-gray-600">Hálft jafngildi</text>
+            {equivalenceVolumes.map((_, i) => (
+              <g key={`leg-eq-${i}`} transform={`translate(0, ${i * 15})`}>
+                <line x1="0" y1="0" x2="20" y2="0" stroke={eqColors[i] || '#ef4444'} strokeWidth="2" strokeDasharray="4,4" />
+                <text x="25" y="4" className="text-xs fill-gray-600">Eq{i + 1}</text>
+              </g>
+            ))}
+            {highlightHalfEq && (
+              <g transform={`translate(0, ${equivalenceVolumes.length * 15})`}>
+                <line x1="0" y1="0" x2="20" y2="0" stroke="#3b82f6" strokeWidth="2" strokeDasharray="4,4" />
+                <text x="25" y="4" className="text-xs fill-gray-600">pKa punkt</text>
+              </g>
+            )}
+          </>
+        ) : (
+          // Legend for monoprotic
+          <>
+            <line x1="0" y1="0" x2="20" y2="0" stroke="#ef4444" strokeWidth="2" strokeDasharray="4,4" />
+            <text x="25" y="4" className="text-xs fill-gray-600">Jafngildi</text>
+            {highlightHalfEq && (
+              <>
+                <line x1="0" y1="15" x2="20" y2="15" stroke="#3b82f6" strokeWidth="2" strokeDasharray="4,4" />
+                <text x="25" y="19" className="text-xs fill-gray-600">Hálft jafngildi</text>
+              </>
+            )}
           </>
         )}
       </g>
@@ -298,6 +404,8 @@ export function Level4({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
       case 'read-pka': return 'Lesa pKa';
       case 'calculate-ka': return 'Reikna Ka';
       case 'full-analysis': return 'Heildargreining';
+      case 'polyprotic-read-pka': return 'Fjölprótón: Lesa pKa';
+      case 'polyprotic-full-analysis': return 'Fjölprótón: Greining';
       default: return type;
     }
   };
@@ -308,6 +416,8 @@ export function Level4({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
       case 'read-pka': return 'bg-green-500';
       case 'calculate-ka': return 'bg-orange-500';
       case 'full-analysis': return 'bg-purple-500';
+      case 'polyprotic-read-pka': return 'bg-teal-500';
+      case 'polyprotic-full-analysis': return 'bg-indigo-500';
       default: return 'bg-gray-500';
     }
   };
@@ -378,8 +488,33 @@ export function Level4({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
               <div><span className="font-semibold">Rúmmál sýru:</span> {challenge.analyteVolume} mL</div>
               <div><span className="font-semibold">Styrkur sýru:</span> {challenge.analyteMolarity} M</div>
               <div><span className="font-semibold">Títrant:</span> {challenge.titrantFormula} ({challenge.titrantMolarity} M)</div>
-              <div><span className="font-semibold text-red-600">Jafngildispunktur:</span> {challenge.equivalenceVolume} mL</div>
+              {challenge.isPolyprotic && challenge.equivalenceVolumes ? (
+                <div className="col-span-2">
+                  <span className="font-semibold text-red-600">Jafngildispunktar:</span>{' '}
+                  {challenge.equivalenceVolumes.map((vol, i) => (
+                    <span key={i}>
+                      {i > 0 && ', '}
+                      <span className="font-mono">{vol} mL</span>
+                      <span className="text-gray-500 text-xs"> (Eq{i + 1})</span>
+                    </span>
+                  ))}
+                </div>
+              ) : (
+                <div><span className="font-semibold text-red-600">Jafngildispunktur:</span> {challenge.equivalenceVolume} mL</div>
+              )}
             </div>
+            {challenge.isPolyprotic && (
+              <div className="mt-2 pt-2 border-t border-gray-200 text-sm">
+                <span className="font-semibold text-teal-600">
+                  {challenge.equivalenceVolumes?.length === 2 ? 'Tvíprótónsýra' : 'Þríprótónsýra'}
+                </span>
+                {challenge.targetPKa && (
+                  <span className="ml-2 bg-blue-100 text-blue-700 px-2 py-0.5 rounded text-xs">
+                    Finndu pKa{challenge.targetPKa}
+                  </span>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Titration curve visualization */}
@@ -390,6 +525,11 @@ export function Level4({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
               equivalenceVolume={challenge.equivalenceVolume}
               halfEquivalenceVolume={challenge.halfEquivalenceVolume}
               highlightHalfEq={showResult || showHint}
+              isPolyprotic={challenge.isPolyprotic}
+              equivalenceVolumes={challenge.equivalenceVolumes}
+              halfEquivalenceVolumes={challenge.halfEquivalenceVolumes}
+              halfEquivalencePHs={challenge.halfEquivalencePHs}
+              targetPKa={challenge.targetPKa}
             />
 
             {/* pH values table */}
@@ -398,7 +538,7 @@ export function Level4({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
                 <thead>
                   <tr className="bg-gray-100">
                     <th className="px-2 py-1 text-left">V (mL)</th>
-                    {challenge.curveData.slice(0, 10).map((point, i) => (
+                    {challenge.curveData.slice(0, challenge.isPolyprotic ? 14 : 10).map((point, i) => (
                       <th key={i} className="px-2 py-1">{point.volume.toFixed(1)}</th>
                     ))}
                   </tr>
@@ -406,18 +546,34 @@ export function Level4({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
                 <tbody>
                   <tr>
                     <td className="px-2 py-1 font-semibold">pH</td>
-                    {challenge.curveData.slice(0, 10).map((point, i) => (
-                      <td
-                        key={i}
-                        className={`px-2 py-1 text-center ${
-                          Math.abs(point.volume - challenge.halfEquivalenceVolume) < 0.5
-                            ? 'bg-blue-100 font-bold text-blue-700'
-                            : ''
-                        }`}
-                      >
-                        {point.pH.toFixed(2)}
-                      </td>
-                    ))}
+                    {challenge.curveData.slice(0, challenge.isPolyprotic ? 14 : 10).map((point, i) => {
+                      // Check if this is a half-equivalence point
+                      const isHalfEqPoint = challenge.isPolyprotic && challenge.halfEquivalenceVolumes
+                        ? challenge.halfEquivalenceVolumes.some(vol => Math.abs(point.volume - vol) < 1)
+                        : challenge.halfEquivalenceVolume
+                        ? Math.abs(point.volume - challenge.halfEquivalenceVolume) < 0.5
+                        : false;
+
+                      // Check if this is the target pKa point for polyprotic
+                      const isTargetPKa = challenge.isPolyprotic && challenge.halfEquivalenceVolumes && challenge.targetPKa
+                        ? Math.abs(point.volume - challenge.halfEquivalenceVolumes[challenge.targetPKa - 1]) < 1
+                        : false;
+
+                      return (
+                        <td
+                          key={i}
+                          className={`px-2 py-1 text-center ${
+                            isTargetPKa
+                              ? 'bg-blue-200 font-bold text-blue-800'
+                              : isHalfEqPoint
+                              ? 'bg-blue-100 font-bold text-blue-700'
+                              : ''
+                          }`}
+                        >
+                          {point.pH.toFixed(2)}
+                        </td>
+                      );
+                    })}
                   </tr>
                 </tbody>
               </table>
@@ -427,11 +583,20 @@ export function Level4({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
           {/* Key concept reminder */}
           <div className="bg-purple-50 border border-purple-200 rounded-xl p-4 mb-4">
             <h4 className="font-bold text-purple-800 mb-2">Lykilhugtök:</h4>
-            <ul className="text-sm text-purple-900 space-y-1">
-              <li>• Við <strong>hálfan jafngildispunkt</strong>, helmingur sýrunnar hefur hvarfast</li>
-              <li>• Við þennan punkt gildir: [HA] = [A⁻] og <strong>pH = pKa</strong></li>
-              <li>• Ka = 10<sup>-pKa</sup></li>
-            </ul>
+            {challenge.isPolyprotic ? (
+              <ul className="text-sm text-purple-900 space-y-1">
+                <li>• <strong>Fjölprótónsýrur</strong> hafa marga jafngildispunkta og marga pKa gildi</li>
+                <li>• <strong>Fyrsti hálfur jafngildispunktur</strong> = Eq₁/2 → pH = pKa₁</li>
+                <li>• <strong>Annar hálfur jafngildispunktur</strong> = mitt á milli Eq₁ og Eq₂ → pH = pKa₂</li>
+                <li>• Ka = 10<sup>-pKa</sup> gildir fyrir hvert pKa gildi</li>
+              </ul>
+            ) : (
+              <ul className="text-sm text-purple-900 space-y-1">
+                <li>• Við <strong>hálfan jafngildispunkt</strong>, helmingur sýrunnar hefur hvarfast</li>
+                <li>• Við þennan punkt gildir: [HA] = [A⁻] og <strong>pH = pKa</strong></li>
+                <li>• Ka = 10<sup>-pKa</sup></li>
+              </ul>
+            )}
           </div>
 
           {/* Answer input */}
@@ -447,8 +612,10 @@ export function Level4({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
                 onKeyDown={handleKeyDown}
                 disabled={showResult}
                 placeholder={
-                  challenge.type === 'calculate-ka' || challenge.type === 'full-analysis'
+                  challenge.type === 'calculate-ka' || challenge.type === 'full-analysis' || challenge.type === 'polyprotic-full-analysis'
                     ? 'T.d. 1.8e-5 eða 0.000018'
+                    : challenge.type === 'polyprotic-read-pka'
+                    ? 'T.d. 4.27 fyrir pKa gildi'
                     : 'Sláðu inn svar...'
                 }
                 className={`flex-1 px-4 py-3 border-2 rounded-xl text-lg font-mono ${
@@ -466,7 +633,7 @@ export function Level4({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
               )}
             </div>
             <p className="text-xs text-gray-500 mt-1">
-              {challenge.type === 'calculate-ka' || challenge.type === 'full-analysis'
+              {challenge.type === 'calculate-ka' || challenge.type === 'full-analysis' || challenge.type === 'polyprotic-full-analysis'
                 ? 'Notaðu vísindalega rithætti (t.d. 1.8e-5)'
                 : `Skekkjumörk: ±${(challenge.tolerance * 100).toFixed(0)}%`}
             </p>
@@ -563,7 +730,7 @@ export function Level4({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Method */}
             <div className="bg-orange-50 rounded-xl p-3">
-              <h4 className="font-semibold text-orange-800 mb-2">Aðferð</h4>
+              <h4 className="font-semibold text-orange-800 mb-2">Aðferð - Einprótónsýrur</h4>
               <ol className="list-decimal list-inside text-sm text-orange-900 space-y-1">
                 <li>Finndu jafngildispunkt (Veq)</li>
                 <li>Reiknaðu hálfan jafngildispunkt (Veq/2)</li>
@@ -588,6 +755,28 @@ export function Level4({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
                 <div>
                   <span className="font-semibold">Ka úr pKa:</span>
                   <div className="font-mono">Ka = 10<sup>-pKa</sup></div>
+                </div>
+              </div>
+            </div>
+
+            {/* Polyprotic method */}
+            <div className="bg-teal-50 rounded-xl p-3 md:col-span-2">
+              <h4 className="font-semibold text-teal-800 mb-2">Aðferð - Fjölprótónsýrur</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-teal-900">
+                <div>
+                  <p className="font-semibold mb-1">Tvíprótónsýrur (H₂A):</p>
+                  <ul className="list-disc list-inside space-y-1">
+                    <li>pKa₁ við V = Eq₁/2</li>
+                    <li>pKa₂ við V = (Eq₁ + Eq₂)/2</li>
+                  </ul>
+                </div>
+                <div>
+                  <p className="font-semibold mb-1">Þríprótónsýrur (H₃A):</p>
+                  <ul className="list-disc list-inside space-y-1">
+                    <li>pKa₁ við V = Eq₁/2</li>
+                    <li>pKa₂ við V = (Eq₁ + Eq₂)/2</li>
+                    <li>pKa₃ við V = (Eq₂ + Eq₃)/2</li>
+                  </ul>
                 </div>
               </div>
             </div>

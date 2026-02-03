@@ -1,14 +1,14 @@
 # Year 3 Chemistry Games — Development Plan
 
-**Date:** 2026-01-30 | **Updated:** 2026-02-02
+**Date:** 2026-01-30 | **Updated:** 2026-02-03
 **Curriculum Reference:** Brown et al, *Chemistry: The Central Science*, Chapters 10, 15-17, 19
-**Status:** Phases 1-3 Complete
+**Status:** Phases 2-3 Complete; Phase 1 Partially Complete (Buffer Recipe Creator needs Levels 2-3)
 
 ---
 
 ## Executive Summary
 
-Year 3 games cover advanced equilibrium, acid-base chemistry, thermodynamics, and gas laws. The 6 existing games are conceptually sophisticated with strong interactive visualizations. **Major sprint completed (2026-02-02):** ICE tables added to Equilibrium Shifter, new Ksp/Solubility game built, Ka determination added to pH Titration, entropy and ΔG-K calculations added to Thermodynamics Predictor, and Dalton's Law added to Gas Law Challenge.
+Year 3 games cover advanced equilibrium, acid-base chemistry, thermodynamics, and gas laws. The 6 existing games are conceptually sophisticated with strong interactive visualizations. Most enhancements are complete: ICE tables in Equilibrium Shifter, new Ksp/Solubility game, Ka determination in pH Titration, entropy/ΔG-K in Thermodynamics Predictor, Dalton's Law in Gas Law Challenge. **Critical gap:** Buffer Recipe Creator only has Level 1 implemented; Levels 2-3 need to be built.
 
 ---
 
@@ -25,7 +25,7 @@ Year 3 games cover advanced equilibrium, acid-base chemistry, thermodynamics, an
 | Ch. 15 | Ksp (Solubility Equilibrium) | ✅ Complete | Leysnisjafnvægi | — |
 | Ch. 16 | Acid-Base Equilibrium | ✅ Strong | pH Titration | — |
 | Ch. 16 | Ka/Kb Calculations | ✅ Complete | pH Titration (Level 4) | — |
-| Ch. 17 | Buffers | ✅ Complete | Buffer Recipe Creator | — |
+| Ch. 17 | Buffers | ⚠️ Partial | Buffer Recipe Creator (Level 1 only) | **High** |
 | Ch. 17 | Titration Curves | ✅ Strong | pH Titration | — |
 | Ch. 19 | Entropy (ΔS) | ✅ Complete | Thermodynamics Predictor | — |
 | Ch. 19 | Gibbs Free Energy | ✅ Strong | Thermodynamics Predictor | — |
@@ -152,26 +152,44 @@ Reverse the typical problem:
 
 ### 3. Buffer Recipe Creator (Stuðpúðasmíði)
 
-**Current Rating:** ★★★★★ (Complete)
+**Current Rating:** ★★★☆☆ (Level 1 only)
 
 **Strengths:**
 - Excellent Level 1 visualization of acid/base ratio effects
 - Real-time pH calculation from Henderson-Hasselbalch
 - Intuitive molecular manipulation interface
 - Good conceptual foundation
-- **Level 2 fully implemented**: Henderson-Hasselbalch 3-step calculations (direction → ratio → mass)
-- **Level 3 fully implemented**: Stock solution preparation with dilution calculations
-- Buffer capacity visualization with β vs pH curve
-- Acid/base addition simulation showing buffering effect
+- Hint system with tiered hints
+- Ratio visualization bar
 
 **Status:**
-- ✅ All 3 levels implemented and functional
-- ✅ 6 puzzles in Level 2 with real-world buffer systems
-- ✅ 4+ puzzles in Level 3 with stock solutions
-- ✅ Biological buffer examples (blood, phosphate, TRIS, citrate)
+- ✅ Level 1 implemented and functional (visual molecule manipulation)
+- ⬜ **Level 2 NOT implemented** (shows "coming soon") — Henderson-Hasselbalch 3-step calculations
+- ⬜ **Level 3 NOT implemented** (shows "coming soon") — Stock solution preparation
+- Data files exist for Levels 2-3 (`level2-puzzles.ts`, `level3-puzzles.ts`) but components not built
+
+#### Enhancement B1: Henderson-Hasselbalch Calculation Mode (Level 2)
+**Effort:** Medium | **Impact:** High | **Status:** ⬜ NOT STARTED
+
+Add calculation mode:
+- 3-step reasoning: direction → ratio → mass
+- 6 puzzles with real-world buffer systems (blood, phosphate, TRIS, citrate)
+- Step-by-step guided calculation
+
+#### Enhancement B2: Stock Solution Preparation (Level 3)
+**Effort:** Medium | **Impact:** High | **Status:** ⬜ NOT STARTED
+
+Add preparation mode:
+- Design constraints (limited stock solutions, target volume, tolerance band)
+- 4+ puzzles with stock solutions
+- Dilution calculations
 
 #### Enhancement B3: Buffer Capacity Visualization
-**Status:** ✅ Complete
+**Effort:** Medium | **Impact:** Medium | **Status:** ⬜ NOT STARTED
+
+Add buffer capacity features:
+- β vs pH curve visualization
+- Acid/base addition simulation showing buffering effect
 
 ---
 
@@ -426,8 +444,8 @@ Link Gas Law Challenge to Equilibrium Shifter:
 
 ## Implementation Priority & Timeline
 
-### Phase 1: Critical Completion ✅ COMPLETE
-1. ✅ **Complete Buffer Recipe Creator Levels 2-3** (B1, B2) — COMPLETE (verified 2026-02-02)
+### Phase 1: Critical Completion ⚠️ PARTIALLY COMPLETE
+1. ⬜ **Complete Buffer Recipe Creator Levels 2-3** (B1, B2) — **NOT IMPLEMENTED** (only Level 1 exists)
 2. ✅ **Add ICE table integration to Equilibrium Shifter** (E1) — COMPLETE (2026-02-02)
 
 ### Phase 2: New Critical Game ✅ COMPLETE
@@ -455,14 +473,19 @@ Link Gas Law Challenge to Equilibrium Shifter:
 
 ## Notes for Next Session
 
-**Sprint Summary (2026-02-02):** Phases 1-3 complete! Major accomplishments:
+**Status Update (2026-02-03):** Phases 2-3 complete, Phase 1 partially complete.
+
+**Accomplishments:**
 - ✅ ICE tables added to Equilibrium Shifter (10 problems across 3 difficulties)
 - ✅ New Ksp/Solubility game built (Leysnisjafnvægi) with 3 complete levels
 - ✅ Ka determination added to pH Titration as Level 4 (6 problems with titration curve analysis)
 - ✅ Entropy calculations (S°) and ΔG-K connection added to Thermodynamics Predictor
 - ✅ Dalton's Law of Partial Pressures added to Gas Law Challenge (8 problems)
 
-**Remaining work:**
+**Critical remaining work:**
+- ⬜ **Buffer Recipe Creator Levels 2-3** — Data files exist but components not built. This is the highest priority item.
+
+**Additional remaining work:**
 - Phase 4: Build Ka/Kb Jafnvægisreikningar (Acid-Base Equilibrium standalone game)
 - Phase 5: Medium-priority enhancements (numerical Q vs K, polyprotic titrations, curve interpretation)
 - Phase 6: Cross-game integration (Equilibrium ↔ Thermodynamics, Buffer ↔ Titration)

@@ -32,7 +32,8 @@ function TitrationCurve({
   equivalenceVolumes,
   halfEquivalenceVolumes,
   halfEquivalencePHs,
-  targetPKa
+  targetPKa,
+  showBufferRegions
 }: {
   data: CurvePoint[];
   equivalenceVolume?: number;
@@ -43,6 +44,7 @@ function TitrationCurve({
   halfEquivalenceVolumes?: number[];
   halfEquivalencePHs?: number[];
   targetPKa?: 1 | 2 | 3;
+  showBufferRegions?: boolean;
 }) {
   const width = 400;
   const height = 300;
@@ -95,10 +97,75 @@ function TitrationCurve({
   // Colors for multiple equivalence points
   const eqColors = ['#ef4444', '#f97316', '#eab308'];
 
+  // Calculate buffer regions (pH = pKa ± 1)
+  // For monoprotic: region around half-equivalence point
+  // For polyprotic: regions around each half-equivalence point
+  const bufferRegions: { startVol: number; endVol: number; pKa: number; index: number }[] = [];
+
+  if (showBufferRegions) {
+    if (isPolyprotic && halfEquivalenceVolumes && halfEquivalencePHs) {
+      halfEquivalenceVolumes.forEach((halfEqVol, i) => {
+        const pKa = halfEquivalencePHs[i];
+        // Buffer region spans from about 10% to 90% of way to next equivalence point
+        // Approximate by finding volume range where pH is within pKa ± 1
+        const startVol = i === 0 ? 0 : (equivalenceVolumes?.[i - 1] || 0);
+        const endVol = equivalenceVolumes?.[i] || halfEqVol * 2;
+        bufferRegions.push({ startVol, endVol, pKa, index: i + 1 });
+      });
+    } else if (halfEquivalenceVolume && !isPolyprotic) {
+      // Find pH at half-eq point
+      const halfEqPoint = sortedData.find(p => Math.abs(p.volume - halfEquivalenceVolume) < 0.5);
+      const pKa = halfEqPoint?.pH || 4.75;
+      // Buffer region: from start to equivalence point (roughly)
+      bufferRegions.push({
+        startVol: 0,
+        endVol: equivalenceVolume || halfEquivalenceVolume * 2,
+        pKa,
+        index: 1
+      });
+    }
+  }
+
   return (
     <svg viewBox={`0 0 ${width} ${height}`} className="w-full max-w-md mx-auto">
       {/* Background */}
       <rect x={padding.left} y={padding.top} width={chartWidth} height={chartHeight} fill="#f8fafc" />
+
+      {/* Buffer regions (shown as shaded areas) */}
+      {showBufferRegions && bufferRegions.map((region, i) => {
+        // Buffer effective region: pH = pKa ± 1
+        const pHMin = region.pKa - 1;
+        const pHMax = region.pKa + 1;
+        const yTop = scaleY(Math.min(14, pHMax));
+        const yBottom = scaleY(Math.max(0, pHMin));
+        const xStart = scaleX(region.startVol);
+        const xEnd = scaleX(region.endVol);
+
+        return (
+          <g key={`buffer-${i}`}>
+            {/* Buffer region rectangle */}
+            <rect
+              x={xStart}
+              y={yTop}
+              width={xEnd - xStart}
+              height={yBottom - yTop}
+              fill={i === 0 ? 'rgba(34, 197, 94, 0.15)' : i === 1 ? 'rgba(59, 130, 246, 0.15)' : 'rgba(168, 85, 247, 0.15)'}
+              stroke={i === 0 ? 'rgba(34, 197, 94, 0.4)' : i === 1 ? 'rgba(59, 130, 246, 0.4)' : 'rgba(168, 85, 247, 0.4)'}
+              strokeWidth="1"
+              strokeDasharray="4,2"
+            />
+            {/* Buffer region label */}
+            <text
+              x={xStart + 5}
+              y={yTop + 12}
+              className="text-xs fill-green-700"
+              opacity="0.8"
+            >
+              Stuðpúði {isPolyprotic ? region.index : ''}
+            </text>
+          </g>
+        );
+      })}
 
       {/* Grid lines */}
       {[0, 2, 4, 6, 7, 8, 10, 12, 14].map(pH => (
@@ -316,6 +383,7 @@ export function Level4({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
   const [showHint, setShowHint] = useState(false);
   const [showSolution, setShowSolution] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
+  const [showBufferRegions, setShowBufferRegions] = useState(false);
 
   const challenge = LEVEL4_CHALLENGES[currentIndex];
   const maxScore = LEVEL4_CHALLENGES.length * 20;
@@ -327,6 +395,7 @@ export function Level4({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
     setShowHint(false);
     setShowSolution(false);
     setIsCorrect(false);
+    setShowBufferRegions(false);
   }, [currentIndex]);
 
   // Check completion
@@ -553,7 +622,19 @@ export function Level4({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
 
           {/* Titration curve visualization */}
           <div className="bg-white border-2 border-gray-200 rounded-xl p-4 mb-4">
-            <h3 className="font-bold text-gray-700 mb-3 text-center">Títrunarkúrfa</h3>
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-bold text-gray-700">Títrunarkúrfa</h3>
+              <button
+                onClick={() => setShowBufferRegions(!showBufferRegions)}
+                className={`text-sm px-3 py-1 rounded-lg transition-colors ${
+                  showBufferRegions
+                    ? 'bg-green-100 text-green-700 border border-green-300'
+                    : 'bg-gray-100 text-gray-600 border border-gray-300 hover:bg-green-50'
+                }`}
+              >
+                {showBufferRegions ? '✓ Stuðpúðasvæði' : '◯ Sýna stuðpúðasvæði'}
+              </button>
+            </div>
             <TitrationCurve
               data={challenge.curveData}
               equivalenceVolume={challenge.equivalenceVolume}
@@ -564,6 +645,7 @@ export function Level4({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
               halfEquivalenceVolumes={challenge.halfEquivalenceVolumes}
               halfEquivalencePHs={challenge.halfEquivalencePHs}
               targetPKa={challenge.targetPKa}
+              showBufferRegions={showBufferRegions}
             />
 
             {/* pH values table */}
@@ -791,6 +873,35 @@ export function Level4({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
                       <li key={index}>{step}</li>
                     ))}
                   </ol>
+                </div>
+              )}
+
+              {/* Cross-game connection to Buffer Recipe Creator */}
+              {showBufferRegions && (
+                <div className="mt-4 bg-gradient-to-r from-green-50 to-teal-50 rounded-xl p-4 border border-green-200">
+                  <div className="flex items-start gap-3">
+                    <span className="text-2xl">🔗</span>
+                    <div className="flex-1">
+                      <div className="font-semibold text-gray-800 mb-1">
+                        Tengist Stuðpúðauppskriftum!
+                      </div>
+                      <p className="text-sm text-gray-600 mb-2">
+                        Stuðpúðasvæðið á títrunarkúrfunni sýnir hvar lausnin virkar sem stuðpúðalausn (pH = pKa ± 1).
+                        Í <strong>Stuðpúðauppskriftum</strong> geturðu lært að búa til þessar nauðsynlegu lausnir!
+                      </p>
+                      <div className="bg-white rounded-lg p-3 text-sm">
+                        <div className="font-semibold text-green-700 mb-1">Af hverju stuðpúðar skipta máli:</div>
+                        <ul className="text-gray-700 space-y-1">
+                          <li>• <strong>Henderson-Hasselbalch:</strong> pH = pKa + log([A⁻]/[HA])</li>
+                          <li>• <strong>Stuðpúðageta:</strong> Hámarks við [HA] = [A⁻] (pH = pKa)</li>
+                          <li>• <strong>Svið:</strong> Virkt þegar pH = pKa ± 1</li>
+                        </ul>
+                      </div>
+                      <div className="mt-2 text-xs text-teal-700 font-medium">
+                        → Stuðpúðauppskriftir (Buffer Recipe Creator)
+                      </div>
+                    </div>
+                  </div>
                 </div>
               )}
 

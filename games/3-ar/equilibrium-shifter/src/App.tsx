@@ -10,6 +10,7 @@ import { ParticleEquilibrium } from './components/ParticleEquilibrium';
 import { QKComparison } from './components/QKComparison';
 import { ICETable } from './components/ICETable';
 import { QKChallenge } from './components/QKChallenge';
+import { ThermodynamicsConnection } from './components/ThermodynamicsConnection';
 import {
   Equilibrium,
   Stress,
@@ -64,6 +65,7 @@ function App() {
   const [userPrediction, setUserPrediction] = useState<ShiftDirection | null>(null);
   const [correctShift, setCorrectShift] = useState<ShiftResult | null>(null);
   const [showExplanation, setShowExplanation] = useState(false);
+  const [showThermoConnection, setShowThermoConnection] = useState(false);
   const [hintMultiplier, setHintMultiplier] = useState(1.0);
   const [hintsUsedTier, setHintsUsedTier] = useState(0);
   const [hintResetKey, setHintResetKey] = useState(0);
@@ -253,6 +255,7 @@ function App() {
 
     setUserPrediction(null);
     setShowExplanation(false);
+    setShowThermoConnection(false);
     setHintMultiplier(1.0);
     setHintsUsedTier(0);
     setHintResetKey(prev => prev + 1);
@@ -826,6 +829,18 @@ function App() {
                       {correctShift.molecularView}
                     </p>
                   </div>
+
+                  {/* Thermodynamics Connection (Learning Mode) */}
+                  {gameMode === 'learning' && currentEquilibrium.thermodynamics.K && (
+                    <div className="mb-4">
+                      <ThermodynamicsConnection
+                        equilibrium={currentEquilibrium}
+                        language={language as 'is' | 'en'}
+                        expanded={showThermoConnection}
+                        onToggle={() => setShowThermoConnection(!showThermoConnection)}
+                      />
+                    </div>
+                  )}
 
                   {/* Points Earned */}
                   {isCorrect && (

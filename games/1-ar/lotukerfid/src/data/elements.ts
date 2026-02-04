@@ -5,11 +5,11 @@ export type ElementCategory = 'metal' | 'nonmetal' | 'metalloid';
 export type ElementGroup =
   | 'alkali'           // Alkalí málmar (Group 1, except H)
   | 'alkaline-earth'   // Jarðalkalí málmar (Group 2)
-  | 'transition'       // Siðmálmar (Groups 3-12)
+  | 'transition'       // Hliðarmálmar (Groups 3-12)
   | 'halogen'          // Halógen (Group 17)
   | 'noble-gas'        // Eðalgös (Group 18)
   | 'other-metal'      // Aðrir málmar
-  | 'other-nonmetal'   // Aðrir ómalmar
+  | 'other-nonmetal'   // Aðrir málmleysingjar
   | 'metalloid';       // Hálfmálmar
 
 export interface Element {
@@ -55,11 +55,11 @@ export const GROUP_COLORS: Record<ElementGroup, { bg: string; text: string; hex:
 export const GROUP_NAMES_IS: Record<ElementGroup, string> = {
   'alkali':         'Alkalí málmar',
   'alkaline-earth': 'Jarðalkalí málmar',
-  'transition':     'Siðmálmar',
+  'transition':     'Hliðarmálmar',
   'halogen':        'Halógen',
   'noble-gas':      'Eðalgös',
   'other-metal':    'Aðrir málmar',
-  'other-nonmetal': 'Aðrir ómalmar',
+  'other-nonmetal': 'Aðrir málmleysingjar',
   'metalloid':      'Hálfmálmar',
 };
 

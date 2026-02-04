@@ -261,8 +261,8 @@ function App() {
               <li>✓ <strong>Hraði:</strong> Rate = Δ[efni]/Δt — hversu hratt efnahvörf gerast</li>
               <li>✓ <strong>Hraðalögmál:</strong> Rate = k[A]<sup>m</sup>[B]<sup>n</sup> — tengsl við styrk</li>
               <li>✓ <strong>Röð hvörfunar:</strong> Veldisvísir segir hversu mikið styrkur hefur áhrif</li>
-              <li>✓ <strong>Hvarfgangsháttur:</strong> Röð frumskref sem mynda heildarhvörf</li>
-              <li>✓ <strong>Hraðaákvarðandi skref:</strong> Hægasta skrefið ræður heildarhraða</li>
+              <li>✓ <strong>Hvarfgangsháttur:</strong> Röð grunnskref sem mynda heildarhvörf</li>
+              <li>✓ <strong>Hraðatakmarkandi skref:</strong> Hægasta skrefið ræður heildarhraða</li>
               <li>✓ <strong>Arrhenius:</strong> k = Ae<sup>-Eₐ/RT</sup> — tengsl hita og hraðafasta</li>
             </ul>
           </div>
@@ -412,7 +412,7 @@ function App() {
                   )}
                 </div>
                 <div className={`text-sm mt-1 ${progress.level2Completed ? 'text-purple-600' : 'text-gray-500'}`}>
-                  Frumskref og hraðaákvarðandi skref
+                  Grunnskref og hraðatakmarkandi skref
                 </div>
                 <div className="text-xs text-gray-600 mt-2">
                   Greindu hvarfgangshætti og finndu millistig.

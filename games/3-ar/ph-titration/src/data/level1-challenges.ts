@@ -97,10 +97,10 @@ export const LEVEL1_CHALLENGES: Level1Challenge[] = [
     hints: {
       topic: 'Þetta snýst um títrunarkúrfur veikra sýra og sterkra basa.',
       strategy: 'Veik sýra er ekki alveg sundurgreind, svo upphaf-pH er hærra. Hugsaðu hvað myndast við jafngildispunkt.',
-      method: 'Veik sýra + sterk basi myndar samþjöppuð basa (basískt) við jafngildispunkt → pH > 7.',
+      method: 'Veik sýra + sterk basi myndar samoka basa (basískt) við jafngildispunkt → pH > 7.',
       solution: 'Púffursvæði + jafngildispunktur yfir pH 7 eru lykileinkenni veikrar sýru + sterkrar basa.'
     },
-    explanationIs: 'Veik sýra + sterk basi hefur: 1) Hærra upphafs-pH (3-5) vegna hlutasundurgreiningar, 2) Púffursvæði við hálfan jafngildispunkt þar sem pH ≈ pKₐ, 3) Jafngildispunkt YFIR pH 7 vegna þess að samþjöppuð basi (t.d. CH₃COO⁻) er basísk.',
+    explanationIs: 'Veik sýra + sterk basi hefur: 1) Hærra upphafs-pH (3-5) vegna hlutasundurgreiningar, 2) Púffursvæði við hálfan jafngildispunkt þar sem pH ≈ pKₐ, 3) Jafngildispunkt YFIR pH 7 vegna þess að samoka basi (t.d. CH₃COO⁻) er basísk.',
     explanation: 'Weak acid + strong base has: 1) Higher initial pH (3-5) due to partial dissociation, 2) Buffer region at half-equivalence where pH ≈ pKₐ, 3) Equivalence point ABOVE pH 7 because conjugate base (e.g., CH₃COO⁻) is basic.'
   },
   {
@@ -209,7 +209,7 @@ export const LEVEL1_CHALLENGES: Level1Challenge[] = [
     ],
     hints: {
       topic: 'Þetta snýst um púffursvæði á títrunarkúrfu.',
-      strategy: 'Púffur myndast þegar bæði veik sýra og samþjöppuð basi hennar eru til staðar í sambærilegu magni.',
+      strategy: 'Stuðpúði myndast þegar bæði veik sýra og samoka basi hennar eru til staðar í sambærilegu magni.',
       method: 'Við hálfan jafngildispunkt er [HA] = [A⁻], svo pH = pKₐ. Púffursvæði er pH = pKₐ ± 1.',
       solution: 'Púffursvæðið er fyrir og eftir hálfan jafngildispunkt (pH = pKₐ ± 1).'
     },

@@ -39,9 +39,9 @@ export const LEVEL1_PROBLEMS: Level1Problem[] = [
     explanation:
       'For HF ⇌ H⁺ + F⁻, Ka = [H⁺][F⁻]/[HF]. This is a simple 1:1:1 dissociation.',
     explanationIs:
-      'Fyrir HF ⇌ H⁺ + F⁻, Ka = [H⁺][F⁻]/[HF]. Þetta er einföld 1:1:1 sundrun.',
+      'Fyrir HF ⇌ H⁺ + F⁻, Ka = [H⁺][F⁻]/[HF]. Þetta er einföld 1:1:1 klofnun.',
     hint: 'HF dissociates into H⁺ and F⁻',
-    hintIs: 'HF sundrast í H⁺ og F⁻',
+    hintIs: 'HF klofnar í H⁺ og F⁻',
   },
   {
     id: 3,
@@ -59,9 +59,9 @@ export const LEVEL1_PROBLEMS: Level1Problem[] = [
     explanation:
       'For HNO₂ ⇌ H⁺ + NO₂⁻, Ka = [H⁺][NO₂⁻]/[HNO₂]. The nitrite ion is the conjugate base.',
     explanationIs:
-      'Fyrir HNO₂ ⇌ H⁺ + NO₂⁻, Ka = [H⁺][NO₂⁻]/[HNO₂]. Nítrat jónin er samstæður basi.',
+      'Fyrir HNO₂ ⇌ H⁺ + NO₂⁻, Ka = [H⁺][NO₂⁻]/[HNO₂]. Nítrít jónin er samoka basi.',
     hint: 'The conjugate base of HNO₂ is NO₂⁻',
-    hintIs: 'Samstæður basi HNO₂ er NO₂⁻',
+    hintIs: 'Samoka basi HNO₂ er NO₂⁻',
   },
 
   // Write Kb expressions
@@ -182,7 +182,7 @@ export const LEVEL1_PROBLEMS: Level1Problem[] = [
     explanationIs:
       'Stærra Ka gildi gefur til kynna sterkari sýru. Maurasýra (Ka = 1.8 × 10⁻⁴) hefur Ka sem er 10 sinnum stærra en edikssýra (Ka = 1.8 × 10⁻⁵), þannig maurasýra er sterkari sýran.',
     hint: 'Higher Ka means more dissociation, which means a stronger acid',
-    hintIs: 'Hærra Ka þýðir meiri sundrun, sem þýðir sterkari sýra',
+    hintIs: 'Hærra Ka þýðir meiri klofnun, sem þýðir sterkari sýra',
   },
   {
     id: 10,

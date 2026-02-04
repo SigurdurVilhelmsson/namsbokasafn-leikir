@@ -33,7 +33,7 @@ export const LEVEL2_PUZZLES: Level2Puzzle[] = [
     task: 'Titrate 25.0 mL of 0.100 M acetic acid (CH₃COOH) with 0.100 M NaOH. Note that equivalence point is NOT at pH 7!',
     volumeTolerance: 1.0,
     acceptableIndicators: ['phenolphthalein', 'thymol-blue'],
-    hintIs: 'Veik sýra + sterk basi myndar basíska samþjöppuðu basa við jafngildispunkt. pH verður hærra en 7.',
+    hintIs: 'Veik sýra + sterk basi myndar basískan samoka basa við jafngildispunkt. pH verður hærra en 7.',
     hint: 'Weak acid + strong base forms basic conjugate base at equivalence. pH will be higher than 7.',
     explanationIs: 'CH₃COOH + NaOH gefur CH₃COONa. Asetat jónin (CH₃COO⁻) er veik basi, svo lausnin verður basísk við jafngildispunkt (~pH 8.7). Fenólftaleín (pH 8.3-10.0) er besti vísirinn.',
     explanation: 'CH₃COOH + NaOH produces CH₃COONa. The acetate ion (CH₃COO⁻) is a weak base, so solution becomes basic at equivalence (~pH 8.7). Phenolphthalein (pH 8.3-10.0) is the best indicator.'
@@ -57,7 +57,7 @@ export const LEVEL2_PUZZLES: Level2Puzzle[] = [
     task: 'Titrate 25.0 mL of 0.100 M ammonia (NH₃) with 0.100 M HCl. This is weak base + strong acid!',
     volumeTolerance: 1.0,
     acceptableIndicators: ['methyl-orange', 'methyl-red'],
-    hintIs: 'Veik basi + sterk sýra myndar súra samþjöppuðu sýru við jafngildispunkt. pH verður lægra en 7.',
+    hintIs: 'Veik basi + sterk sýra myndar súra samoka sýru við jafngildispunkt. pH verður lægra en 7.',
     hint: 'Weak base + strong acid forms acidic conjugate acid at equivalence. pH will be lower than 7.',
     explanationIs: 'NH₃ + HCl gefur NH₄Cl. Ammóníum jónin (NH₄⁺) er veik sýra, svo lausnin verður súr við jafngildispunkt (~pH 5.3). Metýl appelsínugult (pH 3.1-4.4) er góður vísir.',
     explanation: 'NH₃ + HCl produces NH₄Cl. The ammonium ion (NH₄⁺) is a weak acid, so solution becomes acidic at equivalence (~pH 5.3). Methyl orange (pH 3.1-4.4) is a good indicator.'
@@ -71,7 +71,7 @@ export const LEVEL2_PUZZLES: Level2Puzzle[] = [
     acceptableIndicators: ['phenolphthalein', 'thymol-blue'],
     hintIs: 'HF er veik sýra þó hún sé halógen sýra. Jafngildispunktur verður yfir pH 7.',
     hint: 'HF is a weak acid despite being a halogen acid. Equivalence point will be above pH 7.',
-    explanationIs: 'HF + NaOH gefur NaF. Flúoríð jónin (F⁻) er veik basi (samþjöppuð basi HF), svo lausnin verður basísk við jafngildispunkt. pKₐ(HF) ≈ 3.17.',
+    explanationIs: 'HF + NaOH gefur NaF. Flúoríð jónin (F⁻) er veik basi (samoka basi HF), svo lausnin verður basísk við jafngildispunkt. pKₐ(HF) ≈ 3.17.',
     explanation: 'HF + NaOH produces NaF. The fluoride ion (F⁻) is a weak base (conjugate base of HF), so solution becomes basic at equivalence. pKₐ(HF) ≈ 3.17.'
   },
   {

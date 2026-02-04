@@ -12,7 +12,7 @@ export const gameTranslations = createGameTranslations({
     },
     intro: {
       title: 'Hvað er stuðpúðalausn?',
-      description: 'Stuðpúðalausn er lausn sem viðheldur næstum föstu pH þegar lítið magn af sýru eða basa er bætt við. Hún inniheldur veika sýru og samstæða basa (eða öfugt).',
+      description: 'Stuðpúðalausn er lausn sem viðheldur næstum föstu pH þegar lítið magn af sýru eða basa er bætt við. Hún inniheldur veika sýru og samoka basa (eða öfugt).',
     },
     levels: {
       level1: {
@@ -37,9 +37,9 @@ export const gameTranslations = createGameTranslations({
       buffer: 'Stuðpúði',
       bufferCapacity: 'Stuðpúðageta',
       weakAcid: 'Veik sýra',
-      conjugateBase: 'Samstæður basi',
+      conjugateBase: 'Samoka basi',
       weakBase: 'Veikur basi',
-      conjugateAcid: 'Samstæð sýra',
+      conjugateAcid: 'Samoka sýra',
       pKa: 'pKa',
       bufferRange: 'Stuðpúðasvið',
     },

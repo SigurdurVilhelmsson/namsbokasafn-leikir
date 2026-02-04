@@ -18,12 +18,12 @@ export const gameTranslations = createGameTranslations({
       level1: {
         name: 'Stig 1: Grunnlögun',
         description: 'Lærðu undirstöðulögunina',
-        details: 'Kynntu þér línulega, hornrétta, þríhliða og fjórhliða lögun.',
+        details: 'Kynntu þér línulega, beygða, þríhyrningslaga og ferflötungslaga lögun.',
       },
       level2: {
-        name: 'Stig 2: Stakeindir',
-        description: 'Stakeindir breyta lögun',
-        details: 'Sjáðu hvernig stakeindarapör hafa áhrif á sameindalögun.',
+        name: 'Stig 2: Rafeindapör',
+        description: 'Rafeindapör breyta lögun',
+        details: 'Sjáðu hvernig rafeindapör hafa áhrif á sameindalögun.',
         locked: 'Ljúktu stigi 1 fyrst',
       },
       level3: {
@@ -35,11 +35,11 @@ export const gameTranslations = createGameTranslations({
     },
     geometry: {
       linear: 'Línuleg',
-      bentShape: 'Hornrétt',
-      trigonalPlanar: 'Þríhliða slétt',
-      trigonalPyramidal: 'Þríhliða pýramída',
-      tetrahedral: 'Fjórhliða',
-      trigonalBipyramidal: 'Þríhliða tvípýramída',
+      bentShape: 'Beygð',
+      trigonalPlanar: 'Þríhyrningslaga flöt',
+      trigonalPyramidal: 'Þríhyrningslaga pýramídi',
+      tetrahedral: 'Ferflötungur',
+      trigonalBipyramidal: 'Þríhyrningslaga tvípýramídi',
       octahedral: 'Áttflötungur',
       seesawShape: 'Vippu',
       tShape: 'T-lögun',

@@ -7,11 +7,11 @@ export const gameTranslations = createGameTranslations({
   is: {
     game: {
       title: 'Jónir í lausn',
-      subtitle: 'Lærðu um rafleiðara, leysanleikareglur og botnfallshvörf',
+      subtitle: 'Lærðu um rafkleyfi, leysanleikareglur og botnfallshvörf',
     },
     menu: {
       howItWorks: 'Hvernig virkar þetta?',
-      howItWorksDesc: 'Í þessum leik læriru að greina á milli rafleiðara, spá fyrir um leysanleika jónefnasambanda og segja fyrir um botnfallshvörf.',
+      howItWorksDesc: 'Í þessum leik læriru að greina á milli rafkleyfa, spá fyrir um leysanleika jónefnasambanda og segja fyrir um botnfallshvörf.',
       progress: 'Framvinda',
       reset: 'Endurstilla',
       levelsCompleted: 'Stig lokið',
@@ -22,9 +22,9 @@ export const gameTranslations = createGameTranslations({
     },
     levels: {
       level1: {
-        name: 'Stig 1: Rafleiðarar',
-        description: 'Flokka efni eftir rafleiðarategund',
-        details: 'Lærðu að greina sterka rafleiðara, veika rafleiðara og órafleiðara.',
+        name: 'Stig 1: Rafkleyfi',
+        description: 'Flokka efni eftir gerð rafkleyfis',
+        details: 'Lærðu að greina sterk rafkleyfi, veik rafkleyfi og órafkleyfi.',
         locked: 'Ljúktu Stig 1 til að opna þetta stig.',
       },
       level2: {
@@ -79,8 +79,8 @@ export const gameTranslations = createGameTranslations({
       totalScore: 'Heildarstig',
       back: 'Til baka',
       startOver: 'Byrja upp á nýtt',
-      summary1: 'Sterkir rafleiðarar leysast algjörlega upp í jónir',
-      summary2: 'Veikir rafleiðarar leysast að hluta upp í jónir',
+      summary1: 'Sterk rafkleyfi leysast algjörlega upp í jónir',
+      summary2: 'Veik rafkleyfi leysast að hluta upp í jónir',
       summary3: 'Leysanleikareglur hjálpa að spá um hvort efni leysast',
       summary4: 'Botnfallshvörf myndast þegar óleysanlegt efni verður til',
     },

@@ -27,7 +27,7 @@ export const ELECTROLYTE_CATEGORIES: Record<ElectrolyteType, {
   conductivityEn: string;
 }> = {
   strong: {
-    name: 'Sterkur rafleiðari',
+    name: 'Sterkt rafkleyfi',
     nameEn: 'Strong electrolyte',
     description: 'Leysist algjörlega upp í jónir í vatni. Leiðir rafstraum vel.',
     descriptionEn: 'Dissociates completely into ions in water. Conducts electricity well.',
@@ -37,7 +37,7 @@ export const ELECTROLYTE_CATEGORIES: Record<ElectrolyteType, {
     conductivityEn: 'Bright bulb',
   },
   weak: {
-    name: 'Veikur rafleiðari',
+    name: 'Veikt rafkleyfi',
     nameEn: 'Weak electrolyte',
     description: 'Leysist að hluta upp í jónir í vatni. Leiðir rafstraum illa.',
     descriptionEn: 'Partially dissociates into ions in water. Conducts electricity poorly.',
@@ -47,7 +47,7 @@ export const ELECTROLYTE_CATEGORIES: Record<ElectrolyteType, {
     conductivityEn: 'Dim bulb',
   },
   non: {
-    name: 'Órafleiðari',
+    name: 'Órafkleyfi',
     nameEn: 'Non-electrolyte',
     description: 'Leysist ekki upp í jónir í vatni. Leiðir ekki rafstraum.',
     descriptionEn: 'Does not dissociate into ions in water. Does not conduct electricity.',
@@ -104,7 +104,7 @@ export const SUBSTANCES: Substance[] = [
     type: 'strong',
     description: 'Leysanlegt jónefnasamband',
     descriptionEn: 'Soluble ionic compound',
-    hint: 'Öll leysanleg jónefnasambönd eru sterkir rafleiðarar',
+    hint: 'Öll leysanleg jónefnasambönd eru sterk rafkleyfi',
     hintEn: 'All soluble ionic compounds are strong electrolytes',
     dissociation: 'KNO₃ → K⁺ + NO₃⁻',
   },

@@ -28,7 +28,7 @@ export const gameTranslations = createGameTranslations({
       },
       level3: {
         name: 'Stig 3: Hvarfgangsháttur',
-        description: 'Frumskref og hraðaákvarðandi skref',
+        description: 'Grunnskref og hraðatakmarkandi skref',
         details: 'Greindu hvarfgangshætti og finndu millistig.',
         locked: 'Ljúktu stigi 2 fyrst',
       },

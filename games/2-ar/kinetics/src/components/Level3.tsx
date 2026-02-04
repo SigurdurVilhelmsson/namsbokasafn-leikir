@@ -56,21 +56,21 @@ const challenges: Challenge[] = [
       { equation: 'O₃ ⇌ O₂ + O', type: 'equilibrium', label: 'Skref 1 (hratt jafnvægi)' },
       { equation: 'O + O₃ → 2O₂', type: 'slow', label: 'Skref 2 (hægt)' },
     ],
-    question: 'Hvert skref er hraðaákvarðandi?',
+    question: 'Hvert skref er hraðatakmarkandi?',
     type: 'rate_determining',
     options: [
-      { id: 'a', text: 'Skref 2 (hægt)', correct: true, explanation: 'Hægasta skrefið er alltaf hraðaákvarðandi - það er "flöskuhálsinn".' },
+      { id: 'a', text: 'Skref 2 (hægt)', correct: true, explanation: 'Hægasta skrefið er alltaf hraðatakmarkandi - það er "flöskuhálsinn".' },
       { id: 'b', text: 'Skref 1 (hratt jafnvægi)', correct: false, explanation: 'Hraðar skref bíða eftir hægari skrefum.' },
       { id: 'c', text: 'Bæði skref jafn mikilvæg', correct: false, explanation: 'Eitt skref ræður alltaf heildarhraðanum.' },
-      { id: 'd', text: 'Hvorugt skref', correct: false, explanation: 'Í hvarfgangshátt er alltaf eitt skref hraðaákvarðandi.' },
+      { id: 'd', text: 'Hvorugt skref', correct: false, explanation: 'Í hvarfgangshátt er alltaf eitt skref hraðatakmarkandi.' },
     ],
     hint: 'Hugsaðu um umferð: hægasti bíllinn ákvarðar hraða allra',
-    conceptExplanation: 'Hraðaákvarðandi skref (rate-determining step) er hægasta frumskrefið. Heildarhraðinn getur aldrei verið hraðari en hægasta skrefið.'
+    conceptExplanation: 'Hraðaákvarðandi skref (rate-determining step) er hægasta grunnskrefið. Heildarhraðinn getur aldrei verið hraðari en hægasta skrefið.'
   },
   {
     id: 3,
     title: 'Hraðalögmál úr hvarfgangshátt',
-    description: 'Hraðalögmálið ræðst af hraðaákvarðandi skrefi.',
+    description: 'Hraðalögmálið ræðst af hraðatakmarkandi skrefi.',
     overallReaction: '2NO + Br₂ → 2NOBr',
     mechanism: [
       { equation: 'NO + Br₂ ⇌ NOBr₂', type: 'fast', label: 'Skref 1 (hratt jafnvægi)' },
@@ -85,7 +85,7 @@ const challenges: Challenge[] = [
       { id: 'd', text: 'Rate = k[Br₂]', correct: false, explanation: 'Þetta tekur ekki tillit til NO styrks.' },
     ],
     hint: 'Millistig má ekki vera í hraðalögmáli - notaðu jafnvægið til að losna við það',
-    conceptExplanation: 'Þegar millistig er í hraðaákvarðandi skrefi, notum við jafnvægislíkinguna til að skipta því út fyrir upprunalegu hvarfefnin.'
+    conceptExplanation: 'Þegar millistig er í hraðatakmarkandi skrefi, notum við jafnvægislíkinguna til að skipta því út fyrir upprunalegu hvarfefnin.'
   },
   {
     id: 4,
@@ -123,10 +123,10 @@ const challenges: Challenge[] = [
       { id: 'a', text: 'Rate = k[CHCl₃][Cl₂]^½', correct: true, explanation: 'Skref 2 er hægt: Rate = k\'[Cl][CHCl₃]. Frá jafnvægi skrefs 1: [Cl] = K[Cl₂]^½. Þannig: Rate = k[CHCl₃][Cl₂]^½.' },
       { id: 'b', text: 'Rate = k[Cl₂][CHCl₃]', correct: false, explanation: 'Þetta væri rétt ef skref 2 notaði Cl₂ beint.' },
       { id: 'c', text: 'Rate = k[Cl][CHCl₃]', correct: false, explanation: 'Cl er millistig - ekki má vera í lokahraðalögmáli.' },
-      { id: 'd', text: 'Rate = k[Cl₂]', correct: false, explanation: 'CHCl₃ tekur þátt í hraðaákvarðandi skrefi.' },
+      { id: 'd', text: 'Rate = k[Cl₂]', correct: false, explanation: 'CHCl₃ tekur þátt í hraðatakmarkandi skrefi.' },
     ],
     hint: 'Jafnvægi Cl₂ ⇌ 2Cl gefur [Cl] = √(K[Cl₂])',
-    conceptExplanation: 'Þegar millistig (Cl) er í hraðaákvarðandi skrefi og kemur frá jafnvægi, þá kemur brotveldi (½) í hraðalögmálið.'
+    conceptExplanation: 'Þegar millistig (Cl) er í hraðatakmarkandi skrefi og kemur frá jafnvægi, þá kemur brotveldi (½) í hraðalögmálið.'
   },
   {
     id: 6,

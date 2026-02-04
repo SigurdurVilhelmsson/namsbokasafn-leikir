@@ -223,7 +223,7 @@ export const LEVEL3_CHALLENGES: Level3Challenge[] = [
     correctAnswer: 4.86,
     unit: '',
     tolerance: 0.02,
-    hintIs: 'Henderson-Hasselbalch jafnan: pH = pKₐ + log([samþjöppuð basi]/[veik sýra])',
+    hintIs: 'Henderson-Hasselbalch jafnan: pH = pKₐ + log([samoka basi]/[veik sýra])',
     hint: 'Henderson-Hasselbalch equation: pH = pKₐ + log([conjugate base]/[weak acid])',
     explanationIs: 'Settu gildin inn í Henderson-Hasselbalch jöfnuna og reiknaðu.',
     explanation: 'Substitute the values into the Henderson-Hasselbalch equation and calculate.',

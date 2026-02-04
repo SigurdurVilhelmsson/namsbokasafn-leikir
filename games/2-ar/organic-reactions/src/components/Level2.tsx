@@ -83,7 +83,7 @@ const problems: MechanismProblem[] = [
       'Hvarf í gegnum róttækla millilið'
     ],
     correctAnswer: 0,
-    hint: 'SN2: S=substitution, N=nucleophilic, 2=bimolecular (tvær sameindir í hraðaákvarðandi skrefi).',
+    hint: 'SN2: S=substitution, N=nucleophilic, 2=bimolecular (tvær sameindir í hraðatakmarkandi skrefi).',
     explanation: 'SN2 er eins skrefs hvarf þar sem kjarnsækni ræðst á bakhlið kolefnis samtímis og farandi hópur (leaving group) fer. Ýlingar snýst við (Walden inversion).'
   },
   {

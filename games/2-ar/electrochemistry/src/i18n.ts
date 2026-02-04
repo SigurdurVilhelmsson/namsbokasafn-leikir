@@ -18,12 +18,12 @@ export const gameTranslations = createGameTranslations({
       level1: {
         name: 'Stig 1: Galvanísk hlaup',
         description: 'Byggðu rafhlöður',
-        details: 'Lærðu um anode, cathode og rafeindarflæði.',
+        details: 'Lærðu um anóðu, katóðu og rafeindarflæði.',
       },
       level2: {
         name: 'Stig 2: Staðalmætti (E°)',
         description: 'Notaðu E° töflu',
-        details: 'Reiknaðu spennumun og spáðu fyrir um sjálfvirkni.',
+        details: 'Reiknaðu spennumun og spáðu fyrir um sjálfgengi.',
         locked: 'Ljúktu stigi 1 fyrst',
       },
       level3: {
@@ -34,8 +34,8 @@ export const gameTranslations = createGameTranslations({
       },
     },
     concepts: {
-      anode: 'Anode (oxun)',
-      cathode: 'Cathode (afoxun)',
+      anode: 'Anóða (oxun)',
+      cathode: 'Katóða (afoxun)',
       electronFlow: 'Rafeindarflæði',
       saltBridge: 'Saltbrú',
       standardPotential: 'Staðalmætti (E°)',

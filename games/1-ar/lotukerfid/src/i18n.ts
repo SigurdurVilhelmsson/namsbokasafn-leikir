@@ -28,7 +28,7 @@ export const gameTranslations = createGameTranslations({
       level2: {
         name: 'Stig 2: Flokkun',
         description: 'Flokkaðu frumefni eftir eiginleikum',
-        details: 'Greindu málma, ómálma og hálfmálma. Þekktu hópa eins og alkalímálma og eðalgös.',
+        details: 'Greindu málma, málmleysingja og hálfmálma. Þekktu hópa eins og alkalímálma og eðalgös.',
         locked: 'Ljúktu Stig 1 til að opna þetta stig.',
       },
       level3: {
@@ -42,17 +42,17 @@ export const gameTranslations = createGameTranslations({
     },
     categories: {
       metal: 'Málmur',
-      nonmetal: 'Ómálmur',
+      nonmetal: 'Málmleysingi',
       metalloid: 'Hálfmálmur',
     },
     groups: {
       alkali: 'Alkalí málmar',
       alkalineEarth: 'Jarðalkalí málmar',
-      transition: 'Siðmálmar',
+      transition: 'Hliðarmálmar',
       halogen: 'Halógen',
       nobleGas: 'Eðalgös',
       otherMetal: 'Aðrir málmar',
-      otherNonmetal: 'Aðrir ómalmar',
+      otherNonmetal: 'Aðrir málmleysingjar',
     },
     gameplay: {
       correct: 'Rétt!',
@@ -96,7 +96,7 @@ export const gameTranslations = createGameTranslations({
       back: 'Til baka',
       startOver: 'Byrja upp á nýtt',
       summary1: 'Hvernig á að finna frumefni í lotukerfinu',
-      summary2: 'Mismun á málmum, ómálmum og hálfmálmum',
+      summary2: 'Mismun á málmum, málmleysingjum og hálfmálmum',
       summary3: 'Hópaflokkun: alkalí málma, eðalgös og fleira',
       summary4: 'Lotu- og hópamynstur: atómgeisla, jónunarorku og rafneikvæðni',
     },

@@ -12,12 +12,12 @@ export const gameTranslations = createGameTranslations({
     },
     intro: {
       title: 'Hvað eru Lewis formúlur?',
-      description: 'Lewis formúlur sýna hvernig gildisrafeindir eru dreifðar í sameind. Þær sýna bindingar og stakeindir á einfaldan hátt.',
+      description: 'Lewis formúlur sýna hvernig gildisrafeindir eru dreifðar í sameind. Þær sýna bindingar og rafeindapör á einfaldan hátt.',
     },
     levels: {
       level1: {
         name: 'Stig 1: Einföld sambönd',
-        description: 'Einfaldar bindingar og stakeindir',
+        description: 'Einfaldar bindingar og rafeindapör',
         details: 'Lærðu að teikna einfaldar sameindir með einföldum bindingum.',
       },
       level2: {
@@ -28,26 +28,26 @@ export const gameTranslations = createGameTranslations({
       },
       level3: {
         name: 'Stig 3: Formhleðsla',
-        description: 'Formhleðsla og samómun',
-        details: 'Reiknaðu formhleðslu og teiknaðu samómunarmyndir.',
+        description: 'Formhleðsla og samhrif',
+        details: 'Reiknaðu formhleðslu og teiknaðu samhrifsmyndir.',
         locked: 'Ljúktu stigi 2 fyrst',
       },
     },
     concepts: {
       bondingPair: 'Bindipör',
-      lonePair: 'Stakeindir',
-      singleBond: 'Einfalt band',
-      doubleBond: 'Tvöfalt band',
-      tripleBond: 'Þrefalt band',
+      lonePair: 'Rafeindapar',
+      singleBond: 'Eintengi',
+      doubleBond: 'Tvítengi',
+      tripleBond: 'Þrítengi',
       formalCharge: 'Formhleðsla',
-      resonance: 'Samómun',
+      resonance: 'Samhrif',
       octetRule: 'Áttundreglan',
       valenceElectrons: 'Gildisrafeindir',
     },
     instructions: {
       countElectrons: 'Telja rafeindir',
       drawBonds: 'Teikna bindingar',
-      addLonePairs: 'Bæta við stakeindrapörum',
+      addLonePairs: 'Bæta við rafeindapörum',
       checkOctet: 'Athuga áttundreglu',
     },
     progress: {

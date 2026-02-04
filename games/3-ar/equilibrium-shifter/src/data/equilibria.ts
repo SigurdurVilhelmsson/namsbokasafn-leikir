@@ -271,7 +271,7 @@ export const equilibria: Equilibrium[] = [
     id: 8,
     equation: 'CH₃COOH(aq) ⇌ CH₃COO⁻(aq) + H⁺(aq)',
     name: 'Acetic Acid Dissociation',
-    nameIs: 'Ediksýrusundrun',
+    nameIs: 'Ediksýruklofnun',
     difficulty: 'beginner',
     reactants: [
       { formula: 'CH₃COOH', coefficient: 1, phase: 'aq', display: '🧪' }

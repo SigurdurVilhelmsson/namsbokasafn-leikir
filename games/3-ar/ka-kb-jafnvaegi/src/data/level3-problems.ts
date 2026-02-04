@@ -72,7 +72,7 @@ export const LEVEL3_PROBLEMS: Level3Problem[] = [
     explanation:
       'pKa + pKb = 14. So pKb = 14 - 4.74 = 9.26. This shows that the conjugate base of a weak acid is a weak base.',
     explanationIs:
-      'pKa + pKb = 14. Þannig pKb = 14 - 4.74 = 9.26. Þetta sýnir að samstæður basi veikrar sýru er veikur basi.',
+      'pKa + pKb = 14. Þannig pKb = 14 - 4.74 = 9.26. Þetta sýnir að samoka basi veikrar sýru er veikur basi.',
     hint: 'Remember: pKa + pKb = 14 (at 25°C)',
     hintIs: 'Mundu: pKa + pKb = 14 (við 25°C)',
   },
@@ -89,9 +89,9 @@ export const LEVEL3_PROBLEMS: Level3Problem[] = [
     explanation:
       'pKa + pKb = 14. So pKa = 14 - 4.74 = 9.26. The ammonium ion is the conjugate acid of ammonia.',
     explanationIs:
-      'pKa + pKb = 14. Þannig pKa = 14 - 4.74 = 9.26. Ammóníumjónin er samstæð sýra ammoníaks.',
+      'pKa + pKb = 14. Þannig pKa = 14 - 4.74 = 9.26. Ammóníumjónin er samoka sýra ammoníaks.',
     hint: 'The relationship pKa + pKb = 14 applies to conjugate pairs',
-    hintIs: 'Sambandið pKa + pKb = 14 gildir um samstæð pör',
+    hintIs: 'Sambandið pKa + pKb = 14 gildir um samoka pör',
   },
 
   // Dilution effect on ionization
@@ -125,9 +125,9 @@ export const LEVEL3_PROBLEMS: Level3Problem[] = [
     explanation:
       'Formic acid has a larger Ka, meaning it dissociates more. Higher Ka = higher percent ionization at the same concentration.',
     explanationIs:
-      'Maurasýra hefur stærra Ka, sem þýðir að hún sundrast meira. Hærra Ka = hærri jónunarprósentu við sama styrk.',
+      'Maurasýra hefur stærra Ka, sem þýðir að hún klofnar meira. Hærra Ka = hærri jónunarprósentu við sama styrk.',
     hint: 'Larger Ka means more dissociation',
-    hintIs: 'Stærra Ka þýðir meiri sundrun',
+    hintIs: 'Stærra Ka þýðir meiri klofnun',
   },
   {
     id: 8,

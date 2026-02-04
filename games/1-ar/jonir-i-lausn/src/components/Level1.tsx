@@ -106,7 +106,7 @@ export function Level1({ onComplete, onBack }: Level1Props) {
                 <span>&larr;</span> Til baka
               </button>
               <h1 className="text-xl md:text-2xl font-bold text-amber-700">
-                Stig 1: Rafleiðarar
+                Stig 1: Rafkleyfi
               </h1>
               <div></div>
             </div>
@@ -119,7 +119,7 @@ export function Level1({ onComplete, onBack }: Level1Props) {
             </h2>
             <p className="text-center text-gray-600 mb-6 text-sm">
               Þegar efni er leyst upp í vatni, leiðir lausnin rafstraum ef jónir eru til staðar.
-              Perubirtinn sýnir styrk rafleiðarans.
+              Perubirtinn sýnir styrk rafkleyfisins.
             </p>
 
             {/* Visual conductivity testers */}

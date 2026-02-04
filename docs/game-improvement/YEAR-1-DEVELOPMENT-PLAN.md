@@ -2,32 +2,35 @@
 
 **Date:** 2026-01-30 | **Updated:** 2026-02-03
 **Curriculum Reference:** Brown et al, *Chemistry: The Central Science*, Chapters 1-4
-**Status:** ✅ All Phases Complete
+**Status:** Phases 1–4 ✅ Complete | Phase 5 ⬜ Planned
 
 ---
 
 ## Executive Summary
 
-Year 1 games cover most core topics from Chapters 1-4, but have gaps in **balancing equations**, **percent composition/empirical formulas**, and **reaction type classification**. Existing games are pedagogically strong but would benefit from targeted enhancements to deepen concept connections.
+Year 1 games cover most core topics from Chapters 1-4. Phases 1–4 addressed the original gaps (balancing equations, percent composition, reaction types, significant figures, matter classification). A [pedagogical review](YEAR-1-PEDAGOGICAL-REVIEW.md) identified remaining gaps: **atomic structure** (Ch. 2.3–2.4), **periodic table** (Ch. 2.5), **precipitation/solubility rules** (Ch. 4.2), and **acid-base reactions** (Ch. 4.3). Phase 5 addresses these gaps with 4 new games, 7 game enhancements, and 6 cross-cutting improvements.
 
 ---
 
 ## Current Game Coverage Matrix
 
-| Chapter | Topic | Coverage | Game(s) | Priority |
-|---------|-------|----------|---------|----------|
-| Ch. 1 | Measurement & Units | ✅ Strong | Dimensional Analysis | — |
-| Ch. 1 | Significant Figures | ❌ Missing | None | Medium |
-| Ch. 1 | Classification of Matter | ❌ Missing | None | Medium |
-| Ch. 2 | Nomenclature | ✅ Strong | Nafnakerfið | — |
-| Ch. 2 | Atomic Structure | ⚠️ Partial | Mólmassi (periodic table) | Low |
-| Ch. 3 | Molar Mass | ✅ Strong | Mólmassi | — |
-| Ch. 3 | Balancing Equations | ❌ Missing | None | **High** |
-| Ch. 3 | Stoichiometry | ✅ Good | Takmarkandi | — |
-| Ch. 3 | Percent Composition | ❌ Missing | None | **High** |
-| Ch. 3 | Percent Yield | ❌ Missing | None | High |
-| Ch. 4 | Molarity/Dilution | ✅ Strong | Lausnir | — |
-| Ch. 4 | Reaction Types | ❌ Missing | None | Medium |
+| Chapter | Topic | Coverage | Game(s) | Phase 5 Action |
+|---------|-------|----------|---------|----------------|
+| Ch. 1 | Measurement & Units | ✅ Strong | Dimensional Analysis | Density problems (#D3) |
+| Ch. 1 | Significant Figures | ✅ Complete | Markverðir tölustafir | Add measurement reading (#20) |
+| Ch. 1 | Classification of Matter | ✅ Complete | Flokkun efna | — |
+| Ch. 2 | Nomenclature | ✅ Strong | Nafnakerfið | Polyatomic drill, formula-from-name (#16) |
+| Ch. 2 | Atomic Structure | ❌ Missing | None | **New game: Uppbygging atómanna (#12)** |
+| Ch. 2 | Periodic Table | ❌ Missing | None | **New game: Lotukerfið (#13)** |
+| Ch. 3 | Molar Mass | ✅ Strong | Mólmassi | Isotope problems, comparisons (#21) |
+| Ch. 3 | Balancing Equations | ✅ Complete | Stilltu efnajöfnur | Strategy tutorial, atom inventory (#17) |
+| Ch. 3 | Stoichiometry | ✅ Strong | Takmarkandi | — |
+| Ch. 3 | Percent Composition | ✅ Complete | Hlutfallsgreining | Combustion analysis (#22) |
+| Ch. 3 | Percent Yield | ✅ Complete | Takmarkandi L4 | — |
+| Ch. 4 | Molarity/Dilution | ✅ Strong | Lausnir | Electrolytes, solution stoich (#19) |
+| Ch. 4 | Reaction Types | ✅ Complete | Gerðir efnahvarfa | Driving forces, activity series (#18) |
+| Ch. 4 | Precipitation/Net Ionic | ❌ Missing | None | **New game: Jónir í lausn (#14)** |
+| Ch. 4 | Acid-Base Reactions | ⚠️ Minimal | Gerðir efnahvarfa (1 example) | **New game: Sýrur og basar (#15)** |
 
 ---
 
@@ -394,9 +397,238 @@ const EQUATIONS = [
 
 ---
 
+## Phase 5: Deepening & Gap-Filling (from Pedagogical Review)
+
+Based on the [Year 1 Pedagogical Review](YEAR-1-PEDAGOGICAL-REVIEW.md), the following work addresses remaining curriculum gaps and strengthens existing games. Items are grouped by priority.
+
+### 5A: New Games — Critical Curriculum Gaps
+
+These topics are taught in Brown Chapters 1–4 but have no game coverage.
+
+#### 12. Build "Uppbygging atómanna" (Atomic Structure) — Ch. 2.3–2.4
+**Effort:** High | **Impact:** Critical | **Status:** ⬜ Not started
+
+Atomic structure is foundational — ions, isotopes, and the periodic table cannot be understood without it.
+
+**Level 1: Build Atoms**
+- Given element + mass number, place correct number of protons, neutrons, electrons into a Bohr model
+- 12 atoms across periods 1–3
+- Misconception target: "Protons and electrons are always equal" (not in ions)
+
+**Level 2: Isotope Identification**
+- Given atomic number and mass number, determine subatomic particles
+- Include isotope notation (e.g., ¹⁴₆C, ²³⁵₉₂U)
+- 10 problems
+- Misconception target: "Mass number = atomic mass on periodic table"
+
+**Level 3: Average Atomic Mass**
+- Calculate weighted average from isotope abundances
+- Example: Cl — 75.77% ³⁵Cl + 24.23% ³⁷Cl = 35.45 amu
+- 8 problems with real isotope data (Cl, Cu, B, Mg, Si, Ag, Br, Li)
+
+**Level 4 (Bonus): Ion Formation**
+- Remove/add electrons to form cations and anions
+- Connect ion charges to periodic table groups
+- Bridge to Nafnakerfið
+
+---
+
+#### 13. Build "Lotukerfið" (Periodic Table Explorer) — Ch. 2.5
+**Effort:** Medium | **Impact:** High | **Status:** ⬜ Not started
+
+Students need fluency with the periodic table as an organizing framework.
+
+**Level 1: Element Lookup**
+- Timed challenges: find elements by symbol, name, or atomic number on an interactive table
+- 20 elements across all regions (alkali metals, halogens, transition metals, noble gases)
+
+**Level 2: Classification**
+- Sort elements into metals, nonmetals, metalloids
+- Identify group families: alkali metals (1), alkaline earth (2), halogens (17), noble gases (18), transition metals
+- 15 sorting challenges
+- Misconception target: "Metals are always solid" (Hg is liquid)
+
+**Level 3: Periodic Trends (Qualitative)**
+- Compare atomic radius, ionization energy, electronegativity across periods and down groups
+- "Which is larger: Na or Cl?" / "Which has higher IE: Li or F?"
+- 12 comparison problems
+
+**Level 4 (Bonus): Predict Ion Charges**
+- Group 1 → +1, Group 2 → +2, Group 16 → -2, Group 17 → -1
+- Predict charges for main group elements from position
+- Feeds directly into nomenclature skills
+
+---
+
+#### 14. Build "Jónir í lausn" (Ions in Solution) — Ch. 4.1–4.2
+**Effort:** High | **Impact:** Critical | **Status:** ⬜ Not started
+
+Precipitation reactions and solubility rules are among the most heavily tested chapter 4 topics.
+
+**Level 1: Electrolyte Classification**
+- Sort substances into strong electrolyte, weak electrolyte, non-electrolyte
+- Include conductivity-tester visual (bright bulb, dim bulb, no bulb)
+- Items: NaCl, HCl, NaOH (strong); CH₃COOH, NH₃ (weak); C₆H₁₂O₆, C₂H₅OH (non)
+- 12 items
+
+**Level 2: Solubility Rules**
+- Given a solubility rules reference table, predict whether ionic compounds are soluble
+- Start with simple cases (NaCl — soluble), build to exceptions (PbCl₂ — insoluble)
+- 15 problems
+- Misconception target: "All ionic compounds dissolve in water"
+
+**Level 3: Precipitation Prediction**
+- Mix two aqueous solutions, predict products, identify precipitate
+- "Mix Pb(NO₃)₂(aq) + KI(aq) → ?" → PbI₂(s) + KNO₃(aq)
+- 10 mixing scenarios with visual precipitate animation
+
+**Level 4: Net Ionic Equations**
+- Write molecular → complete ionic → net ionic equation
+- Identify spectator ions
+- 8 problems
+- Misconception target: "Spectator ions participate in the reaction"
+
+---
+
+#### 15. Build "Sýrur og basar" (Acids & Bases) — Ch. 4.3
+**Effort:** Medium | **Impact:** High | **Status:** ⬜ Not started
+
+Acid-base neutralization is inadequately represented (only one example in Gerðir efnahvarfa).
+
+**Level 1: Identify Acids and Bases**
+- Recognize patterns: acids = H + anion; Arrhenius bases = metal + OH
+- Sort common substances (HCl, NaOH, H₂SO₄, Ca(OH)₂, HNO₃, KOH, CH₃COOH)
+- 10 items
+- Misconception target: "All acids are dangerous" (vinegar, citric acid)
+
+**Level 2: Write Neutralization Equations**
+- acid + base → salt + water
+- Identify the salt produced: HCl + NaOH → NaCl + H₂O
+- Include diprotic/triprotic acids: H₂SO₄ + 2NaOH → Na₂SO₄ + 2H₂O
+- 10 problems
+
+**Level 3: Neutralization Stoichiometry**
+- "How many mL of 0.10 M NaOH to neutralize 25.0 mL of 0.15 M HCl?"
+- Integrates molarity (Lausnir) with stoichiometry (Takmarkandi)
+- 8 problems
+
+**Level 4 (Bonus): Strong vs. Weak**
+- Classify acids/bases as strong or weak
+- Connect to electrolyte concept from Jónir í lausn
+- 6 problems
+
+---
+
+### 5B: Enhancements to Existing Games
+
+#### 16. Nafnakerfið — Add polyatomic ion drill + formula-from-name
+**Effort:** Medium | **Impact:** High | **Status:** ⬜ Not started
+
+- Add rapid-fire polyatomic ion matching (SO₄²⁻, NO₃⁻, PO₄³⁻, CO₃²⁻, OH⁻, NH₄⁺, ClO₃⁻, CrO₄²⁻, MnO₄⁻, C₂O₄²⁻) with spaced repetition
+- Add "formula from name" mode: "Write the formula for calcium phosphate" → Ca₃(PO₄)₂
+- Add dedicated Stock system (Roman numeral) level for variable-charge metals
+- Add explicit Greek prefix exercise for molecular compounds (mono-, di-, tri-, tetra-, penta-, hexa-)
+
+#### 17. Stilltu efnajöfnur — Add balancing strategy tutorial + atom inventory
+**Effort:** Medium | **Impact:** High | **Status:** ⬜ Not started
+
+- Add guided tutorial teaching systematic approach: balance metals → nonmetals → H → O
+- Show live atom inventory table (atoms left | atoms right) updating as student changes coefficients
+- Add conservation-of-mass verification step after balancing (calculate total mass both sides)
+- Include fractional coefficient → integer technique (e.g., ½O₂ → multiply through)
+
+#### 18. Gerðir efnahvarfa — Add driving forces + activity series
+**Effort:** High | **Impact:** High | **Status:** ⬜ Not started
+
+- Add driving force analysis for double replacement: precipitation, gas formation, water formation
+- Add solubility rules sub-level for precipitation prediction
+- Add activity series for single replacement prediction (Zn above Cu → displaces)
+- Separate neutralization as a specific subtype of double replacement
+- Add oxidation-state identification for single replacement reactions (preview of Year 2 redox)
+
+#### 19. Lausnir — Add electrolyte classification + solution stoichiometry
+**Effort:** Medium | **Impact:** Medium | **Status:** ⬜ Not started
+
+- Add strong/weak/non-electrolyte sorting exercise with conductivity visual
+- Add solution preparation simulation: "Prepare 250 mL of 0.100 M NaCl"
+- Add solution stoichiometry: "How many mL of 0.200 M NaOH to neutralize 25.0 mL of 0.150 M HCl?"
+- Explain retrograde solubility of CaSO₄ explicitly (currently present but unexplained)
+
+#### 20. Markverðir tölustafir — Add measurement reading + exact numbers
+**Effort:** Low | **Impact:** Medium | **Status:** ⬜ Not started
+
+- Add level with graduated cylinder / ruler / balance images — record measurement to correct sig figs
+- Add "exact numbers" exception questions (counting numbers, defined conversions, coefficients)
+- Add mixed-operation problems (multiplication then addition in same calculation)
+
+#### 21. Molmassi — Add isotope-aware problems + "which has more?" comparisons
+**Effort:** Medium | **Impact:** Medium | **Status:** ⬜ Not started
+
+- Add isotope abundance → average atomic mass calculation problems
+- Add hydrate molar masses (CuSO₄·5H₂O = 249.7 g/mol)
+- Add comparison problems: "Which has more molecules: 10 g H₂O or 10 g CO₂?"
+- Add visual "road map" for conversion chains (grams ↔ moles ↔ molecules ↔ atoms with conversion factors on arrows)
+
+#### 22. Hlutfallsgreining — Add combustion analysis + non-obvious rounding
+**Effort:** Medium | **Impact:** Medium | **Status:** ⬜ Not started
+
+- Add combustion analysis problems (mass of CO₂ + H₂O → empirical formula)
+- Add problems where mole ratio requires multiplying by 2 or 3 (e.g., 1:1.5 → 2:3)
+- Add step-by-step validation at each conversion step, not just final answer
+- Frame some problems in real-world context (forensic lab, pharmaceutical analysis)
+
+---
+
+### 5C: Cross-Cutting Improvements
+
+#### 23. Adopt Takmarkandi-style feedback across all games
+**Effort:** High | **Impact:** High | **Status:** ⬜ Not started
+
+Takmarkandi's tiered hint system (topic → strategy → method → solution) with misconception-specific wrong-answer feedback is the gold standard. Apply this pattern to all games, especially:
+- Gerðir efnahvarfa (currently adequate, needs misconception feedback)
+- Flokkun efna (currently simple correct/incorrect)
+- Lausnir (currently weak feedback)
+
+#### 24. Add adaptive difficulty
+**Effort:** High | **Impact:** High | **Status:** ⬜ Not started
+
+If a student misses 3 consecutive questions, offer easier problems or additional scaffolding. If a student answers 5 in a row correctly, advance to harder content. Implement across all games.
+
+#### 25. Add spaced repetition review mode
+**Effort:** High | **Impact:** High | **Status:** ⬜ Not started
+
+A "daily review" mode pulling 5–10 questions from previously completed games, weighted toward items the student previously got wrong. Especially important for nomenclature and polyatomic ions.
+
+#### 26. Add error analysis mode
+**Effort:** Medium | **Impact:** Medium | **Status:** ⬜ Not started
+
+Students are shown a wrong solution and must find the error. Example: "A student calculated the molar mass of Ca(OH)₂ as 57 g/mol. What did they do wrong?" Develops deeper understanding than solving correctly.
+
+#### 27. Add cross-game capstone challenges
+**Effort:** High | **Impact:** Medium | **Status:** ⬜ Not started
+
+Problems requiring skills from multiple games. Example: "Given 5.00 g Na₂CO₃ and 100 mL of 0.200 M HCl — identify reaction type, determine limiting reactant, calculate theoretical yield of CO₂, express answer to correct sig figs."
+
+#### 28. Add Icelandic-English chemistry glossary
+**Effort:** Low | **Impact:** Medium | **Status:** ⬜ Not started
+
+Popup accessible from any game mapping Icelandic terms ↔ English terms ↔ chemical symbols. Supports students using Brown (English textbook) alongside Icelandic-medium instruction.
+
+---
+
+### Phase 5 Implementation Priority
+
+| Priority | Items | Rationale |
+|----------|-------|-----------|
+| **Must-have** | 14 (Jónir í lausn), 12 (Uppbygging atómanna), 15 (Sýrur og basar), 18 (Gerðir efnahvarfa enhancements) | Directly tested, currently missing |
+| **Should-have** | 13 (Lotukerfið), 19 (Lausnir enhancements), 16 (Nafnakerfið enhancements), 17 (Stilltu efnajöfnur enhancements) | Important supporting topics |
+| **Nice-to-have** | 23–28 (cross-cutting), 20–22 (minor enhancements) | Enrichment and polish |
+
+---
+
 ## Notes for Next Session
 
-- All phases are now complete!
-- Year 1 curriculum coverage is comprehensive
-- Consider: Year 2 development plan or refinement of existing games
-- All new games follow consistent 3-level pattern with localization
+- Phases 1–4 complete — all 10 core games built
+- Phase 5 defined — 4 new games + 7 game enhancements + 6 cross-cutting improvements
+- See [YEAR-1-PEDAGOGICAL-REVIEW.md](YEAR-1-PEDAGOGICAL-REVIEW.md) for the full analysis behind these recommendations
+- Priority: Jónir í lausn and Uppbygging atómanna are the most critical gaps

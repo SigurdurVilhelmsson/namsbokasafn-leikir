@@ -26,6 +26,10 @@ Welcome to the ChemistryGames documentation hub. This directory organizes all pr
 
 | Document | Description |
 |----------|-------------|
+| [Semester Priority Plan](game-improvement/semester-priority-plan.md) | Overall development status and priorities |
+| [Year 1 Development Plan](game-improvement/YEAR-1-DEVELOPMENT-PLAN.md) | Year 1 games roadmap (all phases complete) |
+| [Year 2 Development Plan](game-improvement/YEAR-2-DEVELOPMENT-PLAN.md) | Year 2 games roadmap (all phases complete) |
+| [Year 3 Development Plan](game-improvement/YEAR-3-DEVELOPMENT-PLAN.md) | Year 3 games roadmap (all 6 phases complete) |
 | [Recommendations](game-improvement/recommendations.md) | 108 research-based improvement ideas |
 | [Checklist](game-improvement/checklist.md) | Implementation tracker |
 | [Review Prompt](game-improvement/review-prompt.md) | Three-level pedagogical framework |
@@ -88,4 +92,4 @@ Historical documentation from completed project phases in [.archive/](.archive/)
 
 ---
 
-**Last Updated:** 2025-01-22
+**Last Updated:** 2026-02-03

@@ -1,36 +1,36 @@
 # Year 1 Chemistry Games — Development Plan
 
-**Date:** 2026-01-30 | **Updated:** 2026-02-03
+**Date:** 2026-01-30 | **Updated:** 2026-02-04
 **Curriculum Reference:** Brown et al, *Chemistry: The Central Science*, Chapters 1-4
-**Status:** Phases 1–4 ✅ Complete | Phase 5 ⬜ Planned
+**Status:** Phase 5 In Progress (Pedagogical Review Games)
 
 ---
 
 ## Executive Summary
 
-Year 1 games cover most core topics from Chapters 1-4. Phases 1–4 addressed the original gaps (balancing equations, percent composition, reaction types, significant figures, matter classification). A [pedagogical review](YEAR-1-PEDAGOGICAL-REVIEW.md) identified remaining gaps: **atomic structure** (Ch. 2.3–2.4), **periodic table** (Ch. 2.5), **precipitation/solubility rules** (Ch. 4.2), and **acid-base reactions** (Ch. 4.3). Phase 5 addresses these gaps with 4 new games, 7 game enhancements, and 6 cross-cutting improvements.
+Year 1 games cover most core topics from Chapters 1-4. Phases 1-4 addressed gaps in balancing equations, percent composition, and reaction type classification. A pedagogical review (2026-02) identified remaining gaps in **atomic structure** (Ch. 2.3-2.4), **periodic table** (Ch. 2.5), **ions in solution/precipitation** (Ch. 4.2), and **acid-base reactions** (Ch. 4.3). Phase 5 adds four new games to fill these gaps.
 
 ---
 
 ## Current Game Coverage Matrix
 
-| Chapter | Topic | Coverage | Game(s) | Phase 5 Action |
-|---------|-------|----------|---------|----------------|
-| Ch. 1 | Measurement & Units | ✅ Strong | Dimensional Analysis | Density problems (#D3) |
-| Ch. 1 | Significant Figures | ✅ Complete | Markverðir tölustafir | Add measurement reading (#20) |
-| Ch. 1 | Classification of Matter | ✅ Complete | Flokkun efna | — |
-| Ch. 2 | Nomenclature | ✅ Strong | Nafnakerfið | Polyatomic drill, formula-from-name (#16) |
-| Ch. 2 | Atomic Structure | ❌ Missing | None | **New game: Uppbygging atómanna (#12)** |
-| Ch. 2 | Periodic Table | ❌ Missing | None | **New game: Lotukerfið (#13)** |
-| Ch. 3 | Molar Mass | ✅ Strong | Mólmassi | Isotope problems, comparisons (#21) |
-| Ch. 3 | Balancing Equations | ✅ Complete | Stilltu efnajöfnur | Strategy tutorial, atom inventory (#17) |
-| Ch. 3 | Stoichiometry | ✅ Strong | Takmarkandi | — |
-| Ch. 3 | Percent Composition | ✅ Complete | Hlutfallsgreining | Combustion analysis (#22) |
-| Ch. 3 | Percent Yield | ✅ Complete | Takmarkandi L4 | — |
-| Ch. 4 | Molarity/Dilution | ✅ Strong | Lausnir | Electrolytes, solution stoich (#19) |
-| Ch. 4 | Reaction Types | ✅ Complete | Gerðir efnahvarfa | Driving forces, activity series (#18) |
-| Ch. 4 | Precipitation/Net Ionic | ❌ Missing | None | **New game: Jónir í lausn (#14)** |
-| Ch. 4 | Acid-Base Reactions | ⚠️ Minimal | Gerðir efnahvarfa (1 example) | **New game: Sýrur og basar (#15)** |
+| Chapter | Topic | Coverage | Game(s) | Priority |
+|---------|-------|----------|---------|----------|
+| Ch. 1 | Measurement & Units | ✅ Strong | Dimensional Analysis | — |
+| Ch. 1 | Significant Figures | ❌ Missing | None | Medium |
+| Ch. 1 | Classification of Matter | ❌ Missing | None | Medium |
+| Ch. 2 | Nomenclature | ✅ Strong | Nafnakerfið | — |
+| Ch. 2 | Atomic Structure | ✅ Strong | Uppbygging atómanna (Phase 5) | — |
+| Ch. 2 | Periodic Table | ✅ Strong | Lotukerfið (Phase 5) | — |
+| Ch. 3 | Molar Mass | ✅ Strong | Mólmassi | — |
+| Ch. 3 | Balancing Equations | ✅ Strong | Stilltu efnajöfnur | — |
+| Ch. 3 | Stoichiometry | ✅ Good | Takmarkandi | — |
+| Ch. 3 | Percent Composition | ✅ Strong | Hlutfallsgreining | — |
+| Ch. 3 | Percent Yield | ✅ Good | Takmarkandi (Level 4) | — |
+| Ch. 4 | Molarity/Dilution | ✅ Strong | Lausnir | — |
+| Ch. 4 | Reaction Types | ✅ Good | Gerðir efnahvarfa | — |
+| Ch. 4 | Ions in Solution | ✅ Strong | Jónir í lausn (Phase 5) | — |
+| Ch. 4 | Acid-Base Reactions | ✅ Strong | Sýrur og basar (Phase 5) | — |
 
 ---
 
@@ -395,6 +395,30 @@ const EQUATIONS = [
 10. ✅ Build Gerðir efnahvarfa (Reaction Types)
 11. ✅ Build Markverðir tölustafir (Significant Figures)
 
+### Phase 5: Pedagogical Review — New Games (In Progress)
+Based on the [Year 1 Pedagogical Review](YEAR-1-PEDAGOGICAL-REVIEW.md), which identified gaps in Brown Ch. 2 (atomic structure, periodic table) and Ch. 4 (aqueous reactions, acid-base).
+
+12. ⬜ Build Jónir í lausn (Ions in Solution — Precipitation & Net Ionic Equations, Ch. 4.2)
+13. ⬜ Build Uppbygging atómanna (Atomic Structure — Protons/Neutrons/Electrons, Isotopes, Ch. 2.3-2.4)
+14. ⬜ Build Sýrur og basar (Acids & Bases — Neutralization, Ch. 4.3)
+15. ⬜ Build Lotukerfið (Periodic Table Explorer — Groups, Periods, Trends, Ch. 2.5)
+
+### Phase 6: Pedagogical Review — Existing Game Enhancements (Planned)
+16. ⬜ Gerðir efnahvarfa: Add driving force analysis, solubility rules, activity series, net ionic equations
+17. ⬜ Lausnir: Add electrolyte classification, solution stoichiometry
+18. ⬜ Nafnakerfið: Add polyatomic ion drill, formula-from-name mode, Stock system level
+19. ⬜ Stilltu efnajöfnur: Add balancing strategy tutorial, atom inventory tables
+20. ⬜ Flokkun efna: Add separation methods level
+21. ⬜ Markverðir tölustafir: Add measurement-reading problems, exact numbers
+
+### Phase 7: Cross-Cutting Improvements (Planned)
+22. ⬜ Adaptive difficulty across all games
+23. ⬜ Cross-game capstone challenges
+24. ⬜ Spaced repetition review mode
+25. ⬜ Error analysis mode
+26. ⬜ Misconception-aware feedback (Takmarkandi model) for all games
+27. ⬜ Icelandic-English chemistry glossary popup
+
 ---
 
 ## Phase 5: Deepening & Gap-Filling (from Pedagogical Review)
@@ -628,7 +652,7 @@ Popup accessible from any game mapping Icelandic terms ↔ English terms ↔ che
 
 ## Notes for Next Session
 
-- Phases 1–4 complete — all 10 core games built
-- Phase 5 defined — 4 new games + 7 game enhancements + 6 cross-cutting improvements
-- See [YEAR-1-PEDAGOGICAL-REVIEW.md](YEAR-1-PEDAGOGICAL-REVIEW.md) for the full analysis behind these recommendations
-- Priority: Jónir í lausn and Uppbygging atómanna are the most critical gaps
+- Phase 5 adds 4 new games identified by the pedagogical review as must-have
+- These games fill gaps in Brown Ch. 2 (atomic structure, periodic table) and Ch. 4 (precipitation, acid-base)
+- Phase 6 and 7 are planned based on review recommendations
+- All new games follow consistent 3-level pattern with localization (is, en, pl)

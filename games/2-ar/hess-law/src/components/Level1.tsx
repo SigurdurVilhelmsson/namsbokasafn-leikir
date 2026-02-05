@@ -16,7 +16,7 @@ const MISCONCEPTIONS: Record<number, string> = {
 
 // Related concepts for each challenge
 const RELATED_CONCEPTS: Record<number, string[]> = {
-  1: ['Exothermic', 'Endothermic', 'Skammtavarmi'],
+  1: ['Exothermic', 'Endothermic', 'Vermi'],
   2: ['Öfug hvörf', 'Formerkisbreyting', 'Hverfanleiki'],
   3: ['Stökefnafræði', 'Mólhlutföll', 'Hlutfallsleg orka'],
   4: ['Samsett aðgerðir', 'Sundrun vs myndun', 'Margföldun'],
@@ -101,7 +101,7 @@ const CHALLENGES: Challenge[] = [
   {
     id: 1,
     title: 'Hvað er ΔH?',
-    description: 'Skammtavarmi (ΔH) segir okkur hvort hvörf gefi frá sér orku eða taki til sín orku.',
+    description: 'Vermi (ΔH) segir okkur hvort hvörf gefi frá sér orku eða taki til sín orku.',
     concept: 'Neikvætt ΔH = exothermic (gefur frá sér varma). Jákvætt ΔH = endothermic (tekur til sín varma).',
     equation: {
       id: 'eq1',

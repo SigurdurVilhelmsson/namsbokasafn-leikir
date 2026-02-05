@@ -178,7 +178,7 @@ export function ThermodynamicsConnection({
                 </div>
                 <p className="text-sm text-gray-600 mb-2">
                   {language === 'is'
-                    ? 'Í Varmafræðispámanninum geturðu æft þig í að spá fyrir um sjálfvirkni hvörfum með ΔG, ΔH og ΔS gildum.'
+                    ? 'Í Varmafræðispámanninum geturðu æft þig í að spá fyrir um sjálfgengi hvörfum með ΔG, ΔH og ΔS gildum.'
                     : 'In Thermodynamics Predictor, you can practice predicting reaction spontaneity using ΔG, ΔH, and ΔS values.'}
                 </p>
                 <div className="text-xs text-purple-700 font-medium">

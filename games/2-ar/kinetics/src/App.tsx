@@ -236,7 +236,7 @@ function App() {
             <div className="bg-purple-50 p-4 rounded-xl flex justify-between items-center">
               <div>
                 <div className="font-bold text-purple-800">Stig 3: Hvarfgangsháttur</div>
-                <div className="text-sm text-purple-600">Frumskref og millistig</div>
+                <div className="text-sm text-purple-600">Grunnskref og millistig</div>
               </div>
               <div className="text-2xl font-bold text-purple-600">{progress.level3Score}</div>
             </div>

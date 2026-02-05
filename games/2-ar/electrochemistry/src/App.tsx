@@ -187,7 +187,7 @@ function App() {
             <div className="bg-green-50 p-4 rounded-xl flex justify-between items-center">
               <div>
                 <div className="font-bold text-green-800">Stig 2: Staðalmætti</div>
-                <div className="text-sm text-green-600">E° og sjálfvirkni</div>
+                <div className="text-sm text-green-600">E° og sjálfgengi</div>
               </div>
               <div className="text-2xl font-bold text-green-600">{progress.level2Score}</div>
             </div>
@@ -311,7 +311,7 @@ function App() {
                   )}
                 </div>
                 <div className={`text-sm mt-1 ${progress.level1Completed ? 'text-green-600' : 'text-gray-500'}`}>
-                  Notaðu E° töflu til að spá fyrir um sjálfvirkni
+                  Notaðu E° töflu til að spá fyrir um sjálfgengi
                 </div>
               </div>
             </div>

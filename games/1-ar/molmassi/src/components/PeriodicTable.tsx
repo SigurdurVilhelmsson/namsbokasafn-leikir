@@ -111,7 +111,7 @@ export function PeriodicTable({
     { key: 'transition-metal', label: 'Skiptimálmar' },
     { key: 'post-transition-metal', label: 'P-málmar' },
     { key: 'metalloid', label: 'Hálfmálmar' },
-    { key: 'nonmetal', label: 'Ómálmar' },
+    { key: 'nonmetal', label: 'Málmleysingjar' },
     { key: 'halogen', label: 'Halógen' },
     { key: 'noble-gas', label: 'Eðallofttegundir' },
   ];

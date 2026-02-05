@@ -210,7 +210,7 @@ function App() {
               <li>✓ <strong>Viðbótarhvörf:</strong> Atóm bætast við tvítengi</li>
               <li>✓ <strong>Staðgengilshvörf:</strong> Hópur skiptist út fyrir annan</li>
               <li>✓ <strong>Brotthvarfshvörf:</strong> Hópar fara af og tvítengi myndast</li>
-              <li>✓ <strong>Kjarnsækni og rafeindasækni:</strong> Lykil í skilningi hvarfganga</li>
+              <li>✓ <strong>Kjarnsækir og rafsækir:</strong> Lykil í skilningi hvarfganga</li>
               <li>✓ <strong>Efnasmíði:</strong> Skipuleggja hvörfleiðir frá upphaf til enda</li>
             </ul>
           </div>
@@ -382,8 +382,8 @@ function App() {
         <div className="mt-6 bg-gray-50 p-4 rounded-xl">
           <h3 className="font-semibold text-gray-700 mb-2">📋 Lykilhugtök</h3>
           <div className="grid grid-cols-2 gap-2 text-sm">
-            <div className="bg-white p-2 rounded border">Kjarnsækni = e⁻ ríkt</div>
-            <div className="bg-white p-2 rounded border">Rafeindasækni = e⁻ fátækt</div>
+            <div className="bg-white p-2 rounded border">Kjarnsækir = e⁻ ríkt</div>
+            <div className="bg-white p-2 rounded border">Rafsækir = e⁻ fátækt</div>
             <div className="bg-white p-2 rounded border">Hvarfgangur = skref fyrir skref</div>
             <div className="bg-white p-2 rounded border">Örvur = flæði rafeinda</div>
           </div>

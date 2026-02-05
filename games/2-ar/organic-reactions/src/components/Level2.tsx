@@ -23,7 +23,7 @@ const problems: MechanismProblem[] = [
   {
     id: 1,
     questionType: 'nucleophile',
-    question: 'Hvað er kjarnsækni (nucleophile)?',
+    question: 'Hvað er kjarnsækir (nucleophile)?',
     options: [
       'Efni sem gefur frá sér rafeindir og sækir jákvætt hlaðna staði',
       'Efni sem tekur við rafeindum og sækir neikvætt hlaðna staði',
@@ -31,13 +31,13 @@ const problems: MechanismProblem[] = [
       'Efni sem gefur frá sér prótón'
     ],
     correctAnswer: 0,
-    hint: 'Núkleófíll = kjarnsækið. "Kjarni" er jákvæður.',
-    explanation: 'Kjarnsækni (nucleophile) er efni með laus rafeinapör sem sækir jákvætt hlaðna staði. Dæmi: OH⁻, NH₃, H₂O, Br⁻.'
+    hint: 'Núkleófíll = kjarnsækir. "Kjarni" er jákvæður.',
+    explanation: 'Kjarnsækir (nucleophile) er efni með laus rafeinapör sem sækir jákvætt hlaðna staði. Dæmi: OH⁻, NH₃, H₂O, Br⁻.'
   },
   {
     id: 2,
     questionType: 'electrophile',
-    question: 'Hvað er rafeindasækni (electrophile)?',
+    question: 'Hvað er rafsækir (electrophile)?',
     options: [
       'Efni sem gefur frá sér rafeindir',
       'Efni sem tekur við rafeindum og sækir neikvætt hlaðna staði',
@@ -46,16 +46,16 @@ const problems: MechanismProblem[] = [
     ],
     correctAnswer: 2,
     hint: 'Elektró = rafeind, fíll = elskandi. Þetta efni vill fá rafeindir.',
-    explanation: 'Rafeindasækni (electrophile) er efni sem tekur við rafeindum. Það sækir rafeindaþétt svæði. Dæmi: H⁺, Br⁺, karbókatjónir (R⁺).'
+    explanation: 'Rafsækir (electrophile) er efni sem tekur við rafeindum. Það sækir rafeindaþétt svæði. Dæmi: H⁺, Br⁺, karbókatjónir (R⁺).'
   },
   {
     id: 3,
     questionType: 'nucleophile',
-    question: 'Hvað af þessu er STERKASTA kjarnsæknið?',
+    question: 'Hvað af þessu er STERKASTI kjarnsækirinn?',
     options: ['H₂O', 'OH⁻', 'CH₃OH', 'NH₃'],
     correctAnswer: 1,
-    hint: 'Neikvætt hlaðnar jónir eru sterkari kjarnsækni en hlutlausar sameindir.',
-    explanation: 'OH⁻ er sterkasta kjarnsæknið vegna þess að það er neikvætt hlaðið og hefur mikið af rafeinatéttleika til að gefa frá sér.'
+    hint: 'Neikvætt hlaðnar jónir eru sterkari kjarnsækir en hlutlausar sameindir.',
+    explanation: 'OH⁻ er sterkasti kjarnsækirinn vegna þess að það er neikvætt hlaðið og hefur mikið af rafeinatéttleika til að gefa frá sér.'
   },
   {
     id: 4,
@@ -70,21 +70,21 @@ const problems: MechanismProblem[] = [
     ],
     correctAnswer: 0,
     hint: 'Bogarnir sýna HVERT rafeindir fara, ekki hvaðan þær koma.',
-    explanation: 'Bogarnir benda alltaf frá uppsprettu rafeinda (t.d. laust par, tenging) til áfangastaðar (t.d. elektróphile). Nu:⁻ → C sýnir að rafeindir fara frá kjarnsækni til kolefnis.'
+    explanation: 'Bogarnir benda alltaf frá uppsprettu rafeinda (t.d. laust par, tenging) til áfangastaðar (t.d. elektróphile). Nu:⁻ → C sýnir að rafeindir fara frá kjarnsækir til kolefnis.'
   },
   {
     id: 5,
     questionType: 'mechanism-type',
     question: 'Hvað einkennir SN2 hvarf (substitution nucleophilic bimolecular)?',
     options: [
-      'Eitt skref - kjarnsækni ræðst á kolefni samtímis og farandi hópur fer',
-      'Tvö skref - fyrst fer farandi hópur, síðan kemur kjarnsækni',
+      'Eitt skref - kjarnsækir ræðst á kolefni samtímis og farandi hópur fer',
+      'Tvö skref - fyrst fer farandi hópur, síðan kemur kjarnsækir',
       'Þrjú skref - með millilið',
       'Hvarf í gegnum róttækla millilið'
     ],
     correctAnswer: 0,
     hint: 'SN2: S=substitution, N=nucleophilic, 2=bimolecular (tvær sameindir í hraðatakmarkandi skrefi).',
-    explanation: 'SN2 er eins skrefs hvarf þar sem kjarnsækni ræðst á bakhlið kolefnis samtímis og farandi hópur (leaving group) fer. Ýlingar snýst við (Walden inversion).'
+    explanation: 'SN2 er eins skrefs hvarf þar sem kjarnsækir ræðst á bakhlið kolefnis samtímis og farandi hópur (leaving group) fer. Ýlingar snýst við (Walden inversion).'
   },
   {
     id: 6,
@@ -103,12 +103,12 @@ const problems: MechanismProblem[] = [
   {
     id: 7,
     questionType: 'electrophile',
-    question: 'Í viðbótarhvarfi alkens við HBr, hver er rafeindasæknið (electrophile)?',
+    question: 'Í viðbótarhvarfi alkens við HBr, hver er rafsækirinn (electrophile)?',
     diagram: 'C=C + H-Br → C-C(H)(Br)',
     options: ['C=C', 'H⁺ (frá HBr)', 'Br⁻', 'HBr sameind'],
     correctAnswer: 1,
     hint: 'Hvort endinn á HBr er rafeindafátækur?',
-    explanation: 'H⁺ (eða H hlutinn af HBr) er rafeindasæknið. Það er jákvætt og sækir rafeindaþéttu svæðið í tvöföldu tengingunni. Br⁻ bætist síðan við.'
+    explanation: 'H⁺ (eða H hlutinn af HBr) er rafsækirinn. Það er jákvætt og sækir rafeindaþéttu svæðið í tvöföldu tengingunni. Br⁻ bætist síðan við.'
   },
   {
     id: 8,
@@ -116,7 +116,7 @@ const problems: MechanismProblem[] = [
     question: 'Hversu margir bogaörvar þarf til að sýna SN2 hvarf (CH₃Br + OH⁻ → CH₃OH + Br⁻)?',
     options: ['Einn - frá OH⁻ til C', 'Tvo - frá OH⁻ til C og frá C-Br til Br', 'Þrjá', 'Fjóra'],
     correctAnswer: 1,
-    hint: 'Þú þarft að sýna: 1) Kjarnsækni fer að kolefni, 2) Tenging við farandi hóp brotnar.',
+    hint: 'Þú þarft að sýna: 1) Kjarnsækir fer að kolefni, 2) Tenging við farandi hóp brotnar.',
     explanation: 'Tveir bogaörvar: 1) Frá lausu pari á OH⁻ til kolefnisins (ný tenging myndast), 2) Frá C-Br tengingunni til Br (tenging brotnar og Br⁻ myndast).'
   }
 ];
@@ -127,7 +127,7 @@ const MechanismConcepts = () => {
       <h3 className="font-bold text-indigo-800 mb-3 text-center">Lykilhugtök</h3>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="bg-white p-4 rounded-lg border-2 border-indigo-200">
-          <div className="font-bold text-indigo-700 mb-2">Kjarnsækni (Nu:)</div>
+          <div className="font-bold text-indigo-700 mb-2">Kjarnsækir (Nu:)</div>
           <div className="text-sm text-gray-700 mb-2">Gefur rafeindir, sækir + svæði</div>
           <div className="flex flex-wrap gap-1">
             <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">OH⁻</span>
@@ -137,7 +137,7 @@ const MechanismConcepts = () => {
           </div>
         </div>
         <div className="bg-white p-4 rounded-lg border-2 border-indigo-200">
-          <div className="font-bold text-indigo-700 mb-2">Rafeindasækni (E⁺)</div>
+          <div className="font-bold text-indigo-700 mb-2">Rafsækir (E⁺)</div>
           <div className="text-sm text-gray-700 mb-2">Tekur við rafeindum, sækir − svæði</div>
           <div className="flex flex-wrap gap-1">
             <span className="bg-red-100 text-red-800 px-2 py-1 rounded text-xs">H⁺</span>
@@ -179,14 +179,14 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
       icon: '🔬'
     },
     {
-      title: 'Kjarnsækni (Nucleophile)',
-      content: 'Kjarnsækni (Nu:) er efni sem gefur frá sér rafeindir. Það sækir jákvætt hlaðna eða rafeindafátæka staði. "Núkleó" þýðir kjarni (jákvæður).',
+      title: 'Kjarnsækir (Nucleophile)',
+      content: 'Kjarnsækir (Nu:) er efni sem gefur frá sér rafeindir. Það sækir jákvætt hlaðna eða rafeindafátæka staði. "Núkleó" þýðir kjarni (jákvæður).',
       icon: '🔵',
       examples: 'OH⁻, Br⁻, I⁻, NH₃, H₂O, CN⁻'
     },
     {
-      title: 'Rafeindasækni (Electrophile)',
-      content: 'Rafeindasækni (E⁺) er efni sem tekur við rafeindum. Það sækir neikvætt hlaðna eða rafeindaþétta svæði. "Elektró" þýðir rafeind.',
+      title: 'Rafsækir (Electrophile)',
+      content: 'Rafsækir (E⁺) er efni sem tekur við rafeindum. Það sækir neikvætt hlaðna eða rafeindaþétta svæði. "Elektró" þýðir rafeind.',
       icon: '🔴',
       examples: 'H⁺, Br⁺, NO₂⁺, karbókatjónir (R⁺)'
     },
@@ -198,7 +198,7 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
     },
     {
       title: 'SN2 og E2',
-      content: 'SN2: Kjarnsækni ræðst á kolefni samtímis og farandi hópur fer (eitt skref). E2: Basi tekur H og farandi hópur fer (eitt skref, tvöföld tenging myndast).',
+      content: 'SN2: Kjarnsækir ræðst á kolefni samtímis og farandi hópur fer (eitt skref). E2: Basi tekur H og farandi hópur fer (eitt skref, tvöföld tenging myndast).',
       icon: '⚡'
     }
   ];
@@ -257,7 +257,7 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
             Hvarfgangar
           </h1>
           <p className="text-center text-gray-600 mb-8">
-            Kjarnsækni, rafeindasækni og bogaörvar
+            Kjarnsækir, rafsækir og bogaörvar
           </p>
 
           <div className="flex justify-center gap-2 mb-6">
@@ -421,10 +421,10 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer 
                 explanation: isCorrect
                   ? problem.explanation
                   : `Rangt. ${problem.explanation}`,
-                relatedConcepts: ['Kjarnsækni', 'Rafeindasækni', 'Bogaörvar', 'SN2/E2'],
+                relatedConcepts: ['Kjarnsækir', 'Rafsækir', 'Bogaörvar', 'SN2/E2'],
                 nextSteps: isCorrect
                   ? 'Frábært! Þú skilur grunnhugtök hvarfganga.'
-                  : 'Mundu: Kjarnsækni gefur e⁻ (sækir +), Rafeindasækni tekur e⁻ (sækir −).',
+                  : 'Mundu: Kjarnsækir gefur e⁻ (sækir +), Rafsækir tekur e⁻ (sækir −).',
               }}
               config={{
                 showExplanation: true,

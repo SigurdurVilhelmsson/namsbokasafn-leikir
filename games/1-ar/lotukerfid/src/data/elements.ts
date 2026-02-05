@@ -76,7 +76,7 @@ export const GROUP_NAMES_EN: Record<ElementGroup, string> = {
 
 export const CATEGORY_NAMES_IS: Record<ElementCategory, string> = {
   metal: 'Málmur',
-  nonmetal: 'Ómálmur',
+  nonmetal: 'Málmleysingi',
   metalloid: 'Hálfmálmur',
 };
 

@@ -38,6 +38,12 @@ export const gameTranslations = createGameTranslations({
         details: 'Sýndu að þú skilur flokkun efna með hraða og nákvæmni.',
         locked: 'Ljúktu Stig 2 til að opna þetta stig.',
       },
+      level4: {
+        name: 'Stig 4: Aðskilnaðaraðferðir',
+        description: 'Lærðu að aðskilja blöndur',
+        details: 'Kynntu þér síun, eimingu, uppgufun og fleiri aðferðir til að aðskilja blöndur.',
+        locked: 'Ljúktu Stig 3 til að opna þetta stig.',
+      },
       completed: 'Lokið',
       points: 'stig',
     },
@@ -72,6 +78,7 @@ export const gameTranslations = createGameTranslations({
       summary2: 'Efnasambönd eru hrein efni með tvö eða fleiri frumefni',
       summary3: 'Einsleit blanda hefur jafna dreifingu efna',
       summary4: 'Misleit blanda hefur sýnilega mismunandi hluta',
+      summary5: 'Blöndur má aðskilja með síun, eimingu, uppgufun og fleiru',
     },
   },
   en: {
@@ -108,6 +115,12 @@ export const gameTranslations = createGameTranslations({
         details: 'Show your understanding of matter classification with speed and accuracy.',
         locked: 'Complete Level 2 to unlock this level.',
       },
+      level4: {
+        name: 'Level 4: Separation Methods',
+        description: 'Learn to separate mixtures',
+        details: 'Explore filtration, distillation, evaporation and other methods to separate mixtures.',
+        locked: 'Complete Level 3 to unlock this level.',
+      },
       completed: 'Completed',
       points: 'points',
     },
@@ -142,6 +155,7 @@ export const gameTranslations = createGameTranslations({
       summary2: 'Compounds are pure substances with two or more elements',
       summary3: 'Homogeneous mixtures have even distribution',
       summary4: 'Heterogeneous mixtures have visibly different parts',
+      summary5: 'Mixtures can be separated using filtration, distillation, evaporation and more',
     },
   },
   pl: {
@@ -178,6 +192,12 @@ export const gameTranslations = createGameTranslations({
         details: 'Pokaż zrozumienie klasyfikacji materii z szybkością i dokładnością.',
         locked: 'Ukończ Poziom 2, aby odblokować ten poziom.',
       },
+      level4: {
+        name: 'Poziom 4: Metody rozdzielania',
+        description: 'Naucz się rozdzielać mieszaniny',
+        details: 'Poznaj filtrację, destylację, odparowanie i inne metody rozdzielania mieszanin.',
+        locked: 'Ukończ Poziom 3, aby odblokować ten poziom.',
+      },
       completed: 'Ukończone',
       points: 'punkty',
     },
@@ -212,6 +232,7 @@ export const gameTranslations = createGameTranslations({
       summary2: 'Związki są czystymi substancjami z dwoma lub więcej pierwiastkami',
       summary3: 'Mieszaniny jednorodne mają równomierny rozkład',
       summary4: 'Mieszaniny niejednorodne mają widocznie różne części',
+      summary5: 'Mieszaniny można rozdzielić za pomocą filtracji, destylacji, odparowania i innych metod',
     },
   },
 });

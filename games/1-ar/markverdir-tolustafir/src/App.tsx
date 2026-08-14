@@ -6,8 +6,10 @@ import { gameTranslations } from './i18n';
 import { Level1 } from './components/Level1';
 import { Level2 } from './components/Level2';
 import { Level3 } from './components/Level3';
+import { Level4 } from './components/Level4';
+import { Level5 } from './components/Level5';
 
-type Screen = 'menu' | 'level1' | 'level2' | 'level3' | 'complete';
+type Screen = 'menu' | 'level1' | 'level2' | 'level3' | 'level4' | 'level5' | 'complete';
 
 interface LevelScores {
   [key: string]: { score: number; maxScore: number; completed: boolean };
@@ -54,7 +56,7 @@ function App() {
     return levelScores[prevKey]?.completed && (levelScores[prevKey]?.score || 0) >= 500;
   };
 
-  const handleLevelComplete = (level: 1 | 2 | 3, score: number, maxScore: number) => {
+  const handleLevelComplete = (level: 1 | 2 | 3 | 4 | 5, score: number, maxScore: number) => {
     const key = `level${level}`;
     setLevelScores(prev => ({
       ...prev,
@@ -64,7 +66,14 @@ function App() {
     // Track level completion for achievements
     trackLevelComplete(level, score, maxScore, {});
 
-    if (level === 3 && levelScores.level1?.completed && levelScores.level2?.completed) {
+    // Check if all levels completed
+    const allCompleted = level === 5 &&
+      levelScores.level1?.completed &&
+      levelScores.level2?.completed &&
+      levelScores.level3?.completed &&
+      levelScores.level4?.completed;
+
+    if (allCompleted) {
       trackGameComplete();
       setScreen('complete');
     } else {
@@ -95,6 +104,24 @@ function App() {
     return (
       <Level3
         onComplete={(score, maxScore) => handleLevelComplete(3, score, maxScore)}
+        onBack={() => setScreen('menu')}
+      />
+    );
+  }
+
+  if (screen === 'level4') {
+    return (
+      <Level4
+        onComplete={(score, maxScore) => handleLevelComplete(4, score, maxScore)}
+        onBack={() => setScreen('menu')}
+      />
+    );
+  }
+
+  if (screen === 'level5') {
+    return (
+      <Level5
+        onComplete={(score, maxScore) => handleLevelComplete(5, score, maxScore)}
         onBack={() => setScreen('menu')}
       />
     );
@@ -132,6 +159,14 @@ function App() {
               <li className="flex items-start gap-2">
                 <span className="text-green-500">✓</span>
                 {t('completion.summary4')}
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-green-500">✓</span>
+                {t('completion.summary5')}
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-green-500">✓</span>
+                {t('completion.summary6')}
               </li>
             </ul>
           </div>
@@ -200,7 +235,7 @@ function App() {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-gray-50 rounded-xl p-4 text-center">
-              <div className="text-3xl font-bold text-indigo-600">{getCompletedLevels()}/3</div>
+              <div className="text-3xl font-bold text-indigo-600">{getCompletedLevels()}/5</div>
               <div className="text-sm text-gray-500">{t('menu.levelsCompleted')}</div>
             </div>
             <div className="bg-gray-50 rounded-xl p-4 text-center">
@@ -314,6 +349,86 @@ function App() {
                   <span className="text-purple-500 text-2xl">→</span>
                 ) : (
                   <span className="text-gray-400">{t('levels.level3.locked')}</span>
+                )}
+              </div>
+            </div>
+            {!levelScores.level3?.completed && isLevelUnlocked(3) && (
+              <div className="mt-3 text-sm text-amber-600">
+                {t('levels.level3.needScore').replace('{score}', '500')}
+              </div>
+            )}
+          </button>
+
+          {/* Level 4 */}
+          <button
+            onClick={() => isLevelUnlocked(4) && setScreen('level4')}
+            disabled={!isLevelUnlocked(4)}
+            className={`w-full bg-white rounded-2xl shadow-xl p-6 text-left transition-all border-2 border-transparent ${
+              isLevelUnlocked(4)
+                ? 'hover:shadow-2xl hover:border-cyan-300'
+                : 'opacity-60 cursor-not-allowed'
+            }`}
+          >
+            <div className="flex justify-between items-center">
+              <div>
+                <div className="flex items-center gap-3 mb-2">
+                  <span className="text-3xl">🧪</span>
+                  <h3 className="text-xl font-bold text-gray-800">{t('levels.level4.name')}</h3>
+                  {!isLevelUnlocked(4) && <span className="text-gray-400">🔒</span>}
+                </div>
+                <p className="text-gray-600">{t('levels.level4.description')}</p>
+                <p className="text-sm text-gray-500 mt-1">{t('levels.level4.details')}</p>
+              </div>
+              <div className="text-right">
+                {levelScores.level4?.completed ? (
+                  <>
+                    <div className="text-green-600 font-bold">{t('levels.completed')}</div>
+                    <div className="text-lg text-indigo-600">{levelScores.level4.score} {t('levels.points')}</div>
+                  </>
+                ) : isLevelUnlocked(4) ? (
+                  <span className="text-cyan-500 text-2xl">→</span>
+                ) : (
+                  <span className="text-gray-400">{t('levels.level4.locked')}</span>
+                )}
+              </div>
+            </div>
+            {!levelScores.level4?.completed && isLevelUnlocked(4) && (
+              <div className="mt-3 text-sm text-amber-600">
+                {t('levels.level4.needScore').replace('{score}', '500')}
+              </div>
+            )}
+          </button>
+
+          {/* Level 5 */}
+          <button
+            onClick={() => isLevelUnlocked(5) && setScreen('level5')}
+            disabled={!isLevelUnlocked(5)}
+            className={`w-full bg-white rounded-2xl shadow-xl p-6 text-left transition-all border-2 border-transparent ${
+              isLevelUnlocked(5)
+                ? 'hover:shadow-2xl hover:border-amber-300'
+                : 'opacity-60 cursor-not-allowed'
+            }`}
+          >
+            <div className="flex justify-between items-center">
+              <div>
+                <div className="flex items-center gap-3 mb-2">
+                  <span className="text-3xl">🎯</span>
+                  <h3 className="text-xl font-bold text-gray-800">{t('levels.level5.name')}</h3>
+                  {!isLevelUnlocked(5) && <span className="text-gray-400">🔒</span>}
+                </div>
+                <p className="text-gray-600">{t('levels.level5.description')}</p>
+                <p className="text-sm text-gray-500 mt-1">{t('levels.level5.details')}</p>
+              </div>
+              <div className="text-right">
+                {levelScores.level5?.completed ? (
+                  <>
+                    <div className="text-green-600 font-bold">{t('levels.completed')}</div>
+                    <div className="text-lg text-indigo-600">{levelScores.level5.score} {t('levels.points')}</div>
+                  </>
+                ) : isLevelUnlocked(5) ? (
+                  <span className="text-amber-500 text-2xl">→</span>
+                ) : (
+                  <span className="text-gray-400">{t('levels.level5.locked')}</span>
                 )}
               </div>
             </div>

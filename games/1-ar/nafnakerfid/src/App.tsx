@@ -2,12 +2,15 @@ import { useState, useEffect } from 'react';
 import { Level1 } from './components/Level1';
 import { Level2 } from './components/Level2';
 import { Level3 } from './components/Level3';
+import { Level4 } from './components/Level4';
+import { Level5 } from './components/Level5';
+import { Level6 } from './components/Level6';
 import { NameBuilder } from './components/NameBuilder';
 import { useAchievements } from '@shared/hooks/useAchievements';
 import { AchievementsButton, AchievementsPanel } from '@shared/components/AchievementsPanel';
 import { AchievementNotificationsContainer } from '@shared/components/AchievementNotificationPopup';
 
-type Screen = 'menu' | 'level1' | 'level2' | 'level3' | 'namebuilder';
+type Screen = 'menu' | 'level1' | 'level2' | 'level3' | 'level4' | 'level5' | 'level6' | 'namebuilder';
 
 interface Progress {
   level1Completed: boolean;
@@ -15,6 +18,12 @@ interface Progress {
   level2Completed: boolean;
   level2Score: number;
   level3BestMoves: { [key: string]: number };
+  level4Completed: boolean;
+  level4Score: number;
+  level5Completed: boolean;
+  level5Score: number;
+  level6Completed: boolean;
+  level6Score: number;
   totalGamesPlayed: number;
 }
 
@@ -39,6 +48,12 @@ function getDefaultProgress(): Progress {
     level2Completed: false,
     level2Score: 0,
     level3BestMoves: {},
+    level4Completed: false,
+    level4Score: 0,
+    level5Completed: false,
+    level5Score: 0,
+    level6Completed: false,
+    level6Score: 0,
     totalGamesPlayed: 0,
   };
 }
@@ -123,6 +138,39 @@ function App() {
     setScreen('menu');
   };
 
+  const handleLevel4Complete = (score: number, maxScore: number, hintsUsed: number) => {
+    setProgress(prev => ({
+      ...prev,
+      level4Completed: true,
+      level4Score: Math.max(prev.level4Score, score),
+      totalGamesPlayed: prev.totalGamesPlayed + 1,
+    }));
+    trackLevelComplete(4, score, maxScore, { hintsUsed });
+    setScreen('menu');
+  };
+
+  const handleLevel5Complete = (score: number, maxScore: number, hintsUsed: number) => {
+    setProgress(prev => ({
+      ...prev,
+      level5Completed: true,
+      level5Score: Math.max(prev.level5Score, score),
+      totalGamesPlayed: prev.totalGamesPlayed + 1,
+    }));
+    trackLevelComplete(5, score, maxScore, { hintsUsed });
+    setScreen('menu');
+  };
+
+  const handleLevel6Complete = (score: number, maxScore: number, hintsUsed: number) => {
+    setProgress(prev => ({
+      ...prev,
+      level6Completed: true,
+      level6Score: Math.max(prev.level6Score, score),
+      totalGamesPlayed: prev.totalGamesPlayed + 1,
+    }));
+    trackLevelComplete(6, score, maxScore, { hintsUsed });
+    setScreen('menu');
+  };
+
   const resetProgress = () => {
     const newProgress = getDefaultProgress();
     setProgress(newProgress);
@@ -169,6 +217,57 @@ function App() {
       <>
         <Level3
           onComplete={handleLevel3Complete}
+          onBack={() => setScreen('menu')}
+          onCorrectAnswer={trackCorrectAnswer}
+          onIncorrectAnswer={trackIncorrectAnswer}
+        />
+        <AchievementNotificationsContainer
+          notifications={notifications}
+          onDismiss={dismissNotification}
+        />
+      </>
+    );
+  }
+
+  if (screen === 'level4') {
+    return (
+      <>
+        <Level4
+          onComplete={handleLevel4Complete}
+          onBack={() => setScreen('menu')}
+          onCorrectAnswer={trackCorrectAnswer}
+          onIncorrectAnswer={trackIncorrectAnswer}
+        />
+        <AchievementNotificationsContainer
+          notifications={notifications}
+          onDismiss={dismissNotification}
+        />
+      </>
+    );
+  }
+
+  if (screen === 'level5') {
+    return (
+      <>
+        <Level5
+          onComplete={handleLevel5Complete}
+          onBack={() => setScreen('menu')}
+          onCorrectAnswer={trackCorrectAnswer}
+          onIncorrectAnswer={trackIncorrectAnswer}
+        />
+        <AchievementNotificationsContainer
+          notifications={notifications}
+          onDismiss={dismissNotification}
+        />
+      </>
+    );
+  }
+
+  if (screen === 'level6') {
+    return (
+      <>
+        <Level6
+          onComplete={handleLevel6Complete}
           onBack={() => setScreen('menu')}
           onCorrectAnswer={trackCorrectAnswer}
           onIncorrectAnswer={trackIncorrectAnswer}
@@ -331,6 +430,123 @@ function App() {
               </div>
             </button>
 
+            {/* Level 4 */}
+            <button
+              onClick={() => setScreen('level4')}
+              className={`w-full bg-white border-2 rounded-xl p-6 text-left transition-all ${
+                Object.keys(progress.level3BestMoves).length > 0
+                  ? 'border-cyan-200 hover:border-cyan-400 hover:bg-cyan-50'
+                  : 'border-gray-200 opacity-60'
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className={`text-white text-sm font-bold px-3 py-1 rounded-full ${
+                      Object.keys(progress.level3BestMoves).length > 0 ? 'bg-cyan-500' : 'bg-gray-400'
+                    }`}>
+                      Stig 4
+                    </span>
+                    <h3 className="text-xl font-bold text-gray-800">Fjölatóma jónaæfing</h3>
+                    {Object.keys(progress.level3BestMoves).length === 0 && (
+                      <span className="text-xs text-gray-500">(Ljúktu stigi 3 fyrst)</span>
+                    )}
+                  </div>
+                  <p className="text-gray-600 text-sm">
+                    Lærðu helstu fjölatóma jónirnar á flasskorta-stíl
+                  </p>
+                </div>
+                <div className="text-right">
+                  {progress.level4Completed ? (
+                    <div className="text-green-600">
+                      <div className="text-2xl font-bold">{progress.level4Score}</div>
+                      <div className="text-xs">Lokið</div>
+                    </div>
+                  ) : (
+                    <div className="text-gray-400 text-3xl">→</div>
+                  )}
+                </div>
+              </div>
+            </button>
+
+            {/* Level 5 */}
+            <button
+              onClick={() => setScreen('level5')}
+              className={`w-full bg-white border-2 rounded-xl p-6 text-left transition-all ${
+                progress.level4Completed
+                  ? 'border-emerald-200 hover:border-emerald-400 hover:bg-emerald-50'
+                  : 'border-gray-200 opacity-60'
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className={`text-white text-sm font-bold px-3 py-1 rounded-full ${
+                      progress.level4Completed ? 'bg-emerald-500' : 'bg-gray-400'
+                    }`}>
+                      Stig 5
+                    </span>
+                    <h3 className="text-xl font-bold text-gray-800">Formúla úr nafni</h3>
+                    {!progress.level4Completed && (
+                      <span className="text-xs text-gray-500">(Ljúktu stigi 4 fyrst)</span>
+                    )}
+                  </div>
+                  <p className="text-gray-600 text-sm">
+                    Skrifaðu formúlur út frá efnanöfnum
+                  </p>
+                </div>
+                <div className="text-right">
+                  {progress.level5Completed ? (
+                    <div className="text-green-600">
+                      <div className="text-2xl font-bold">{progress.level5Score}</div>
+                      <div className="text-xs">Lokið</div>
+                    </div>
+                  ) : (
+                    <div className="text-gray-400 text-3xl">→</div>
+                  )}
+                </div>
+              </div>
+            </button>
+
+            {/* Level 6 */}
+            <button
+              onClick={() => setScreen('level6')}
+              className={`w-full bg-white border-2 rounded-xl p-6 text-left transition-all ${
+                progress.level5Completed
+                  ? 'border-violet-200 hover:border-violet-400 hover:bg-violet-50'
+                  : 'border-gray-200 opacity-60'
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className={`text-white text-sm font-bold px-3 py-1 rounded-full ${
+                      progress.level5Completed ? 'bg-violet-500' : 'bg-gray-400'
+                    }`}>
+                      Stig 6
+                    </span>
+                    <h3 className="text-xl font-bold text-gray-800">Rómverskur tölustuðull</h3>
+                    {!progress.level5Completed && (
+                      <span className="text-xs text-gray-500">(Ljúktu stigi 5 fyrst)</span>
+                    )}
+                  </div>
+                  <p className="text-gray-600 text-sm">
+                    Málmar með breytilega hleðslu og rómverskar tölur
+                  </p>
+                </div>
+                <div className="text-right">
+                  {progress.level6Completed ? (
+                    <div className="text-green-600">
+                      <div className="text-2xl font-bold">{progress.level6Score}</div>
+                      <div className="text-xs">Lokið</div>
+                    </div>
+                  ) : (
+                    <div className="text-gray-400 text-3xl">→</div>
+                  )}
+                </div>
+              </div>
+            </button>
+
             {/* Name Builder - Bonus Mode */}
             <button
               onClick={() => setScreen('namebuilder')}
@@ -343,7 +559,6 @@ function App() {
                       Bónus
                     </span>
                     <h3 className="text-xl font-bold text-gray-800">Nafnasmiðja</h3>
-                    <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full">Nýtt!</span>
                   </div>
                   <p className="text-gray-600 text-sm">
                     Byggðu efnanöfn úr pörtum - læra nafnareglurnar!
@@ -370,13 +585,20 @@ function App() {
             <div className="grid grid-cols-3 gap-4 text-center">
               <div className="bg-blue-50 rounded-lg p-3">
                 <div className="text-2xl font-bold text-blue-600">
-                  {[progress.level1Completed, progress.level2Completed].filter(Boolean).length}/2
+                  {[
+                    progress.level1Completed,
+                    progress.level2Completed,
+                    Object.keys(progress.level3BestMoves).length > 0,
+                    progress.level4Completed,
+                    progress.level5Completed,
+                    progress.level6Completed
+                  ].filter(Boolean).length}/6
                 </div>
                 <div className="text-xs text-gray-600">Stig lokið</div>
               </div>
               <div className="bg-green-50 rounded-lg p-3">
                 <div className="text-2xl font-bold text-green-600">
-                  {progress.level1Score + progress.level2Score}
+                  {progress.level1Score + progress.level2Score + progress.level4Score + progress.level5Score + progress.level6Score}
                 </div>
                 <div className="text-xs text-gray-600">Heildar stig</div>
               </div>

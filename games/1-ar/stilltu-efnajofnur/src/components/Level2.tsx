@@ -7,6 +7,7 @@ import {
   isBalanced,
   REACTION_TYPES,
 } from '../data/equations';
+import { AtomInventory, AtomInventoryToggle } from './AtomInventory';
 
 interface Level2Props {
   onComplete: (score: number, maxScore: number, hintsUsed: number) => void;
@@ -138,6 +139,7 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer,
   const [hintLevel, setHintLevel] = useState(0); // 0 = no hint, 1 = element to start, 2 = specific hint
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
   const [attempts, setAttempts] = useState(0);
+  const [showAtomInventory, setShowAtomInventory] = useState(false);
 
   const equations = LEVEL_2_EQUATIONS;
   const currentEquation = equations[currentIndex];
@@ -270,8 +272,28 @@ export function Level2({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer,
             disabled={feedback === 'correct'}
           />
 
-          {/* Balance status */}
+          {/* Balance status - original inline view */}
           <BalanceStatus equation={currentEquation} coefficients={coefficients} />
+
+          {/* Optional Atom Inventory toggle */}
+          <div className="mt-4 flex justify-center">
+            <AtomInventoryToggle
+              showInventory={showAtomInventory}
+              onToggle={() => setShowAtomInventory(!showAtomInventory)}
+              language={language}
+            />
+          </div>
+
+          {/* Enhanced Atom Inventory table */}
+          {showAtomInventory && (
+            <div className="mt-4">
+              <AtomInventory
+                equation={currentEquation}
+                coefficients={coefficients}
+                language={language}
+              />
+            </div>
+          )}
         </div>
 
         {/* Feedback */}

@@ -7,6 +7,7 @@ import {
   isBalanced,
   REACTION_TYPES,
 } from '../data/equations';
+import { AtomInventory, AtomInventoryToggle } from './AtomInventory';
 
 interface Level3Props {
   onComplete: (score: number, correct: number, total: number, maxScore: number, hintsUsed: number) => void;
@@ -102,6 +103,7 @@ export function Level3({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer,
   const [timeLeft, setTimeLeft] = useState(0);
   const [gameOver, setGameOver] = useState(false);
   const [shuffledEquations, setShuffledEquations] = useState<Equation[]>([]);
+  const [showAtomInventory, setShowAtomInventory] = useState(false);
 
   const CHALLENGE_TIME = 180; // 3 minutes
   const currentEquation = shuffledEquations[currentIndex];
@@ -401,6 +403,28 @@ export function Level3({ onComplete, onBack, onCorrectAnswer, onIncorrectAnswer,
 
           {/* Compact balance status */}
           <CompactBalanceStatus equation={currentEquation} coefficients={coefficients} />
+
+          {/* Optional Atom Inventory toggle (practice mode only) */}
+          {mode === 'practice' && (
+            <div className="mt-4 flex justify-center">
+              <AtomInventoryToggle
+                showInventory={showAtomInventory}
+                onToggle={() => setShowAtomInventory(!showAtomInventory)}
+                language={language}
+              />
+            </div>
+          )}
+
+          {/* Enhanced Atom Inventory table */}
+          {showAtomInventory && mode === 'practice' && (
+            <div className="mt-4">
+              <AtomInventory
+                equation={currentEquation}
+                coefficients={coefficients}
+                language={language}
+              />
+            </div>
+          )}
         </div>
 
         {/* Feedback */}

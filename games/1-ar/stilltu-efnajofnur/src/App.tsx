@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Level1 } from './components/Level1';
 import { Level2 } from './components/Level2';
 import { Level3 } from './components/Level3';
+import { Level4 } from './components/Level4';
 import { storage } from './utils/storage';
 import { useAchievements } from '@shared/hooks/useAchievements';
 import { useGameI18n } from '@shared/hooks';
@@ -11,7 +12,7 @@ import { LanguageSwitcher } from '@shared/components';
 import { gameTranslations } from './i18n';
 import './styles.css';
 
-type Screen = 'menu' | 'level1' | 'level2' | 'level3';
+type Screen = 'menu' | 'level1' | 'level2' | 'level3' | 'level4';
 
 interface Progress {
   level1Completed: boolean;
@@ -20,6 +21,8 @@ interface Progress {
   level2Score: number;
   level3BestScore: number;
   level3BestCorrect: number;
+  level4Completed: boolean;
+  level4Score: number;
   totalGamesPlayed: number;
 }
 
@@ -33,6 +36,8 @@ function getDefaultProgress(): Progress {
     level2Score: 0,
     level3BestScore: 0,
     level3BestCorrect: 0,
+    level4Completed: false,
+    level4Score: 0,
     totalGamesPlayed: 0,
   };
 }
@@ -112,6 +117,17 @@ function App() {
     setScreen('menu');
   };
 
+  const handleLevel4Complete = (score: number, maxScore: number, hintsUsed: number) => {
+    setProgress(prev => ({
+      ...prev,
+      level4Completed: true,
+      level4Score: Math.max(prev.level4Score, score),
+      totalGamesPlayed: prev.totalGamesPlayed + 1,
+    }));
+    trackLevelComplete(4, score, maxScore, { hintsUsed });
+    setScreen('menu');
+  };
+
   const resetProgress = () => {
     const newProgress = getDefaultProgress();
     setProgress(newProgress);
@@ -162,6 +178,25 @@ function App() {
       <>
         <Level3
           onComplete={handleLevel3Complete}
+          onBack={() => setScreen('menu')}
+          onCorrectAnswer={trackCorrectAnswer}
+          onIncorrectAnswer={trackIncorrectAnswer}
+          t={t}
+          language={language}
+        />
+        <AchievementNotificationsContainer
+          notifications={notifications}
+          onDismiss={dismissNotification}
+        />
+      </>
+    );
+  }
+
+  if (screen === 'level4') {
+    return (
+      <>
+        <Level4
+          onComplete={handleLevel4Complete}
           onBack={() => setScreen('menu')}
           onCorrectAnswer={trackCorrectAnswer}
           onIncorrectAnswer={trackIncorrectAnswer}
@@ -325,6 +360,41 @@ function App() {
                 </div>
               </div>
             </button>
+
+            {/* Level 4 - Strategy Tutorial */}
+            <button
+              onClick={() => setScreen('level4')}
+              className="w-full bg-white border-2 border-purple-200 hover:border-purple-400 hover:bg-purple-50 rounded-xl p-6 text-left transition-all"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className="bg-purple-500 text-white text-sm font-bold px-3 py-1 rounded-full">
+                      {t('levels.level', 'Stig')} 4
+                    </span>
+                    <h3 className="text-xl font-bold text-gray-800">
+                      {t('level4.title', 'Námskeið í stillingu')}
+                    </h3>
+                    <span className="text-xs px-2 py-1 bg-purple-100 text-purple-700 rounded-full">
+                      {t('level4.badge', 'Kennsla')}
+                    </span>
+                  </div>
+                  <p className="text-gray-600 text-sm">
+                    {t('level4.description', 'Lærðu kerfisbundna aðferð til að stilla efnajöfnur')}
+                  </p>
+                </div>
+                <div className="text-right">
+                  {progress.level4Completed ? (
+                    <div className="text-green-600">
+                      <div className="text-2xl font-bold">{progress.level4Score}</div>
+                      <div className="text-xs">{t('common.points', 'stig')} - {t('common.completed', 'Lokið')}</div>
+                    </div>
+                  ) : (
+                    <div className="text-purple-400 text-3xl">🎓</div>
+                  )}
+                </div>
+              </div>
+            </button>
           </div>
         </div>
 
@@ -345,7 +415,7 @@ function App() {
             <div className="grid grid-cols-3 gap-4 text-center">
               <div className="bg-blue-50 rounded-lg p-3">
                 <div className="text-2xl font-bold text-blue-600">
-                  {[progress.level1Completed, progress.level2Completed].filter(Boolean).length}/2
+                  {[progress.level1Completed, progress.level2Completed, progress.level4Completed].filter(Boolean).length}/3
                 </div>
                 <div className="text-xs text-gray-600">
                   {t('menu.levelsCompleted', 'Stig lokið')}
@@ -353,7 +423,7 @@ function App() {
               </div>
               <div className="bg-green-50 rounded-lg p-3">
                 <div className="text-2xl font-bold text-green-600">
-                  {progress.level1Score + progress.level2Score + progress.level3BestScore}
+                  {progress.level1Score + progress.level2Score + progress.level3BestScore + progress.level4Score}
                 </div>
                 <div className="text-xs text-gray-600">
                   {t('menu.totalScore', 'Heildar stig')}

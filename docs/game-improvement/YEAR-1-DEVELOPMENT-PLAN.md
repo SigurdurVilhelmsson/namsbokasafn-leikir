@@ -2,7 +2,7 @@
 
 **Date:** 2026-01-30 | **Updated:** 2026-02-04
 **Curriculum Reference:** Brown et al, *Chemistry: The Central Science*, Chapters 1-4
-**Status:** Phase 5 In Progress (Pedagogical Review Games)
+**Status:** Phase 6 In Progress (Existing Game Enhancements)
 
 ---
 
@@ -395,15 +395,15 @@ const EQUATIONS = [
 10. ✅ Build Gerðir efnahvarfa (Reaction Types)
 11. ✅ Build Markverðir tölustafir (Significant Figures)
 
-### Phase 5: Pedagogical Review — New Games (In Progress)
+### Phase 5: Pedagogical Review — New Games ✅ COMPLETED
 Based on the [Year 1 Pedagogical Review](YEAR-1-PEDAGOGICAL-REVIEW.md), which identified gaps in Brown Ch. 2 (atomic structure, periodic table) and Ch. 4 (aqueous reactions, acid-base).
 
-12. ⬜ Build Jónir í lausn (Ions in Solution — Precipitation & Net Ionic Equations, Ch. 4.2)
-13. ⬜ Build Uppbygging atómanna (Atomic Structure — Protons/Neutrons/Electrons, Isotopes, Ch. 2.3-2.4)
-14. ⬜ Build Sýrur og basar (Acids & Bases — Neutralization, Ch. 4.3)
-15. ⬜ Build Lotukerfið (Periodic Table Explorer — Groups, Periods, Trends, Ch. 2.5)
+12. ✅ Build Jónir í lausn (Ions in Solution — Precipitation & Net Ionic Equations, Ch. 4.2)
+13. ✅ Build Uppbygging atómanna (Atomic Structure — Protons/Neutrons/Electrons, Isotopes, Ch. 2.3-2.4)
+14. ✅ Build Sýrur og basar (Acids & Bases — Neutralization, Ch. 4.3)
+15. ✅ Build Lotukerfið (Periodic Table Explorer — Groups, Periods, Trends, Ch. 2.5)
 
-### Phase 6: Pedagogical Review — Existing Game Enhancements (Planned)
+### Phase 6: Pedagogical Review — Existing Game Enhancements (In Progress)
 16. ⬜ Gerðir efnahvarfa: Add driving force analysis, solubility rules, activity series, net ionic equations
 17. ⬜ Lausnir: Add electrolyte classification, solution stoichiometry
 18. ⬜ Nafnakerfið: Add polyatomic ion drill, formula-from-name mode, Stock system level

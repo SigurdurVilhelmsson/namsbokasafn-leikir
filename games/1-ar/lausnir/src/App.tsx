@@ -3,6 +3,8 @@ import { Level1 } from './components/Level1';
 import { Level2 } from './components/Level2';
 import { Level3 } from './components/Level3';
 import { Level4 } from './components/Level4';
+import { Level5 } from './components/Level5';
+import { Level6 } from './components/Level6';
 import { useAchievements } from '@shared/hooks/useAchievements';
 import { useGameI18n } from '@shared/hooks/useGameI18n';
 import { AchievementsButton, AchievementsPanel } from '@shared/components/AchievementsPanel';
@@ -10,7 +12,7 @@ import { AchievementNotificationsContainer } from '@shared/components/Achievemen
 import { LanguageSwitcher } from '@shared/components';
 import { gameTranslations } from './i18n';
 
-type ActiveLevel = 'menu' | 'level1' | 'level2' | 'level3' | 'level4' | 'complete';
+type ActiveLevel = 'menu' | 'level1' | 'level2' | 'level3' | 'level4' | 'level5' | 'level6' | 'complete';
 
 interface Progress {
   level1Score: number | null;
@@ -21,6 +23,10 @@ interface Progress {
   level3Completed: boolean;
   level4Score: number | null;
   level4Completed: boolean;
+  level5Score: number | null;
+  level5Completed: boolean;
+  level6Score: number | null;
+  level6Completed: boolean;
   totalGamesPlayed: number;
 }
 
@@ -52,6 +58,10 @@ function getDefaultProgress(): Progress {
     level3Completed: false,
     level4Score: null,
     level4Completed: false,
+    level5Score: null,
+    level5Completed: false,
+    level6Score: null,
+    level6Completed: false,
     totalGamesPlayed: 0,
   };
 }
@@ -140,8 +150,29 @@ function App() {
       totalGamesPlayed: prev.totalGamesPlayed + 1,
     }));
 
-    // Level 4 is a bonus level - trackLevelComplete only supports 1-3
-    // Track game completion since all 4 levels are now complete
+    setActiveLevel('menu');
+  };
+
+  const handleLevel5Complete = (score: number, _maxScore: number, _hintsUsed: number) => {
+    setProgress(prev => ({
+      ...prev,
+      level5Score: Math.max(prev.level5Score || 0, score),
+      level5Completed: true,
+      totalGamesPlayed: prev.totalGamesPlayed + 1,
+    }));
+
+    setActiveLevel('menu');
+  };
+
+  const handleLevel6Complete = (score: number, _maxScore: number, _hintsUsed: number) => {
+    setProgress(prev => ({
+      ...prev,
+      level6Score: Math.max(prev.level6Score || 0, score),
+      level6Completed: true,
+      totalGamesPlayed: prev.totalGamesPlayed + 1,
+    }));
+
+    // Track game completion since all 6 levels are now complete
     trackGameComplete();
 
     setActiveLevel('complete');
@@ -157,6 +188,8 @@ function App() {
   const isLevel2Unlocked = progress.level1Completed;
   const isLevel3Unlocked = progress.level2Completed;
   const isLevel4Unlocked = progress.level3Completed;
+  const isLevel5Unlocked = progress.level4Completed;
+  const isLevel6Unlocked = progress.level5Completed;
 
   // Render active level
   if (activeLevel === 'level1') {
@@ -227,9 +260,43 @@ function App() {
     );
   }
 
+  if (activeLevel === 'level5') {
+    return (
+      <>
+        <Level5
+          onComplete={handleLevel5Complete}
+          onBack={() => setActiveLevel('menu')}
+          onCorrectAnswer={trackCorrectAnswer}
+          onIncorrectAnswer={trackIncorrectAnswer}
+        />
+        <AchievementNotificationsContainer
+          notifications={notifications}
+          onDismiss={dismissNotification}
+        />
+      </>
+    );
+  }
+
+  if (activeLevel === 'level6') {
+    return (
+      <>
+        <Level6
+          onComplete={handleLevel6Complete}
+          onBack={() => setActiveLevel('menu')}
+          onCorrectAnswer={trackCorrectAnswer}
+          onIncorrectAnswer={trackIncorrectAnswer}
+        />
+        <AchievementNotificationsContainer
+          notifications={notifications}
+          onDismiss={dismissNotification}
+        />
+      </>
+    );
+  }
+
   // Complete screen
   if (activeLevel === 'complete') {
-    const totalScore = (progress.level1Score || 0) + (progress.level2Score || 0) + (progress.level3Score || 0) + (progress.level4Score || 0);
+    const totalScore = (progress.level1Score || 0) + (progress.level2Score || 0) + (progress.level3Score || 0) + (progress.level4Score || 0) + (progress.level5Score || 0) + (progress.level6Score || 0);
 
     return (
       <div className="min-h-screen bg-gradient-to-br from-yellow-50 to-orange-100 p-4 md:p-8">
@@ -278,6 +345,22 @@ function App() {
               <div className="text-2xl font-bold text-cyan-600">{progress.level4Score || 0}</div>
             </div>
 
+            <div className="bg-amber-50 p-4 rounded-xl flex justify-between items-center">
+              <div>
+                <div className="font-bold text-amber-800">{t('levels.level5.name')}</div>
+                <div className="text-sm text-amber-600">{t('completion.electrolytes')}</div>
+              </div>
+              <div className="text-2xl font-bold text-amber-600">{progress.level5Score || 0}</div>
+            </div>
+
+            <div className="bg-indigo-50 p-4 rounded-xl flex justify-between items-center">
+              <div>
+                <div className="font-bold text-indigo-800">{t('levels.level6.name')}</div>
+                <div className="text-sm text-indigo-600">{t('completion.stoichiometry')}</div>
+              </div>
+              <div className="text-2xl font-bold text-indigo-600">{progress.level6Score || 0}</div>
+            </div>
+
             <div className="bg-orange-100 p-4 rounded-xl flex justify-between items-center border-2 border-orange-400">
               <div className="font-bold text-orange-800 text-lg">{t('completion.totalScore')}</div>
               <div className="text-3xl font-bold text-orange-600">{totalScore}</div>
@@ -291,6 +374,8 @@ function App() {
               <li>✓ <strong>{t('levels.level2.name')}:</strong> {t('completion.level2Summary')}</li>
               <li>✓ <strong>{t('levels.level3.name')}:</strong> {t('completion.level3Summary')}</li>
               <li>✓ <strong>{t('levels.level4.name')}:</strong> {t('completion.level4Summary')}</li>
+              <li>✓ <strong>{t('levels.level5.name')}:</strong> {t('completion.level5Summary')}</li>
+              <li>✓ <strong>{t('levels.level6.name')}:</strong> {t('completion.level6Summary')}</li>
             </ul>
           </div>
 
@@ -511,6 +596,86 @@ function App() {
               </div>
             </div>
           </button>
+
+          {/* Level 5 - Locked until Level 4 completed */}
+          <button
+            onClick={() => isLevel5Unlocked && setActiveLevel('level5')}
+            disabled={!isLevel5Unlocked}
+            className={`w-full p-6 rounded-xl border-4 transition-all text-left ${
+              isLevel5Unlocked
+                ? 'border-amber-400 bg-amber-50 hover:bg-amber-100 cursor-pointer'
+                : 'border-gray-300 bg-gray-100 cursor-not-allowed opacity-70'
+            }`}
+          >
+            <div className="flex items-center gap-4">
+              <div className="text-4xl">{isLevel5Unlocked ? '💡' : '🔒'}</div>
+              <div className="flex-1">
+                <div className="flex items-center gap-2">
+                  <span className={`text-xl font-bold ${isLevel5Unlocked ? 'text-amber-800' : 'text-gray-500'}`}>
+                    {t('levels.level5.name')}
+                  </span>
+                  {progress.level5Completed && (
+                    <span className="bg-green-500 text-white text-xs px-2 py-1 rounded-full">
+                      ✓ {t('levels.completed')}
+                    </span>
+                  )}
+                  {progress.level5Score !== null && (
+                    <span className="bg-amber-600 text-white text-xs px-2 py-1 rounded-full">
+                      {progress.level5Score} {t('levels.points')}
+                    </span>
+                  )}
+                </div>
+                <div className={`text-sm mt-1 ${isLevel5Unlocked ? 'text-amber-600' : 'text-gray-500'}`}>
+                  {t('levels.level5.description')}
+                </div>
+                <div className="text-xs text-gray-600 mt-2">
+                  {isLevel5Unlocked
+                    ? t('levels.level5.details')
+                    : t('levels.level5.locked')}
+                </div>
+              </div>
+            </div>
+          </button>
+
+          {/* Level 6 - Locked until Level 5 completed */}
+          <button
+            onClick={() => isLevel6Unlocked && setActiveLevel('level6')}
+            disabled={!isLevel6Unlocked}
+            className={`w-full p-6 rounded-xl border-4 transition-all text-left ${
+              isLevel6Unlocked
+                ? 'border-indigo-400 bg-indigo-50 hover:bg-indigo-100 cursor-pointer'
+                : 'border-gray-300 bg-gray-100 cursor-not-allowed opacity-70'
+            }`}
+          >
+            <div className="flex items-center gap-4">
+              <div className="text-4xl">{isLevel6Unlocked ? '⚗️' : '🔒'}</div>
+              <div className="flex-1">
+                <div className="flex items-center gap-2">
+                  <span className={`text-xl font-bold ${isLevel6Unlocked ? 'text-indigo-800' : 'text-gray-500'}`}>
+                    {t('levels.level6.name')}
+                  </span>
+                  {progress.level6Completed && (
+                    <span className="bg-green-500 text-white text-xs px-2 py-1 rounded-full">
+                      ✓ {t('levels.completed')}
+                    </span>
+                  )}
+                  {progress.level6Score !== null && (
+                    <span className="bg-indigo-600 text-white text-xs px-2 py-1 rounded-full">
+                      {progress.level6Score} {t('levels.points')}
+                    </span>
+                  )}
+                </div>
+                <div className={`text-sm mt-1 ${isLevel6Unlocked ? 'text-indigo-600' : 'text-gray-500'}`}>
+                  {t('levels.level6.description')}
+                </div>
+                <div className="text-xs text-gray-600 mt-2">
+                  {isLevel6Unlocked
+                    ? t('levels.level6.details')
+                    : t('levels.level6.locked')}
+                </div>
+              </div>
+            </div>
+          </button>
         </div>
 
         {/* Progress summary */}
@@ -528,13 +693,13 @@ function App() {
             <div className="grid grid-cols-3 gap-3 text-center text-sm">
               <div className="bg-blue-50 rounded-lg p-2">
                 <div className="text-lg font-bold text-blue-600">
-                  {[progress.level1Completed, progress.level2Completed, progress.level3Completed, progress.level4Completed].filter(Boolean).length}/4
+                  {[progress.level1Completed, progress.level2Completed, progress.level3Completed, progress.level4Completed, progress.level5Completed, progress.level6Completed].filter(Boolean).length}/6
                 </div>
                 <div className="text-xs text-gray-600">{t('menu.levelsCompleted')}</div>
               </div>
               <div className="bg-green-50 rounded-lg p-2">
                 <div className="text-lg font-bold text-green-600">
-                  {(progress.level1Score || 0) + (progress.level2Score || 0) + (progress.level3Score || 0) + (progress.level4Score || 0)}
+                  {(progress.level1Score || 0) + (progress.level2Score || 0) + (progress.level3Score || 0) + (progress.level4Score || 0) + (progress.level5Score || 0) + (progress.level6Score || 0)}
                 </div>
                 <div className="text-xs text-gray-600">{t('menu.totalPoints')}</div>
               </div>

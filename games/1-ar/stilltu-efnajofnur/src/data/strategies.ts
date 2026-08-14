@@ -1,0 +1,652 @@
+// Balancing strategies and tutorial content for Level 4
+
+import { Equation } from './equations';
+
+export interface StrategyStep {
+  id: string;
+  titleIs: string;
+  titleEn: string;
+  titlePl: string;
+  descriptionIs: string;
+  descriptionEn: string;
+  descriptionPl: string;
+  tipIs: string;
+  tipEn: string;
+  tipPl: string;
+}
+
+export interface TutorialExample {
+  equation: Equation;
+  steps: TutorialStep[];
+}
+
+export interface TutorialStep {
+  stepNumber: number;
+  strategyId: string;
+  coefficientsBeforeIs: string;
+  coefficientsBeforeEn: string;
+  coefficientsAfterIs: string;
+  coefficientsAfterEn: string;
+  explanationIs: string;
+  explanationEn: string;
+  explanationPl: string;
+  coefficients: number[]; // Current state after this step
+  highlightElements: string[]; // Elements being balanced in this step
+}
+
+// The 5-step balancing strategy
+export const BALANCING_STRATEGY_STEPS: StrategyStep[] = [
+  {
+    id: 'metals',
+    titleIs: 'Stilltu málma fyrst',
+    titleEn: 'Balance metals first',
+    titlePl: 'Najpierw zrównoważ metale',
+    descriptionIs: 'Málmar koma oft fyrir í einu efnasambandi á hvorri hlið. Þeir eru venjulega auðveldastir til að stilla.',
+    descriptionEn: 'Metals often appear in one compound on each side. They are usually the easiest to balance.',
+    descriptionPl: 'Metale często występują w jednym związku po każdej stronie. Zwykle są najłatwiejsze do zrównoważenia.',
+    tipIs: 'Leitaðu að frumefnum eins og Na, K, Ca, Mg, Fe, Al',
+    tipEn: 'Look for elements like Na, K, Ca, Mg, Fe, Al',
+    tipPl: 'Szukaj pierwiastków takich jak Na, K, Ca, Mg, Fe, Al',
+  },
+  {
+    id: 'nonmetals',
+    titleIs: 'Stilltu málmleysingja (nema H og O)',
+    titleEn: 'Balance nonmetals (except H and O)',
+    titlePl: 'Zrównoważ niemetale (oprócz H i O)',
+    descriptionIs: 'Næst stilum við málmleysingja eins og C, N, S, P, Cl. Látum vetni og súrefni bíða.',
+    descriptionEn: 'Next, balance nonmetals like C, N, S, P, Cl. Leave hydrogen and oxygen for later.',
+    descriptionPl: 'Następnie zrównoważ niemetale takie jak C, N, S, P, Cl. Zostaw wodór i tlen na później.',
+    tipIs: 'Kolefni (C) og klór (Cl) eru oft auðveldir',
+    tipEn: 'Carbon (C) and chlorine (Cl) are often easy',
+    tipPl: 'Węgiel (C) i chlor (Cl) są często łatwe',
+  },
+  {
+    id: 'hydrogen',
+    titleIs: 'Stilltu vetni',
+    titleEn: 'Balance hydrogen',
+    titlePl: 'Zrównoważ wodór',
+    descriptionIs: 'Vetni kemur oft fyrir í mörgum efnasamböndum. Það er best að stilla það eftir málma og aðra málmleysingja.',
+    descriptionEn: 'Hydrogen often appears in multiple compounds. It is best to balance it after metals and other nonmetals.',
+    descriptionPl: 'Wodór często występuje w wielu związkach. Najlepiej zrównoważyć go po metalach i innych niemetalach.',
+    tipIs: 'Athugaðu H₂O, HCl, H₂SO₄ og önnur efnasambönd',
+    tipEn: 'Watch for H₂O, HCl, H₂SO₄ and other compounds',
+    tipPl: 'Uważaj na H₂O, HCl, H₂SO₄ i inne związki',
+  },
+  {
+    id: 'oxygen',
+    titleIs: 'Stilltu súrefni síðast',
+    titleEn: 'Balance oxygen last',
+    titlePl: 'Zrównoważ tlen na końcu',
+    descriptionIs: 'Súrefni kemur fyrir í mörgum efnasamböndum og breytist oft þegar önnur frumefni eru stillt. Þess vegna stillum við það síðast.',
+    descriptionEn: 'Oxygen appears in many compounds and often changes when other elements are balanced. That is why we balance it last.',
+    descriptionPl: 'Tlen występuje w wielu związkach i często zmienia się przy równoważeniu innych pierwiastków. Dlatego równoważymy go na końcu.',
+    tipIs: 'Ef súrefni er ekki jafnt, reyndu að tvöfalda alla stuðla',
+    tipEn: 'If oxygen is not balanced, try doubling all coefficients',
+    tipPl: 'Jeśli tlen się nie zgadza, spróbuj podwoić wszystkie współczynniki',
+  },
+  {
+    id: 'check',
+    titleIs: 'Athugaðu allt',
+    titleEn: 'Check everything',
+    titlePl: 'Sprawdź wszystko',
+    descriptionIs: 'Teldu öll atóm beggja megin til að staðfesta að jafnan sé rétt stillt. Ef eitthvað er rangt, byrjaðu aftur.',
+    descriptionEn: 'Count all atoms on both sides to confirm the equation is balanced. If something is wrong, start over.',
+    descriptionPl: 'Policz wszystkie atomy po obu stronach, aby potwierdzić, że równanie jest zrównoważone. Jeśli coś jest nie tak, zacznij od nowa.',
+    tipIs: 'Notaðu atómatalningartöfluna til að athuga',
+    tipEn: 'Use the atom inventory table to check',
+    tipPl: 'Użyj tabeli inwentarza atomów do sprawdzenia',
+  },
+];
+
+// Polyatomic ion tips
+export const POLYATOMIC_ION_TIP = {
+  titleIs: 'Ráð um fjölatóma jónir',
+  titleEn: 'Tip for polyatomic ions',
+  titlePl: 'Wskazówka dla jonów wieloatomowych',
+  descriptionIs: 'Ef fjölatóma jón (eins og SO₄, NO₃, PO₄, OH) kemur fyrir óbreytt á báðum hliðum, meðhöndlaðu hana sem eina einingu.',
+  descriptionEn: 'If a polyatomic ion (like SO₄, NO₃, PO₄, OH) appears unchanged on both sides, treat it as a single unit.',
+  descriptionPl: 'Jeśli jon wieloatomowy (jak SO₄, NO₃, PO₄, OH) występuje niezmieniony po obu stronach, traktuj go jako jedną jednostkę.',
+  exampleIs: 'Í NaOH + H₂SO₄ → Na₂SO₄ + H₂O, teldu SO₄ sem eina einingu',
+  exampleEn: 'In NaOH + H₂SO₄ → Na₂SO₄ + H₂O, count SO₄ as one unit',
+  examplePl: 'W NaOH + H₂SO₄ → Na₂SO₄ + H₂O, policz SO₄ jako jedną jednostkę',
+};
+
+// Tutorial examples with step-by-step walkthrough
+export const TUTORIAL_EXAMPLES: TutorialExample[] = [
+  // Example 1: Simple synthesis - Fe + O₂ → Fe₂O₃
+  {
+    equation: {
+      id: 'tut-1',
+      reactants: ['Fe', 'O₂'],
+      products: ['Fe₂O₃'],
+      coefficients: [4, 3, 2],
+      type: 'synthesis',
+      difficulty: 'medium',
+    },
+    steps: [
+      {
+        stepNumber: 1,
+        strategyId: 'metals',
+        coefficientsBeforeIs: '1 Fe + 1 O₂ → 1 Fe₂O₃',
+        coefficientsBeforeEn: '1 Fe + 1 O₂ → 1 Fe₂O₃',
+        coefficientsAfterIs: '2 Fe + 1 O₂ → 1 Fe₂O₃',
+        coefficientsAfterEn: '2 Fe + 1 O₂ → 1 Fe₂O₃',
+        explanationIs: 'Byrjum á járni (Fe). Vinstri: 1 Fe, Hægri: 2 Fe. Setjum stuðul 2 fyrir Fe vinstra megin.',
+        explanationEn: 'Start with iron (Fe). Left: 1 Fe, Right: 2 Fe. Put coefficient 2 before Fe on the left.',
+        explanationPl: 'Zacznij od żelaza (Fe). Lewa: 1 Fe, Prawa: 2 Fe. Wstaw współczynnik 2 przed Fe po lewej.',
+        coefficients: [2, 1, 1],
+        highlightElements: ['Fe'],
+      },
+      {
+        stepNumber: 2,
+        strategyId: 'oxygen',
+        coefficientsBeforeIs: '2 Fe + 1 O₂ → 1 Fe₂O₃',
+        coefficientsBeforeEn: '2 Fe + 1 O₂ → 1 Fe₂O₃',
+        coefficientsAfterIs: '2 Fe + 1 O₂ → 1 Fe₂O₃ (Súrefni: 2 ≠ 3)',
+        coefficientsAfterEn: '2 Fe + 1 O₂ → 1 Fe₂O₃ (Oxygen: 2 ≠ 3)',
+        explanationIs: 'Súrefni: Vinstri: 2 O, Hægri: 3 O. Þetta er ekki jafnt! Við þurfum sameiginlegan margfeldara.',
+        explanationEn: 'Oxygen: Left: 2 O, Right: 3 O. This is not equal! We need a common multiple.',
+        explanationPl: 'Tlen: Lewa: 2 O, Prawa: 3 O. To nie jest równe! Potrzebujemy wspólnej wielokrotności.',
+        coefficients: [2, 1, 1],
+        highlightElements: ['O'],
+      },
+      {
+        stepNumber: 3,
+        strategyId: 'oxygen',
+        coefficientsBeforeIs: 'Súrefni þarf 6 (sameiginlegur margfeldari 2 og 3)',
+        coefficientsBeforeEn: 'Oxygen needs 6 (common multiple of 2 and 3)',
+        coefficientsAfterIs: '4 Fe + 3 O₂ → 2 Fe₂O₃',
+        coefficientsAfterEn: '4 Fe + 3 O₂ → 2 Fe₂O₃',
+        explanationIs: '6 súrefnisatóm: 3×O₂ = 6 O vinstri, 2×Fe₂O₃ = 6 O hægri. En nú eru 4 Fe hægri, svo við þurfum 4 Fe vinstra megin.',
+        explanationEn: '6 oxygen atoms: 3×O₂ = 6 O left, 2×Fe₂O₃ = 6 O right. But now there are 4 Fe right, so we need 4 Fe on the left.',
+        explanationPl: '6 atomów tlenu: 3×O₂ = 6 O po lewej, 2×Fe₂O₃ = 6 O po prawej. Ale teraz jest 4 Fe po prawej, więc potrzebujemy 4 Fe po lewej.',
+        coefficients: [4, 3, 2],
+        highlightElements: ['Fe', 'O'],
+      },
+      {
+        stepNumber: 4,
+        strategyId: 'check',
+        coefficientsBeforeIs: '4 Fe + 3 O₂ → 2 Fe₂O₃',
+        coefficientsBeforeEn: '4 Fe + 3 O₂ → 2 Fe₂O₃',
+        coefficientsAfterIs: 'Fe: 4 = 4 ✓, O: 6 = 6 ✓',
+        coefficientsAfterEn: 'Fe: 4 = 4 ✓, O: 6 = 6 ✓',
+        explanationIs: 'Athugum: Fe: 4 vinstri = 4 hægri ✓, O: 6 vinstri = 6 hægri ✓. Jafnan er stillt!',
+        explanationEn: 'Check: Fe: 4 left = 4 right ✓, O: 6 left = 6 right ✓. The equation is balanced!',
+        explanationPl: 'Sprawdź: Fe: 4 po lewej = 4 po prawej ✓, O: 6 po lewej = 6 po prawej ✓. Równanie jest zrównoważone!',
+        coefficients: [4, 3, 2],
+        highlightElements: [],
+      },
+    ],
+  },
+  // Example 2: Combustion - CH₄ + O₂ → CO₂ + H₂O
+  {
+    equation: {
+      id: 'tut-2',
+      reactants: ['CH₄', 'O₂'],
+      products: ['CO₂', 'H₂O'],
+      coefficients: [1, 2, 1, 2],
+      type: 'combustion',
+      difficulty: 'medium',
+    },
+    steps: [
+      {
+        stepNumber: 1,
+        strategyId: 'nonmetals',
+        coefficientsBeforeIs: '1 CH₄ + 1 O₂ → 1 CO₂ + 1 H₂O',
+        coefficientsBeforeEn: '1 CH₄ + 1 O₂ → 1 CO₂ + 1 H₂O',
+        coefficientsAfterIs: '1 CH₄ + 1 O₂ → 1 CO₂ + 1 H₂O',
+        coefficientsAfterEn: '1 CH₄ + 1 O₂ → 1 CO₂ + 1 H₂O',
+        explanationIs: 'Kolefni (C): Vinstri: 1 C, Hægri: 1 C. Kolefni er þegar jafnt!',
+        explanationEn: 'Carbon (C): Left: 1 C, Right: 1 C. Carbon is already balanced!',
+        explanationPl: 'Węgiel (C): Lewa: 1 C, Prawa: 1 C. Węgiel jest już zrównoważony!',
+        coefficients: [1, 1, 1, 1],
+        highlightElements: ['C'],
+      },
+      {
+        stepNumber: 2,
+        strategyId: 'hydrogen',
+        coefficientsBeforeIs: '1 CH₄ + 1 O₂ → 1 CO₂ + 1 H₂O',
+        coefficientsBeforeEn: '1 CH₄ + 1 O₂ → 1 CO₂ + 1 H₂O',
+        coefficientsAfterIs: '1 CH₄ + 1 O₂ → 1 CO₂ + 2 H₂O',
+        coefficientsAfterEn: '1 CH₄ + 1 O₂ → 1 CO₂ + 2 H₂O',
+        explanationIs: 'Vetni (H): Vinstri: 4 H, Hægri: 2 H. Setjum stuðul 2 fyrir H₂O.',
+        explanationEn: 'Hydrogen (H): Left: 4 H, Right: 2 H. Put coefficient 2 before H₂O.',
+        explanationPl: 'Wodór (H): Lewa: 4 H, Prawa: 2 H. Wstaw współczynnik 2 przed H₂O.',
+        coefficients: [1, 1, 1, 2],
+        highlightElements: ['H'],
+      },
+      {
+        stepNumber: 3,
+        strategyId: 'oxygen',
+        coefficientsBeforeIs: '1 CH₄ + 1 O₂ → 1 CO₂ + 2 H₂O',
+        coefficientsBeforeEn: '1 CH₄ + 1 O₂ → 1 CO₂ + 2 H₂O',
+        coefficientsAfterIs: '1 CH₄ + 2 O₂ → 1 CO₂ + 2 H₂O',
+        coefficientsAfterEn: '1 CH₄ + 2 O₂ → 1 CO₂ + 2 H₂O',
+        explanationIs: 'Súrefni (O): Hægri: 2 (í CO₂) + 2 (í 2×H₂O) = 4 O. Vinstri þarf 4 O, svo 2×O₂.',
+        explanationEn: 'Oxygen (O): Right: 2 (in CO₂) + 2 (in 2×H₂O) = 4 O. Left needs 4 O, so 2×O₂.',
+        explanationPl: 'Tlen (O): Prawa: 2 (w CO₂) + 2 (w 2×H₂O) = 4 O. Lewa potrzebuje 4 O, więc 2×O₂.',
+        coefficients: [1, 2, 1, 2],
+        highlightElements: ['O'],
+      },
+      {
+        stepNumber: 4,
+        strategyId: 'check',
+        coefficientsBeforeIs: '1 CH₄ + 2 O₂ → 1 CO₂ + 2 H₂O',
+        coefficientsBeforeEn: '1 CH₄ + 2 O₂ → 1 CO₂ + 2 H₂O',
+        coefficientsAfterIs: 'C: 1=1 ✓, H: 4=4 ✓, O: 4=4 ✓',
+        coefficientsAfterEn: 'C: 1=1 ✓, H: 4=4 ✓, O: 4=4 ✓',
+        explanationIs: 'Athugum öll frumefni: C: 1=1 ✓, H: 4=4 ✓, O: 4=4 ✓. Rétt stillt!',
+        explanationEn: 'Check all elements: C: 1=1 ✓, H: 4=4 ✓, O: 4=4 ✓. Correctly balanced!',
+        explanationPl: 'Sprawdź wszystkie pierwiastki: C: 1=1 ✓, H: 4=4 ✓, O: 4=4 ✓. Poprawnie zrównoważone!',
+        coefficients: [1, 2, 1, 2],
+        highlightElements: [],
+      },
+    ],
+  },
+  // Example 3: Acid-base - NaOH + H₂SO₄ → Na₂SO₄ + H₂O
+  {
+    equation: {
+      id: 'tut-3',
+      reactants: ['NaOH', 'H₂SO₄'],
+      products: ['Na₂SO₄', 'H₂O'],
+      coefficients: [2, 1, 1, 2],
+      type: 'double-replacement',
+      difficulty: 'medium',
+    },
+    steps: [
+      {
+        stepNumber: 1,
+        strategyId: 'metals',
+        coefficientsBeforeIs: '1 NaOH + 1 H₂SO₄ → 1 Na₂SO₄ + 1 H₂O',
+        coefficientsBeforeEn: '1 NaOH + 1 H₂SO₄ → 1 Na₂SO₄ + 1 H₂O',
+        coefficientsAfterIs: '2 NaOH + 1 H₂SO₄ → 1 Na₂SO₄ + 1 H₂O',
+        coefficientsAfterEn: '2 NaOH + 1 H₂SO₄ → 1 Na₂SO₄ + 1 H₂O',
+        explanationIs: 'Natríum (Na): Vinstri: 1 Na, Hægri: 2 Na í Na₂SO₄. Setjum stuðul 2 fyrir NaOH.',
+        explanationEn: 'Sodium (Na): Left: 1 Na, Right: 2 Na in Na₂SO₄. Put coefficient 2 before NaOH.',
+        explanationPl: 'Sód (Na): Lewa: 1 Na, Prawa: 2 Na w Na₂SO₄. Wstaw współczynnik 2 przed NaOH.',
+        coefficients: [2, 1, 1, 1],
+        highlightElements: ['Na'],
+      },
+      {
+        stepNumber: 2,
+        strategyId: 'nonmetals',
+        coefficientsBeforeIs: '2 NaOH + 1 H₂SO₄ → 1 Na₂SO₄ + 1 H₂O',
+        coefficientsBeforeEn: '2 NaOH + 1 H₂SO₄ → 1 Na₂SO₄ + 1 H₂O',
+        coefficientsAfterIs: 'S: 1 = 1 ✓ (súlfat jón SO₄ er óbreytt)',
+        coefficientsAfterEn: 'S: 1 = 1 ✓ (sulfate ion SO₄ is unchanged)',
+        explanationIs: 'Súlfat (SO₄) kemur fyrir á báðum hliðum sem ein eining. 1 SO₄ vinstri = 1 SO₄ hægri ✓',
+        explanationEn: 'Sulfate (SO₄) appears on both sides as one unit. 1 SO₄ left = 1 SO₄ right ✓',
+        explanationPl: 'Siarczan (SO₄) występuje po obu stronach jako jedna jednostka. 1 SO₄ po lewej = 1 SO₄ po prawej ✓',
+        coefficients: [2, 1, 1, 1],
+        highlightElements: ['S'],
+      },
+      {
+        stepNumber: 3,
+        strategyId: 'hydrogen',
+        coefficientsBeforeIs: '2 NaOH + 1 H₂SO₄ → 1 Na₂SO₄ + 1 H₂O',
+        coefficientsBeforeEn: '2 NaOH + 1 H₂SO₄ → 1 Na₂SO₄ + 1 H₂O',
+        coefficientsAfterIs: '2 NaOH + 1 H₂SO₄ → 1 Na₂SO₄ + 2 H₂O',
+        coefficientsAfterEn: '2 NaOH + 1 H₂SO₄ → 1 Na₂SO₄ + 2 H₂O',
+        explanationIs: 'Vetni: Vinstri: 2 (úr 2×NaOH) + 2 (úr H₂SO₄) = 4 H. Hægri: 2 H í H₂O. Setjum stuðul 2 fyrir H₂O.',
+        explanationEn: 'Hydrogen: Left: 2 (from 2×NaOH) + 2 (from H₂SO₄) = 4 H. Right: 2 H in H₂O. Put coefficient 2 before H₂O.',
+        explanationPl: 'Wodór: Lewa: 2 (z 2×NaOH) + 2 (z H₂SO₄) = 4 H. Prawa: 2 H w H₂O. Wstaw współczynnik 2 przed H₂O.',
+        coefficients: [2, 1, 1, 2],
+        highlightElements: ['H'],
+      },
+      {
+        stepNumber: 4,
+        strategyId: 'check',
+        coefficientsBeforeIs: '2 NaOH + 1 H₂SO₄ → 1 Na₂SO₄ + 2 H₂O',
+        coefficientsBeforeEn: '2 NaOH + 1 H₂SO₄ → 1 Na₂SO₄ + 2 H₂O',
+        coefficientsAfterIs: 'Na: 2=2 ✓, S: 1=1 ✓, H: 4=4 ✓, O: 6=6 ✓',
+        coefficientsAfterEn: 'Na: 2=2 ✓, S: 1=1 ✓, H: 4=4 ✓, O: 6=6 ✓',
+        explanationIs: 'Allt athuguð: Na: 2=2 ✓, S: 1=1 ✓, H: 4=4 ✓, O: 2+4=4+2=6 ✓',
+        explanationEn: 'All checked: Na: 2=2 ✓, S: 1=1 ✓, H: 4=4 ✓, O: 2+4=4+2=6 ✓',
+        explanationPl: 'Wszystko sprawdzone: Na: 2=2 ✓, S: 1=1 ✓, H: 4=4 ✓, O: 2+4=4+2=6 ✓',
+        coefficients: [2, 1, 1, 2],
+        highlightElements: [],
+      },
+    ],
+  },
+  // Example 4: Single replacement - Al + HCl → AlCl₃ + H₂
+  {
+    equation: {
+      id: 'tut-4',
+      reactants: ['Al', 'HCl'],
+      products: ['AlCl₃', 'H₂'],
+      coefficients: [2, 6, 2, 3],
+      type: 'single-replacement',
+      difficulty: 'medium',
+    },
+    steps: [
+      {
+        stepNumber: 1,
+        strategyId: 'metals',
+        coefficientsBeforeIs: '1 Al + 1 HCl → 1 AlCl₃ + 1 H₂',
+        coefficientsBeforeEn: '1 Al + 1 HCl → 1 AlCl₃ + 1 H₂',
+        coefficientsAfterIs: '1 Al + 1 HCl → 1 AlCl₃ + 1 H₂',
+        coefficientsAfterEn: '1 Al + 1 HCl → 1 AlCl₃ + 1 H₂',
+        explanationIs: 'Ál (Al): Vinstri: 1 Al, Hægri: 1 Al. Ál er þegar jafnt!',
+        explanationEn: 'Aluminum (Al): Left: 1 Al, Right: 1 Al. Aluminum is already balanced!',
+        explanationPl: 'Aluminium (Al): Lewa: 1 Al, Prawa: 1 Al. Aluminium jest już zrównoważone!',
+        coefficients: [1, 1, 1, 1],
+        highlightElements: ['Al'],
+      },
+      {
+        stepNumber: 2,
+        strategyId: 'nonmetals',
+        coefficientsBeforeIs: '1 Al + 1 HCl → 1 AlCl₃ + 1 H₂',
+        coefficientsBeforeEn: '1 Al + 1 HCl → 1 AlCl₃ + 1 H₂',
+        coefficientsAfterIs: '1 Al + 3 HCl → 1 AlCl₃ + 1 H₂',
+        coefficientsAfterEn: '1 Al + 3 HCl → 1 AlCl₃ + 1 H₂',
+        explanationIs: 'Klór (Cl): Vinstri: 1 Cl, Hægri: 3 Cl í AlCl₃. Setjum stuðul 3 fyrir HCl.',
+        explanationEn: 'Chlorine (Cl): Left: 1 Cl, Right: 3 Cl in AlCl₃. Put coefficient 3 before HCl.',
+        explanationPl: 'Chlor (Cl): Lewa: 1 Cl, Prawa: 3 Cl w AlCl₃. Wstaw współczynnik 3 przed HCl.',
+        coefficients: [1, 3, 1, 1],
+        highlightElements: ['Cl'],
+      },
+      {
+        stepNumber: 3,
+        strategyId: 'hydrogen',
+        coefficientsBeforeIs: '1 Al + 3 HCl → 1 AlCl₃ + 1 H₂',
+        coefficientsBeforeEn: '1 Al + 3 HCl → 1 AlCl₃ + 1 H₂',
+        coefficientsAfterIs: 'H: Vinstri: 3, Hægri: 2. Þetta er ekki jafnt!',
+        coefficientsAfterEn: 'H: Left: 3, Right: 2. This is not balanced!',
+        explanationIs: 'Vetni: 3 H vinstri (í 3×HCl), 2 H hægri (í H₂). Við þurfum sameiginlegan margfeldara: 6 H.',
+        explanationEn: 'Hydrogen: 3 H left (in 3×HCl), 2 H right (in H₂). We need a common multiple: 6 H.',
+        explanationPl: 'Wodór: 3 H po lewej (w 3×HCl), 2 H po prawej (w H₂). Potrzebujemy wspólnej wielokrotności: 6 H.',
+        coefficients: [1, 3, 1, 1],
+        highlightElements: ['H'],
+      },
+      {
+        stepNumber: 4,
+        strategyId: 'hydrogen',
+        coefficientsBeforeIs: 'H þarf 6 (sameiginlegur margfeldari 3 og 2)',
+        coefficientsBeforeEn: 'H needs 6 (common multiple of 3 and 2)',
+        coefficientsAfterIs: '2 Al + 6 HCl → 2 AlCl₃ + 3 H₂',
+        coefficientsAfterEn: '2 Al + 6 HCl → 2 AlCl₃ + 3 H₂',
+        explanationIs: '6 H: 6×HCl vinstri, 3×H₂ hægri. En þá eru 6 Cl, þurfum 2×AlCl₃ og 2×Al.',
+        explanationEn: '6 H: 6×HCl left, 3×H₂ right. But then there are 6 Cl, we need 2×AlCl₃ and 2×Al.',
+        explanationPl: '6 H: 6×HCl po lewej, 3×H₂ po prawej. Ale wtedy jest 6 Cl, potrzebujemy 2×AlCl₃ i 2×Al.',
+        coefficients: [2, 6, 2, 3],
+        highlightElements: ['H', 'Al', 'Cl'],
+      },
+      {
+        stepNumber: 5,
+        strategyId: 'check',
+        coefficientsBeforeIs: '2 Al + 6 HCl → 2 AlCl₃ + 3 H₂',
+        coefficientsBeforeEn: '2 Al + 6 HCl → 2 AlCl₃ + 3 H₂',
+        coefficientsAfterIs: 'Al: 2=2 ✓, Cl: 6=6 ✓, H: 6=6 ✓',
+        coefficientsAfterEn: 'Al: 2=2 ✓, Cl: 6=6 ✓, H: 6=6 ✓',
+        explanationIs: 'Athugum: Al: 2=2 ✓, Cl: 6=6 ✓, H: 6=6 ✓. Fullkomlega stillt!',
+        explanationEn: 'Check: Al: 2=2 ✓, Cl: 6=6 ✓, H: 6=6 ✓. Perfectly balanced!',
+        explanationPl: 'Sprawdź: Al: 2=2 ✓, Cl: 6=6 ✓, H: 6=6 ✓. Idealnie zrównoważone!',
+        coefficients: [2, 6, 2, 3],
+        highlightElements: [],
+      },
+    ],
+  },
+  // Example 5: More complex combustion - C₂H₆ + O₂ → CO₂ + H₂O
+  {
+    equation: {
+      id: 'tut-5',
+      reactants: ['C₂H₆', 'O₂'],
+      products: ['CO₂', 'H₂O'],
+      coefficients: [2, 7, 4, 6],
+      type: 'combustion',
+      difficulty: 'hard',
+    },
+    steps: [
+      {
+        stepNumber: 1,
+        strategyId: 'nonmetals',
+        coefficientsBeforeIs: '1 C₂H₆ + 1 O₂ → 1 CO₂ + 1 H₂O',
+        coefficientsBeforeEn: '1 C₂H₆ + 1 O₂ → 1 CO₂ + 1 H₂O',
+        coefficientsAfterIs: '1 C₂H₆ + 1 O₂ → 2 CO₂ + 1 H₂O',
+        coefficientsAfterEn: '1 C₂H₆ + 1 O₂ → 2 CO₂ + 1 H₂O',
+        explanationIs: 'Kolefni (C): Vinstri: 2 C í C₂H₆, Hægri: 1 C í CO₂. Setjum stuðul 2 fyrir CO₂.',
+        explanationEn: 'Carbon (C): Left: 2 C in C₂H₆, Right: 1 C in CO₂. Put coefficient 2 before CO₂.',
+        explanationPl: 'Węgiel (C): Lewa: 2 C w C₂H₆, Prawa: 1 C w CO₂. Wstaw współczynnik 2 przed CO₂.',
+        coefficients: [1, 1, 2, 1],
+        highlightElements: ['C'],
+      },
+      {
+        stepNumber: 2,
+        strategyId: 'hydrogen',
+        coefficientsBeforeIs: '1 C₂H₆ + 1 O₂ → 2 CO₂ + 1 H₂O',
+        coefficientsBeforeEn: '1 C₂H₆ + 1 O₂ → 2 CO₂ + 1 H₂O',
+        coefficientsAfterIs: '1 C₂H₆ + 1 O₂ → 2 CO₂ + 3 H₂O',
+        coefficientsAfterEn: '1 C₂H₆ + 1 O₂ → 2 CO₂ + 3 H₂O',
+        explanationIs: 'Vetni (H): Vinstri: 6 H, Hægri: 2 H í H₂O. Setjum stuðul 3 fyrir H₂O (3×2=6).',
+        explanationEn: 'Hydrogen (H): Left: 6 H, Right: 2 H in H₂O. Put coefficient 3 before H₂O (3×2=6).',
+        explanationPl: 'Wodór (H): Lewa: 6 H, Prawa: 2 H w H₂O. Wstaw współczynnik 3 przed H₂O (3×2=6).',
+        coefficients: [1, 1, 2, 3],
+        highlightElements: ['H'],
+      },
+      {
+        stepNumber: 3,
+        strategyId: 'oxygen',
+        coefficientsBeforeIs: '1 C₂H₆ + 1 O₂ → 2 CO₂ + 3 H₂O',
+        coefficientsBeforeEn: '1 C₂H₆ + 1 O₂ → 2 CO₂ + 3 H₂O',
+        coefficientsAfterIs: 'O hægri: 4 (í 2×CO₂) + 3 (í 3×H₂O) = 7',
+        coefficientsAfterEn: 'O right: 4 (in 2×CO₂) + 3 (in 3×H₂O) = 7',
+        explanationIs: 'Súrefni: Hægri: 4 (í 2×CO₂) + 3 (í 3×H₂O) = 7 O. En O₂ hefur 2 O, og 7 er oddatala!',
+        explanationEn: 'Oxygen: Right: 4 (in 2×CO₂) + 3 (in 3×H₂O) = 7 O. But O₂ has 2 O, and 7 is odd!',
+        explanationPl: 'Tlen: Prawa: 4 (w 2×CO₂) + 3 (w 3×H₂O) = 7 O. Ale O₂ ma 2 O, a 7 jest nieparzyste!',
+        coefficients: [1, 1, 2, 3],
+        highlightElements: ['O'],
+      },
+      {
+        stepNumber: 4,
+        strategyId: 'oxygen',
+        coefficientsBeforeIs: 'Tvöföldum allt til að losna við brotið',
+        coefficientsBeforeEn: 'Double everything to eliminate the fraction',
+        coefficientsAfterIs: '2 C₂H₆ + 7 O₂ → 4 CO₂ + 6 H₂O',
+        coefficientsAfterEn: '2 C₂H₆ + 7 O₂ → 4 CO₂ + 6 H₂O',
+        explanationIs: 'Tvöföldum alla stuðla: 2 C₂H₆ + ? O₂ → 4 CO₂ + 6 H₂O. Nú: 14 O hægri, þannig 7 O₂ vinstri.',
+        explanationEn: 'Double all coefficients: 2 C₂H₆ + ? O₂ → 4 CO₂ + 6 H₂O. Now: 14 O right, so 7 O₂ left.',
+        explanationPl: 'Podwój wszystkie współczynniki: 2 C₂H₆ + ? O₂ → 4 CO₂ + 6 H₂O. Teraz: 14 O po prawej, więc 7 O₂ po lewej.',
+        coefficients: [2, 7, 4, 6],
+        highlightElements: ['O', 'C', 'H'],
+      },
+      {
+        stepNumber: 5,
+        strategyId: 'check',
+        coefficientsBeforeIs: '2 C₂H₆ + 7 O₂ → 4 CO₂ + 6 H₂O',
+        coefficientsBeforeEn: '2 C₂H₆ + 7 O₂ → 4 CO₂ + 6 H₂O',
+        coefficientsAfterIs: 'C: 4=4 ✓, H: 12=12 ✓, O: 14=14 ✓',
+        coefficientsAfterEn: 'C: 4=4 ✓, H: 12=12 ✓, O: 14=14 ✓',
+        explanationIs: 'Athugum: C: 4=4 ✓, H: 12=12 ✓, O: 14 (7×2) = 14 (8+6) ✓',
+        explanationEn: 'Check: C: 4=4 ✓, H: 12=12 ✓, O: 14 (7×2) = 14 (8+6) ✓',
+        explanationPl: 'Sprawdź: C: 4=4 ✓, H: 12=12 ✓, O: 14 (7×2) = 14 (8+6) ✓',
+        coefficients: [2, 7, 4, 6],
+        highlightElements: [],
+      },
+    ],
+  },
+  // Example 6: Decomposition - KClO₃ → KCl + O₂
+  {
+    equation: {
+      id: 'tut-6',
+      reactants: ['KClO₃'],
+      products: ['KCl', 'O₂'],
+      coefficients: [2, 2, 3],
+      type: 'decomposition',
+      difficulty: 'medium',
+    },
+    steps: [
+      {
+        stepNumber: 1,
+        strategyId: 'metals',
+        coefficientsBeforeIs: '1 KClO₃ → 1 KCl + 1 O₂',
+        coefficientsBeforeEn: '1 KClO₃ → 1 KCl + 1 O₂',
+        coefficientsAfterIs: '1 KClO₃ → 1 KCl + 1 O₂',
+        coefficientsAfterEn: '1 KClO₃ → 1 KCl + 1 O₂',
+        explanationIs: 'Kalíum (K): Vinstri: 1 K, Hægri: 1 K. Þegar jafnt!',
+        explanationEn: 'Potassium (K): Left: 1 K, Right: 1 K. Already balanced!',
+        explanationPl: 'Potas (K): Lewa: 1 K, Prawa: 1 K. Już zrównoważone!',
+        coefficients: [1, 1, 1],
+        highlightElements: ['K'],
+      },
+      {
+        stepNumber: 2,
+        strategyId: 'nonmetals',
+        coefficientsBeforeIs: '1 KClO₃ → 1 KCl + 1 O₂',
+        coefficientsBeforeEn: '1 KClO₃ → 1 KCl + 1 O₂',
+        coefficientsAfterIs: '1 KClO₃ → 1 KCl + 1 O₂',
+        coefficientsAfterEn: '1 KClO₃ → 1 KCl + 1 O₂',
+        explanationIs: 'Klór (Cl): Vinstri: 1 Cl, Hægri: 1 Cl. Þegar jafnt!',
+        explanationEn: 'Chlorine (Cl): Left: 1 Cl, Right: 1 Cl. Already balanced!',
+        explanationPl: 'Chlor (Cl): Lewa: 1 Cl, Prawa: 1 Cl. Już zrównoważone!',
+        coefficients: [1, 1, 1],
+        highlightElements: ['Cl'],
+      },
+      {
+        stepNumber: 3,
+        strategyId: 'oxygen',
+        coefficientsBeforeIs: '1 KClO₃ → 1 KCl + 1 O₂',
+        coefficientsBeforeEn: '1 KClO₃ → 1 KCl + 1 O₂',
+        coefficientsAfterIs: 'O: Vinstri: 3, Hægri: 2. Þetta er ekki jafnt!',
+        coefficientsAfterEn: 'O: Left: 3, Right: 2. This is not balanced!',
+        explanationIs: 'Súrefni: 3 O vinstri (í KClO₃), 2 O hægri (í O₂). Við þurfum sameiginlegan margfeldara: 6 O.',
+        explanationEn: 'Oxygen: 3 O left (in KClO₃), 2 O right (in O₂). We need a common multiple: 6 O.',
+        explanationPl: 'Tlen: 3 O po lewej (w KClO₃), 2 O po prawej (w O₂). Potrzebujemy wspólnej wielokrotności: 6 O.',
+        coefficients: [1, 1, 1],
+        highlightElements: ['O'],
+      },
+      {
+        stepNumber: 4,
+        strategyId: 'oxygen',
+        coefficientsBeforeIs: 'O þarf 6 (sameiginlegur margfeldari 3 og 2)',
+        coefficientsBeforeEn: 'O needs 6 (common multiple of 3 and 2)',
+        coefficientsAfterIs: '2 KClO₃ → 2 KCl + 3 O₂',
+        coefficientsAfterEn: '2 KClO₃ → 2 KCl + 3 O₂',
+        explanationIs: '6 O: 2×KClO₃ (6 O) vinstri, 3×O₂ (6 O) hægri. Uppfærum K og Cl: 2 KCl.',
+        explanationEn: '6 O: 2×KClO₃ (6 O) left, 3×O₂ (6 O) right. Update K and Cl: 2 KCl.',
+        explanationPl: '6 O: 2×KClO₃ (6 O) po lewej, 3×O₂ (6 O) po prawej. Zaktualizuj K i Cl: 2 KCl.',
+        coefficients: [2, 2, 3],
+        highlightElements: ['O', 'K', 'Cl'],
+      },
+      {
+        stepNumber: 5,
+        strategyId: 'check',
+        coefficientsBeforeIs: '2 KClO₃ → 2 KCl + 3 O₂',
+        coefficientsBeforeEn: '2 KClO₃ → 2 KCl + 3 O₂',
+        coefficientsAfterIs: 'K: 2=2 ✓, Cl: 2=2 ✓, O: 6=6 ✓',
+        coefficientsAfterEn: 'K: 2=2 ✓, Cl: 2=2 ✓, O: 6=6 ✓',
+        explanationIs: 'Athugum: K: 2=2 ✓, Cl: 2=2 ✓, O: 6=6 ✓. Fullkomlega stillt!',
+        explanationEn: 'Check: K: 2=2 ✓, Cl: 2=2 ✓, O: 6=6 ✓. Perfectly balanced!',
+        explanationPl: 'Sprawdź: K: 2=2 ✓, Cl: 2=2 ✓, O: 6=6 ✓. Idealnie zrównoważone!',
+        coefficients: [2, 2, 3],
+        highlightElements: [],
+      },
+    ],
+  },
+];
+
+// Practice equations for after the tutorial (simpler versions for practice)
+export const PRACTICE_EQUATIONS: Equation[] = [
+  {
+    id: 'prac-1',
+    reactants: ['H₂', 'Cl₂'],
+    products: ['HCl'],
+    coefficients: [1, 1, 2],
+    type: 'synthesis',
+    difficulty: 'easy',
+    hint: 'Tveir hvarfefnisþættir mynda eitt efni',
+    hintEn: 'Two reactants form one product',
+  },
+  {
+    id: 'prac-2',
+    reactants: ['Ca', 'O₂'],
+    products: ['CaO'],
+    coefficients: [2, 1, 2],
+    type: 'synthesis',
+    difficulty: 'easy',
+    hint: 'Byrjaðu á kalsíum',
+    hintEn: 'Start with calcium',
+  },
+  {
+    id: 'prac-3',
+    reactants: ['Fe', 'Cl₂'],
+    products: ['FeCl₃'],
+    coefficients: [2, 3, 2],
+    type: 'synthesis',
+    difficulty: 'medium',
+    hint: 'Járn myndar FeCl₃ (járn III klóríð)',
+    hintEn: 'Iron forms FeCl₃ (iron III chloride)',
+  },
+  {
+    id: 'prac-4',
+    reactants: ['Mg', 'HCl'],
+    products: ['MgCl₂', 'H₂'],
+    coefficients: [1, 2, 1, 1],
+    type: 'single-replacement',
+    difficulty: 'medium',
+    hint: 'Magnesíum leysir upp í saltsýru',
+    hintEn: 'Magnesium dissolves in hydrochloric acid',
+  },
+  {
+    id: 'prac-5',
+    reactants: ['C₃H₈', 'O₂'],
+    products: ['CO₂', 'H₂O'],
+    coefficients: [1, 5, 3, 4],
+    type: 'combustion',
+    difficulty: 'hard',
+    hint: 'Própanbruni - stilltu C, H, O í þeirri röð',
+    hintEn: 'Propane combustion - balance C, H, O in that order',
+  },
+];
+
+// Common mistakes and how to avoid them
+export const COMMON_MISTAKES = [
+  {
+    titleIs: 'Að breyta aftengdum efnum',
+    titleEn: 'Changing subscripts',
+    titlePl: 'Zmiana indeksów dolnych',
+    wrongIs: 'H₂O → H₃O',
+    wrongEn: 'H₂O → H₃O',
+    correctIs: 'Notaðu stuðla, ekki aftengd',
+    correctEn: 'Use coefficients, not subscripts',
+    correctPl: 'Używaj współczynników, nie indeksów',
+    explanationIs: 'Aftengd efni lýsa sameindabyggingu. Stuðlar lýsa fjölda sameinda.',
+    explanationEn: 'Subscripts describe molecular structure. Coefficients describe number of molecules.',
+    explanationPl: 'Indeksy dolne opisują strukturę cząsteczki. Współczynniki opisują liczbę cząsteczek.',
+  },
+  {
+    titleIs: 'Að gleyma að tvöfalda alla stuðla',
+    titleEn: 'Forgetting to adjust all coefficients',
+    titlePl: 'Zapominanie o dostosowaniu wszystkich współczynników',
+    wrongIs: 'Breyta bara einni hlið',
+    wrongEn: 'Changing only one side',
+    correctIs: 'Athugaðu alltaf allar hliðar eftir breytingu',
+    correctEn: 'Always check all sides after a change',
+    correctPl: 'Zawsze sprawdzaj obie strony po zmianie',
+    explanationIs: 'Þegar þú breytir einum stuðli getur það haft áhrif á fleiri frumefni.',
+    explanationEn: 'When you change one coefficient, it can affect multiple elements.',
+    explanationPl: 'Kiedy zmieniasz jeden współczynnik, może to wpłynąć na wiele pierwiastków.',
+  },
+  {
+    titleIs: 'Að byrja á súrefni',
+    titleEn: 'Starting with oxygen',
+    titlePl: 'Zaczynanie od tlenu',
+    wrongIs: 'Stilla O fyrst',
+    wrongEn: 'Balance O first',
+    correctIs: 'Stilltu súrefni síðast',
+    correctEn: 'Balance oxygen last',
+    correctPl: 'Zrównoważ tlen na końcu',
+    explanationIs: 'Súrefni kemur oft fyrir í mörgum efnasamböndum og breytist þegar önnur eru stillt.',
+    explanationEn: 'Oxygen often appears in many compounds and changes when others are balanced.',
+    explanationPl: 'Tlen często występuje w wielu związkach i zmienia się podczas równoważenia innych.',
+  },
+];
+
+// Get a strategy step by id
+export function getStrategyStep(id: string): StrategyStep | undefined {
+  return BALANCING_STRATEGY_STEPS.find(step => step.id === id);
+}
+
+// Get tutorial example by index
+export function getTutorialExample(index: number): TutorialExample | undefined {
+  return TUTORIAL_EXAMPLES[index];
+}

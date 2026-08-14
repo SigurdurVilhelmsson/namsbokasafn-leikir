@@ -39,6 +39,21 @@ export const gameTranslations = createGameTranslations({
         title: 'Minnisleikur',
         description: 'Paraðu saman formúlur og nöfn í minnisleik',
       },
+      level4: {
+        name: 'Stig 4',
+        title: 'Fjölatóma jónaæfing',
+        description: 'Lærðu helstu fjölatóma jónirnar á flasskorta-stíl',
+      },
+      level5: {
+        name: 'Stig 5',
+        title: 'Formúla úr nafni',
+        description: 'Skrifaðu formúlur út frá efnanöfnum',
+      },
+      level6: {
+        name: 'Stig 6',
+        title: 'Rómverskur tölustuðull',
+        description: 'Málmar með breytilega hleðslu og rómverskar tölur',
+      },
     },
   },
   en: {
@@ -75,6 +90,21 @@ export const gameTranslations = createGameTranslations({
         title: 'Memory Game',
         description: 'Match formulas and names in a memory game',
       },
+      level4: {
+        name: 'Level 4',
+        title: 'Polyatomic Ion Drill',
+        description: 'Learn key polyatomic ions using flashcard-style practice',
+      },
+      level5: {
+        name: 'Level 5',
+        title: 'Formula from Name',
+        description: 'Write formulas from chemical names',
+      },
+      level6: {
+        name: 'Level 6',
+        title: 'Stock System Mastery',
+        description: 'Variable-charge metals with Roman numerals',
+      },
     },
   },
   pl: {
@@ -110,6 +140,21 @@ export const gameTranslations = createGameTranslations({
         name: 'Poziom 3',
         title: 'Gra pamieci',
         description: 'Dopasuj wzory i nazwy w grze pamieci',
+      },
+      level4: {
+        name: 'Poziom 4',
+        title: 'Cwiczenie jonow wieloatomowych',
+        description: 'Naucz sie kluczowych jonow wieloatomowych za pomoca fiszek',
+      },
+      level5: {
+        name: 'Poziom 5',
+        title: 'Wzor z nazwy',
+        description: 'Zapisz wzory na podstawie nazw chemicznych',
+      },
+      level6: {
+        name: 'Poziom 6',
+        title: 'Opanowanie systemu Stocka',
+        description: 'Metale o zmiennej wartosciowosci z cyframi rzymskimi',
       },
     },
   },

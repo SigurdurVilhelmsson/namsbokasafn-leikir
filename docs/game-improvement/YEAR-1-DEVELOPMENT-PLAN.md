@@ -1,8 +1,8 @@
 # Year 1 Chemistry Games — Development Plan
 
-**Date:** 2026-01-30 | **Updated:** 2026-02-04
+**Date:** 2026-01-30 | **Updated:** 2026-08-14
 **Curriculum Reference:** Brown et al, *Chemistry: The Central Science*, Chapters 1-4
-**Status:** Phase 6 In Progress (Existing Game Enhancements)
+**Status:** Phase 6 Complete (Existing Game Enhancements) — Phase 7 next
 
 ---
 
@@ -17,8 +17,8 @@ Year 1 games cover most core topics from Chapters 1-4. Phases 1-4 addressed gaps
 | Chapter | Topic | Coverage | Game(s) | Priority |
 |---------|-------|----------|---------|----------|
 | Ch. 1 | Measurement & Units | ✅ Strong | Dimensional Analysis | — |
-| Ch. 1 | Significant Figures | ❌ Missing | None | Medium |
-| Ch. 1 | Classification of Matter | ❌ Missing | None | Medium |
+| Ch. 1 | Significant Figures | ✅ Strong | Markverðir tölustafir | — |
+| Ch. 1 | Classification of Matter | ✅ Strong | Flokkun efna | — |
 | Ch. 2 | Nomenclature | ✅ Strong | Nafnakerfið | — |
 | Ch. 2 | Atomic Structure | ✅ Strong | Uppbygging atómanna (Phase 5) | — |
 | Ch. 2 | Periodic Table | ✅ Strong | Lotukerfið (Phase 5) | — |
@@ -403,13 +403,13 @@ Based on the [Year 1 Pedagogical Review](YEAR-1-PEDAGOGICAL-REVIEW.md), which id
 14. ✅ Build Sýrur og basar (Acids & Bases — Neutralization, Ch. 4.3)
 15. ✅ Build Lotukerfið (Periodic Table Explorer — Groups, Periods, Trends, Ch. 2.5)
 
-### Phase 6: Pedagogical Review — Existing Game Enhancements (In Progress)
-16. ⬜ Gerðir efnahvarfa: Add driving force analysis, solubility rules, activity series, net ionic equations
-17. ⬜ Lausnir: Add electrolyte classification, solution stoichiometry
-18. ⬜ Nafnakerfið: Add polyatomic ion drill, formula-from-name mode, Stock system level
-19. ⬜ Stilltu efnajöfnur: Add balancing strategy tutorial, atom inventory tables
-20. ⬜ Flokkun efna: Add separation methods level
-21. ⬜ Markverðir tölustafir: Add measurement-reading problems, exact numbers
+### Phase 6: Pedagogical Review — Existing Game Enhancements ✅ COMPLETED
+16. ✅ Gerðir efnahvarfa: Driving forces (L4), activity series (L5), net ionic equations (L6)
+17. ✅ Lausnir: Electrolyte classification (L5), solution stoichiometry (L6)
+18. ✅ Nafnakerfið: Polyatomic ion drill (L4), formula-from-name (L5), Stock system (L6)
+19. ✅ Stilltu efnajöfnur: Balancing strategy tutorial (L4), atom inventory table (L2/L3 helper)
+20. ✅ Flokkun efna: Separation methods (L4)
+21. ✅ Markverðir tölustafir: Measurement reading (L4), exact numbers (L5)
 
 ### Phase 7: Cross-Cutting Improvements (Planned)
 22. ⬜ Adaptive difficulty across all games
@@ -425,5 +425,8 @@ Based on the [Year 1 Pedagogical Review](YEAR-1-PEDAGOGICAL-REVIEW.md), which id
 
 - Phase 5 adds 4 new games identified by the pedagogical review as must-have
 - These games fill gaps in Brown Ch. 2 (atomic structure, periodic table) and Ch. 4 (precipitation, acid-base)
-- Phase 6 and 7 are planned based on review recommendations
+- Phase 6 deepened 6 existing games with 14 new levels; Gerðir efnahvarfa, Lausnir and
+  Nafnakerfið now run to 6 levels, Markverðir tölustafir to 5, Flokkun efna and
+  Stilltu efnajöfnur to 4
+- Phase 7 (cross-cutting improvements) is the next planned work
 - All new games follow consistent 3-level pattern with localization (is, en, pl)
